@@ -20,4 +20,9 @@ class Index extends HomeController
     {
         return $this->view->fetch();
     }
+
+    public function calling()
+    {
+        return $this->view->fetch();
+    }
 }

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>拨号</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="__STATIC__/lib/layui-v2.6.8/css/layui.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/css/public.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/css/bootstrap.min.css" media="all">
+    <link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/font/bootstrap-icons.css" media="all">
+    <style id="layuimini-bg-color"></style>
+</head>
+<body class="vh-100">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="layui-card">
+                <div class="my-3 text-center fs-3">
+                    <i class="fa fa-warning icon text-warning me-2"></i>呼叫中心拨号
+                </div>
+                <div class="layui-card-body">
+                    <div class="row justify-content-center">
+                        <div class="col-4">
+                            <blockquote class="layui-elem-quote">
+                                温馨小提示
+                            </blockquote>
+                            <ol class="mb-5">
+                                <li><span
+                                        class="layui-badge-dot me-2"></span><span> 只允许拨打本公司业务电话，不允许拨打其他行业电话。</span>
+                                </li>
+                                <li><span class="layui-badge-dot me-2"></span> 拨号当中不允许出现：金融、地产相关高频行业。</li>
+                                <li><span class="layui-badge-dot me-2"></span> 通话中不允许出现：代开发票、造假等违法字眼。</li>
+                                <li><span class="layui-badge-dot me-2"></span> 不允许在通话中辱骂。</li>
+                            </ol>
+                            <div class="mb-3">
+                                <input type="text" name="phone" value="" onkeyup="value=value.replace(/[^\d]/g,'')"
+                                       class="layui-input callinginput fs-1" id="input"
+                                       style="background-color: #F6F6F6;height: 90px;">
+                            </div>
+                            <div class="layui-panel layui-bg-green">
+                                <div class="row row-cols-3 gy-3 p-5">
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="1">1
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="2">2
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="3">3
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="4">4
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="5">5
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="6">6
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="7">7
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="8">8
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="9">9
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-1"
+                                                data-value="*">*
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="0">0
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
+                                                data-value="#">#
+                                        </button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class="layui-btn-warm layui-btn-lg rounded-pill  border-0 fs-2"><i
+                                                class="bi bi-person-fill"></i></button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class="layui-btn-warm layui-btn-lg lqp-oncalling rounded-pill  border-0 fs-2"><i
+                                                class="fa fa-phone"></i></button>
+                                    </div>
+                                    <div class="col text-center">
+                                        <button type="button"
+                                                class="layui-btn-warm layui-btn-lg lqp-empyt rounded-pill  border-0 fs-2"><i
+                                                class="bi bi-dash"></i></button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="__STATIC__/lib/layui-v2.6.8/layui.js" charset="utf-8"></script>
+<script src="__STATIC__/lib/bootstrap-5.0.0/js/bootstrap.min.js" charset="utf-8"></script>
+<script src="__STATIC__/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['layer',], function () {
+        var $ = layui.jquery,
+            layer = layui.layer;
+        // document.getElementsByClassName('callinginput').focus();
+        document.getElementById("input").focus();
+
+        let callinginput = $('.callinginput');
+        //按页面
+        $('.lqp-btn').on('click', function () {
+            if (callinginput.val().length < 11) {//电话11位数
+                callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
+                // console.log(callinginput.val())
+            }
+        });
+        // 按键盘
+        $(window).on('keydown', function (e) {
+            if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
+                if (callinginput.val().length < 11) {
+                    callinginput.val(callinginput.val() + e.key);
+                }
+
+            } else if (e.keyCode === 13) {
+                console.log(e)
+            }
+        });
+        $('.lqp-empyt').on('click', function () {
+            callinginput = $('.callinginput').val('');
+
+        });
+        $('.lqp-oncalling').on('click', function () {
+
+
+        })
+    });
+</script>
+</body>
+</html>
