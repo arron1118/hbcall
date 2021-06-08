@@ -1,27 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>拨号</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" href="__STATIC__/lib/layui-v2.6.8/css/layui.css" media="all">
-    <link rel="stylesheet" href="__STATIC__/lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
-    <link rel="stylesheet" href="__STATIC__/css/public.css" media="all">
-    <link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/css/bootstrap.min.css" media="all">
-    <link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/font/bootstrap-icons.css" media="all">
-    <style id="layuimini-bg-color"></style>
-</head>
-<body class="vh-100">
+{extend name="public/base" /}
+{block name="css"}
+<link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/css/bootstrap.min.css" media="all">
+<link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/font/bootstrap-icons.css" media="all">
+{/block}
+{block name="body"}
+<body class="">
 <div class="container-fluid">
     <div class="row">
         <div class="col">
-            <div class="layui-card">
-                <div class="my-3 text-center fs-3">
-                    <i class="fa fa-warning icon text-warning me-2"></i>呼叫中心拨号
-                </div>
-                <div class="layui-card-body">
+            <div class="card">
+                <div class="card-body">
+                    <div class="my-3 text-center fs-3">
+                        <i class="fa fa-warning icon text-warning me-2"></i>呼叫中心拨号
+                    </div>
                     <div class="row justify-content-center">
                         <div class="col-4">
                             <blockquote class="layui-elem-quote">
@@ -40,96 +31,59 @@
                                        class="layui-input callinginput fs-1" id="input"
                                        style="background-color: #F6F6F6;height: 90px;">
                             </div>
-                            <div class="layui-panel layui-bg-green">
-                                <div class="row row-cols-3 gy-3 p-5">
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="1">1
-                                        </button>
+                            <div class=" bg-secondary">
+                                <div class="row row-cols-3 gy-3 p-5 text-center">
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="1">1</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="2">2
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="2">2</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="3">3
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="3">3</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="4">4
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="4">4</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="5">5
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="5">5</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="6">6
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="6">6</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="7">7
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="7">7</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="8">8
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="8">8</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="9">9
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="9">9</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-1"
-                                                data-value="*">*
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="*">*</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="0">0
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="0">0</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class=" layui-btn-warm layui-btn-lg lqp-btn rounded-pill  border-0 fs-2"
-                                                data-value="#">#
-                                        </button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="#">#</span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class="layui-btn-warm layui-btn-lg rounded-pill  border-0 fs-2"><i
-                                                class="bi bi-person-fill"></i></button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-3 text-reset" data-value="#">
+                                            <i class="fa fa-user"></i>
+                                        </span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class="layui-btn-warm layui-btn-lg lqp-oncalling rounded-pill  border-0 fs-2"><i
-                                                class="fa fa-phone"></i></button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-3 text-reset" data-value="#">
+                                            <i class="fa fa-phone"></i>
+                                        </span>
                                     </div>
-                                    <div class="col text-center">
-                                        <button type="button"
-                                                class="layui-btn-warm layui-btn-lg lqp-empyt rounded-pill  border-0 fs-2"><i
-                                                class="bi bi-dash"></i></button>
+                                    <div class="col">
+                                        <span class="badge rounded-pill bg-warning lqp-btn fs-3 text-reset" data-value="#">
+                                            <i class="fa fa-minus"></i>
+                                        </span>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -139,9 +93,9 @@
         </div>
     </div>
 </div>
-<script src="__STATIC__/lib/layui-v2.6.8/layui.js" charset="utf-8"></script>
-<script src="__STATIC__/lib/bootstrap-5.0.0/js/bootstrap.min.js" charset="utf-8"></script>
-<script src="__STATIC__/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+{/block}
+{block name="js"}
+
 <script>
     layui.use(['layer',], function () {
         var $ = layui.jquery,
@@ -178,5 +132,5 @@
         })
     });
 </script>
-</body>
-</html>
+
+{/block}
