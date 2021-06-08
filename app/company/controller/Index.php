@@ -1,5 +1,5 @@
 <?php
-namespace app\home\controller;
+namespace app\company\controller;
 
 use app\common\controller\HomeController;
 
@@ -11,11 +11,19 @@ class Index extends HomeController
         return $this->view->fetch();
     }
 
-    public function calltable($name = 'ThinkPHP6')
+    public function open()
     {
         return $this->view->fetch();
     }
     public function calling()
+    {
+        return $this->view->fetch();
+    }
+    public function calltable()
+    {
+        return $this->view->fetch();
+    }
+    public function add()
     {
         return $this->view->fetch();
     }

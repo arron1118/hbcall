@@ -22,8 +22,14 @@
           "target": "_self"
         },
         {
-          "title": "历史记录",
-          "href": "home/index/hello",
+          "title": "通话记录",
+          "href": "home/index/calltable",
+          "icon": "fa fa-file-text",
+          "target": "_self"
+        },
+        {
+          "title": "登陆",
+          "href": "home/index/login",
           "icon": "fa fa-file-text",
           "target": "_self"
         }
