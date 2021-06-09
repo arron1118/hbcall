@@ -3,10 +3,13 @@
 
 namespace app\common\controller;
 
+use think\facade\Session;
 use think\facade\View;
 
 class HomeController extends \app\BaseController
 {
+    protected $middleware = [\app\home\middleware\Check::class];
+
     protected $view = null;
 
     // 小号
@@ -18,6 +21,17 @@ class HomeController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
+
+        $this->isLogin();
     }
 
+    public function isLogin()
+    {
+
+        if (!Session::get('user') && $this->request->action() !== 'login') {
+            return redirect((string) url('index/login'));
+        }
+
+        return true;
+    }
 }
