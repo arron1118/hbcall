@@ -2,6 +2,7 @@
 namespace app\home\controller;
 
 use app\common\controller\HomeController;
+use app\api\controller\HbCall;
 
 class Index extends HomeController
 {
@@ -17,6 +18,13 @@ class Index extends HomeController
     }
     public function calling()
     {
+        $result = curl_request('http://call.hbosw.net/API/axbCallApi.aspx?mobile=19868115646&axb_number=18426190532', true);
+        if(is_array($result)){
+            #请求失败
+            echo $result[0];die;
+        }
+        echo $result;die;
+        $this->view->assign('result', $result);
         return $this->view->fetch();
     }
     public function login()
