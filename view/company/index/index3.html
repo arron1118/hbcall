@@ -1,0 +1,156 @@
+{extend name="public/base" /}
+{block name="css"}
+<link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/css/bootstrap.min.css" media="all">
+<link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/font/bootstrap-icons.css" media="all">
+{/block}
+{block name="body"}
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="row p-2 mb-5">
+            <div class="col-12">
+                <div class="row border">
+                    <div class="col-4">
+                        <div class="card border-0 p-0 border-end">
+                            <div class="card-body">
+                                <h5 class="card-title">Hi 东莞汇邦</h5>
+                                <div class="row row-cols-3">
+                                    <div class="col">
+                                        <img src="/static/images/2.png" style="max-height: 100px;">
+                                    </div>
+                                    <div class="col">
+                                        <div>账号：123456</div>
+                                        <div>账号类型：企业</div>
+                                    </div>
+                                    <div class="col">
+                                        <div>手机：123456</div>
+                                        <div>邮箱：123456</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card border-0 p-0">
+
+                            <div class="card-body">
+                                <h5 class="card-title">当前余额/元</h5>
+                                <h1 class="card-text">100</h1>
+                                <a href="#" class="layui-btn layui-btn-warm text-decoration-none">立即充值</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="text-center">
+                                            <img src="/static/images/xiaoqiang.png" style="max-height: 100px;">
+                                            <p class="mt-2">微信咨询</p>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="text-center">
+                                            <img src="/static/images/22.png" style="max-height: 100px;">
+                                            <h5 class="mt-2 text-primary">13622850769</h5>
+                                            <p class="mt-2">客服咨询</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row p-2 ">
+            <div class="card p-0">
+                <div class="card-header">使用情况</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h1>800</h1>
+                                    <h5 class="card-title"><span class="layui-badge-dot  me-3"></span>今日消费/元</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h1>800</h1>
+                                    <h5 class="card-title"><span class="layui-badge-dot  me-3"></span>本月消费/元</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="card text-center">
+                                <div class="card-body">
+                                    <h1>800</h1>
+                                    <h5 class="card-title"><span class="layui-badge-dot  me-3"></span>今年消费/元</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+
+<script>
+    layui.use(['layer',], function () {
+        let $ = layui.jquery,
+            layer = layui.layer;
+        //输入框获取焦点
+        $(document).ready(function () {
+            $("#input").focus();
+        });
+
+        let callinginput = $('.callinginput');
+
+        //按页面
+        $('.lqp-btn').on('click', function () {
+            if (callinginput.val().length < 11) {
+                callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
+            }
+        });
+        // 按键盘
+        $(window).on('keydown', function (e) {
+            console.log(e);
+            console.log(e.keyCode);
+            // 大键盘||小键盘
+            if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
+                if (callinginput.val().length < 11) {
+                    // callinginput.val(callinginput.val() + e.key);
+                    callinginput.val() + e.key;
+                    console.log('lpp');
+                    console.log(callinginput.val() + e.key);
+                }
+
+            } else if (e.keyCode === 13) {
+                console.log(e)
+            }
+        });
+        //清空输入框
+        $('.lqp-empyt').on('click', function () {
+            callinginput = $('.callinginput').val('');
+        });
+        // 拨打
+        $('.lqp-oncalling').on('click', function () {
+            let number = 132654289822;
+            layer.open(
+                {
+                    title: '正在通话中...',
+                    content: '请用手机拨打号码：' + number,
+                },
+            );
+        })
+    });
+</script>
+
+{/block}

@@ -16,6 +16,12 @@
       "target": "_self",
       "child": [
         {
+          "title": "主页",
+          "href": "company/index/index3",
+          "icon": "fa fa-file-text",
+          "target": "_self"
+        },
+        {
           "title": "开通账号",
           "href": "company/index/open",
           "icon": "fa fa-file-text",

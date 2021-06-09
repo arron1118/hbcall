@@ -10,7 +10,10 @@ class Index extends HomeController
         $this->view->assign('title', 'lqpbd');
         return $this->view->fetch();
     }
-
+    public function index3()
+    {
+        return $this->view->fetch();
+    }
     public function open()
     {
         return $this->view->fetch();
