@@ -105,7 +105,7 @@
         <div class="layui-form login-form ">
             <form class="layui-form" action="">
                 <div class="layui-form-item logo-title">
-                    <h1>开通账号</h1>
+                    <h1>编辑账号</h1>
                 </div>
 
                 <div class="layui-form-item">
@@ -121,7 +121,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="account">账号</label>
                     <div class="layui-input-block">
@@ -145,7 +144,7 @@
                 </div>
                 <div class="layui-form-item">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
-                            lay-filter="open">开通
+                            lay-filter="open">确认
                     </button>
                 </div>
             </form>
@@ -164,24 +163,20 @@
         // 进行登录操作
         form.on('submit(open)', function (data) {
             let params = data.field;
-            console.log(params);
-            // if (params.trumpet == '') {
-            //     layer.msg('请选择小号');
-            //     return false;
-            // }
-            // if (params.account == '') {
-            //     layer.msg('账号不能为空');
-            //     return false;
-            // }
-            // if (params.password == '') {
-            //     layer.msg('密码不能为空');
-            //     return false;
-            // }
-            // if (params.holder == '') {
-            //     layer.msg('持有人不能为空');
-            //     return false;
-            // }
-            // return false
+            console.log('lqp');
+            if (params.account == '') {
+                layer.msg('账号不能为空');
+                return false;
+            }
+            if (params.password == '') {
+                layer.msg('密码不能为空');
+                return false;
+            }
+            if (params.holder == '') {
+                layer.msg('持有人不能为空');
+                return false;
+            }
+            return false
             let url = '';
             $.post(url, params, function (res) {
                 //Todo
