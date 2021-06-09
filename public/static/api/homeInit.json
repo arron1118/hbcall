@@ -1,7 +1,7 @@
 {
   "homeInfo": {
     "title": "立即拨号",
-    "href": "home/index/calling.html?t=1"
+    "href": "home/hbcall/callCenter.html?t=1"
   },
   "logoInfo": {
     "title": "呼叫系统",
@@ -16,21 +16,9 @@
       "target": "_self",
       "child": [
         {
-          "title": "立即拨号",
-          "href": "home/index/calling.html",
-          "icon": "fa fa-gears",
-          "target": "_self"
-        },
-        {
           "title": "通话记录",
-          "href": "home/index/calltable",
-          "icon": "fa fa-file-text",
-          "target": "_self"
-        },
-        {
-          "title": "登陆",
-          "href": "home/index/login",
-          "icon": "fa fa-file-text",
+          "href": "home/hbcall/callHistoryList.html",
+          "icon": "fa fa-file-alt",
           "target": "_self"
         }
       ]

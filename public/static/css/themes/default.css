@@ -93,3 +93,8 @@
 .layuimini-tab .layui-tab-title .layui-this .layuimini-tab-active {
     background-color: #1e9fff;
 }
+.text-center {
+    height: 100% !important;
+    line-height: 100%!important;
+    text-align: center !important;
+}

@@ -27,6 +27,10 @@ class Index extends HomeController
     {
         return $this->view->fetch();
     }
+    public function edit()
+    {
+        return $this->view->fetch();
+    }
     public function login()
     {
         return $this->view->fetch();
