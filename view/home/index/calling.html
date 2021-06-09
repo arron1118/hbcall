@@ -5,16 +5,11 @@
 {/block}
 {block name="body"}
 <div class="container-fluid">
-    <div>
-        {:dump($result)}
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="my-3 text-center fs-3">
-                <i class="fa fa-exclamation text-warning me-2"></i>呼叫中心拨号
-            </div>
+    <div class="row justify-content-center fs-3 my-4">呼叫中心拨号</div>
+    <div class="row justify-content-center">
+        <div class="col-4">
             <div class="row justify-content-center">
-                <div class="col-4">
+                <div class="col">
                     <blockquote class="layui-elem-quote">
                         温馨小提示
                     </blockquote>
@@ -26,66 +21,60 @@
                         <li><span class="layui-badge-dot me-2"></span> 通话中不允许出现：代开发票、造假等违法字眼。</li>
                         <li><span class="layui-badge-dot me-2"></span> 不允许在通话中辱骂。</li>
                     </ol>
-                    <div class="mb-3">
-                        <input type="text" name="phone" value="" onkeyup="value=value.replace(/[^\d]/g,'')"
-                               class="layui-input callinginput fs-1" id="input"
-                               style="background-color: #F6F6F6;height: 90px;">
-                    </div>
-                    <div class=" bg-secondary" style="">
-                        <div class="row row-cols-3 gy-3 text-center">
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="1">1</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="2">2</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="3">3</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="4">4</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="5">5</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="6">6</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="7">7</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="8">8</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="9">9</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="*">*</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="0">0</span>
-                            </div>
-                            <div class="col">
-                                <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="#">#</span>
-                            </div>
-                            <div class="col">
-                                        <span class="badge rounded-pill bg-warning lqp-btn fs-3 text-reset" data-value="#">
-                                            <i class="fa fa-user"></i>
-                                        </span>
-                            </div>
-                            <div class="col">
-                                        <span class="badge rounded-pill bg-warning lqp-btn fs-3 text-reset" data-value="#">
-                                            <i class="fa fa-phone"></i>
-                                        </span>
-                            </div>
-                            <div class="col">
-                                        <span class="badge rounded-pill bg-warning lqp-btn fs-3 text-reset" data-value="#">
-                                            <i class="fa fa-minus"></i>
-                                        </span>
-                            </div>
-                        </div>
-                    </div>
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <input type="text" name="phone" value=""
+                       class="layui-input callinginput fs-1" id="input"
+                       style="background-color: #F6F6F6;height: 90px;">
+                <!--                onkeyup="value=value.replace(/[^\d]/g,'')"-->
+            </div>
+            <div class="row layui-bg-green row-cols-3 gy-3 py-4 pb-4">
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="1">1</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="2">2</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="3">3</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="4">4</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="5">5</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="6">6</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="7">7</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="8">8</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="9">9</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="*">*</span>
+                </div>
+                <div class="col text-center mb-2">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="0">0</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="#">#</span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning fs-3 text-reset"><i class="fa fa-user"></i></span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-oncalling fs-3 text-reset"><i class="fa fa-phone"></i></span>
+                </div>
+                <div class="col text-center">
+                    <span class="badge rounded-pill bg-warning lqp-empyt fs-3 text-reset"><i class="fa fa-minus"></i></span>
                 </div>
             </div>
         </div>
@@ -94,39 +83,53 @@
 {/block}
 {block name="js"}
 
+
 <script>
     layui.use(['layer',], function () {
-        var $ = layui.jquery,
+        let $ = layui.jquery,
             layer = layui.layer;
-        // document.getElementsByClassName('callinginput').focus();
-        document.getElementById("input").focus();
+        //输入框获取焦点
+        $(document).ready(function () {
+            $("#input").focus();
+        });
 
         let callinginput = $('.callinginput');
+
         //按页面
         $('.lqp-btn').on('click', function () {
-            if (callinginput.val().length < 11) {//电话11位数
+            if (callinginput.val().length < 11) {
                 callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
-                // console.log(callinginput.val())
             }
         });
         // 按键盘
         $(window).on('keydown', function (e) {
+            console.log(e);
+            console.log(e.keyCode);
+            // 大键盘||小键盘
             if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
                 if (callinginput.val().length < 11) {
-                    callinginput.val(callinginput.val() + e.key);
+                    // callinginput.val(callinginput.val() + e.key);
+                    callinginput.val() + e.key;
+                    console.log('lpp');
+                    console.log(callinginput.val() + e.key);
                 }
 
             } else if (e.keyCode === 13) {
                 console.log(e)
             }
         });
+        //清空输入框
         $('.lqp-empyt').on('click', function () {
             callinginput = $('.callinginput').val('');
-
         });
+        // 拨打
         $('.lqp-oncalling').on('click', function () {
-
-
+            let number =132654289822;
+            layer.open(
+                {title:'正在通话中...',
+                    content:'请用手机拨打号码：'+ number,
+                },
+            );
         })
     });
 </script>
