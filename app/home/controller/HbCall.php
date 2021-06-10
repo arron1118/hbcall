@@ -31,7 +31,7 @@ class HbCall extends \app\common\controller\HomeController
         $curl = new Curl();
         $curl->post('http://call.hbosw.net/API/axbCallApi.aspx', [
             'mobile' => $mobile,
-            'axb_number' => $this->axb_number
+            'axb_number' => Session::get('user.axb_number')
         ]);
         $response = json_decode($curl->response, true);
         if ($response['status']) {
