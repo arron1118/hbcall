@@ -114,13 +114,25 @@
             }
         });
 
+        callinginput.on('keydown', function (e) {
+            // e.preventDefault();
+            // 大键盘||小键盘
+            if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
+                if (callinginput.val().length >= 11) {
+                    return false
+                }
+            } else if (e.keyCode === 13) {
+                makeCall();
+            }
+        })
+
         // 按键盘
-        $(window).on('keydown', function (e) {
+        /*$(window).on('keydown', function (e) {
             // 大键盘||小键盘
             if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
                 if (callinginput.val().length < 11) {
-                    // callinginput.val(callinginput.val() + e.key);
-                    callinginput.val() + e.key;
+                    callinginput.val(callinginput.val() + e.key);
+                    // callinginput.val() + e.key;
                     console.log('lpp');
                     console.log(callinginput.val() + e.key);
                 }
@@ -128,7 +140,7 @@
             } else if (e.keyCode === 13) {
                 makeCall();
             }
-        });
+        });*/
 
         // 清空输入框
         $('.lqp-empyt').on('click', function () {
@@ -139,10 +151,22 @@
         $('.lqp-oncalling').on('click', function () {
             makeCall();
         });
+        //
+
+        $('#input').keyup(function () {
+            this.value = this.value.replace(/[^0-9$]/i,"");
+        });
+        //验证输入的是数字
+        function isPhoneNo(phone) {
+            let pattern = /^1\d{10}$/;
+            return pattern.test(phone);
+        }
 
         let makeCall = function () {
             let number = callinginput.val();
-            if (number.length < 11) {
+            console.log(number);
+
+            if (number.length < 11 || !isPhoneNo(number)) {
                 layer.msg('请输入正确的号码', {icon: 2});
                 return false;
             }
