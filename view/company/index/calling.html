@@ -7,8 +7,8 @@
 <div class="container-fluid">
     <div class="row justify-content-center fs-3 my-4">呼叫中心拨号</div>
     <div class="row justify-content-center">
-        <div class="col-4">
-            <div class="row justify-content-center">
+        <div class="col-3">
+               <div class="row justify-content-center">
                     <div class="col">
                         <blockquote class="layui-elem-quote">
                             温馨小提示
@@ -24,59 +24,58 @@
 
                     </div>
                 </div>
-            <div class="row mb-3">
-                <input type="text" name="phone" value=""
-                       class="layui-input callinginput fs-1" id="input"
-                       style="background-color: #F6F6F6;height: 90px;">
-<!--                onkeyup="value=value.replace(/[^\d]/g,'')"-->
-            </div>
-            <div class="row layui-bg-green row-cols-3 gy-3 py-4 pb-4">
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="1">1</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="2">2</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="3">3</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="4">4</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="5">5</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="6">6</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="7">7</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="8">8</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="9">9</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="*">*</span>
-                </div>
-                <div class="col text-center mb-2">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="0">0</span>
-                </div>
-                <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="#">#</span>
-                </div>
-                <div class="col text-center">
-                                        <span class="badge rounded-pill bg-warning fs-3 text-reset cursor"><i class="fa fa-user"></i></span>
-                </div>
-                <div class="col text-center">
-                                        <span class="badge rounded-pill bg-warning lqp-oncalling fs-3 text-reset cursor"><i class="fa fa-phone"></i></span>
-                </div>
-                <div class="col text-center">
-                                        <span class="badge rounded-pill bg-warning lqp-empyt fs-3 text-reset cursor"><i class="fa fa-minus"></i></span>
-                </div>
-            </div>
+               <div class="row mb-3" style="background-color: #f4f4f4;">
+                   <input type="text" name="phone" value=""
+                          class="layui-input callinginput fs-1 border-0 text-center py-5" id="input" onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''"
+                          style="height: 90px;line-height:90px;background-color: #f4f4f4;" >
+               </div>
+               <div class="row row-cols-3 gy-3  pb-4 justify-content-center mb-5" style="background-color: #f4f4f4;">
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="1">1</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="2">2</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="3">3</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="4">4</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="5">5</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="6">6</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="7">7</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="8">8</span>
+                   </div>
+                   <div class="col text-center">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="9">9</span>
+                   </div>
+                   <div class="col text-center mb-2">
+                       <span class="badge rounded-pill fs-4 text-reset cursor" style="background-color: #e4e4e4; width:60px;height: 60px; line-height: 50px;" data-value="0">*</span>
+                   </div>
+                   <div class="col text-center mb-2">
+                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="0">0</span>
+                   </div>
+                   <div class="col text-center">
+                    <span class="badge rounded-pill  lqp-empyt fs-3 text-reset cursor" style="background-color: #e4e4e4; line-height: 40px;">
+                        <i class="fa fa-backspace text-sm-center small"></i>
+                    </span>
+                   </div>
+
+                   <div class="col text-center">
+                    <span class="badge rounded-pill  lqp-oncalling fs-3  cursor" style="background-color: #0856f6; width: 60px; height: 60px; line-height: 40px;">
+                        <i class="fa fa-phone"></i>
+                    </span>
+                   </div>
+
+               </div>
         </div>
     </div>
 </div>
@@ -95,6 +94,7 @@
         $('.cursor').hover(function () {
             $(this).css({cursor:'pointer'});
         });
+        $('.btn-style').css({"background-color": '#e4e4e4',width: '60px',height: '60px', "line-height": '40px'})
 
 
         let callinginput = $('.callinginput');
