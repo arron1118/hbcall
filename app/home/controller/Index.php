@@ -31,6 +31,10 @@ class Index extends HomeController
                 return json(['data' => [], 'msg' => lang('Password is incorrect'), 'code' => 0]);
             }
 
+            if (!captcha_check($param['captcha'])) {
+                return json(['data' => [], 'msg' => lang('Captcha is incorrect'), 'code' => 0]);
+            }
+
             $user->prevtime = $user->logintime;
             $user->logintime = time();
             $user->loginip = $this->request->ip();
