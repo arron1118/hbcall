@@ -20,6 +20,18 @@
           "href": "home/hbcall/callHistoryList.html",
           "icon": "fa fa-file-alt",
           "target": "_self"
+        },
+        {
+          "title": "基本资料",
+          "href": "home/user/profile.html",
+          "icon": "fa fa-file-alt",
+          "target": "_self"
+        },
+        {
+          "title": "修改密码",
+          "href": "home/user/resetPassword.html",
+          "icon": "fa fa-file-alt",
+          "target": "_self"
         }
       ]
     }

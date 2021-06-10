@@ -13,7 +13,6 @@ class Index extends HomeController
     {
         return $this->view->fetch();
     }
-
     public function login()
     {
         if (Session::has('user')) {
@@ -90,5 +89,7 @@ class Index extends HomeController
         }
         $user->saveAll($data);
     }
+
+
 
 }
