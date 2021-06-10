@@ -79,11 +79,11 @@ class Index extends HomeController
 
         $user = new User();
         $data = [];
-        foreach ($axb_number as $val) {
+        foreach ($axb_number as $key => $val) {
             $salt = Random::alnum();
             $data[] = [
-                'username' => $val,
-                'password' => getEncryptPassword($val, $salt),
+                'username' => '慧辰' . (int)($key + 1),
+                'password' => getEncryptPassword('123456', $salt),
                 'axb_number' => $val,
                 'salt' => $salt
             ];
