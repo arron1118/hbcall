@@ -32,49 +32,49 @@
             </div>
             <div class="row layui-bg-green row-cols-3 gy-3 py-4 pb-4">
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="1">1</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="1">1</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="2">2</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="2">2</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="3">3</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="3">3</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="4">4</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="4">4</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="5">5</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="5">5</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="6">6</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="6">6</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="7">7</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="7">7</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="8">8</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="8">8</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="9">9</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="9">9</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="*">*</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="*">*</span>
                 </div>
                 <div class="col text-center mb-2">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="0">0</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="0">0</span>
                 </div>
                 <div class="col text-center">
-                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset" data-value="#">#</span>
+                    <span class="badge rounded-pill bg-warning lqp-btn fs-2 text-reset cursor" data-value="#">#</span>
                 </div>
                 <div class="col text-center">
-                                        <span class="badge rounded-pill bg-warning fs-3 text-reset"><i class="fa fa-user"></i></span>
+                                        <span class="badge rounded-pill bg-warning fs-3 text-reset cursor"><i class="fa fa-user"></i></span>
                 </div>
                 <div class="col text-center">
-                                        <span class="badge rounded-pill bg-warning lqp-oncalling fs-3 text-reset"><i class="fa fa-phone"></i></span>
+                                        <span class="badge rounded-pill bg-warning lqp-oncalling fs-3 text-reset cursor"><i class="fa fa-phone"></i></span>
                 </div>
                 <div class="col text-center">
-                                        <span class="badge rounded-pill bg-warning lqp-empyt fs-3 text-reset"><i class="fa fa-minus"></i></span>
+                                        <span class="badge rounded-pill bg-warning lqp-empyt fs-3 text-reset cursor"><i class="fa fa-minus"></i></span>
                 </div>
             </div>
         </div>
@@ -91,6 +91,11 @@
         $(document).ready(function () {
             $("#input").focus();
         });
+        //鼠标过手
+        $('.cursor').hover(function () {
+            $(this).css({cursor:'pointer'});
+        });
+
 
         let callinginput = $('.callinginput');
 
@@ -125,8 +130,8 @@
         $('.lqp-oncalling').on('click', function () {
             let number =132654289822;
             layer.open(
-                {title:'正在通话中...',
-                 content:'请用手机拨打号码：'+ number,
+                {title:'通话成功',
+                 content:'请在10秒内用手机拨打号码：'+ number,
                 },
             );
         })
