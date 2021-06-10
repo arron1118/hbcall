@@ -25,9 +25,9 @@ class HbCall extends \app\common\controller\HomeController
     {
         $mobile = $this->request->param('mobile');
         $mobile = trim($mobile);
-        /*if (!$mobile || strlen($mobile) < 11) {
-            return json(['error']);
-        }*/
+        if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
+            return json(['data' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
+        }
         $curl = new Curl();
         $curl->post('http://call.hbosw.net/API/axbCallApi.aspx', [
             'mobile' => $mobile,
