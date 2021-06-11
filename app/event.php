@@ -10,6 +10,8 @@ return [
         'HttpEnd'  => [],
         'LogLevel' => [],
         'LogWrite' => [],
+        'CallHistory' => [\app\common\event\CallHistory::class],
+//        'Test' => [\app\common\event\Test::class],
     ],
 
     'subscribe' => [

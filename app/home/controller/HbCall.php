@@ -6,6 +6,7 @@ namespace app\home\controller;
 
 use app\common\model\CallHistory;
 use Curl\Curl;
+use think\facade\Event;
 use think\facade\Session;
 
 class HbCall extends \app\common\controller\HomeController
@@ -18,9 +19,30 @@ class HbCall extends \app\common\controller\HomeController
 
     public function callHistoryList()
     {
+        /**
+         * 获取通话记录  暂时放在这里，后期用定时任务实现
+         */
+        Event::trigger('CallHistory');
+
         return $this->view->fetch('hbcall/history_list');
     }
 
+    public function getHistoryList()
+    {
+        if ($this->request->isPost()) {
+            $page = (int) $this->request->param('page', 1);
+            $limit = (int) $this->request->param('limit', 10);
+            $map = ['user_id' => Session::get('user.id')];
+            $total = CallHistory::where($map)->count();
+            $historyList = CallHistory::where($map)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
+        }
+    }
+
+    /**
+     * 拨号
+     * @return \think\response\Json
+     */
     public function makeCall()
     {
         $mobile = $this->request->param('mobile');

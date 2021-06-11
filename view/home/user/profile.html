@@ -7,7 +7,7 @@
 <div class="container-fluid m-2">
     <div class="row mt-5 justify-content-center">
         <div class="col-6">
-            <div class="layui-form layuimini-form">
+            <form class="layui-form layuimini-form">
                 <div class="layui-form-item">
                     <label class="layui-form-label required">昵称</label>
                     <div class="layui-input-block">
@@ -42,10 +42,10 @@
 
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -61,7 +61,6 @@
         //监听提交
         form.on('submit(saveBtn)', function (data) {
             $.post('{:url("")}', data.field, function (res) {
-                console.log(res);
                 if (res.code) {
                     layer.msg(res.msg, {icon: 6});
                 } else {
