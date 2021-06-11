@@ -5,77 +5,83 @@
 {/block}
 {block name="body"}
 <div class="container-fluid">
-    <div class="row justify-content-center fs-3 my-4">呼叫中心拨号</div>
-    <div class="row justify-content-center">
-        <div class="col-3">
-               <div class="row justify-content-center">
-                    <div class="col">
-                        <blockquote class="layui-elem-quote">
-                            温馨小提示
-                        </blockquote>
-                        <ol class="mb-5">
-                            <li><span
-                                    class="layui-badge-dot me-2"></span><span> 只允许拨打本公司业务电话，不允许拨打其他行业电话。</span>
-                            </li>
-                            <li><span class="layui-badge-dot me-2"></span> 拨号当中不允许出现：金融、地产相关高频行业。</li>
-                            <li><span class="layui-badge-dot me-2"></span> 通话中不允许出现：代开发票、造假等违法字眼。</li>
-                            <li><span class="layui-badge-dot me-2"></span> 不允许在通话中辱骂。</li>
-                        </ol>
+    <div class="row  fs-4 text-danger my-5 justify-content-center">
+        呼叫中心
+    </div>
+    <div class="row mt-5">
+        <div class="col-7 offset-1">
+            <div class="row">
+                <div class="col-6 ms-5">
+                    <div class="row justify-content-center">
+                        <div class="col">
+                            <blockquote class="layui-elem-quote">
+                                温馨小提示
+                            </blockquote>
+                            <ol class="ps-0">
+                                <li><span class="layui-badge-dot me-2"></span> 只允许拨打本公司业务电话，不允许拨打其他行业电话。</li>
+                                <li><span class="layui-badge-dot me-2"></span> 拨号当中不允许出现：金融、地产相关高频行业。</li>
+                                <li><span class="layui-badge-dot me-2"></span> 通话中不允许出现：代开发票、造假等违法字眼。</li>
+                                <li><span class="layui-badge-dot me-2"></span> 不允许在通话中辱骂。</li>
+                            </ol>
 
+                        </div>
                     </div>
                 </div>
-               <div class="row mb-3" style="background-color: #f4f4f4;">
-                   <input type="text" name="phone" value=""
-                          class="layui-input callinginput fs-1 border-0 text-center py-5" id="input" onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''"
-                          style="height: 90px;line-height:90px;background-color: #f4f4f4;" >
-               </div>
-               <div class="row row-cols-3 gy-3  pb-4 justify-content-center mb-5" style="background-color: #f4f4f4;">
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="1">1</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="2">2</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="3">3</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="4">4</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="5">5</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="6">6</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="7">7</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="8">8</span>
-                   </div>
-                   <div class="col text-center">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="9">9</span>
-                   </div>
-                   <div class="col text-center mb-2">
-                       <span class="badge rounded-pill fs-4 text-reset cursor" style="background-color: #e4e4e4; width:60px;height: 60px; line-height: 50px;" data-value="0">*</span>
-                   </div>
-                   <div class="col text-center mb-2">
-                       <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="0">0</span>
-                   </div>
-                   <div class="col text-center">
+                <div class="col-4">
+                    <div class="row mb-3" style="background-color: #f4f4f4;">
+                        <input type="text" name="phone" value=""
+                               class="layui-input callinginput fs-1 border-0 text-center py-5" id="input" onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''"
+                               style="height: 90px;line-height:90px;background-color: #f4f4f4;" >
+                    </div>
+                    <div class="row row-cols-3 gy-3  pb-4 justify-content-center mb-5" style="background-color: #f4f4f4;">
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="1">1</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="2">2</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="3">3</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="4">4</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="5">5</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="6">6</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="7">7</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="8">8</span>
+                        </div>
+                        <div class="col text-center">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="9">9</span>
+                        </div>
+                        <div class="col text-center mb-2">
+                            <span class="badge rounded-pill fs-4 text-reset cursor" style="background-color: #e4e4e4; width:60px;height: 60px; line-height: 50px;" data-value="0">*</span>
+                        </div>
+                        <div class="col text-center mb-2">
+                            <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="0">0</span>
+                        </div>
+                        <div class="col text-center">
                     <span class="badge rounded-pill  lqp-empyt fs-3 text-reset cursor" style="background-color: #e4e4e4; line-height: 40px;">
                         <i class="fa fa-backspace text-sm-center small"></i>
                     </span>
-                   </div>
+                        </div>
 
-                   <div class="col text-center">
+                        <div class="col text-center">
                     <span class="badge rounded-pill  lqp-oncalling fs-3  cursor" style="background-color: #0856f6; width: 60px; height: 60px; line-height: 40px;">
                         <i class="fa fa-phone"></i>
                     </span>
-                   </div>
+                        </div>
 
-               </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -86,55 +92,97 @@
     layui.use(['layer',], function () {
         let $ = layui.jquery,
             layer = layui.layer;
-        //输入框获取焦点
-        $(document).ready(function () {
-            $("#input").focus();
-        });
+
         //鼠标过手
         $('.cursor').hover(function () {
             $(this).css({cursor:'pointer'});
         });
         $('.btn-style').css({"background-color": '#e4e4e4',width: '60px',height: '60px', "line-height": '40px'})
 
+        // 输入框获取焦点
+        let inputFocus = function () {
+            $("#input").focus();
+        };
+        inputFocus();
 
         let callinginput = $('.callinginput');
-
-        //按页面
+        // 按页面
         $('.lqp-btn').on('click', function () {
             if (callinginput.val().length < 11) {
                 callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
             }
         });
+
+        callinginput.on('keydown', function (e) {
+            // e.preventDefault();
+            // 大键盘||小键盘
+            if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
+                if (callinginput.val().length >= 11) {
+                    return false
+                }
+            } else if (e.keyCode === 13) {
+                makeCall();
+            }
+        })
+
         // 按键盘
-        $(window).on('keydown', function (e) {
-            console.log(e);
-            console.log(e.keyCode);
+        /*$(window).on('keydown', function (e) {
             // 大键盘||小键盘
             if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
                 if (callinginput.val().length < 11) {
-                    // callinginput.val(callinginput.val() + e.key);
-                    callinginput.val() + e.key;
+                    callinginput.val(callinginput.val() + e.key);
+                    // callinginput.val() + e.key;
                     console.log('lpp');
                     console.log(callinginput.val() + e.key);
                 }
 
             } else if (e.keyCode === 13) {
-                console.log(e)
+                makeCall();
             }
-        });
-        //清空输入框
+        });*/
+
+        // 清空输入框
         $('.lqp-empyt').on('click', function () {
             callinginput = $('.callinginput').val('');
+            inputFocus();
         });
+
         // 拨打
         $('.lqp-oncalling').on('click', function () {
-            let number =132654289822;
-            layer.open(
-                {title:'通话成功',
-                 content:'请在10秒内用手机拨打号码：'+ number,
-                },
-            );
-        })
+            makeCall();
+        });
+
+        //验证输入的是数字
+        function isPhoneNo(phone) {
+            let pattern = /^1\d{10}$/;
+            return pattern.test(phone);
+        }
+
+        let makeCall = function () {
+            let number = callinginput.val();
+            console.log(number);
+
+            if (number.length < 11 || !isPhoneNo(number)) {
+                layer.msg('请输入正确的号码', {icon: 2});
+                return false;
+            }
+
+            $.post('{:url("hbcall/makeCall")}', {mobile: number}, function (res) {
+                if (res.status) {
+                    layer.open(
+                        {
+                            title: '拨号成功',
+                            content: '请在10秒内用手机拨打号码：' + res.data.axb_number+' 进行通话',
+                        },
+                    );
+                } else {
+                    layer.open({
+                        title: res.info,
+                        content: res.data
+                    })
+                }
+            })
+        }
     });
 </script>
 
