@@ -22,7 +22,7 @@ class HomeController extends \app\BaseController
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
 
-        $this->isLogin();
+        $this->view->assign('user', Session::get('user'));
     }
 
     public function isLogin()

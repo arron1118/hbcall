@@ -20,10 +20,20 @@ class Index extends HomeController
         }
 
         if ($this->request->isPost()) {
+            $check = $this->request->checkToken('__token__');
+            if(false === $check) {
+                $token = $this->request->buildToken();
+                return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
+            }
+
             $param = $this->request->param();
             $user = User::getByUsername($param['username']);
             if (!$user) {
                 return json(['data' => [], 'msg' => lang('Account is incorrect'), 'code' => 0]);
+            }
+
+            if (!$user->status) {
+                return json(['data' => [], 'msg' => lang('Account is locked'), 'code' => 0]);
             }
 
             $password = getEncryptPassword($param['password'], $user->salt);
@@ -35,7 +45,7 @@ class Index extends HomeController
                 return json(['data' => [], 'msg' => lang('Captcha is incorrect'), 'code' => 0]);
             }
 
-            $user->prevtime = $user->logintime;
+            $user->prevtime = $user->getData('logintime');
             $user->logintime = time();
             $user->loginip = $this->request->ip();
 

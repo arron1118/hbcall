@@ -107,8 +107,9 @@
         <div class="layui-form login-form">
             <form class="layui-form" action="">
                 <div class="layui-form-item logo-title">
-                    <h1>呼叫系统后台登录</h1>
+                    <h1>喵头鹰呼叫系统</h1>
                 </div>
+                {:token_field()}
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-username" for="username"></label>
                     <input type="text" name="username" lay-verify="required|account" placeholder="用户名或者邮箱"
@@ -170,10 +171,11 @@
                 layer.msg('密码不能为空');
                 return false;
             }
-            /*if (params.captcha == '') {
+
+            if (params.captcha === '') {
                 layer.msg('验证码不能为空');
                 return false;
-            }*/
+            }
 
             $.post('{:url("")}', params, function (res) {
                 console.log(res);
@@ -182,6 +184,7 @@
                         window.location = res.url;
                     });
                 } else {
+                    $('input[name="__token__"]').val(res.data.token);
                     layer.msg(res.msg);
                 }
             });

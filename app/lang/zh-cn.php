@@ -7,4 +7,5 @@ return [
     'Captcha is incorrect' => '验证码错误',
     'Hello' => '您好！',
     'Logined' => '登录成功',
+    'Invalid token' => '令牌失效',
 ];
