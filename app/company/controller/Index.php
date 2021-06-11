@@ -1,9 +1,9 @@
 <?php
 namespace app\company\controller;
 
-use app\common\controller\HomeController;
+use app\common\controller\CompanyController;
 
-class Index extends HomeController
+class Index extends CompanyController
 {
     public function index()
     {
