@@ -15,3 +15,5 @@ Route::get('think', function () {
 });
 
 Route::get('hello/:name', 'index/hello');
+
+Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');

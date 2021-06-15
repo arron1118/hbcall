@@ -3,10 +3,13 @@
 
 namespace app\common\controller;
 
+use think\facade\Session;
 use think\facade\View;
 
 class CompanyController extends \app\BaseController
 {
+    protected $middleware = [\app\company\middleware\Check::class];
+
     protected $view = null;
 
     protected function initialize()
@@ -15,6 +18,7 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
+        $this->view->assign('user', Session::get('company'));
     }
 
 }

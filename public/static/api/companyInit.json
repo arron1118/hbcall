@@ -1,7 +1,7 @@
 {
   "homeInfo": {
-    "title": "开通账号",
-    "href": "company/index/open.html?t=1"
+    "title": "控制台",
+    "href": "company/index/dashboard.html?t=1"
   },
   "logoInfo": {
     "title": "呼叫系统",
@@ -16,26 +16,14 @@
       "target": "_self",
       "child": [
         {
-          "title": "主页",
-          "href": "company/index/index3",
-          "icon": "fa fa-file-text",
-          "target": "_self"
-        },
-        {
           "title": "开通账号",
           "href": "company/index/open",
           "icon": "fa fa-file-text",
           "target": "_self"
         },
         {
-          "title": "立即拨号",
-          "href": "company/index/calling",
-          "icon": "fa fa-file-text",
-          "target": "_self"
-        },
-        {
           "title": "通话记录",
-          "href": "company/index/calltable",
+          "href": "company/hbcall/CallHistoryList.html",
           "icon": "fa fa-file-text",
           "target": "_self"
         },
@@ -43,24 +31,6 @@
           "title": "充值管理",
           "href": "company/payment/index",
           "icon": "fa fa-file-text",
-          "target": "_self"
-        },
-        {
-          "title": "登陆",
-          "href": "company/index/login",
-          "icon": "fa fa-file-text",
-          "target": "_self"
-        },
-        {
-          "title": "基本资料",
-          "href": "home/user/profile.html",
-          "icon": "fa fa-file-alt",
-          "target": "_self"
-        },
-        {
-          "title": "修改密码",
-          "href": "home/user/resetPassword.html",
-          "icon": "fa fa-file-alt",
           "target": "_self"
         }
       ]

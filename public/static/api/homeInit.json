@@ -18,13 +18,13 @@
         {
           "title": "通话记录",
           "href": "home/hbcall/callHistoryList.html",
-          "icon": "far fa-clock",
+          "icon": "fa fa-clock",
           "target": "_self"
         },
         {
           "title": "基本资料",
           "href": "home/user/profile.html",
-          "icon": "far fa-file-alt",
+          "icon": "fa fa-file-alt",
           "target": "_self"
         },
         {

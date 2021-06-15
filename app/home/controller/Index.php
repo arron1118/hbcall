@@ -20,11 +20,11 @@ class Index extends HomeController
         }
 
         if ($this->request->isPost()) {
-            $check = $this->request->checkToken('__token__');
+            /*$check = $this->request->checkToken('__token__');
             if(false === $check) {
                 $token = $this->request->buildToken();
                 return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
-            }
+            }*/
 
             $param = $this->request->param();
             $user = User::getByUsername($param['username']);
