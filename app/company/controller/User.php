@@ -12,6 +12,8 @@ class User extends \app\common\controller\CompanyController
 {
     public function index()
     {
+        $key = getRandChar(32);
+        dump($key);
         return $this->view->fetch();
     }
 
