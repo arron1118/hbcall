@@ -2,40 +2,43 @@
 {block name="css"}
 <link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/css/bootstrap.min.css" media="all">
 <link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/font/bootstrap-icons.css" media="all">
+<style>
+    .lqp-hover:hover .card-img{
+        transform: rotateY(90deg);
+    }
+</style>
 {/block}
 {block name="body"}
 <div class="container-fluid p-4">
     <div class="row mb-2">
-        <div class="col-4 ">
+        <div class="col-5 pb-4">
             <div class="card border-0 p-0 border-end">
                 <div class="card-body py-0">
-                    <h5 class="card-title mb-4"> Hi 东莞汇邦</h5>
-                    <div class="row row-cols-3">
-                        <div class="col">
-                            <img src="__STATIC__/images/2.png" style="max-height: 100px;">
+                    <p class="card-title mb-4 fw-bold"> Hi,您好汇邦！</p>
+                    <div class="row">
+                        <div class="col-3">
+                            <img src="__STATIC__/images/dashuser.png" style="max-height: 80px;">
                         </div>
-                        <div class="col">
-                            <div>账号：123456</div>
-                            <div>手机：123456</div>
-                            <div>邮箱：123456</div>
-                            <div>账号类型：企业</div>
-
+                        <div class="col-4">
+                            <div class="mb-4">账号：<span class="fw-bold">12345678901</span></div>
+                            <div> 手机：<span class="fw-bold">12345678901</span></div>
                         </div>
-
+                        <div class="col-5">
+                            <div class="mb-4">账号类型：<span class="fw-bold">企业</span></div>
+                            <div>邮箱：<span class="fw-bold">448427168@qq.com</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-4 text-center">
+        <div class="col-3 text-center my-auto">
             <div class="card border-0 p-0 border-end">
                 <div class="card-body py-0">
-                    <h5 class="card-title">当前余额/元</h5>
-                    <h1 class="card-text text-danger my-4">100</h1>
-                    <a href="{:url('payment/index')}" class="layui-btn layui-btn-normal text-decoration-none shadow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
-                            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"/>
-                        </svg>
-                        立即充值
+                    <p class="card-title">当前余额/元</p>
+                    <h5 class="card-text my-3 text-success"><i class="layui-icon layui-icon-rmb"></i>100.00</h5>
+                    <a href="{:url('payment/index')}" class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill px-4">
+                       <i class="fa fa-wallet"></i>
+                        充值
                     </a>
                 </div>
             </div>
@@ -44,19 +47,22 @@
             <div class="card border-0">
                 <div class="card-body">
                     <div class="row">
-                        <div class="col">
-                            <div class="text-center">
-                                <img src="__STATIC__/images/xiaoqiang.png" style="max-height: 100px;">
-                                <p class="mt-2">微信咨询</p>
+                        <div class="col" >
+                            <div class="d-flex flex-row align-items-end">
+                                <img src="__STATIC__/images/22.png" style="max-height: 78px;">
+                               <div class="ms-3">
+                                   <p class="mb-0">客服咨询</p>
+                                   <p class="fw-bold mb-0">13622850769</p>
+                               </div>
                             </div>
                         </div>
                         <div class="col">
-                            <div class="text-center">
-                                <img src="__STATIC__/images/22.png" style="max-height: 100px;">
-                                <p class="mt-2">客服咨询</p>
-                                <h5 class="mt-2 text-primary">13622850769</h5>
+                            <div class="text-center d-flex flex-row align-items-center">
+                                <img src="__STATIC__/images/xiaoqiang.png" style="max-height: 78px;">
+                                <p class="mb-0 ms-3">微信咨询</p>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -66,28 +72,30 @@
         <div class="card p-0">
             <div class="card-header">使用情况</div>
             <div class="card-body">
-                <div class="row">
+                <div class="row text-center">
                     <div class="col">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h5 class="">800</h5>
-                                <p class="card-title"><span class="layui-badge-dot  me-3"></span>今日消费/元</p>
+                        <div class="card bg-primary lqp-hover" style="height: 250px;">
+
+                            <div class="card-body text-light  d-flex flex-column justify-content-center " style="background: url('__STATIC__/images/p.png') no-repeat center;background-size: 30%;">
+                                <p class="">今日消费/元</p>
+                                <h5 class="fw-bold">￥800</h5>
                             </div>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h5 class="">800</h5>
-                                <p class="card-title"><span class="layui-badge-dot  me-3"></span>本月消费/元</p>
+                        <div class="card layui-bg-green lqp-hover" style="height: 250px;">
+
+                            <div class="card-body text-light  d-flex flex-column justify-content-center " style="background: url('__STATIC__/images/s.png') no-repeat center;background-size: 30%;">
+                                <p class="">本月消费/元</p>
+                                <h5 class="fw-bold">￥800</h5>
                             </div>
                         </div>
                     </div>
                     <div class="col">
-                        <div class="card text-center">
-                            <div class="card-body">
-                                <h5 class="">800</h5>
-                                <p class="card-title"><span class="layui-badge-dot  me-3"></span>今年消费/元</p>
+                        <div class="card lqp-hover" style="background-color: #d98501; height: 250px; ">
+                            <div class="card-body text-light  d-flex flex-column justify-content-center " style="background: url('__STATIC__/images/w.png') no-repeat center;background-size: 30%;">
+                                <p class="">今年消费/元</p>
+                                <h5 class="fw-bold">￥800</h5>
                             </div>
                         </div>
                     </div>
@@ -107,8 +115,15 @@
         $(document).ready(function () {
             $("#input").focus();
         });
-
-
+        //
+        // $('.lqp-hover').hover(function () {
+        //     console.log( $(this).find('img'));
+        //     $(this).find('img').css({transform:'rotateY(360deg)'});
+        // }
+        // // ,function () {
+        // //     $(this).removeClass('tranY');
+        // // }
+        // )
         let callinginput = $('.callinginput');
 
         //按页面

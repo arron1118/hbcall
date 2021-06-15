@@ -4,8 +4,8 @@
     "href": "company/index/dashboard.html?t=1"
   },
   "logoInfo": {
-    "title": "呼叫系统",
-    "image": "static/images/logo.png",
+    "title": "",
+    "image": "static/images/logo1.png",
     "href": ""
   },
   "menuInfo": [
@@ -15,6 +15,12 @@
       "href": "",
       "target": "_self",
       "child": [
+        {
+          "title": "控制台",
+          "href": "company/index/dashboard",
+          "icon": "fa fa-tachometer-alt",
+          "target": "_self"
+        },
         {
           "title": "开通账号",
           "href": "company/index/open",
