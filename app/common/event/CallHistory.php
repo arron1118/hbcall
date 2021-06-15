@@ -17,7 +17,13 @@ class CallHistory
 
     public function handle()
     {
-        $callList = \app\common\model\CallHistory::where(['callid' => '', 'user_id' => Session::get('user.id')])->select();
+        $module = app('http')->getName();
+        $map = ['callid' => ''];
+        if ($module === 'home') {
+            $map['user_id'] = Session::get('user.id');
+        }
+
+        $callList = \app\common\model\CallHistory::where($map)->select();
         if (!empty($callList)) {
             $curl = new Curl();
             foreach ($callList as $val) {
