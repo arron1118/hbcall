@@ -5,11 +5,35 @@ namespace app\company\controller;
 
 
 use app\company\model\Company;
+use app\common\model\User as UserModel;
 use think\facade\Session;
 
 class User extends \app\common\controller\CompanyController
 {
+    public function index()
+    {
+        return $this->view->fetch();
+    }
 
+    public function getUserList()
+    {
+        $page = (int) $this->request->param('page', 1);
+        $limit = (int) $this->request->param('limit', 10);
+        $map = ['company_id' => Session::get('company.id')];
+        $total = UserModel::where($map)->count();
+        $userList = UserModel::where($map)->limit(($page - 1) * $limit, $limit)->select();
+        return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+    }
+
+    public function add()
+    {
+        return $this->view->fetch();
+    }
+
+    public function edit()
+    {
+        return $this->view->fetch();
+    }
 
     public function profile()
     {

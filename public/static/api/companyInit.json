@@ -16,9 +16,9 @@
       "target": "_self",
       "child": [
         {
-          "title": "开通账号",
-          "href": "company/index/open",
-          "icon": "fa fa-user-plus",
+          "title": "账号管理",
+          "href": "company/user/index",
+          "icon": "fa fa-users",
           "target": "_self"
         },
         {
