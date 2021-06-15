@@ -17,14 +17,14 @@
       "child": [
         {
           "title": "控制台",
-          "href": "company/index/dashboard",
+          "href": "company/index/dashboard.html",
           "icon": "fa fa-tachometer-alt",
           "target": "_self"
         },
         {
-          "title": "开通账号",
-          "href": "company/index/open",
-          "icon": "fa fa-user-plus",
+          "title": "用户管理",
+          "href": "company/user/index.html",
+          "icon": "fa fa-users",
           "target": "_self"
         },
         {
@@ -35,7 +35,7 @@
         },
         {
           "title": "充值管理",
-          "href": "company/payment/index",
+          "href": "company/payment/index.html",
           "icon": "fa fa-yen-sign",
           "target": "_self"
         }
