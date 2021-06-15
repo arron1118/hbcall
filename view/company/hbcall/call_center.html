@@ -100,7 +100,7 @@
         $('.btn-style').css({"background-color": '#e4e4e4',width: '60px',height: '60px', "line-height": '40px'})
 
         // 输入框获取焦点
-        let inputFocus = function () {
+       let inputFocus = function () {
             $("#input").focus();
         };
         inputFocus();
@@ -171,17 +171,31 @@
                 if (res.status) {
                     layer.open(
                         {
-                            title: '拨号成功',
-                            content: '请在10秒内用手机拨打号码：' + res.data.axb_number+' 进行通话',
+                            // title: '拨号成功',
+                            // content: '请在10秒内用手机拨打号码：' + res.data.axb_number+' 进行通话',
+                            // area:['50%','50%']
+                            type: 1
+                            ,title: false //不显示标题栏
+                            ,closeBtn: false
+                            ,area: '400px;'
+                            ,shade: 0.8
+                            ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                            ,btn: ['确认']
+                            ,btnAlign: 'c'
+                            ,moveType: 1 //拖拽模式，0或者1
+                            ,content: '<div style="padding: 50px; line-height: 30px; background-color: #393D49; color: #fff; font-weight: 300;"><i class="layui-icon layui-icon-ok me-2" style="font-size: 25px; color: #1E9FFF;"></i> 拨号成功<br><p>请在10秒内用手机拨打号码：<h3>'+res.data.axb_number+'</h3> 进行通话。</p></div>'
+
                         },
                     );
                 } else {
                     layer.open({
                         title: res.info,
                         content: res.data
+
                     })
                 }
-            })
+            });
+
         }
     });
 </script>

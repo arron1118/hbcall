@@ -18,19 +18,19 @@
         {
           "title": "开通账号",
           "href": "company/index/open",
-          "icon": "fa fa-file-text",
+          "icon": "fa fa-user-plus",
           "target": "_self"
         },
         {
           "title": "通话记录",
           "href": "company/hbcall/CallHistoryList.html",
-          "icon": "fa fa-file-text",
+          "icon": "fa fa-clock",
           "target": "_self"
         },
         {
           "title": "充值管理",
           "href": "company/payment/index",
-          "icon": "fa fa-file-text",
+          "icon": "fa fa-yen-sign",
           "target": "_self"
         }
       ]

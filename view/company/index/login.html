@@ -177,7 +177,6 @@
             }
 
             $.post('{:url("")}', params, function (res) {
-                console.log(res);
                 if (res.code) {
                     layer.msg(res.msg, {icon: 6, time: 1500}, function () {
                         window.location = res.url;

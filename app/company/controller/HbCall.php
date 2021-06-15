@@ -33,6 +33,7 @@ class HbCall extends \app\common\controller\CompanyController
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
             $total = CallHistory::count();
+
             $historyList = CallHistory::order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
