@@ -1,12 +1,39 @@
 body {
-    margin: 15px 15px 15px 15px;
+    /*margin: 15px 15px 15px 15px;*/
+    padding: 1rem;
     background: #f2f2f2;
+}
+
+/**
+2021/06/17
+@author arron
+ */
+.layui-body {
+    padding-bottom: 0 !important;
+}
+
+.layuimini-tab .layui-tab-title {
+    box-shadow: 0 5px 16px 5px rgba(0, 0, 0, .2);
+    -webkit-box-shadow: 0 5px 16px 8px rgba(0, 0, 0, .2);
+    -moz-box-shadow: 0 0 16px 5px rgba(0, 0, 0, .2);
+    -o-box-shadow: 0 0 16px 5px rgba(0, 0, 0, .2);
+}
+
+.layuimini-menu-left {
+    box-shadow: 0 0 16px 5px rgba(0, 0, 0, .2);
+    -webkit-box-shadow: 0 0 16px 8px rgba(0, 0, 0, .2);
+    -moz-box-shadow: 0 0 16px 5px rgba(0, 0, 0, .2);
+    -o-box-shadow: 0 0 16px 5px rgba(0, 0, 0, .2);
 }
 
 .layuimini-container {
     border: 1px solid #f2f2f2;
     border-radius: 5px;
-    background-color: #ffffff
+    background-color: #ffffff;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
+    -o-box-shadow: 0 0 10px 0 rgba(0, 0, 0, .2);
 }
 
 .layuimini-main {

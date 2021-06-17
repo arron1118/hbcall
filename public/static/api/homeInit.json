@@ -1,7 +1,7 @@
 {
   "homeInfo": {
     "title": "立即拨号",
-    "href": "home/hbcall/callCenter.html?t=1"
+    "href": "home/hbcall/callCenter.html"
   },
   "logoInfo": {
     "title": "猫头鹰",
@@ -15,6 +15,12 @@
       "href": "",
       "target": "_self",
       "child": [
+        {
+          "title": "立即拨号",
+          "href": "home/hbcall/callCenter.html",
+          "icon": "fa fa-phone",
+          "target": "_self"
+        },
         {
           "title": "通话记录",
           "href": "home/hbcall/callHistoryList.html",
