@@ -29,3 +29,14 @@ function getRandChar($length = 16)
 
     return $str;
 }
+
+/**
+ * 生成订单号
+ * @return string 返回24位订单号
+ */
+function getOrderNo()
+{
+    $t = explode(' ', microtime());
+    $m = explode('.', $t[0]);
+    return date('Ymd') . $t[1] . substr($m[1], 0, 6);
+}
