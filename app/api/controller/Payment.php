@@ -5,6 +5,7 @@ namespace app\api\controller;
 
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Log;
+use chillerlan\QRCode\QRCode;
 
 class Payment extends \app\common\controller\ApiController
 {
@@ -28,7 +29,7 @@ class Payment extends \app\common\controller\ApiController
             'connect_timeout' => 5.0,
             // 更多配置项请参考 [Guzzle](https://guzzle-cn.readthedocs.io/zh_CN/latest/request-options.html)
         ],
-        'mode' => 'dev', // optional, dev/hk;当为 `hk` 时，为香港 gateway。
+        'mode' => 'normal', // optional, dev/hk;当为 `hk` 时，为香港 gateway。
     ];
 
     public function index()
@@ -41,6 +42,8 @@ class Payment extends \app\common\controller\ApiController
 
         $pay = Pay::wechat($this->config)->scan($order);
         dump($pay);
+        $qr = new QRCode();
+        echo '<img src="' . $qr->render($pay->code_url) . '" />';
         // $pay->appId
         // $pay->timeStamp
         // $pay->nonceStr
