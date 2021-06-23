@@ -69,15 +69,15 @@
                                     <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="0">0</span>
                                 </div>
                                 <div class="col text-center">
-                    <span class="badge rounded-pill  lqp-empyt fs-3 text-reset cursor" style="background-color: #e4e4e4; line-height: 40px;">
-                        <i class="fa fa-backspace text-sm-center small"></i>
-                    </span>
+                                    <span class="badge rounded-pill  lqp-empyt fs-3 text-reset cursor" style="background-color: #e4e4e4; line-height: 40px;">
+                                        <i class="fa fa-backspace text-sm-center small"></i>
+                                    </span>
                                 </div>
 
                                 <div class="col text-center">
-                    <span class="badge rounded-pill  lqp-oncalling fs-3  cursor" style="background-color: #0856f6; width: 60px; height: 60px; line-height: 40px;">
-                        <i class="fa fa-phone"></i>
-                    </span>
+                                    <span class="badge rounded-pill  lqp-oncalling fs-3  cursor" style="background-color: #0856f6; width: 60px; height: 60px; line-height: 40px;">
+                                        <i class="fa fa-phone"></i>
+                                    </span>
                                 </div>
 
                             </div>
@@ -96,6 +96,37 @@
     layui.use(['layer',], function () {
         let $ = layui.jquery,
             layer = layui.layer;
+
+        // cookie
+        let cookie = function (key = null, val = null, obj = {}) {
+            if (key === null) {
+                let val = [];
+                let cookie = document.cookie.split('; ');
+                $.each(cookie, function (index, item) {
+                    let i = item.split('=');
+                    val[i[0]] = i[1];
+                })
+
+                return val;
+            } else {
+                if (val === null) {
+                    let val = '';
+                    let cookie = document.cookie.split('; ');
+                    $.each(cookie, function (index, item) {
+                        let i = item.split('=');
+                        if (i[0] === key) {
+                            val = i[1];
+                            return;
+                        }
+                    })
+
+                    return val;
+                } else {
+                    document.cookie = key + '=' + val;
+                    return true;
+                }
+            }
+        }
 
         //鼠标过手
         $('.cursor').hover(function () {

@@ -7,10 +7,6 @@
 *
 **/
 
-require_once "../lib/WxPay.Api.php";
-require_once '../lib/WxPay.Notify.php';
-require_once "WxPay.Config.php";
-require_once 'log.php';
 use wxpay\lib\WxPayApi;
 use wxpay\lib\WxPayNotify;
 use wxpay\lib\CLogFileHandler;
@@ -39,6 +35,9 @@ class PayNotifyCallBack extends WxPayNotify
 			&& $result["return_code"] == "SUCCESS"
 			&& $result["result_code"] == "SUCCESS")
 		{
+		    // todo
+            // 此处为付款成功的业务处理
+
 			return true;
 		}
 		return false;

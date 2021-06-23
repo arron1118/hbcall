@@ -7,10 +7,6 @@
 *
 **/
 
-require_once "../lib/WxPay.Api.php";
-require_once "WxPay.NativePay.php";
-require_once 'log.php';
-
 use wxpay\lib\WxPayApi;
 use wxpay\lib\CLogFileHandler;
 use wxpay\lib\WxPayUnifiedOrder;

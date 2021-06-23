@@ -10,7 +10,7 @@ class CLogFileHandler implements ILogHandler
 
     public function __construct($file = '')
     {
-        $this->handle = fopen($file,'a');
+        $this->handle = fopen($file,'a+');
     }
 
     public function write($msg)

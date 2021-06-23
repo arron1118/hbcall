@@ -33,11 +33,11 @@ class WxPayConfig extends WxPayConfigInterface
 	 */
 	public function GetAppId()
 	{
-		return '';
+		return 'ww8ee3085852a83f1d';
 	}
 	public function GetMerchantId()
 	{
-		return '';
+		return '1503645201';
 	}
 
 	//=======【支付相关配置：支付成功回调地址/签名方式】===================================
@@ -47,7 +47,7 @@ class WxPayConfig extends WxPayConfigInterface
 	**/
 	public function GetNotifyUrl()
 	{
-		return "";
+		return "http://caller.hbosw.com/";
 	}
 	public function GetSignType()
 	{
@@ -93,7 +93,7 @@ class WxPayConfig extends WxPayConfigInterface
 	 */
 	public function GetKey()
 	{
-		return '';
+		return 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb';
 	}
 	public function GetAppSecret()
 	{
