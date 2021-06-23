@@ -10,8 +10,8 @@ use chillerlan\QRCode\QRCode;
 class Payment extends \app\common\controller\ApiController
 {
     protected $config = [
-        'appid' => 'ww8ee3085852a83f1d', // APP APPID
-        'app_id' => '', // 公众号 APPID
+        'appid' => '', // APP APPID
+        'app_id' => 'ww8ee3085852a83f1d', // 公众号 APPID
         'miniapp_id' => '', // 小程序 APPID
         'mch_id' => '1503645201',
         'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',
@@ -36,7 +36,7 @@ class Payment extends \app\common\controller\ApiController
     {
         $order = [
             'out_trade_no' => getOrderNo(),
-            'total_fee' => '1', // **单位：分**
+            'total_fee' => '100', // **单位：分**
             'body' => 'test body - 测试',
         ];
 
