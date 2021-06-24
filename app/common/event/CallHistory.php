@@ -34,6 +34,7 @@ class CallHistory
                 ]);
                 $response = json_decode($curl->response, true);
                 if ($response['status'] && !empty($response['data'])) {
+//                    dump($response);
                     /*$val->callid = $response['data']['callid'];
                     $val->caller_number = $response['data']['callerNumber'];
                     $val->starttime = strtotime($response['data']['starttime']);

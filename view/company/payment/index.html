@@ -2,7 +2,6 @@
 {block name="body"}
 <div class="layuimini-container">
     <div class="layuimini-main">
-
         <fieldset class="table-search-fieldset">
             <legend>账户充值</legend>
             <div style="margin: 10px 10px 10px 10px">
@@ -16,7 +15,9 @@
                         </div>
 
                         <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="data-money-btn">立即充值</button>
+                            <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                    lay-filter="data-money-btn">立即充值
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -43,6 +44,15 @@
                 layEvent: 'LAYTABLE_TIPS',
                 icon: 'layui-icon-tips'
             }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: 'id', title: 'id', sort: true},
@@ -50,41 +60,33 @@
                 {field: 'account', title: '充值时间'},
                 {field: 'holder', title: '充值方式'},
             ]],
-            limits: [10, 15, 20, 25, 50, 100],
-            limit: 15,
-            page: true,
+            page: {
+                limits: [15, 20, 25, 30],
+                limit: 15
+            },
             skin: 'line'
         });
 
         // 监听操作
         form.on('submit(data-money-btn)', function (data) {
-            // let result = JSON.stringify(data.field);
             let result = data.field;
-            if(!result.money){
+            if (!result.money) {
                 layer.msg('请输入要充值的金额！');
                 return false;
-            }else if(result.money<1){
+            } else if (result.money < 1) {
                 layer.msg('请输入正确的金额！');
                 return false;
-            }else{
-                layer.open(
-                    {
-                        title: '支付方式',
-                        type: 2,
-                        area:['100%','100%'],
-                        content: '{:url("payment/pay")}',
-                        btn:['确定']
-
-                    },
-                );
+            } else {
+                layer.open({
+                    title: '支付方式',
+                    type: 2,
+                    area: ['100%', '100%'],
+                    content: '{:url("payment/pay")}?amount=' + result.money,
+                    btn: ['确定']
+                });
                 return false;
             }
-
-
         });
-
-
-
     });
 </script>
 

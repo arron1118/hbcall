@@ -3,9 +3,11 @@
 
 namespace app\api\controller;
 
+use think\facade\Config;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Log;
 use chillerlan\QRCode\QRCode;
+use think\facade\Log as ThinkLog;
 
 class Payment extends \app\common\controller\ApiController
 {
@@ -13,8 +15,8 @@ class Payment extends \app\common\controller\ApiController
         'appid' => '', // APP APPID
         'app_id' => 'ww8ee3085852a83f1d', // 公众号 APPID
         'miniapp_id' => '', // 小程序 APPID
-        'mch_id' => '1503645201',
-        'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',
+        'mch_id' => '1503645201',   // 商务号
+        'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',    // 商务号KEY
         'notify_url' => 'http://caller.hbosw.com/api/payment/notify',
         'cert_client' => './cert/apiclient_cert.pem', // optional，退款等情况时用到
         'cert_key' => './cert/apiclient_key.pem', // optional，退款等情况时用到
@@ -36,11 +38,14 @@ class Payment extends \app\common\controller\ApiController
     {
         $order = [
             'out_trade_no' => getOrderNo(),
-            'total_fee' => '100', // **单位：分**
+            'total_fee' => '1', // **单位：分**
             'body' => 'test body - 测试',
         ];
 
-        $pay = Pay::wechat($this->config)->scan($order);
+        $wxpay = Config::get('wxpay');
+        dump($wxpay);
+
+        $pay = Pay::wechat(Config::get('wxpay'))->scan($order);
         dump($pay);
         $qr = new QRCode();
         echo '<img src="' . $qr->render($pay->code_url) . '" />';
@@ -53,7 +58,7 @@ class Payment extends \app\common\controller\ApiController
 
     public function notify()
     {
-        $pay = Pay::wechat($this->config);
+        $pay = Pay::wechat(Config::get('wxpay'));
 
         try{
             $data = $pay->verify(); // 是的，验签就这么简单！
