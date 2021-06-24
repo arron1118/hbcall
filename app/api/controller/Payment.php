@@ -63,6 +63,7 @@ class Payment extends \app\common\controller\ApiController
         try{
             $data = $pay->verify(); // 是的，验签就这么简单！
 
+            ThinkLog::info($data->toJson());
             Log::debug('Wechat notify', $data->all());
         } catch (\Exception $e) {
             // $e->getMessage();

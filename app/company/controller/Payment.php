@@ -20,6 +20,8 @@ class Payment extends \app\common\controller\CompanyController
 
     public function index()
     {
+        $res = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => '202106241624498668248659']);
+        dump($res);
         return $this->view->fetch();
     }
 
