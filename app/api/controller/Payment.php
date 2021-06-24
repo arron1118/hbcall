@@ -60,14 +60,18 @@ class Payment extends \app\common\controller\ApiController
     {
         $pay = Pay::wechat(Config::get('wxpay'));
 
+        ThinkLog::info('wechat pay notify start');
         try{
+            ThinkLog::info('wechat pay verify start');
             $data = $pay->verify(); // 是的，验签就这么简单！
 
+            ThinkLog::info('wechat pay verify end');
             ThinkLog::info($data->toJson());
             Log::debug('Wechat notify', $data->all());
         } catch (\Exception $e) {
             // $e->getMessage();
         }
+        ThinkLog::info('wechat pay notify end');
 
         return $pay->success()->send();// laravel 框架中请直接 `return $pay->success()`
     }
