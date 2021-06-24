@@ -33,7 +33,7 @@ class Payment extends \app\common\controller\CompanyController
 
     public function pay()
     {
-        $amount = (int) $this->request->param('amount', 0);
+        $amount = (float) $this->request->param('amount', 0);
         if ($amount <= 0) {
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
