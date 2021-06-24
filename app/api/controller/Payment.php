@@ -8,6 +8,7 @@ use Yansongda\Pay\Pay;
 use Yansongda\Pay\Log;
 use chillerlan\QRCode\QRCode;
 use think\facade\Log as ThinkLog;
+use app\company\model\Payment as PaymentModel;
 
 class Payment extends \app\common\controller\ApiController
 {
@@ -64,6 +65,24 @@ class Payment extends \app\common\controller\ApiController
         try{
             ThinkLog::info('wechat pay verify start');
             $data = $pay->verify(); // 是的，验签就这么简单！
+
+            if ($data->trade_state === 'SUCCESS') {
+                $mt = mktime(
+                    substr($data->time_end, 8, 2),
+                    substr($data->time_end, 10, 2),
+                    substr($data->time_end, 12, 2),
+                    substr($data->time_end, 4, 2),
+                    substr($data->time_end, 6, 2),
+                    substr($data->time_end, 0, 4)
+                );
+                $paymentModel = PaymentModel::where('payno', $data->out_trade_no)->find();
+//            $paymentModel->startTrans();
+                $paymentModel->pay_time = $mt;
+                $paymentModel->payment_no = $data->transaction_id;
+                $paymentModel->status = 1;
+                $paymentModel->save();
+
+            }
 
             ThinkLog::info('wechat pay verify end');
             ThinkLog::info($data->toJson());
