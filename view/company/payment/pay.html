@@ -20,6 +20,30 @@
 {/block}
 
 {block name="js"}
+<script>
+    layui.use(['jquery'], function () {
+        let $ = layui.jquery;
 
+        let FrameIndex = parent.layer.getFrameIndex(window.name);
+        let i = 0;
+        let intval = setInterval(function(){
+            if (i > 5) {
+                clearInterval(intval);
+                return;
+            }
+
+            $.post('{:url("payment/checkOrder")}', function (res) {
+                if (res.trade_state === 'SUCCESS') {
+                    clearInterval(intval);
+                    layer.msg(res.trade_state_desc, {icon: 6}, function () {
+                        parent.layer.close(FrameIndex);
+                    })
+                }
+            });
+
+            i++;
+        }, 2000);
+    });
+</script>
 
 {/block}
