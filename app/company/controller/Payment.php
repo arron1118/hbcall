@@ -20,10 +20,10 @@ class Payment extends \app\common\controller\CompanyController
 
     public function index()
     {
-//        $res2 = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => '202106241624498668248659']);
+//        $res2 = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => '202106251624609025154289']);
 //        dump($res2);
-        $nopay = $this->model->where(['company_id' => Session::get('company.id'), 'payment_no' => ''])->select();
-        foreach ($nopay as $key => $value) {
+        $notpay = $this->model->where(['company_id' => Session::get('company.id'), 'payment_no' => ''])->select();
+        foreach ($notpay as $key => $value) {
             $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
             if ($data->trade_state === 'SUCCESS') {
                 $mt = mktime(
@@ -59,7 +59,8 @@ class Payment extends \app\common\controller\CompanyController
 
     public function checkOrder()
     {
-        $res = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => '202106241624498668248659']);
+        $payno = $this->request->param('payno');
+        $res = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $payno]);
         return json($res);
     }
 
