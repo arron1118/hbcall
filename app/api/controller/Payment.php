@@ -92,6 +92,6 @@ class Payment extends \app\common\controller\ApiController
         }
         ThinkLog::info('wechat pay notify end');
 
-        return $pay->success()->send();// laravel 框架中请直接 `return $pay->success()`
+//        return $pay->success()->send();// laravel 框架中请直接 `return $pay->success()`
     }
 }
