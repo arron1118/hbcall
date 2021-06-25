@@ -61,12 +61,10 @@ class Payment extends \app\common\controller\ApiController
     {
         $pay = Pay::wechat(Config::get('wxpay'));
 
-        ThinkLog::info('wechat pay notify start');
         try{
-            ThinkLog::info('wechat pay verify start');
             $data = $pay->verify(); // 是的，验签就这么简单！
 
-            if ($data->trade_state === 'SUCCESS') {
+            if ($data->result_code === 'SUCCESS') {
                 $mt = mktime(
                     substr($data->time_end, 8, 2),
                     substr($data->time_end, 10, 2),
@@ -84,13 +82,11 @@ class Payment extends \app\common\controller\ApiController
 
             }
 
-            ThinkLog::info('wechat pay verify end');
-            ThinkLog::info($data->toJson());
+            ThinkLog::info('Wechat return result ' . $data->all());
             Log::debug('Wechat notify', $data->all());
         } catch (\Exception $e) {
             // $e->getMessage();
         }
-        ThinkLog::info('wechat pay notify end');
 
         return $pay->success()->send();// laravel 框架中请直接 `return $pay->success()`
     }
