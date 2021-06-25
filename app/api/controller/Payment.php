@@ -82,7 +82,7 @@ class Payment extends \app\common\controller\ApiController
 
             }
 
-            ThinkLog::info('Wechat return result ' . $data->all());
+            ThinkLog::info('Wechat return result ' . $data->toJson());
             Log::debug('Wechat notify', $data->all());
         } catch (\Exception $e) {
             // $e->getMessage();
