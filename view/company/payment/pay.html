@@ -37,7 +37,7 @@
             $.post('{:url("payment/checkOrder")}', {payno: payno}, function (res) {
                 if (res.trade_state === 'SUCCESS') {
                     clearInterval(intval);
-                    parent.table.reload('paymentTable');
+                    parent.layui.table.reload('paymentTable');
                     layer.msg(res.trade_state_desc, {icon: 6}, function () {
                         parent.layer.close(FrameIndex);
                     })
