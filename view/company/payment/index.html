@@ -62,7 +62,8 @@
                 {field: 'pay_type', title: '充值方式', align: "center"},
                 {field: 'status', title: '状态', align: "center", templet: function(d) {
                     if (d.status === '未支付') {
-                        return '<span style="color: #f00;">' + d.status + '</span>';
+                        // return '<span style="color: #f00;">' + d.status + '</span>';
+                        return '<span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>';
                     } else {
                         return d.status;
                     }
@@ -74,6 +75,19 @@
             },
             skin: 'line'
         });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            console.log(obj)
+            if (obj.event === 'gopay') {
+                layer.open({
+                    title: '扫码支付',
+                    type: 2,
+                    area: ['100%', '100%'],
+                    content: '{:url("payment/pay")}?amount=' + obj.data.amount + '&payno=' + obj.data.payno,
+                    btn: ['确定']
+                });
+            }
+        })
 
         // 监听操作
         form.on('submit(data-money-btn)', function (data) {
@@ -89,7 +103,7 @@
             }*/
 
             layer.open({
-                title: '支付方式',
+                title: '扫码支付',
                 type: 2,
                 area: ['100%', '100%'],
                 content: '{:url("payment/pay")}?amount=' + result.money,

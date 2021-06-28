@@ -71,18 +71,21 @@ class Payment extends \app\common\controller\CompanyController
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
-        $orderNo = getOrderNo();
+        $orderNo = $this->request->param('payno', '');
         $title = '余额充值';
 
-        $order = [
-            'payno' => $orderNo,
-            'company_id' => Session::get('company.id'),
-            'title' => $title,
-            'amount' => $amount,
-            'pay_type' => 1,
-            'create_time' => time(),
-        ];
-        $this->model->save($order);
+        if (!$orderNo) {
+            $orderNo = getOrderNo();
+            $order = [
+                'payno' => $orderNo,
+                'company_id' => Session::get('company.id'),
+                'title' => $title,
+                'amount' => $amount,
+                'pay_type' => 1,
+                'create_time' => time(),
+            ];
+            $this->model->save($order);
+        }
 
         $wxOrder = [
             'out_trade_no' => $orderNo,
