@@ -57,6 +57,11 @@ class Payment extends \app\common\controller\ApiController
         // $pay->signType
     }
 
+    /**
+     * 微信支付回调
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
+     */
     public function notify()
     {
         $pay = Pay::wechat(Config::get('wxpay'));

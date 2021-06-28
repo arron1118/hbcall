@@ -20,8 +20,9 @@ class Payment extends \app\common\controller\CompanyController
 
     public function index()
     {
-//        $res2 = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => '202106251624609025154289']);
-//        dump($res2);
+        /**
+         * 检查订单是否已支付
+         */
         $notpay = $this->model->where(['company_id' => Session::get('company.id'), 'payment_no' => ''])->select();
         foreach ($notpay as $key => $value) {
             $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
@@ -45,6 +46,10 @@ class Payment extends \app\common\controller\CompanyController
         return $this->view->fetch();
     }
 
+    /**
+     * 获取订单列表
+     * @return \think\response\Json
+     */
     public function getOrderList()
     {
         if ($this->request->isPost()) {
@@ -57,6 +62,13 @@ class Payment extends \app\common\controller\CompanyController
         }
     }
 
+    /**
+     * 检测订单
+     * @return \think\response\Json
+     * @throws \Yansongda\Pay\Exceptions\GatewayException
+     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
+     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
+     */
     public function checkOrder()
     {
         $payno = $this->request->param('payno');
@@ -64,6 +76,10 @@ class Payment extends \app\common\controller\CompanyController
         return json($res);
     }
 
+    /**
+     * 支付
+     * @return \think\response\Json
+     */
     public function pay()
     {
         $amount = (float) $this->request->param('amount', 0);

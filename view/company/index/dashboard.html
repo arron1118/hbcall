@@ -37,7 +37,7 @@
                 <div class="card-body py-0">
                     <p class="card-title">当前余额/元</p>
                     <h5 class="card-text my-3 text-success"><i class="layui-icon layui-icon-rmb"></i>100.00</h5>
-                    <a href="{:url('payment/index')}" class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill px-4">
+                    <a href="javascript:;" layuimini-content-href="company/payment/index.html" data-title="充值管理" class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill px-4">
                        <i class="fa fa-wallet"></i>
                         充值
                     </a>
@@ -111,61 +111,14 @@
 {block name="js"}
 
 <script>
-    layui.use(['layer',], function () {
+    layui.use(['layer', 'miniTab'], function () {
         let $ = layui.jquery,
-            layer = layui.layer;
-        //输入框获取焦点
-        $(document).ready(function () {
-            $("#input").focus();
-        });
-        //
-        // $('.lqp-hover').hover(function () {
-        //     console.log( $(this).find('img'));
-        //     $(this).find('img').css({transform:'rotateY(360deg)'});
-        // }
-        // // ,function () {
-        // //     $(this).removeClass('tranY');
-        // // }
-        // )
-        let callinginput = $('.callinginput');
+            layer = layui.layer,
+            miniTab = layui.miniTab;
 
-        //按页面
-        $('.lqp-btn').on('click', function () {
-            if (callinginput.val().length < 11) {
-                callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
-            }
-        });
-        // 按键盘
-        $(window).on('keydown', function (e) {
-            console.log(e);
-            console.log(e.keyCode);
-            // 大键盘||小键盘
-            if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
-                if (callinginput.val().length < 11) {
-                    // callinginput.val(callinginput.val() + e.key);
-                    callinginput.val() + e.key;
-                    console.log('lpp');
-                    console.log(callinginput.val() + e.key);
-                }
+        // 在新的Tab窗口打开页面
+        miniTab.listen();
 
-            } else if (e.keyCode === 13) {
-                console.log(e)
-            }
-        });
-        //清空输入框
-        $('.lqp-empyt').on('click', function () {
-            callinginput = $('.callinginput').val('');
-        });
-        // 拨打
-        $('.lqp-oncalling').on('click', function () {
-            let number = 132654289822;
-            layer.open(
-                {
-                    title: '正在通话中...',
-                    content: '请用手机拨打号码：' + number,
-                },
-            );
-        })
     });
 </script>
 

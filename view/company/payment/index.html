@@ -74,18 +74,26 @@
                 limits: [15, 20, 25, 30],
                 limit: 15
             },
-            skin: 'line'
+            skin: 'line',
+            even: true,
         });
 
         table.on('tool(currentTableFilter)', function (obj) {
-            console.log(obj)
             if (obj.event === 'gopay') {
                 layer.open({
                     title: '扫码支付',
                     type: 2,
                     area: ['100%', '100%'],
                     content: '{:url("payment/pay")}?amount=' + obj.data.amount + '&payno=' + obj.data.payno,
-                    btn: ['确定']
+                    btn: ['确定'],
+                    yes: function (index, layero) {
+                        layer.close(index);
+                        table.reload('paymentTable');
+                    },
+                    cancel: function (index, layero) {
+                        layer.close(index);
+                        table.reload('paymentTable');
+                    }
                 });
             }
         })
@@ -108,7 +116,15 @@
                 type: 2,
                 area: ['100%', '100%'],
                 content: '{:url("payment/pay")}?amount=' + result.money,
-                btn: ['确定']
+                btn: ['确定'],
+                yes: function (index, layero) {
+                    layer.close(index);
+                    table.reload('paymentTable');
+                },
+                cancel: function (index, layero) {
+                    layer.close(index);
+                    table.reload('paymentTable');
+                }
             });
 
             return false;
