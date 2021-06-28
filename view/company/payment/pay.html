@@ -21,14 +21,15 @@
 
 {block name="js"}
 <script>
-    layui.use(['jquery'], function () {
-        let $ = layui.jquery;
+    layui.use(['jquery', 'table'], function () {
+        let $ = layui.jquery,
+            table = layui.table;
 
         let FrameIndex = parent.layer.getFrameIndex(window.name);
         let payno = $('input[name=payno]').val();
         let i = 0;
         let intval = setInterval(function(){
-            if (i > 60) {
+            if (i > 100) {
                 clearInterval(intval);
                 return;
             }
@@ -36,6 +37,7 @@
             $.post('{:url("payment/checkOrder")}', {payno: payno}, function (res) {
                 if (res.trade_state === 'SUCCESS') {
                     clearInterval(intval);
+                    table.reload('paymentTable');
                     layer.msg(res.trade_state_desc, {icon: 6}, function () {
                         parent.layer.close(FrameIndex);
                     })
