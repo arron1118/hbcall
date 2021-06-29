@@ -57,9 +57,9 @@ class Payment extends \app\common\controller\ApiController
         // $pay->signType
         // 支付
 
-        $alipay = Pay::alipay(Config::get('alipay'))->web($order);
+        $alipay = Pay::alipay(Config::get('alipay'))->scan($order);
 
-        return $alipay->send();// laravel 框架中请直接 `return $alipay`
+        dump($alipay);
     }
 
     /**
