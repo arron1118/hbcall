@@ -43,18 +43,23 @@ class Payment extends \app\common\controller\ApiController
             'body' => 'test body - 测试',
         ];
 
-        $wxpay = Config::get('wxpay');
+        /*$wxpay = Config::get('wxpay');
         dump($wxpay);
 
         $pay = Pay::wechat(Config::get('wxpay'))->scan($order);
         dump($pay);
         $qr = new QRCode();
-        echo '<img src="' . $qr->render($pay->code_url) . '" />';
+        echo '<img src="' . $qr->render($pay->code_url) . '" />';*/
         // $pay->appId
         // $pay->timeStamp
         // $pay->nonceStr
         // $pay->package
         // $pay->signType
+        // 支付
+
+        $alipay = Pay::alipay(Config::get('alipay'))->web($order);
+
+        return $alipay->send();// laravel 框架中请直接 `return $alipay`
     }
 
     /**
@@ -94,5 +99,18 @@ class Payment extends \app\common\controller\ApiController
         }
 
         return $pay->success()->send();// laravel 框架中请直接 `return $pay->success()`
+    }
+
+    public function alipayNotify()
+    {
+        $alipay = Pay::alipay(Config::get('alipay'));
+
+        try {
+            $data = $alipay->verify();
+
+        } catch (\Exception $e) {
+        }
+
+        return $alipay->success()->send();
     }
 }
