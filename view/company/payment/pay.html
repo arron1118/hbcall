@@ -1,25 +1,52 @@
 {extend name="public/base" /}
 {block name="css"}
-<link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/css/bootstrap.min.css" media="all">
-<link rel="stylesheet" href="__STATIC__/lib/bootstrap-5.0.0/font/bootstrap-icons.css" media="all">
+{include file="public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container">
-    <div class="row justify-content-center text-center" style="margin-top: 200px;">
+<div class="container h-100">
+    <div class="row justify-content-center align-items-center text-center">
         <div class="col-3 me-2">
             <h6 class="">微信支付</h6>
-            <img src="/static/images/xiaoqiang.png">
+            <img src="{$qr}" />
+            <input name="payno" type="hidden" value="{$payno}" />
         </div>
-        <div class="col-3" >
+        <!--<div class="col-3" >
              <h6 class="">支付宝支付</h6>
             <img src="/static/images/xiaoqiang.png">
-        </div>
+        </div>-->
     </div>
 </div>
 
 {/block}
 
 {block name="js"}
+<script>
+    layui.use(['jquery', 'table'], function () {
+        let $ = layui.jquery,
+            table = layui.table;
 
+        let FrameIndex = parent.layer.getFrameIndex(window.name);
+        let payno = $('input[name=payno]').val();
+        let i = 0;
+        let intval = setInterval(function(){
+            if (i > 100) {
+                clearInterval(intval);
+                return;
+            }
+
+            $.post('{:url("payment/checkOrder")}', {payno: payno}, function (res) {
+                if (res.trade_state === 'SUCCESS') {
+                    clearInterval(intval);
+                    parent.layui.table.reload('paymentTable');
+                    layer.msg(res.trade_state_desc, {icon: 6}, function () {
+                        parent.layer.close(FrameIndex);
+                    })
+                }
+            });
+
+            i++;
+        }, 2000);
+    });
+</script>
 
 {/block}

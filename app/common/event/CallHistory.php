@@ -24,7 +24,7 @@ class CallHistory
         }
 
         $HistoryModel = new \app\common\model\CallHistory();
-        $callList = $HistoryModel->where($map)->order('id DESC')->limit(10)->select();
+        $callList = $HistoryModel->where($map)->order('id DESC')->limit(20)->select();
         if (!empty($callList)) {
             $curl = new Curl();
             $news = [];
@@ -34,6 +34,7 @@ class CallHistory
                 ]);
                 $response = json_decode($curl->response, true);
                 if ($response['status'] && !empty($response['data'])) {
+//                    dump($response);
                     /*$val->callid = $response['data']['callid'];
                     $val->caller_number = $response['data']['callerNumber'];
                     $val->starttime = strtotime($response['data']['starttime']);

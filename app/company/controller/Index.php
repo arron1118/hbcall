@@ -17,26 +17,6 @@ class Index extends CompanyController
     {
         return $this->view->fetch();
     }
-    public function open()
-    {
-        return $this->view->fetch();
-    }
-    public function calling()
-    {
-        return $this->view->fetch();
-    }
-    public function calltable()
-    {
-        return $this->view->fetch();
-    }
-    public function add()
-    {
-        return $this->view->fetch();
-    }
-    public function edit()
-    {
-        return $this->view->fetch();
-    }
 
     public function login()
     {
