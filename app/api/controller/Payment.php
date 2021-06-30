@@ -114,4 +114,9 @@ class Payment extends \app\common\controller\ApiController
 
         return $alipay->success()->send();
     }
+
+    public function alipayReturn()
+    {
+        dump('支付成功，正在跳转...');
+    }
 }
