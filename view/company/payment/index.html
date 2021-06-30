@@ -87,21 +87,39 @@
 
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'gopay') {
-                layer.open({
-                    title: '扫码支付',
-                    type: 2,
-                    area: ['100%', '100%'],
-                    content: '{:url("payment/pay")}?amount=' + obj.data.amount + '&payno=' + obj.data.payno,
-                    btn: ['确定'],
-                    yes: function (index, layero) {
-                        layer.close(index);
-                        table.reload('paymentTable');
-                    },
-                    cancel: function (index, layero) {
-                        layer.close(index);
-                        table.reload('paymentTable');
-                    }
-                });
+                if (obj.data.pay_type === '微信') {
+                    layer.open({
+                        title: '扫码支付',
+                        type: 2,
+                        area: ['100%', '100%'],
+                        content: '{:url("payment/pay")}?amount=' + obj.data.amount + '&payno=' + obj.data.payno,
+                        btn: ['确定'],
+                        yes: function (index, layero) {
+                            layer.close(index);
+                            table.reload('paymentTable');
+                        },
+                        cancel: function (index, layero) {
+                            layer.close(index);
+                            table.reload('paymentTable');
+                        }
+                    });
+                }else if(obj.data.pay_type === '支付宝'){
+                    layer.open({
+                        title: '扫码支付',
+                        type: 2,
+                        area: ['100%', '100%'],
+                        content: '{:url("payment/alipay")}?amount=' + obj.data.amount + '&payno=' + obj.data.payno,
+                        btn: ['确定'],
+                        yes: function (index, layero) {
+                            layer.close(index);
+                            table.reload('paymentTable');
+                        },
+                        cancel: function (index, layero) {
+                            layer.close(index);
+                            table.reload('paymentTable');
+                        }
+                    });
+                }
             }
         })
 
@@ -118,8 +136,6 @@
                 return false;
             }*/
 
-            console.log(typeof parseInt(result.pay_type));
-            console.log(typeof 1)
             if(parseInt(result.pay_type) === 1){
                 layer.open({
                     title: '扫码支付',

@@ -128,15 +128,24 @@ class Payment extends \app\common\controller\CompanyController
         $title = '余额充值';
         if (!$orderNo) {
             $orderNo = getOrderNo();
+            $order = [
+                'payno' => $orderNo,
+                'company_id' => Session::get('company.id'),
+                'title' => $title,
+                'amount' => $amount,
+                'pay_type' => 2,
+                'create_time' => time(),
+            ];
+            $this->model->save($order);
         }
 
-        $order = [
+        $alipayOrder = [
             'out_trade_no' => $orderNo,
             'total_amount' => $amount, // **单位：分**
             'subject' => '喵头鹰呼叫系统 - ' . $title,
         ];
 
-        return Pay::alipay(Config::get('alipay'))->web($order)->send();
+        return Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
     }
 
     public function alipayResult()
