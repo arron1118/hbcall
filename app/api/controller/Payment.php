@@ -40,7 +40,7 @@ class Payment extends \app\common\controller\ApiController
         $order = [
             'out_trade_no' => getOrderNo(),
             'total_amount' => '0.01', // **单位：分**
-            'subject' => 'test body - 扫码测试',
+            'subject' => '喵头鹰呼叫系统 - PC场景下单并支付测试',
         ];
 
         /*$wxpay = Config::get('wxpay');
@@ -57,8 +57,7 @@ class Payment extends \app\common\controller\ApiController
         // $pay->signType
         // 支付
 
-        $alipay = Pay::alipay(Config::get('alipay'))->web($order)->send();
-        return $alipay;
+        return Pay::alipay(Config::get('alipay'))->web($order)->send();
 //        dump($alipay);
     }
 
