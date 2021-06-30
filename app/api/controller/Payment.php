@@ -107,8 +107,15 @@ class Payment extends \app\common\controller\ApiController
         try {
             $data = $alipay->verify();
 
-            ThinkLog::info('alipay notify info > ' . $data->all());
+            if ($data->trade_status === 'TRADE_SUCCESS') {
+                $paymentModel = PaymentModel::where('payno', $data->out_trade_no)->find();
+                $paymentModel->pay_time = strtotime($data->gmt_payment);
+                $paymentModel->payment_no = $data->trade_no;
+                $paymentModel->status = 1;
+                $paymentModel->save();
+            }
 
+            ThinkLog::info('alipay notify info > ' . $data->all());
         } catch (\Exception $e) {
         }
 
