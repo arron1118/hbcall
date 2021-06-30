@@ -116,4 +116,31 @@ class Payment extends \app\common\controller\CompanyController
         $this->view->assign('qr', $qr);
         return $this->view->fetch();
     }
+
+    public function alipay()
+    {
+        $amount = (float) $this->request->param('amount', 0);
+        if ($amount <= 0) {
+            return json(['code' => 0, 'msg' => '请输入正确的金额']);
+        }
+
+        $orderNo = $this->request->param('payno', '');
+        $title = '余额充值';
+        if (!$orderNo) {
+            $orderNo = getOrderNo();
+        }
+
+        $order = [
+            'out_trade_no' => $orderNo,
+            'total_amount' => $amount, // **单位：分**
+            'subject' => '喵头鹰呼叫系统 - ' . $title,
+        ];
+
+        return Pay::alipay(Config::get('alipay'))->web($order)->send();
+    }
+
+    public function alipayResult()
+    {
+        return $this->view->fetch();
+    }
 }

@@ -4,9 +4,16 @@
     <div class="layuimini-main">
         <fieldset class="table-search-fieldset">
             <legend>账户充值</legend>
-            <div style="margin: 10px 10px 10px 10px">
+            <div style="margin: 10px 10px 10px 10px; ">
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付方式</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="pay_type" value="1" title="微信" checked="">
+                                <input type="radio" name="pay_type" value="2" title="支付宝">
+                            </div>
+                        </div>
                         <div class="layui-inline">
                             <label class="layui-form-label">金额/元</label>
                             <div class="layui-input-inline">
@@ -111,21 +118,42 @@
                 return false;
             }*/
 
-            layer.open({
-                title: '扫码支付',
-                type: 2,
-                area: ['100%', '100%'],
-                content: '{:url("payment/pay")}?amount=' + result.money,
-                btn: ['确定'],
-                yes: function (index, layero) {
-                    layer.close(index);
-                    table.reload('paymentTable');
-                },
-                cancel: function (index, layero) {
-                    layer.close(index);
-                    table.reload('paymentTable');
-                }
-            });
+            console.log(typeof parseInt(result.pay_type));
+            console.log(typeof 1)
+            if(parseInt(result.pay_type) === 1){
+                layer.open({
+                    title: '扫码支付',
+                    type: 2,
+                    area: ['100%', '100%'],
+                    content: '{:url("payment/pay")}?amount=' + result.money,
+                    btn: ['确定'],
+                    yes: function (index, layero) {
+                        layer.close(index);
+                        table.reload('paymentTable');
+                    },
+                    cancel: function (index, layero) {
+                        layer.close(index);
+                        table.reload('paymentTable');
+                    }
+                });
+            }else if(parseInt(result.pay_type) === 2){
+                layer.open({
+                    title: '扫码支付',
+                    type: 2,
+                    area: ['100%', '100%'],
+                    content: '{:url("payment/alipay")}?amount=' + result.money,
+                    btn: ['确定'],
+                    yes: function (index, layero) {
+                        layer.close(index);
+                        table.reload('paymentTable');
+                    },
+                    cancel: function (index, layero) {
+                        layer.close(index);
+                        table.reload('paymentTable');
+                    }
+                });
+            }
+
 
             return false;
         });
