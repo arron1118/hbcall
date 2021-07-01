@@ -51,7 +51,6 @@ class Payment extends \app\common\controller\CompanyController
         foreach ($notalipay as $key => $value) {
             try {
                 $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
-                dump($data);
                 $paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
                 $paymentModel->pay_time = strtotime($data->send_pay_date);
                 $paymentModel->payment_no = $data->trade_no;
@@ -168,7 +167,7 @@ class Payment extends \app\common\controller\CompanyController
         ];
 
         $alipay = Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
-        dump($alipay);
+//        dump($alipay);
     }
 
     public function alipayResult()
