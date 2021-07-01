@@ -7,6 +7,7 @@ use chillerlan\QRCode\QRCode;
 use think\facade\Config;
 use think\facade\Session;
 use Yansongda\Pay\Pay;
+use Yansongda\Pay\Exceptions\GatewayException;
 
 
 class Payment extends \app\common\controller\CompanyController
@@ -48,12 +49,20 @@ class Payment extends \app\common\controller\CompanyController
          */
         $notalipay = $this->model->where(['company_id' => Session::get('company.id'), 'payment_no' => '', 'pay_type' => 2])->select();
         foreach ($notalipay as $key => $value) {
-            $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
-            $paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
-            $paymentModel->pay_time = strtotime($data->send_pay_date);
-            $paymentModel->payment_no = $data->trade_no;
-            $paymentModel->status = 1;
-            $paymentModel->save();
+            try {
+                $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
+                dump($data);
+                $paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
+                $paymentModel->pay_time = strtotime($data->send_pay_date);
+                $paymentModel->payment_no = $data->trade_no;
+                $paymentModel->status = 1;
+                $paymentModel->save();
+            } catch (GatewayException $e) {
+                $response = $e->raw['alipay_trade_query_response'];
+                if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {
+//                    $value->delete();
+                }
+            }
         }
 
         return $this->view->fetch();
@@ -93,7 +102,7 @@ class Payment extends \app\common\controller\CompanyController
      * 支付
      * @return \think\response\Json
      */
-    public function pay()
+    public function wxpay()
     {
         $amount = (float) $this->request->param('amount', 0);
         if ($amount <= 0) {
@@ -158,7 +167,8 @@ class Payment extends \app\common\controller\CompanyController
             'subject' => '喵头鹰呼叫系统 - ' . $title,
         ];
 
-        return Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
+        $alipay = Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
+        dump($alipay);
     }
 
     public function alipayResult()

@@ -87,39 +87,8 @@
 
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'gopay') {
-                if (obj.data.pay_type === '微信') {
-                    layer.open({
-                        title: '扫码支付',
-                        type: 2,
-                        area: ['100%', '100%'],
-                        content: '{:url("payment/pay")}?amount=' + obj.data.amount + '&payno=' + obj.data.payno,
-                        btn: ['确定'],
-                        yes: function (index, layero) {
-                            layer.close(index);
-                            table.reload('paymentTable');
-                        },
-                        cancel: function (index, layero) {
-                            layer.close(index);
-                            table.reload('paymentTable');
-                        }
-                    });
-                }else if(obj.data.pay_type === '支付宝'){
-                    layer.open({
-                        title: '扫码支付',
-                        type: 2,
-                        area: ['100%', '100%'],
-                        content: '{:url("payment/alipay")}?amount=' + obj.data.amount + '&payno=' + obj.data.payno,
-                        btn: ['确定'],
-                        yes: function (index, layero) {
-                            layer.close(index);
-                            table.reload('paymentTable');
-                        },
-                        cancel: function (index, layero) {
-                            layer.close(index);
-                            table.reload('paymentTable');
-                        }
-                    });
-                }
+                let payType = obj.data.pay_type === '微信' ? 'wxpay' : (obj.data.pay_type === '支付宝' ? 'alipay' : 'wxpay');
+                pay(payType, obj.data.amount, obj.data.payno);
             }
         })
 
@@ -131,48 +100,35 @@
                 return false;
             }
 
-            /*if (result.money < 1) {
+            if (result.money < 0) {
                 layer.msg('请输入正确的金额！');
                 return false;
-            }*/
-
-            if(parseInt(result.pay_type) === 1){
-                layer.open({
-                    title: '扫码支付',
-                    type: 2,
-                    area: ['100%', '100%'],
-                    content: '{:url("payment/pay")}?amount=' + result.money,
-                    btn: ['确定'],
-                    yes: function (index, layero) {
-                        layer.close(index);
-                        table.reload('paymentTable');
-                    },
-                    cancel: function (index, layero) {
-                        layer.close(index);
-                        table.reload('paymentTable');
-                    }
-                });
-            }else if(parseInt(result.pay_type) === 2){
-                layer.open({
-                    title: '扫码支付',
-                    type: 2,
-                    area: ['100%', '100%'],
-                    content: '{:url("payment/alipay")}?amount=' + result.money,
-                    btn: ['确定'],
-                    yes: function (index, layero) {
-                        layer.close(index);
-                        table.reload('paymentTable');
-                    },
-                    cancel: function (index, layero) {
-                        layer.close(index);
-                        table.reload('paymentTable');
-                    }
-                });
             }
 
-
+            let payType = result.pay_type === '1' ? 'wxpay' : (result.pay_type === '2' ? 'alipay' : 'wxpay');
+            pay(payType, result.money);
             return false;
         });
+
+        // 支付页面
+        let pay = function (payType, amount, payNo = '') {
+            let pay_type = ['wxpay', 'alipay'];
+            if (!pay_type.includes(payType)) {
+                payType = 'wxpay';
+            }
+
+            layer.open({
+                title: '支付',
+                type: 2,
+                area: ['100%', '100%'],
+                content: '/company/payment/' + payType + '?amount=' + amount + '&payno=' + payNo,
+                btn: false,
+                cancel: function (index, layero) {
+                    layer.close(index);
+                    table.reload('paymentTable');
+                }
+            });
+        }
     });
 </script>
 

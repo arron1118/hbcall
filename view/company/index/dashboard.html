@@ -15,14 +15,14 @@
                 <div class="col-5 pb-4">
                     <div class="card border-0 p-0 border-end">
                         <div class="card-body py-0">
-                            <p class="card-title mb-4 fw-bold"> Hi,您好汇邦！</p>
+                            <p class="card-title mb-4 fw-bold"> Hi，您好<span class="text-primary">{$user.username}</span>！</p>
                             <div class="row">
                                 <div class="col-3">
                                     <img src="__STATIC__/images/dashuser.png" style="max-height: 80px;">
                                 </div>
                                 <div class="col-4">
-                                    <div class="mb-4">账号：<span class="fw-bold">12345678901</span></div>
-                                    <div> 手机：<span class="fw-bold">12345678901</span></div>
+                                    <div class="mb-4">账号：<span class="fw-bold">{$user.username}</span></div>
+                                    <div> 手机：<span class="fw-bold">***********</span></div>
                                 </div>
                             </div>
                         </div>
@@ -32,10 +32,10 @@
                     <div class="card border-0 p-0 border-end">
                         <div class="card-body py-0">
                             <p class="card-title">当前余额/元</p>
-                            <h5 class="card-text my-3 text-success"><i class="layui-icon layui-icon-rmb"></i>100.00</h5>
+                            <h5 class="card-text my-3 text-success"><i class="fa fa-yen-sign me-2"></i>{$user.balance}</h5>
                             <a href="javascript:;" layuimini-content-href="company/payment/index.html" data-title="充值管理"
-                               class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill px-4">
-                                <i class="fa fa-wallet"></i>
+                               class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill">
+                                <i class="fa fa-wallet me-2"></i>
                                 充值
                             </a>
                         </div>
@@ -72,12 +72,12 @@
                         <div class="row text-center">
                             <div class="col">
                                 <div class="card bg-primary lqp-hover" style="height: 250px;">
-
                                     <div class="card-body text-light  d-flex flex-column justify-content-center "
                                          style="background: url('__STATIC__/images/p.png') no-repeat center;background-size: 30%;">
                                         <p class="">今日消费/元</p>
-                                        <h5 class="fw-bold "><i class="fa fa-yen-sign me-2"></i><span
-                                                class="l-number">1800</span></h5>
+                                        <h5 class="fw-bold ">
+                                            <i class="fa fa-yen-sign me-2"></i>
+                                            <span class="l-number">0.00</span></h5>
                                     </div>
                                 </div>
                             </div>
@@ -86,8 +86,9 @@
                                     <div class="card-body text-light  d-flex flex-column justify-content-center "
                                          style="background: url('__STATIC__/images/s.png') no-repeat center;background-size: 30%;">
                                         <p class="">本月消费/元</p>
-                                        <h5 class="fw-bold"><i class="fa fa-yen-sign me-2"></i><span
-                                                class="l-number">8800</span></h5>
+                                        <h5 class="fw-bold">
+                                            <i class="fa fa-yen-sign me-2"></i>
+                                            <span class="l-number">0.00</span></h5>
                                     </div>
                                 </div>
                             </div>
@@ -97,8 +98,9 @@
                                     <div class="card-body text-light  d-flex flex-column justify-content-center "
                                          style="background: url('__STATIC__/images/w.png') no-repeat center;background-size: 30%;">
                                         <p class="">今年消费/元</p>
-                                        <h5 class="fw-bold"><i class="fa fa-yen-sign me-2"></i><span
-                                                class="l-number">4800</span></h5>
+                                        <h5 class="fw-bold">
+                                            <i class="fa fa-yen-sign me-2"></i>
+                                            <span class="l-number">0.00</span></h5>
                                     </div>
                                 </div>
                             </div>

@@ -1,4 +1,5 @@
 <?php
+
 namespace app\company\controller;
 
 use app\common\controller\CompanyController;
@@ -10,9 +11,9 @@ class Index extends CompanyController
 {
     public function index()
     {
-        $this->view->assign('title', 'lqpbd');
         return $this->view->fetch();
     }
+
     public function dashboard()
     {
         return $this->view->fetch();
@@ -58,7 +59,7 @@ class Index extends CompanyController
 
             Session::set('company', $user->toArray());
 
-            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string) url('/company')]);
+            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/company')]);
         }
         return $this->view->fetch();
     }
