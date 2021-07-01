@@ -21,9 +21,9 @@ class Payment extends \app\common\controller\CompanyController
     public function index()
     {
         /**
-         * 检查订单是否已支付
+         * 检查微信订单是否已支付
          */
-        $notpay = $this->model->where(['company_id' => Session::get('company.id'), 'payment_no' => ''])->select();
+        $notpay = $this->model->where(['company_id' => Session::get('company.id'), 'payment_no' => '', 'pay_type' => 1])->select();
         foreach ($notpay as $key => $value) {
             $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
             if ($data->trade_state === 'SUCCESS') {
@@ -41,6 +41,19 @@ class Payment extends \app\common\controller\CompanyController
                 $paymentModel->status = 1;
                 $paymentModel->save();
             }
+        }
+
+        /**
+         * 检查支付宝订单是否已支付
+         */
+        $notalipay = $this->model->where(['company_id' => Session::get('company.id'), 'payment_no' => '', 'pay_type' => 2])->select();
+        foreach ($notalipay as $key => $value) {
+            $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
+            $paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
+            $paymentModel->pay_time = strtotime($data->gmt_payment);
+            $paymentModel->payment_no = $data->trade_no;
+            $paymentModel->status = 1;
+            $paymentModel->save();
         }
 
         return $this->view->fetch();
