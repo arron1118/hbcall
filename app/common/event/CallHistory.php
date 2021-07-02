@@ -5,6 +5,7 @@ namespace app\common\event;
 
 
 use Curl\Curl;
+use think\facade\Config;
 use think\facade\Session;
 
 /**
@@ -30,7 +31,7 @@ class CallHistory
             $news = [];
             foreach ($callList as $val) {
                 try {
-                    $curl->post('http://call.hbosw.net/API/axbCallRecord.ashx', [
+                    $curl->post(Config::get('hbcall.record_api'), [
                         'subid' => $val['subid']
                     ]);
                     $response = json_decode($curl->response, true);
