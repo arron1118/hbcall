@@ -14,6 +14,16 @@ Route::get('think', function () {
     return 'hello,ThinkPHP6!';
 });
 
+Route::miss(function () {
+    return '404 Not Found!';
+});
+
 Route::get('hello/:name', 'index/hello');
 
 Route::get('captcha/[:config]','\\think\\captcha\\CaptchaController@index');
+/*
+Route::get('test', function () {
+    return 'api/user/index';
+});*/
+
+//Route::get('test', '/api/user/index');

@@ -11,21 +11,21 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">操作人</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="holdername" autocomplete="off" class="layui-input">
+                                <input type="text" name="holdername" class="layui-input">
                             </div>
                         </div>
 
-                            <div class="layui-inline">
-                                <label class="layui-form-label">开始时间</label>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="">
-                                </div>
-
+                        <div class="layui-inline">
+                            <label class="layui-form-label">开始时间</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
                             </div>
-
+                        </div>
 
                         <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit
+                                    lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -37,7 +37,7 @@
 
         <script type="text/html" id="currentTableBar">
             <a class="layui-btn layui-btn-xs layui-btn-info" lay-event="preview">查看</a>
-       </script>
+        </script>
 
     </div>
 </div>
@@ -46,20 +46,20 @@
 
 {block name="js"}
 <script>
-    layui.use(['form', 'table','laydate'], function () {
+    layui.use(['form', 'table', 'laydate'], function () {
         let $ = layui.jquery,
             form = layui.form,
             laydate = layui.laydate,
             table = layui.table;
 
         laydate.render({
-            elem:'#startTime'
+            elem: '#startTime'
         });
 
         table.render({
             elem: '#currentTableId',
             url: '{:url("HbCall/getHistoryList")}',
-            method:'post',
+            method: 'post',
             toolbar: true,
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -92,13 +92,13 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            let params = JSON.stringify(data.field);
+            let params = data.field;
             console.log(params);
-            return
-            let url='';
-            $.get(url,params,function (res) {
+            return false;
+            let url = '';
+            $.get(url, params, function (res) {
                 //todo
-                if(res){
+                if (res) {
                     //执行搜索重载
                     table.reload('currentTableId', {
                         page: {
@@ -108,10 +108,10 @@
                             searchParams: params
                         }
                     }, 'data');
-
-                    return false;
                 }
-            })
+            });
+
+            return false;
         });
 
         table.on('tool(currentTableFilter)', function (obj) {
@@ -121,7 +121,7 @@
                     title: '编辑用户',
                     type: 2,
                     shade: 0.2,
-                    maxmin:true,
+                    maxmin: true,
                     shadeClose: true,
                     area: ['100%', '100%'],
                     content: '../page/table/edit.html',

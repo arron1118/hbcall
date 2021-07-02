@@ -5,6 +5,7 @@ namespace app\home\controller;
 
 
 use app\common\model\CallHistory;
+use app\company\model\Company;
 use Curl\Curl;
 use think\facade\Event;
 use think\facade\Session;
@@ -19,6 +20,7 @@ class HbCall extends \app\common\controller\HomeController
         dump($strTime);
         $next = date('Y-m-d H:i:s', $strTime + 86400 - 1);
         dump($next);*/
+
         return $this->view->fetch();
     }
 
@@ -64,7 +66,9 @@ class HbCall extends \app\common\controller\HomeController
         if ($response['status']) {
             $CallHistory = new CallHistory();
             $CallHistory->user_id = $this->userInfo['id'];
+            $CallHistory->username = $this->userInfo['username'];
             $CallHistory->company_id = $this->userInfo['company_id'];
+            $CallHistory->company = Company::where(['id' => $this->userInfo['company_id']])->value('username');
             $CallHistory->subid = $response['data']['subid'];
             $CallHistory->axb_number = $response['data']['axb_number'];
             $CallHistory->called_number = $response['data']['mobile'];

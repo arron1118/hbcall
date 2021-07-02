@@ -203,6 +203,7 @@
             }
 
             $.post('{:url("hbcall/makeCall")}', {mobile: number}, function (res) {
+                console.log(res);
                 if (res.status) {
                     layer.open(
                         {
@@ -226,7 +227,6 @@
                     layer.open({
                         title: res.info,
                         content: res.data
-
                     })
                 }
             });

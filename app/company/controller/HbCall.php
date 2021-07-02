@@ -35,7 +35,14 @@ class HbCall extends \app\common\controller\CompanyController
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
+            $holdername = $this->request->param('holdername', '');
+            $holdertime = $this->request->param('holdertime', '');
             $map = ['company_id' => $this->userInfo['id']];
+
+            if ($holdername) {
+                $map['user_id'] = '';
+            }
+
             $total = CallHistory::where('caller_number != ""')->where($map)->count();
 
             $historyList = CallHistory::where('caller_number != ""')

@@ -16,8 +16,18 @@ class User extends \think\Model
         return date($this->getDateFormat(), $value);
     }
 
-    public function getTestAttr()
+    public function getStatusAttr($value)
     {
-        return 'This is test attr';
+        return $this->getStatusList()[$value];
+    }
+
+    protected function getStatusList()
+    {
+        return [0 => '禁止登录', 1 => '正常'];
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(\app\company\model\Company::class, 'company_id');
     }
 }

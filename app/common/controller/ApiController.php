@@ -12,8 +12,8 @@ class ApiController extends \app\BaseController
         'code' => 0,
         'msg' => '未知错误',
         'data' => [],
-        'sub_code' => 'unknow error',
-        'sub_msg' => '系统繁忙',
+//        'sub_code' => 'unknow error',
+//        'sub_msg' => '系统繁忙',
     ];
 
     protected function initialize()
