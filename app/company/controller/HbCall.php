@@ -5,9 +5,11 @@ namespace app\company\controller;
 
 
 use app\common\model\CallHistory;
+use app\common\model\User;
 use Curl\Curl;
 use think\facade\Event;
 use think\facade\Session;
+use think\facade\Db;
 
 class HbCall extends \app\common\controller\CompanyController
 {
@@ -29,12 +31,23 @@ class HbCall extends \app\common\controller\CompanyController
 
     public function getHistoryList()
     {
+
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $total = CallHistory::count();
+            $map = ['company_id' => $this->userInfo['id']];
+            $total = CallHistory::where('caller_number != ""')->where($map)->count();
 
-            $historyList = CallHistory::order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $historyList = CallHistory::where('caller_number != ""')
+                ->where($map)
+                ->order('id DESC')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
+
+            foreach ($historyList as $val) {
+                $val->username = User::where(['id' => $val->user_id])->value('username');
+            }
+
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
     }

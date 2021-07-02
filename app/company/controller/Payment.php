@@ -172,6 +172,7 @@ class Payment extends \app\common\controller\CompanyController
 
     public function alipayResult()
     {
-        return $this->view->fetch();
+        return redirect(url('payment/index'));
+//        return $this->view->fetch();
     }
 }

@@ -15,7 +15,7 @@ class Index extends HomeController
     }
     public function login()
     {
-        if (Session::has('user')) {
+        if ($this->isLogin()) {
             return redirect('/');
         }
 

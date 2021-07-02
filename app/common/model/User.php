@@ -15,4 +15,9 @@ class User extends \think\Model
     {
         return date($this->getDateFormat(), $value);
     }
+
+    public function getTestAttr()
+    {
+        return 'This is test attr';
+    }
 }

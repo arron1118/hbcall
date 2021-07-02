@@ -12,7 +12,7 @@ class User extends \app\common\controller\HomeController
 
     public function profile()
     {
-        $user = UserModel::find(Session::get('user.id'));
+        $user = UserModel::find($this->userInfo['id']);
 
         if ($this->request->isPost()) {
             $username = trim($this->request->param('username'));
@@ -38,7 +38,7 @@ class User extends \app\common\controller\HomeController
             $old_password = trim($this->request->param('old_password'));
             $new_password = trim($this->request->param('new_password'));
             $confirm_password = trim($this->request->param('confirm_password'));
-            $user = UserModel::find(Session::get('user.id'));
+            $user = UserModel::find($this->userInfo['id']);
             if (empty($old_password)) {
                 return json(['msg' => '请输入旧密码', 'code' => 0]);
             }

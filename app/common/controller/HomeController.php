@@ -13,6 +13,8 @@ class HomeController extends \app\BaseController
 
     protected $view = null;
 
+    protected $userInfo = null;
+
     // 小号
     protected $axb_number = '18426190532';
 
@@ -22,16 +24,13 @@ class HomeController extends \app\BaseController
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
 
-        $this->view->assign('user', Session::get('user'));
+        $this->userInfo = Session::get('user');
+        $this->view->assign('user', $this->userInfo);
     }
+
 
     public function isLogin()
     {
-
-        if (!Session::get('user') && $this->request->action() !== 'login') {
-            return redirect((string) url('index/login'));
-        }
-
-        return true;
+        return Session::has('user');
     }
 }

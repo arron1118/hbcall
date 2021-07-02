@@ -24,7 +24,7 @@ class CallHistory
         }
 
         $HistoryModel = new \app\common\model\CallHistory();
-        $callList = $HistoryModel->where($map)->order('id DESC')->limit(20)->select();
+        $callList = $HistoryModel->where($map)->order('id DESC')->limit(50)->select();
         if (!empty($callList)) {
             $curl = new Curl();
             $news = [];

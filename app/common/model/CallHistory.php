@@ -4,6 +4,8 @@
 namespace app\common\model;
 
 
+use think\model\relation\BelongsTo;
+
 class CallHistory extends \think\Model
 {
 
@@ -30,5 +32,10 @@ class CallHistory extends \think\Model
     public function getReleasetimeAttr($value)
     {
         return $value ? date($this->getDateFormat(), $value) : '-';
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\app\common\model\User::class, 'user_id', 'id');
     }
 }
