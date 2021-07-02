@@ -9,11 +9,13 @@
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label">操作时间</label>
+                            <label class="layui-form-label">开始时间</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="holdertime" autocomplete="off" class="layui-input">
+                                <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="">
                             </div>
+
                         </div>
+
 
                         <div class="layui-inline">
                             <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
@@ -37,10 +39,15 @@
 
 {block name="js"}
 <script>
-    layui.use(['form', 'table'], function () {
+    layui.use(['form', 'table','laydate'], function () {
         let $ = layui.jquery,
             form = layui.form,
+            laydate = layui.laydate,
             table = layui.table;
+
+        laydate.render({
+            elem:'#startTime'
+        });
 
         table.render({
             elem: '#currentTableId',
@@ -78,6 +85,8 @@
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             let params = JSON.stringify(data.field);
+            console.log(params);
+            return
             let url='';
             $.get(url,params,function (res) {
                 //todo

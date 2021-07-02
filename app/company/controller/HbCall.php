@@ -24,7 +24,7 @@ class HbCall extends \app\common\controller\CompanyController
         /**
          * 获取通话记录  暂时放在这里，后期用定时任务实现
          */
-        Event::trigger('CallHistory');
+//        Event::trigger('CallHistory');
 
         return $this->view->fetch('hbcall/history_list');
     }
