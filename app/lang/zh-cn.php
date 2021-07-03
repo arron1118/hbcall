@@ -12,4 +12,6 @@ return [
     'Balance' => '余额',
     'ration' => '配额',
     'You are already logged in' => '您已经登录过了',
+    'Unknown error' => '未知错误',
+    'The server is wrong' => '服务器错误',
 ];

@@ -11,11 +11,9 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">开始时间</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="">
+                                <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
                             </div>
-
                         </div>
-
 
                         <div class="layui-inline">
                             <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
@@ -51,6 +49,7 @@
 
         table.render({
             elem: '#currentTableId',
+            id: 'historyTable',
             url: '{:url("HbCall/getHistoryList")}',
             method:'post',
             toolbar: true,
@@ -69,7 +68,7 @@
                 }
             },
             cols: [[
-                {field: 'callid', title: '编号', align: "center"},
+                {field: 'subid', title: '编号', align: "center"},
                 {field: 'called_number', title: '被叫号码', align: "center"},
                 {field: 'call_duration', title: '通话时长（分）', sort: true, align: "center"},
                 {field: 'starttime', title: '开始时间', align: "center"},
@@ -80,30 +79,21 @@
                 limits: [10, 20, 30, 40],
                 limit: 10,
             },
+            skin: 'line'
         });
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            let params = JSON.stringify(data.field);
-            console.log(params);
-            return
-            let url='';
-            $.get(url,params,function (res) {
-                //todo
-                if(res){
-                    //执行搜索重载
-                    table.reload('currentTableId', {
-                        page: {
-                            curr: 1
-                        }
-                        , where: {
-                            searchParams: params
-                        }
-                    }, 'data');
+            let params = data.field;
 
-                    return false;
-                }
-            })
+            table.reload('historyTable', {
+                page: {
+                    curr: 1
+                },
+                where: params
+            }, 'data');
+
+            return false;
         });
 
         table.on('tool(currentTableFilter)', function (obj) {

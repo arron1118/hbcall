@@ -13,6 +13,7 @@ class Index extends HomeController
     {
         return $this->view->fetch();
     }
+
     public function login()
     {
         if ($this->isLogin()) {
@@ -29,20 +30,24 @@ class Index extends HomeController
             $param = $this->request->param();
             $user = User::getByUsername($param['username']);
             if (!$user) {
-                return json(['data' => [], 'msg' => lang('Account is incorrect'), 'code' => 0]);
+                $this->returnData['msg'] = lang('Account is incorrect');
+                return json($this->returnData);
             }
 
             if (!$user->status) {
-                return json(['data' => [], 'msg' => lang('Account is locked'), 'code' => 0]);
+                $this->returnData['msg'] = lang('Account is locked');
+                return json($this->returnData);
             }
 
             $password = getEncryptPassword($param['password'], $user->salt);
             if ($password !== $user->password) {
-                return json(['data' => [], 'msg' => lang('Password is incorrect'), 'code' => 0]);
+                $this->returnData['msg'] = lang('Password is incorrect');
+                return json($this->returnData);
             }
 
             if (!captcha_check($param['captcha'])) {
-                return json(['data' => [], 'msg' => lang('Captcha is incorrect'), 'code' => 0]);
+                $this->returnData['msg'] = lang('Captcha is incorrect');
+                return json($this->returnData);
             }
 
             $user->prevtime = $user->getData('logintime');
@@ -53,7 +58,10 @@ class Index extends HomeController
 
             Session::set('user', $user->toArray());
 
-            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string) url('/')]);
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = lang('Logined');
+            $this->returnData['url'] = (string)url('/');
+            return json($this->returnData);
         }
         return $this->view->fetch();
     }
@@ -101,9 +109,8 @@ class Index extends HomeController
                 'salt' => $salt
             ];
         }
-        $user->saveAll($data);
+//        $user->saveAll($data);
     }
-
 
 
 }

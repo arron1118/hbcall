@@ -7,6 +7,7 @@ namespace app\home\controller;
 use app\common\model\CallHistory;
 use app\company\model\Company;
 use Curl\Curl;
+use think\facade\Config;
 use think\facade\Event;
 use think\facade\Session;
 
@@ -17,7 +18,7 @@ class HbCall extends \app\common\controller\HomeController
     {
         /*$str = '2021/06/20';
         $strTime = strtotime($str);
-        dump($strTime);
+        dump((bool)$strTime);
         $next = date('Y-m-d H:i:s', $strTime + 86400 - 1);
         dump($next);*/
 
@@ -39,9 +40,20 @@ class HbCall extends \app\common\controller\HomeController
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $map = ['user_id' => $this->userInfo['id']];
-            $total = CallHistory::where($map)->where('caller_number != ""')->count();
-            $historyList = CallHistory::where($map)->where('caller_number != ""')->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $holdertime = $this->request->param('holdertime', '');
+            $map = [
+                ['user_id', '=', $this->userInfo['id']],
+                ['caller_number', '<>', '']
+            ];
+
+            $start = strtotime($holdertime);
+            if ($start) {
+                $end = $start + 86400 - 1;
+                $map[] = ['starttime', 'between', [$start, $end]];
+            }
+
+            $total = CallHistory::where($map)->count();
+            $historyList = CallHistory::where($map)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
     }
@@ -58,11 +70,12 @@ class HbCall extends \app\common\controller\HomeController
             return json(['data' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
         }
         $curl = new Curl();
-        $curl->post('http://call.hbosw.net/API/axbCallApi.aspx', [
+        $curl->post(Config::get('hbcall.call_api'), [
             'mobile' => $mobile,
             'axb_number' => $this->userInfo['axb_number']
         ]);
         $response = json_decode($curl->response, true);
+
         if ($response['status']) {
             $CallHistory = new CallHistory();
             $CallHistory->user_id = $this->userInfo['id'];
@@ -74,6 +87,7 @@ class HbCall extends \app\common\controller\HomeController
             $CallHistory->called_number = $response['data']['mobile'];
             $CallHistory->save();
         }
+
         return json($response);
     }
 }

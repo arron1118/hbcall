@@ -63,4 +63,34 @@ class HbCall extends \app\common\controller\ApiController
         return json($this->returnData);
     }
 
+    public function getHistoryList()
+    {
+        if (!$this->isLogin()) {
+            $this->returnData['msg'] = '权限不足：未登录';
+            return json($this->returnData);
+        }
+
+        $userInfo = $this->getUserInfo();
+        $page = (int) $this->request->param('page', 1);
+        $limit = (int) $this->request->param('limit', 10);
+        $date = $this->request->param('date', '');
+        $map = [
+            ['user_id', '=', $userInfo['id']],
+            ['caller_number', '<>', '']
+        ];
+
+        $start = strtotime($date);
+        if ($start) {
+            $end = $start + 86400 - 1;
+            $map[] = ['starttime', 'between', [$start, $end]];
+        }
+
+        $total = CallHistory::where($map)->count();
+        $historyList = CallHistory::where($map)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = '操作成功';
+        $this->returnData['data'] = $historyList->toArray();
+        $this->returnData['total'] = $total;
+        return json($this->returnData);
+    }
 }

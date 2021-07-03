@@ -15,12 +15,12 @@ class User extends ApiController
 
     public function login()
     {
-        if ($this->isLogin()) {
+        /*if ($this->isLogin()) {
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('You are already logged in');
             $this->returnData['data'] = Session::get('api_user');
             return json($this->returnData);
-        }
+        }*/
 
         if ($this->request->isPost()) {
             /*$check = $this->request->checkToken('__token__');
