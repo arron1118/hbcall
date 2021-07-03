@@ -92,6 +92,14 @@ class HbCall extends \app\common\controller\ApiController
             $map[] = ['starttime', 'between', [$start, $end]];
         }
 
+        if ($page <= 0) {
+            $page = 1;
+        }
+
+        if ($limit <= 0) {
+            $limit = 10;
+        }
+
         $total = CallHistory::where($map)->count();
         $historyList = CallHistory::where($map)->order('starttime DESC')->limit(($page - 1) * $limit, $limit)->select();
         $this->returnData['code'] = 1;
