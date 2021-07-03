@@ -7,6 +7,7 @@ namespace app\company\controller;
 use app\common\model\CallHistory;
 use app\common\model\User;
 use Curl\Curl;
+use think\facade\Config;
 use think\facade\Event;
 use think\facade\Session;
 use think\facade\Db;
@@ -47,7 +48,7 @@ class HbCall extends \app\common\controller\CompanyController
 
             $historyList = CallHistory::where('caller_number != ""')
                 ->where($map)
-                ->order('id DESC')
+                ->order('starttime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
 
@@ -71,7 +72,7 @@ class HbCall extends \app\common\controller\CompanyController
             return json(['data' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
         }
         $curl = new Curl();
-        $curl->post('http://call.hbosw.net/API/axbCallApi.aspx', [
+        $curl->post(Config::get('hbcall.call_api'), [
             'mobile' => $mobile,
             'axb_number' => Session::get('user.axb_number')
         ]);

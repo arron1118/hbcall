@@ -53,7 +53,7 @@ class HbCall extends \app\common\controller\HomeController
             }
 
             $total = CallHistory::where($map)->count();
-            $historyList = CallHistory::where($map)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $historyList = CallHistory::where($map)->order('starttime DESC, id DESC')->limit(($page - 1) * $limit, $limit)->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
     }
