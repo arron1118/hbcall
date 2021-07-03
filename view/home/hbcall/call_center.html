@@ -203,30 +203,59 @@
             }
 
             $.post('{:url("hbcall/makeCall")}', {mobile: number}, function (res) {
+                console.log('999');
                 console.log(res);
                 if (res.status) {
-                    layer.open(
+                   layer.config({
+                       extend: 'skin/blue.css',
+                   }).open(
                         {
-                            // title: '拨号成功',
-                            // content: '请在10秒内用手机拨打号码：' + res.data.axb_number+' 进行通话',
-                            // area:['50%','50%']
-                            type: 1
-                            ,title: false //不显示标题栏
+                             type: 1
+                            ,title: '拨号成功！' //不显示标题栏
                             ,closeBtn: false
                             ,area: '400px;'
                             ,shade: 0.8
                             ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
-                            ,btn: ['确认']
+                            //,btn: ['确认']
                             ,btnAlign: 'c'
                             ,moveType: 1 //拖拽模式，0或者1
-                            ,content: '<div style="padding: 50px; line-height: 30px; background-color: #393D49; color: #fff; font-weight: 300;"><i class="layui-icon layui-icon-ok me-2" style="font-size: 25px; color: #1E9FFF;"></i> 拨号成功<br><p>请在10秒内用手机拨打号码：<h3>'+res.data.axb_number+'</h3> 进行通话。</p></div>'
+                            // ,time:10000
+                            ,skin: 'layer-ext-blue'
+                            ,content: '<div style="padding: 50px; line-height: 30px; font-weight: 300;"><p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>'+res.data.axb_number+'</h3> 进行通话。</p></div>'
+                            ,success:function (layero, index) {
+                               // 10秒倒计时
+                                let t = 10;
+                                let time = document.getElementsByClassName("clock")[0];
+                                let getTime = function() {
+                                    t--;
+                                    time.innerHTML = t;
+                                    if(t < 0) {
+                                        clearInterval(inter);
+                                        // 关闭当前窗
+                                        layer.close(index);
+                                    }
+                                };
+                                let inter = setInterval(getTime, 1000);
 
-                        },
+                            }
+                },
                     );
+
                 } else {
-                    layer.open({
-                        title: res.info,
-                        content: res.data
+                    layer.config({
+                        extend: 'skin/red.css',
+                    }).open({
+                        title: res.info
+                        ,type: 1
+                        // ,closeBtn: true
+                        ,area: '400px;'
+                        ,shade: 0.8
+                        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+                        ,btnAlign: 'c'
+                        // ,btn: ['确认']
+                        ,moveType: 1 //拖拽模式，0或者1
+                        ,skin: 'layer-ext-blue'
+                        ,content: '<div style="padding: 50px; line-height: 30px; font-weight: 300;"><p><p>'+res.data+'</p></div>'
                     })
                 }
             });
