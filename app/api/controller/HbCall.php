@@ -63,6 +63,13 @@ class HbCall extends \app\common\controller\ApiController
         return json($this->returnData);
     }
 
+    /**
+     * 获取通话记录 (拨通号码的记录)
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function getHistoryList()
     {
         if (!$this->isLogin()) {
