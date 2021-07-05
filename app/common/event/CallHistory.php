@@ -35,6 +35,7 @@ class CallHistory
                         'subid' => $val['subid']
                     ]);
                     $response = json_decode($curl->response, true);
+
                     if (!is_null($response) && $response['status'] && !empty($response['data'])) {
                         if (!is_array($response['data'])) {
                             $response['data'] = json_decode($response['data'], true);

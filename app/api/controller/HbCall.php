@@ -118,6 +118,6 @@ class HbCall extends \app\common\controller\ApiController
     public function updateCallHistory()
     {
         Event::trigger('CallHistory');
-        return true;
+        return 'Done!';
     }
 }
