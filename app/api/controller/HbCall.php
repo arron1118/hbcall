@@ -32,6 +32,7 @@ class HbCall extends \app\common\controller\ApiController
         }
 
         $userInfo = $this->getUserInfo();
+        $userInfo = \app\common\model\User::find($userInfo['id']);
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [
             'mobile' => $mobile,

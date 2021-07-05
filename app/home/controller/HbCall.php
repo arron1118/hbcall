@@ -69,19 +69,20 @@ class HbCall extends \app\common\controller\HomeController
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
             return json(['data' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
         }
+        $userInfo = \app\common\model\User::find($this->userInfo['id']);
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [
             'mobile' => $mobile,
-            'axb_number' => $this->userInfo['axb_number']
+            'axb_number' => $userInfo['axb_number']
         ]);
         $response = json_decode($curl->response, true);
 
         if ($response['status']) {
             $CallHistory = new CallHistory();
-            $CallHistory->user_id = $this->userInfo['id'];
-            $CallHistory->username = $this->userInfo['username'];
-            $CallHistory->company_id = $this->userInfo['company_id'];
-            $CallHistory->company = Company::where(['id' => $this->userInfo['company_id']])->value('username');
+            $CallHistory->user_id = $userInfo['id'];
+            $CallHistory->username = $userInfo['username'];
+            $CallHistory->company_id = $userInfo['company_id'];
+            $CallHistory->company = Company::where(['id' => $userInfo['company_id']])->value('username');
             $CallHistory->subid = $response['data']['subid'];
             $CallHistory->axb_number = $response['data']['axb_number'];
             $CallHistory->called_number = $response['data']['mobile'];
