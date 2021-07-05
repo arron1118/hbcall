@@ -8,6 +8,7 @@ use app\common\model\CallHistory;
 use app\company\model\Company;
 use Curl\Curl;
 use think\facade\Config;
+use think\facade\Event;
 
 class HbCall extends \app\common\controller\ApiController
 {
@@ -47,6 +48,7 @@ class HbCall extends \app\common\controller\ApiController
             $CallHistory->subid = $response['data']['subid'];
             $CallHistory->axb_number = $response['data']['axb_number'];
             $CallHistory->called_number = $response['data']['mobile'];
+            $CallHistory->createtime = time();
             $CallHistory->save();
 
             $this->returnData['code'] = 1;
@@ -107,5 +109,14 @@ class HbCall extends \app\common\controller\ApiController
         $this->returnData['data'] = $historyList->visible(['id', 'called_number', 'starttime'])->toArray();
         $this->returnData['total'] = $total;
         return json($this->returnData);
+    }
+
+    /**
+     * 更新通话记录
+     */
+    public function updateCallHistory()
+    {
+        Event::trigger('CallHistory');
+        return true;
     }
 }

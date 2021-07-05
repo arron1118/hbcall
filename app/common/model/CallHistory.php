@@ -34,6 +34,11 @@ class CallHistory extends \think\Model
         return $value ? date($this->getDateFormat(), $value) : '-';
     }
 
+    public function getCreatetimeAttr($value)
+    {
+        return $value ? date($this->getDateFormat(), $value) : '-';
+    }
+
     public function user()
     {
         return $this->belongsTo(\app\common\model\User::class, 'user_id', 'id');

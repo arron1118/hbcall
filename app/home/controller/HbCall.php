@@ -85,6 +85,7 @@ class HbCall extends \app\common\controller\HomeController
             $CallHistory->subid = $response['data']['subid'];
             $CallHistory->axb_number = $response['data']['axb_number'];
             $CallHistory->called_number = $response['data']['mobile'];
+            $CallHistory->createtime = time();
             $CallHistory->save();
         }
 
