@@ -51,11 +51,12 @@ class Payment extends \app\common\controller\CompanyController
         foreach ($notalipay as $key => $value) {
             try {
                 $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
-                $paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
+                dump($data);
+                /*$paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
                 $paymentModel->pay_time = strtotime($data->send_pay_date);
                 $paymentModel->payment_no = $data->trade_no;
                 $paymentModel->status = 1;
-                $paymentModel->save();
+                $paymentModel->save();*/
             } catch (GatewayException $e) {
                 $response = $e->raw['alipay_trade_query_response'];
                 if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {

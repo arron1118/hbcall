@@ -30,4 +30,9 @@ class User extends \think\Model
     {
         return $this->belongsTo(\app\company\model\Company::class, 'company_id');
     }
+
+    public function axbNumber()
+    {
+        return $this->hasOne(\app\common\model\NumberStore::class);
+    }
 }

@@ -40,4 +40,9 @@ class Payment extends \think\Model
         return ['未支付', '已支付'];
     }
 
+    public function company()
+    {
+        return $this->belongsTo(\app\company\model\Company::class);
+    }
+
 }

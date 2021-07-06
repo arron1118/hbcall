@@ -5,6 +5,7 @@ namespace app\api\controller;
 
 
 use app\common\model\NumberStore;
+use app\company\model\Company;
 use think\db\exception\PDOException;
 
 class Util extends \app\common\controller\ApiController
@@ -55,6 +56,16 @@ class Util extends \app\common\controller\ApiController
         $content = array_unique($content);
 
         return json($content);
+    }
+
+    public function getPayments()
+    {
+        $company = Company::find(1);
+        $payments = $company->payments()->field('id,payno')->where('status', 1)->order('id DESC')->select();
+//        foreach ($pa)
+        dump($payments->toArray());
+        $users = $company->users;
+        dump($users->toArray());
     }
 
 }
