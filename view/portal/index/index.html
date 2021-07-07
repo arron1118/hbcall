@@ -1,0 +1,428 @@
+{extend name="public/base" /}
+{block name="content"}
+
+<!--     轮播 -->
+<div class="container-fluid mb-5 lqp-bgi">
+
+    <div id="carouselExampleDark" class="carousel carousel-dark slide lqp-carousel overflow-hidden h-100" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+<!--            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1"-->
+<!--                    aria-label="Slide 2"></button>-->
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev" style="left: -15%;transition: left 0.8s ease;">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next" style="right: -15%;transition: right 0.8s ease;">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+
+        <div class="carousel-inner">
+            <div class="carousel-item active h-100" data-bs-interval="3000">
+                <div class="container">
+                    <div class="row d-flex justify-content-between align-items-center">
+                        <img class="d-block order-lg-2" src="__STATIC__/images/product/slide.png" alt=""
+                             style="width: auto; height: auto; max-width: 100%;">
+                        <div class="position-relative mx-auto order-lg-1 h-100" style="max-width: 42rem; z-index: 10;">
+                            <div class="text-center text-lg-start text-lg-nowrap">
+                                <h2 class="text-light mb-3">喵头鹰呼叫中心方案</h2>
+                                <h5 class="text-light pb-3"><span class="lqp-line2">全新</span>合作模式 轻松打造自己品牌</h5>
+                                <p class="" style="color:rgb(125,189,252);">我们将协助您跨境出海通讯服务，打造海外客服服务、电话回访、
+                                    电话营销等场景服务！</p>
+                                <a class="btn btn-outline-light px-4 my-5 lqp-borderradius20" href="#">
+                                    查看详情
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--            <div class="carousel-item" data-bs-interval="6000">-->
+<!--                <div class="container">-->
+<!--                    <div class="row d-flex justify-content-between align-items-center">-->
+<!--                        <img class="d-block order-lg-2" src="__STATIC__/images/product/slide.png" alt=""-->
+<!--                             style="width: auto; height: auto; max-width: 100%;">-->
+<!--                        <div class="position-relative mx-auto order-lg-1" style="max-width: 42rem; z-index: 10;">-->
+<!--                            <div class="text-center text-lg-start text-lg-nowrap">-->
+<!--                                <h2 class="text-light mb-3">喵头鹰呼叫中心方案</h2>-->
+<!--                                <h5 class="text-light pb-3"><span class="lqp-line2">全新</span>合作模式 轻松打造自己品牌</h5>-->
+<!--                                <p class="" style="color:rgb(125,189,252);">我们将协助您跨境出海通讯服务，打造海外客服服务、电话回访、-->
+<!--                                    电话营销等场景服务！</p>-->
+<!--                                <a class="btn btn-outline-light px-4 my-5 lqp-borderradius20" href="#">-->
+<!--                                    查看详情-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+    </div>
+
+</div>
+<!--    cp -->
+<div class="container-fluid mb-5 pb-5">
+    <div class="container m-auto">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h3>聚焦用户、专注产品</h3>
+                <h6 class="text-muted my-4">我们基于用户的需求主导产品研发，提供丰富、安全、易用、灵活的云产品</h6>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 justify-content-around lqp-hovershadow">
+            <div class="col shadowitems">
+                <div class="card align-items-center py-5 border-0">
+                    <div class="my-2">
+                        <img src="__STATIC__/images/index/h1.png" alt="..."
+                             style="max-height: 80px;">
+                    </div>
+                    <div class="card-body text-center px-5">
+                        <h5 class="card-title "><span class="lqp-line">呼叫</span>中心</h5>
+                        <div style="min-height: 120px;">
+                            <p class="text-start text-muted my-4"> 专业客服型呼叫中心、平台稳定
+                                通话清晰、不占线、不漏接，全
+                                面提升客服工作效率、提高客户
+                                满意度。</p>
+                        </div>
+
+                        <a href="#" class="btn btn-outline-primary btn-sm d-grid lqp-borderradius20">查看详情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col shadowitems">
+                <div class="card align-items-center py-5  border-0">
+                    <div  class="my-2">
+                        <img src="__STATIC__/images/index/h2.png" alt="..."
+                             style="max-height: 80px;">
+                    </div>
+                    <div class="card-body text-center px-5">
+                        <h5 class="card-title"><span class="lqp-line">云电</span>销平台</h5>
+                        <div style="min-height: 120px;">
+                            <p class="text-start text-muted my-4"> 解决通讯资源、移动办公、客户
+                                数据管理、座席管理等 功能。
+                            </p>
+                        </div>
+                        <a href="#" class="btn btn-outline-primary btn-sm d-grid lqp-borderradius20">查看详情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col shadowitems">
+                <div class="card align-items-center py-5 border-0 ">
+                    <div class="my-2">
+                        <img src="__STATIC__/images/index/h3.png" alt="..."
+                             style="max-height: 80px;">
+                    </div>
+                    <div class="card-body text-center px-5">
+                        <h5 class="card-title"><span class="lqp-line">喵头</span>小号</h5>
+                        <div style="min-height: 120px;">
+                            <p class="text-start text-muted my-4"> 专业的号码隐私保护产品，提供
+                                AXB、AX两种模式。
+                            </p>
+                        </div>
+
+                        <a href="#" class="btn btn-outline-primary btn-sm d-grid lqp-borderradius20">查看详情</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col shadowitems">
+                <div class="card align-items-center py-5 border-0">
+                    <div class="my-2">
+                        <img src="__STATIC__/images/index/h4.png" alt="..."
+                             style="max-height: 80px;">
+                    </div>
+                    <div class="card-body text-center px-5">
+                        <h5 class="card-title"><span class="lqp-line">云通</span>信</h5>
+                        <div style="min-height: 120px;">
+                            <p class="text-start text-muted my-4"> 提供语音SDK、号码识别、隐号
+                                保护、语音通知等云通 信能力。
+                            </p>
+                        </div>
+
+                        <a href="#" class="btn btn-outline-primary btn-sm d-grid lqp-borderradius20">查看详情</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  fa   -->
+<div class="container-fluid mb-5 pb-5 bg-dark">
+    <div class="container m-auto">
+        <div class="row text-center py-5">
+            <div class="col-12">
+                <h3 class="text-light">行业解决方案</h3>
+                <h6 class="text-muted my-4">为各领域提供实质性的、有针对性的解决方案，提升商家服务能力、提升消费者体验和转化率</h6>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 lqp-latey pb-5">
+            <div class="col ">
+                <div class="card lateitem align-items-center d-flex flex-column justify-content-center align-items-center"
+                     style="background: url('__STATIC__/images/index/s11.png') no-repeat center; background-size: 100% 100%; height: 400px;">
+                    <div class="p-4" style="width: 160px; height: 160px;">
+                        <img src="__STATIC__/images/index/s1.png" alt="..."
+                             style="width: 100%; height: auto; max-height: 160px;">
+                    </div>
+                    <div class="lqp-line3 my-4"></div>
+                    <h5 class="text-light">呼叫解决方案</h5>
+                </div>
+            </div>
+            <div class="col ">
+                <div class="card lateitem align-items-center d-flex flex-column justify-content-center align-items-center"
+                     style="background: url('__STATIC__/images/index/s22.png') no-repeat center; background-size: 100% 100%; height: 400px;">
+                    <div class="p-4" style="width: 160px; height: 160px;">
+                        <img src="__STATIC__/images/index/s2.png" alt="..."
+                             style="width: 100%; height: auto; max-height: 160px;">
+                    </div>
+                    <div class="lqp-line3 my-4"></div>
+                    <h5 class="text-light">呼叫解决方案</h5>
+                </div>
+            </div>
+            <div class="col ">
+                <div class="card lateitem align-items-center d-flex flex-column justify-content-center align-items-center"
+                     style="background: url('__STATIC__/images/index/s11.png') no-repeat center; background-size: 100% 100%; height: 400px;">
+                    <div class="p-4" style="width: 160px; height: 160px;">
+                        <img src="__STATIC__/images/index/s1.png" alt="..."
+                             style="width: 100%; height: auto; max-height: 160px;">
+                    </div>
+                    <div class="lqp-line3 my-4"></div>
+                    <h5 class="text-light">呼叫解决方案</h5>
+                </div>
+            </div>
+            <div class="col ">
+                <div class="card lateitem align-items-center d-flex flex-column justify-content-center align-items-center"
+                     style="background: url('__STATIC__/images/index/s22.png') no-repeat center; background-size: 100% 100%; height: 400px;">
+                    <div class="p-4" style="width: 160px; height: 160px;">
+                        <img src="__STATIC__/images/index/s2.png" alt="..."
+                             style="width: 100%; height: auto; max-height: 160px;">
+                    </div>
+                    <div class="lqp-line3 my-4"></div>
+                    <h5 class="text-light ">呼叫解决方案</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--    dt-->
+<div class="container-fluid p-0 mb-5 py-5">
+    <div class="container m-auto customerBox">
+        <div class="row mb-5 text-center">
+            <div class="col-12">
+                <h3>汇邦动态</h3>
+                <h6 class="text-muted my-4">我们提供云端通讯接口，与行业系统无缝对接，共同打造一个完整的行业服务方案</h6>
+            </div>
+        </div>
+        <div class="row justify-content-center customerList overflow-hidden">
+            <!--             如果多于4个，则添加样式   row-cols-2 gy-5-->
+            <ul class="d-flex flex-row justify-content-between  py-4">
+                <li class="col-3 me-4" style="min-width: 250px;">
+                    <div class="shadow-lg px-0">
+                        <div class="card border-0">
+                            <div class="card-header border-0" style="min-height: 170px;">
+                                <img src="__STATIC__/images/index/dt.png" class="card-img-top" alt="..."
+                                     style="max-height: 155px;">
+                            </div>
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">
+                                    汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</h5>
+                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
+                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎...
+                                </div>
+                            </div>
+                            <div class="card-footer border">
+                                <ol class="ps-0">
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-3 me-4" style="min-width: 250px;">
+                    <div class="shadow-lg px-0">
+                        <div class="card border-0">
+                            <div class="card-header border-0" style="min-height: 170px;">
+                                <img src="__STATIC__/images/index/dt.png" class="card-img-top" alt="..."
+                                     style="max-height: 155px;">
+                            </div>
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">
+                                    汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</h5>
+                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
+                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎...
+                                </div>
+                            </div>
+                            <div class="card-footer border">
+                                <ol class="ps-0">
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-3 me-4" style="min-width: 250px;">
+                    <div class="shadow-lg px-0">
+                        <div class="card border-0">
+                            <div class="card-header border-0" style="min-height: 170px;">
+                                <img src="__STATIC__/images/index/dt.png" class="card-img-top" alt="..."
+                                     style="max-height: 155px;">
+                            </div>
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">
+                                    汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</h5>
+                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
+                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎...
+                                </div>
+                            </div>
+                            <div class="card-footer border">
+                                <ol class="ps-0">
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-3 me-4" style="min-width: 250px;">
+                    <div class="shadow-lg px-0">
+                        <div class="card border-0">
+                            <div class="card-header border-0" style="min-height: 170px;">
+                                <img src="__STATIC__/images/index/dt.png" class="card-img-top" alt="..."
+                                     style="max-height: 155px;">
+                            </div>
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">
+                                    汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</h5>
+                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
+                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎...
+                                </div>
+                            </div>
+                            <div class="card-footer border">
+                                <ol class="ps-0">
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-3 me-4" style="min-width: 250px;">
+                    <div class="shadow-lg px-0">
+                        <div class="card border-0">
+                            <div class="card-header border-0" style="min-height: 170px;">
+                                <img src="__STATIC__/images/index/dt.png" class="card-img-top" alt="..."
+                                     style="max-height: 155px;">
+                            </div>
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">
+                                    汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</h5>
+                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
+                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎...
+                                </div>
+                            </div>
+                            <div class="card-footer border">
+                                <ol class="ps-0">
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="col-3 me-4" style="min-width: 250px;">
+                    <div class="shadow-lg px-0">
+                        <div class="card border-0">
+                            <div class="card-header border-0" style="min-height: 170px;">
+                                <img src="__STATIC__/images/index/dt.png" class="card-img-top" alt="..."
+                                     style="max-height: 155px;">
+                            </div>
+                            <div class="card-body text-start">
+                                <h5 class="card-title text-truncate">
+                                    汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</h5>
+                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
+                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎汇邦猎头人才管理系统是东莞汇邦软件科技有
+                                    限公司开发的一款满足猎头公司和人力资源服
+                                    务企业日常管理、人才、客户管理、猎...
+                                </div>
+                            </div>
+                            <div class="card-footer border">
+                                <ol class="ps-0">
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                    <li class="text-truncate pb-2">
+                                        【2021-02-20】汇邦CRM客户管理软件—汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...汇邦CRM客户管理软件—...
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    $(".customerBox").slide({
+        mainCell: ".customerList ul",
+        autoPlay: true,
+        effect: "leftMarquee",
+        vis: 5,
+        interTime: 50,
+        trigger: "click"
+    });
+    //vis:5 当数量=5||>5的时候才滚动
+
+</script>
+{/block}

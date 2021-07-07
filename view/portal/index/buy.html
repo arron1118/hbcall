@@ -1,0 +1,129 @@
+{extend name="public/base" /}
+
+{block name="css"}
+
+{/block}
+
+{block name="content"}
+
+<div class="container-fluid mb-5" style="background: url('__STATIC__/images/buy/slide.png') no-repeat center;">
+    <div class="container">
+        <div class="row d-flex justify-content-between align-items-center" style="min-height: 700px;">
+            <div class="position-relative mx-auto text-light text-center">
+                <h3><img src="__STATIC__/images/buy/right.png" style="width: auto;height: auto;"><span class="px-5 text-nowrap">购买资源中心</span><img
+                        src="__STATIC__/images/buy/left.png"></h3>
+                <h6 class="text-white-50 mb-4">TA们与汇邦的成功故事</h6>
+                <img src="__STATIC__/images/buy/s1.png" class="mx-3"
+                     style="width: auto; height: auto; max-width: 120px;max-height: 120px;">
+                <img src="__STATIC__/images/buy/s2.png" class="mx-3"
+                     style="width: auto; height: auto; max-width: 113px;max-height: 113px;">
+                <img src="__STATIC__/images/buy/s3.png" class="mx-3"
+                     style="width: auto; height: auto; max-width: 120px;max-height: 120px;">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid  lqp-bg  pb-5">
+    <div class="container-xxl pt-4">
+        <div class="row my-5 text-center">
+            <div class="col-12">
+                <h3><span class="text-primary">购买&amp;</span>试用</h3>
+                <h6 class="text-muted my-4">提交资料成功后，我们将会第一时间和您取得联系，感谢您的支持和理解</h6>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 mb-5 pb-5">
+            <div class="col">
+                <img src="__STATIC__/images/buy/b1.png" class="img-fluid" style="max-height: 320px;">
+            </div>
+            <div class="col px-5">
+                <h4 class="mb-4 text-nowrap mt-4 fw-bold">汇邦CRM系统：喵头鹰</h4>
+                <div class="d-flex flex-row mb-3 text-muted">
+                    <div class="me-4" >
+                        <h6 class="">软件类型：<span class="fw-bold text-dark ">国产软件</span>
+                        </h6>
+                    </div>
+                    <div class="">
+                        <h6 class="">授权方式：<span class="fw-bold text-dark ">共享软件</span>
+                        </h6>
+                    </div>
+                </div>
+                <h6 class="text-muted mb-5">汇邦猎头人才管理系统是东莞汇邦软件科技有限公
+                    司开发的一款满足猎头公司和人力资源服务企业日
+                    常管理、人才、客户管理、猎头项目管理、业绩管
+                    理的一体化猎头公司管理系统。</h6>
+                <div class="d-flex flex-row">
+                    <div class="me-4" >
+                        <a href="#" class="btn btn-success text-nowrap">
+                            <img src="__STATIC__/images/buy/w.png" class="pe-1" style="max-height: 20px;"/>微信支付</a>
+                    </div>
+                    <div class="">
+                        <a href="#" class="btn btn-primary text-nowrap">
+                            <img src="__STATIC__/images/buy/z.png" class="pe-1" style="max-height: 20px;"/>支付宝支付</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form name="applyForm" action="" method="post">
+<!--                 action="/index/send_apply" method="post"   -->
+                    <div class="row row-cols-1 row-cols-md-2 mb-4 pt-4 ">
+                        <div class="col px-5 mb-4 border-end">
+                            <h5 class="mb-5 text-center lqp-line1">基础信息(必填)</h5>
+                            <div class="mb-3">
+                                <label for="company" class="form-label">公司名称<i
+                                        class="bi bi-asterisk ms-2 text-danger"></i></label>
+                                <input type="text" class="form-control lqp-font14" id="company"
+                                       placeholder="您你公司的完整名称" name="mc" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label for="yourname" class="form-label">您的姓名<i
+                                        class="bi bi-asterisk ms-2 text-danger"></i></label>
+                                <input type="text" class="form-control lqp-font14" id="yourname"
+                                       placeholder="让我们知道沟通中对您的称谓" name="mz" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label for="tel" class="form-label">联系电话<i
+                                        class="bi bi-asterisk ms-2 text-danger"></i></label>
+                                <input type="text" class="form-control lqp-font14" id="tel"
+                                       placeholder="最直接交流的渠道，最及时的通知" name="sj" vlaue="">
+                            </div>
+                        </div>
+                        <div class="col px-5">
+                            <h5 class="mb-5 text-center lqp-line1">详细信息(选填)</h5>
+                            <div class="mb-3">
+                                <label for="scale" class="form-label text-start">公司规模</label>
+                                <input type="text" class="form-control lqp-font14" id="scale"
+                                       placeholder="方便我们为您推荐最适合的产品" name="gm" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">您的地址</label>
+                                <input type="text" class="form-control lqp-font14" id="address"
+                                       placeholder="如果可以，希望能为您上门安装" name="add" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">邮箱或qq号</label>
+                                <input type="text" class="form-control lqp-font14" id="email"
+                                       placeholder="更多优惠和方案可以发送给您" name="em" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center my-5">
+                        <div class="col-12">
+                            <a class="btn btn-primary btn-lg px-5 apply">申请试用</a>
+<!--                            <a class="btn btn-primary btn-sm apply">申请试用</a>-->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{/block}
+
+
+{block name="js"}
+{/block}
+
