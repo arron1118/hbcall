@@ -26,13 +26,14 @@ class HbCall extends \app\common\controller\CompanyController
          * 获取通话记录  暂时放在这里，后期用定时任务实现
          */
 //        Event::trigger('CallHistory');
+        $ch = CallHistory::find(1)->bindAttr('user', ['loginip']);
+        dump($ch->toArray());
 
         return $this->view->fetch('hbcall/history_list');
     }
 
     public function getHistoryList()
     {
-
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
@@ -53,8 +54,10 @@ class HbCall extends \app\common\controller\CompanyController
                 ->select();
 
             foreach ($historyList as $val) {
-                $val->username = User::where(['id' => $val->user_id])->value('username');
+//                $val->username = User::where(['id' => $val->user_id])->value('username');
+                $val->bindAttr('user', ['username']);
             }
+
 
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }

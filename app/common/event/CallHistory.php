@@ -69,7 +69,9 @@ class CallHistory
             }
 
 //            dump($news);
-            $HistoryModel->saveAll($news);
+            if (!empty($news)) {
+                $HistoryModel->saveAll($news);
+            }
         }
     }
 

@@ -41,7 +41,7 @@ class CallHistory extends \think\Model
 
     public function user()
     {
-        return $this->belongsTo(\app\common\model\User::class, 'user_id', 'id');
+        return $this->belongsTo(\app\common\model\User::class);
     }
 
     public function company()

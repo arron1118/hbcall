@@ -4,8 +4,10 @@
 namespace app\company\controller;
 
 use chillerlan\QRCode\QRCode;
+use think\Collection;
 use think\facade\Config;
 use think\facade\Session;
+use think\response\Json;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Exceptions\GatewayException;
 
@@ -41,6 +43,8 @@ class Payment extends \app\common\controller\CompanyController
                 $paymentModel->payment_no = $data->transaction_id;
                 $paymentModel->status = 1;
                 $paymentModel->save();
+
+
             }
         }
 
@@ -51,12 +55,13 @@ class Payment extends \app\common\controller\CompanyController
         foreach ($notalipay as $key => $value) {
             try {
                 $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
-                dump($data);
-                /*$paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
-                $paymentModel->pay_time = strtotime($data->send_pay_date);
-                $paymentModel->payment_no = $data->trade_no;
-                $paymentModel->status = 1;
-                $paymentModel->save();*/
+                if ($data->trade_status === 'TRADE_SUCCESS') {
+                    $paymentModel = $this->model->where('payno', $data->out_trade_no)->find();
+                    $paymentModel->pay_time = strtotime($data->send_pay_date);
+                    $paymentModel->payment_no = $data->trade_no;
+                    $paymentModel->status = 1;
+                    $paymentModel->save();
+                }
             } catch (GatewayException $e) {
                 $response = $e->raw['alipay_trade_query_response'];
                 if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {
@@ -167,7 +172,7 @@ class Payment extends \app\common\controller\CompanyController
             'subject' => '喵头鹰呼叫系统 - ' . $title,
         ];
 
-        $alipay = Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
+        return Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
 //        dump($alipay);
     }
 

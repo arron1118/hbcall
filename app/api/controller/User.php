@@ -9,8 +9,8 @@ class User extends ApiController
 {
     public function index()
     {
-        dump($this->getUserInfo());
-        dump($this->isLogin());
+//        dump($this->getUserInfo());
+//        dump($this->isLogin());
     }
 
     public function login()
