@@ -137,7 +137,7 @@
                 if ($.trim(item.value) !== '') {
                     // 正则
                     function code(phone) {
-                        let telVerify = /^1[0-9]{10}$/;
+                        let telVerify = /^1[3456789]{1}\d{9}$/;
                         return telVerify.test(phone)
                     }
                     // 手机格式验证
