@@ -15,28 +15,39 @@ class Index extends \app\common\controller\PortalController
     {
         return $this->view->fetch();
     }
+
     public function cooperate()
     {
         return $this->view->fetch();
     }
+
     public function solution()
     {
         return $this->view->fetch();
     }
+
     public function case()
     {
         return $this->view->fetch();
     }
+
     public function news()
     {
         return $this->view->fetch();
     }
+
     public function about()
     {
         return $this->view->fetch();
     }
+
     public function buy()
     {
         return $this->view->fetch();
+    }
+
+    public function test()
+    {
+        return 'Test';
     }
 }

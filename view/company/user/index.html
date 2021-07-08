@@ -58,7 +58,7 @@
 
         table.render({
             elem: '#currentTableId',
-            url: '{:url("user/getUserList")}',
+            url: '{:url("/user/getUserList")}',
             id: 'userTable',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -122,7 +122,7 @@
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '{:url("user/add")}',
+                    content: '{:url("/user/add")}',
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
@@ -161,7 +161,7 @@
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '{:url("user/edit")}',
+                    content: '{:url("/user/edit")}',
                 });
                 $(window).on("resize", function () {
                     layer.full(index);

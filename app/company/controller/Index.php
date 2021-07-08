@@ -59,7 +59,7 @@ class Index extends CompanyController
 
             Session::set('company', $user->toArray());
 
-            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/company')]);
+            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/')]);
         }
         return $this->view->fetch();
     }
@@ -67,7 +67,7 @@ class Index extends CompanyController
     public function logout()
     {
         Session::delete('company');
-        return redirect('/company');
+        return redirect('/index/login');
     }
 
 }

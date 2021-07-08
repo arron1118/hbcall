@@ -1,11 +1,11 @@
 {
   "homeInfo": {
     "title": "控制台",
-    "href": "company/index/dashboard.html"
+    "href": "index/dashboard.html"
   },
   "logoInfo": {
     "title": "",
-    "image": "static/images/logo1.png",
+    "image": "/static/images/logo1.png",
     "href": ""
   },
   "menuInfo": [
@@ -17,25 +17,25 @@
       "child": [
         {
           "title": "控制台",
-          "href": "company/index/dashboard.html",
+          "href": "index/dashboard.html",
           "icon": "fa fa-tachometer-alt",
           "target": "_self"
         },
         {
           "title": "用户管理",
-          "href": "company/user/index.html",
+          "href": "user/index.html",
           "icon": "fa fa-users",
           "target": "_self"
         },
         {
           "title": "通话记录",
-          "href": "company/hbcall/CallHistoryList.html",
+          "href": "hbcall/CallHistoryList.html",
           "icon": "fa fa-clock",
           "target": "_self"
         },
         {
           "title": "充值管理",
-          "href": "company/payment/index.html",
+          "href": "payment/index.html",
           "icon": "fa fa-yen-sign",
           "target": "_self"
         }
