@@ -130,7 +130,36 @@
     // 申请试用
     $('.apply').on('click', function () {
         let paramsData = $(this).closest('form[name="applyForm"]').serializeArray();
-        getAjax(paramsData);
+        let flag = false;
+        console.log(paramsData);
+        $(paramsData).each(function (index,item) {
+            if (['mc', 'mz', 'sj','em'].includes(item.name)) {
+                if ($.trim(item.value) !== '') {
+                    // 正则
+                    function code(phone) {
+                        let telVerify = /^1[0-9]{10}$/;
+                        return telVerify.test(phone)
+                    }
+                    // 手机格式验证
+                    if(item.name === "sj"){
+                      if(!code(item.value)){
+                          layer.msg('手机格式不正确！')
+                          return false;
+                      }else{
+                          flag = true;
+                      }
+                    }
+                    // flag = true;
+                } else {
+                    flag = false;
+                    layer.msg('必填项不能为空！');
+                    return false;
+                }
+            }
+        });
+        if (flag) {
+            getAjax(paramsData);
+        }
     });
     let getAjax = function (p) {
         $.ajax({
@@ -154,8 +183,14 @@
             },
             statusCode:{
                 200:function () {
-                    layer.msg('申请成功!');
-
+                    layer.msg('申请成功!',function () {
+                        let a = $('form[name="applyForm"]');
+                              for(let i=0; i<a.length; i++){
+                                  $(a)[i].reset();
+                              }
+                        // $('#myform').reset()   这样是错误的 JQuery中没有reset方法
+                        // 需要转成dom 再用reset方法即 $('#myform')[0].reset()
+                    });
                 }
             }
         })
