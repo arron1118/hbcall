@@ -26,7 +26,8 @@ class PortalController extends \app\BaseController
 
         $this->view = View::instance();
 
-        $this->userInfo = Session::get('user');
+        // 用户登录状态
+        $this->userInfo = $this->getUserInfo();
         $this->view->assign('user', $this->userInfo);
     }
 

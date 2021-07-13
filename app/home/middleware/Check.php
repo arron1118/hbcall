@@ -12,7 +12,7 @@ class Check
     public function handle($request, \Closure $next)
     {
         if (!Session::has('user') && $request->action() !== 'login') {
-            return redirect(url('home/index/login'));
+            return redirect(url('/index/login'));
         }
 
         return $next($request);

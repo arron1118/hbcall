@@ -1,85 +1,52 @@
 {extend name="public/base" /}
 {block name="css"}
 {include file="public/bootstrap" /}
+<style type="text/css">
+    #phone-numbers span:active {
+        background-color: blue;
+    }
+</style>
 {/block}
 {block name="body"}
 <div class="layuimini-container">
     <div class="layuimini-main">
         <div class="container-fluid">
-            <div class="row  fs-4 text-danger my-5 justify-content-center">
+            <!--<div class="row  fs-4 text-danger my-5 justify-content-center">
                 呼叫中心
-            </div>
-            <div class="row mt-5">
-                <div class="col-7 offset-1">
-                    <div class="row">
-                        <div class="col-6 ms-5">
-                            <div class="row justify-content-center">
-                                <div class="col">
-                                    <blockquote class="layui-elem-quote">
-                                        温馨小提示
-                                    </blockquote>
-                                    <ol class="ps-0">
-                                        <li><span class="layui-badge-dot me-2"></span> 只允许拨打本公司业务电话，不允许拨打其他行业电话。</li>
-                                        <li><span class="layui-badge-dot me-2"></span> 拨号当中不允许出现：金融、地产相关高频行业。</li>
-                                        <li><span class="layui-badge-dot me-2"></span> 通话中不允许出现：代开发票、造假等违法字眼。</li>
-                                        <li><span class="layui-badge-dot me-2"></span> 不允许在通话中辱骂。</li>
-                                    </ol>
-
+            </div>-->
+            <div class="row mt-5 justify-content-center">
+                <div class="col-sm-12 col-lg-10 col-xl-7">
+                    <div class="row justify-content-center mb-5">
+                        <div class="col-md-8 col-sm-12 col-lg-6">
+                            <div class="callout callout-info mt-0">
+                                <h4>温馨提示</h4>
+                                <div class="row">
+                                    <div class="col py-3">
+                                        <ol class="list-group list-group-numbered">
+                                            <li class="list-group-item border-0">只允许拨打本公司业务电话，不允许拨打其他行业电话。</li>
+                                            <li class="list-group-item border-0">拨号当中不允许出现：金融、地产相关高频行业。</li>
+                                            <li class="list-group-item border-0">通话中不允许出现：代开发票、造假等违法字眼。</li>
+                                            <li class="list-group-item border-0">不允许在通话中辱骂。</li>
+                                        </ol>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-4">
-                            <div class="row mb-3" style="background-color: #f4f4f4;">
-                                <input type="text" name="phone" value=""
-                                       class="layui-input callinginput fs-1 border-0 text-center py-5" id="input" onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''"
-                                       style="height: 90px;line-height:90px;background-color: #f4f4f4;" >
-                            </div>
-                            <div class="row row-cols-3 gy-3  pb-4 justify-content-center mb-5" style="background-color: #f4f4f4;">
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="1">1</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="2">2</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="3">3</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="4">4</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="5">5</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="6">6</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="7">7</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="8">8</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style"  data-value="9">9</span>
-                                </div>
-                                <div class="col text-center mb-2">
-                                    <span class="badge rounded-pill fs-4 text-reset cursor" style="background-color: #e4e4e4; width:60px;height: 60px; line-height: 50px;" data-value="0">*</span>
-                                </div>
-                                <div class="col text-center mb-2">
-                                    <span class="badge rounded-pill  lqp-btn fs-4 text-reset cursor btn-style" data-value="0">0</span>
-                                </div>
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-empyt fs-3 text-reset cursor" style="background-color: #e4e4e4; line-height: 40px;">
-                                        <i class="fa fa-backspace text-sm-center small"></i>
-                                    </span>
-                                </div>
+                        <div class="col-md-8 col-sm-12 col-lg-6 ">
+                            <div class="row pb-3" style="background-color: #f4f4f4;">
+                                <div class="col">
+                                    <div class="row ">
+                                        <div class="col p-0">
+                                            <input type="text" name="phone" value=""
+                                                   placeholder="请输入号码"
+                                                   class="w-100 callinginput fs-1 border-0 text-center py-5 bg-transparent" id="input"
+                                                   onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''">
+                                        </div>
+                                    </div>
 
-                                <div class="col text-center">
-                                    <span class="badge rounded-pill  lqp-oncalling fs-3  cursor" style="background-color: #0856f6; width: 60px; height: 60px; line-height: 40px;">
-                                        <i class="fa fa-phone"></i>
-                                    </span>
+                                    <!-- 拨号键 -->
+                                    <div class="row row-cols-3 gy-5 py-4 justify-content-center fs-1" id="phone-numbers"></div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -128,25 +95,80 @@
             }
         }
 
-        //鼠标过手
-        $('.cursor').hover(function () {
-            $(this).css({cursor:'pointer'});
-        });
-        $('.btn-style').css({"background-color": '#e4e4e4',width: '60px',height: '60px', "line-height": '40px'})
 
         // 输入框获取焦点
-       let inputFocus = function () {
+        let inputFocus = function () {
             $("#input").focus();
         };
         inputFocus();
 
         let callinginput = $('.callinginput');
-        // 按页面
-        $('.lqp-btn').on('click', function () {
-            if (callinginput.val().length < 11) {
-                callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
-            }
-        });
+        // 生成拨号按键
+        let btnSize = 4;    // 按键大小 单位：1rem = 16px
+        let buildPhoneNumber = function () {
+              let phoneNumbersDiv = $('#phone-numbers');
+              let isPhoneIcon = false;
+              let cssClass = 'align-middle cursor rounded-circle  d-inline-block';
+              let css = {width: btnSize + 'rem', height: btnSize + 'rem', 'line-height': btnSize + 'rem', cursor: 'pointer', backgroundColor: "rgb(228, 228, 228)"};
+              for (let i = 1; i < 14; i++) {
+                  let col = $('<div />', {
+                      class: 'col text-center'
+                  });
+                  let text = i;
+
+                  // * 键
+                  if (i === 10) {
+                      text = `<i class="fa fa-asterisk"></i>`
+                      col.append($('<span />', {
+                          class: cssClass + ' fs-4'
+                      }).css(css).html(text));
+                  }
+
+                  if (i === 11) {
+                      text = 0;
+                  }
+
+                  // 删除键
+                  if (i === 12) {
+                      text = `<i class="fa fa-backspace text-sm-center small"></i>`;
+                      col.append($('<span />', {
+                          class: cssClass + ' fs-3'
+                      }).css(css).html(text).on('click', function (e) {
+                          callinginput.val('');
+                          inputFocus();
+                      }));
+                  }
+
+                  // 拨号键
+                  if (i === 13) {
+                      isPhoneIcon = true;
+                      text = `<i class="fa fa-phone"></i>`;
+                      css.backgroundColor = 'rgb(8, 86, 246)';
+                      css.color = '#fff';
+                      col.append($('<span />', {
+                          class: cssClass + ' fs-2'
+                      }).css(css).html(text).on('click', function (e) {
+                          makeCall();
+                      }));
+                  } else {
+                      isPhoneIcon = false;
+                  }
+
+                  if (Number.isFinite(text)) {
+                      col.append($('<span />', {
+                          class: cssClass,
+                          'data-value': text
+                      }).css(css).html(text).on('click', function (e) {
+                          if (callinginput.val().length < 11) {
+                              callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
+                          }
+                      }));
+                  }
+
+                  phoneNumbersDiv.append(col);
+              }
+        };
+        buildPhoneNumber();
 
         callinginput.on('keydown', function (e) {
             // e.preventDefault();
@@ -176,86 +198,75 @@
             }
         });*/
 
-        // 清空输入框
-        $('.lqp-empyt').on('click', function () {
-            callinginput = $('.callinginput').val('');
-            inputFocus();
-        });
-
-        // 拨打
-        $('.lqp-oncalling').on('click', function () {
-            makeCall();
-        });
-
         //验证输入的是数字
         function isPhoneNo(phone) {
-            let pattern = /^1\d{10}$/;
+            let pattern = /^1[345789]\d{9}$/;
             return pattern.test(phone);
         }
 
         let makeCall = function () {
             let number = callinginput.val();
-            console.log(number);
 
             if (number.length < 11 || !isPhoneNo(number)) {
                 layer.msg('请输入正确的号码', {icon: 2});
                 return false;
             }
 
-            $.post('{:url("hbcall/makeCall")}', {mobile: number}, function (res) {
-                console.log('999');
-                console.log(res);
+            $.post('{:url("/hbcall/makeCall")}', {mobile: number}, function (res) {
                 if (res.status) {
-                   layer.config({
-                       extend: 'skin/blue.css',
-                   }).open(
-                        {
-                             type: 1
-                            ,title: '拨号成功！' //不显示标题栏
-                            ,closeBtn: false
-                            ,area: '400px;'
-                            ,shade: 0.8
-                            ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
-                            //,btn: ['确认']
-                            ,btnAlign: 'c'
-                            ,moveType: 1 //拖拽模式，0或者1
-                            // ,time:10000
-                            ,skin: 'layer-ext-blue'
-                            ,content: '<div style="padding: 50px; line-height: 30px; font-weight: 300;"><p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>'+res.data.axb_number+'</h3> 进行通话。</p></div>'
-                            ,success:function (layero, index) {
-                               // 10秒倒计时
-                                let t = 10;
-                                let time = document.getElementsByClassName("clock")[0];
-                                let getTime = function() {
-                                    t--;
-                                    time.innerHTML = t;
-                                    if(t < 0) {
-                                        clearInterval(inter);
-                                        // 关闭当前窗
-                                        layer.close(index);
-                                    }
-                                };
-                                let inter = setInterval(getTime, 1000);
+                    let con = `
+                            <div style="padding: 50px; line-height: 30px; font-weight: 300;">
+                                <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${res.data.axb_number}</h3> 进行通话。</p>
+                            </div>
+                        `;
+                    layer.config({
+                        extend: 'skin/blue.css',
+                    }).open({
+                        type: 1,
+                        title: '拨号成功！',
+                        closeBtn: false,
+                        area: '400px;',
+                        shade: 0.8,
+                        id: 'LAY_layuipro',
+                        btnAlign: 'c',
+                        moveType: 1,
+                        skin: 'layer-ext-blue',
+                        content: con,
+                        success: function (layero, index) {
+                            // 10秒倒计时
+                            let t = 10;
+                            let time = document.getElementsByClassName("clock")[0];
+                            let getTime = function () {
+                                t--;
+                                time.innerHTML = t;
+                                if (t < 0) {
+                                    clearInterval(inter);
+                                    // 关闭当前窗
+                                    layer.close(index);
+                                }
+                            };
 
-                            }
-                },
-                    );
-
+                            let inter = setInterval(getTime, 1000);
+                        }
+                    });
                 } else {
+                    let con = `
+                        <div style="padding: 50px; line-height: 30px; font-weight: 300;">
+                            <p>${res.data}</p>
+                        </div>
+                    `;
                     layer.config({
                         extend: 'skin/red.css',
                     }).open({
-                        title: res.info
-                        ,type: 1
-                        // ,closeBtn: true
-                        ,area: '400px;'
-                        ,shade: 0.8
-                        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
-                        ,btnAlign: 'c'
-                        // ,btn: ['确认']
-                        ,moveType: 1 //拖拽模式，0或者1
-                        ,skin: 'layer-ext-blue'
-                        ,content: '<div style="padding: 50px; line-height: 30px; font-weight: 300;"><p><p>'+res.data+'</p></div>'
+                        title: res.info,
+                        type: 1,
+                        area: '400px',
+                        shade: 0.8,
+                        id: 'LAY_layuipro',
+                        btnAlign: 'c',
+                        moveType: 1,
+                        skin: 'layer-ext-blue',
+                        content: con
                     })
                 }
             });

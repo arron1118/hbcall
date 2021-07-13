@@ -22,7 +22,7 @@ class Index extends CompanyController
     public function login()
     {
         if (Session::has('company')) {
-            return redirect(url('/company'));
+            return redirect(url('/index'));
         }
 
         if ($this->request->isPost()) {
@@ -59,7 +59,7 @@ class Index extends CompanyController
 
             Session::set('company', $user->toArray());
 
-            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/')]);
+            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/index')]);
         }
         return $this->view->fetch();
     }
@@ -67,7 +67,7 @@ class Index extends CompanyController
     public function logout()
     {
         Session::delete('company');
-        return redirect('/index/login');
+        return redirect((string) url('/index/login'));
     }
 
 }

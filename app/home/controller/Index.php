@@ -17,7 +17,7 @@ class Index extends HomeController
     public function login()
     {
         if ($this->isLogin()) {
-            return redirect('/');
+            return redirect((string) url('/index'));
         }
 
         if ($this->request->isPost()) {
@@ -60,7 +60,7 @@ class Index extends HomeController
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('Logined');
-            $this->returnData['url'] = (string)url('/');
+            $this->returnData['url'] = (string)url('/index');
             return json($this->returnData);
         }
         return $this->view->fetch();
@@ -69,7 +69,7 @@ class Index extends HomeController
     public function logout()
     {
         Session::delete('user');
-        return redirect('/');
+        return redirect((string) url('/index'));
     }
 
     // 生成用户

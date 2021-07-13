@@ -12,7 +12,11 @@
                 <li class="order-2 ps-5">
                     <div class="position-relative border border-primary px-4 py-2 px-4 lqp-borderradius20">
                         <ul class="d-flex flex-row p-0 m-0 justify-content-between">
-                            <li class="text-nowrap "><a class="text-light stretched-link" target="_blank" href="{:url('home/index/login')}">登录</a></li>
+                            {if is_null($user)}
+                            <li class="text-nowrap "><a class="text-light stretched-link" target="_blank" href="home.php{:url('/index/login')}">登录</a></li>
+                            {else /}
+                            <li class="text-nowrap "><a class="text-light stretched-link" target="_blank" href="home.php{:url('/index')}">控制中心</a></li>
+                            {/if}
 <!--                            <li class="text-nowrap"><a href="./register.html">注册</a></li>-->
                         </ul>
                     </div>

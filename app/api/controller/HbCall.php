@@ -19,6 +19,7 @@ class HbCall extends \app\common\controller\ApiController
     public function makeCall()
     {
         if (!$this->isLogin()) {
+            $this->returnData['code'] = 2;
             $this->returnData['msg'] = '权限不足：未登录';
             return json($this->returnData);
         }

@@ -64,7 +64,7 @@
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            $.post('{:url("")}', data.field, function (res) {
+            $.post('{:url("/user/profile")}', data.field, function (res) {
                 if (res.code) {
                     layer.msg(res.msg, {icon: 6});
                 } else {

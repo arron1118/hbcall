@@ -11,7 +11,7 @@
 
     let navInit = function () {
         // 配置文件
-        let menuUrl = prefix + '/static/js/menu.json';
+        let menuUrl = prefix + '/static/api/portalMenu.json';
 
         let url = window.location.href;//获取浏览器地址
         let res = url.lastIndexOf("\/");
@@ -131,9 +131,9 @@
     $('.apply').on('click', function () {
         let paramsData = $(this).closest('form[name="applyForm"]').serializeArray();
         let flag = false;
-        console.log(paramsData);
+        // console.log(paramsData);
         $(paramsData).each(function (index,item) {
-            if (['mc', 'mz', 'sj','em'].includes(item.name)) {
+            if (['mc', 'mz', 'sj', 'em'].includes(item.name)) {
                 if ($.trim(item.value) !== '') {
                     // 正则
                     function code(phone) {

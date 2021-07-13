@@ -2,14 +2,14 @@
   "logoImg": [
     {
       "src": "/assets/img/logo.png",
-      "href": "index.html"
+      "href": "/index.html"
     }
   ],
   "menuClass": "nav-link ",
   "menuList": [
     {
       "id": 1,
-      "href": "index.html",
+      "href": "/index.html",
       "title": "首页",
       "name": "index",
       "class": "",
@@ -18,7 +18,7 @@
     },
     {
       "id": 2,
-      "href": "product.html",
+      "href": "/product.html",
       "title": "产品",
       "name": "product",
       "class": "",
@@ -27,7 +27,7 @@
     },
     {
       "id": 3,
-      "href": "cooperate.html",
+      "href": "/cooperate.html",
       "title": "伙伴",
       "name": "cooperate",
       "class": "",
@@ -36,7 +36,7 @@
     },
     {
       "id": 4,
-      "href": "solution.html",
+      "href": "/solution.html",
       "title": "方案",
       "name": "solution",
       "class": "",
@@ -45,7 +45,7 @@
     },
     {
       "id": 5,
-      "href": "case.html",
+      "href": "/case.html",
       "title": "案例",
       "name": "case",
       "class": "",
@@ -54,7 +54,7 @@
     },
     {
       "id": 6,
-      "href": "news.html",
+      "href": "/news.html",
       "title": "资讯",
       "name": "news",
       "class": "",
@@ -63,7 +63,7 @@
     },
     {
       "id": 7,
-      "href": "about.html",
+      "href": "/about.html",
       "title": "关于",
       "name": "about",
       "class": "",
@@ -72,7 +72,7 @@
     },
     {
       "id": 8,
-      "href": "buy.html",
+      "href": "/buy.html",
       "title": "购买&试用",
       "name": "buy",
       "class": "",
