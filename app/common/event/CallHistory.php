@@ -34,9 +34,11 @@ class CallHistory
                     $curl->post(Config::get('hbcall.record_api'), [
                         'subid' => $val['subid']
                     ]);
+
                     $response = json_decode($curl->response, true);
 
                     if (!is_null($response) && $response['status'] && !empty($response['data'])) {
+//                        dump($response);
                         if (!is_array($response['data'])) {
                             $response['data'] = json_decode($response['data'], true);
                         }

@@ -1,0 +1,212 @@
+{extend name="public/base" /}
+{block name="css"}
+<style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden
+    }
+
+    body {
+        background: rgb(228, 228, 228);
+    }
+
+    body:after {
+        content: '';
+        background-repeat: no-repeat;
+        background-size: cover;
+        -webkit-filter: blur(3px);
+        -moz-filter: blur(3px);
+        -o-filter: blur(3px);
+        -ms-filter: blur(3px);
+        filter: blur(3px);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+    }
+
+    .layui-container {
+        width: 100%;
+        height: 100%;
+        overflow: hidden
+    }
+
+    .admin-login-background {
+        position: absolute;
+        left: 50%;
+        top: 40%;
+        margin-left: -180px;
+        margin-top: -100px;
+    }
+
+    .logo-title {
+        text-align: center;
+        letter-spacing: 2px;
+        padding: 14px 0;
+    }
+
+    .logo-title h1 {
+        color: #1E9FFF;
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .login-form {
+        background-color: #fff;
+        border: 1px solid #fff;
+        border-radius: 3px;
+        padding: 14px 20px;
+        box-shadow: 0 0 8px #eeeeee;
+    }
+
+    .login-form .layui-form-item {
+        position: relative;
+    }
+
+    .login-form .layui-form-item label {
+        position: absolute;
+        left: 1px;
+        top: 1px;
+        width: 58px;
+        line-height: 36px;
+        text-align: center;
+        color: #565656;
+    }
+
+    .login-form .layui-form-item input {
+        padding-left: 36px;
+    }
+
+    .captcha {
+        width: 60%;
+        display: inline-block;
+    }
+
+    .captcha-img {
+        display: inline-block;
+        width: 34%;
+        float: right;
+    }
+
+    .captcha-img img {
+        height: 34px;
+        border: 1px solid #e6e6e6;
+        height: 36px;
+        width: 100%;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="layui-container" id="lqp">
+    <div class="admin-login-background ">
+        <div class="layui-form login-form ">
+            <form class="layui-form" action="">
+                <input type="hidden" name="id" value="{$userInfo.id}" />
+                <div class="layui-form-item logo-title">
+                    <h1>编辑账号</h1>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="account">账号</label>
+                    <div class="layui-input-block" id="account">
+                        <input type="text" name="username" lay-verify="required" placeholder="账号"
+                               autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="password">密码</label>
+                    <div class="layui-input-block" id="password">
+                        <input type="password" name="password" lay-verify="required|password" placeholder="密码"
+                               autocomplete="off" class="layui-input" value="{$userInfo.password}" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="ration">座席</label>
+                    <div class="layui-input-block" id="ration">
+                        <input type="number" name="ration" min="0" placeholder="0"
+                               autocomplete="off" class="layui-input" value="{$userInfo.ration}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="rate">费率(元)</label>
+                    <div class="layui-input-block" id="rate">
+                        <input type="number" name="rate" min="0" placeholder="0"
+                               autocomplete="off" class="layui-input" value="{$userInfo.rate}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="corporation">公司名称</label>
+                    <div class="layui-input-block" id="corporation">
+                        <input type="text" name="corporation" lay-verify="required" placeholder="公司名称"
+                               autocomplete="off" class="layui-input" value="{$userInfo.corporation}" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
+                            lay-filter="edit">确认
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form'], function () {
+        let $ = layui.jquery,
+            form = layui.form;
+
+        let frameIndex = parent.layer.getFrameIndex(window.name);
+
+        // 进行登录操作
+        form.on('submit(edit)', function (data) {
+            let params = data.field;
+            // console.log(params);
+            if (params.account === '') {
+                layer.msg('账号不能为空', {icon: 5});
+                return false;
+            }
+
+            if (params.password === '') {
+                layer.msg('密码不能为空', {icon: 5});
+                return false;
+            }
+
+            if (params.rate < 0) {
+                layer.msg('费率不能为小数', {icon: 5});
+                return false;
+            }
+
+            if (params.ration < 0) {
+                layer.msg('座席不能为小数', {icon: 5});
+                return false;
+            }
+
+            if (params.corporation === '') {
+                layer.msg('公司名称不能为空', {icon: 5});
+                return false;
+            }
+
+            $.post('{:url("/user/edit")}', params, function (res) {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 2500}, function () {
+                        parent.layer.close(frameIndex);
+                        parent.layui.table.reload('userTable');
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5});
+                }
+            });
+
+            return false;
+        });
+
+    });
+</script>
+
+{/block}

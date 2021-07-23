@@ -42,7 +42,7 @@ class Payment extends \think\Model
 
     public function company()
     {
-        return $this->belongsTo(\app\company\model\Company::class);
+        return $this->belongsTo(\app\company\model\Company::class)->bind(['username', 'corporation']);
     }
 
 }

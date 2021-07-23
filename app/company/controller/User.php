@@ -4,6 +4,7 @@
 namespace app\company\controller;
 
 
+use app\common\model\NumberStore;
 use app\company\model\Company;
 use app\common\model\User as UserModel;
 use think\facade\Session;
@@ -21,12 +22,45 @@ class User extends \app\common\controller\CompanyController
         $limit = (int) $this->request->param('limit', 10);
         $map = ['company_id' => Session::get('company.id')];
         $total = UserModel::where($map)->count();
-        $userList = UserModel::where($map)->limit(($page - 1) * $limit, $limit)->select();
+        $userList = UserModel::with('axbNumber')->where($map)->limit(($page - 1) * $limit, $limit)->select();
         return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
     }
 
     public function add()
     {
+        if ($this->request->isPost()) {
+            $params = $this->request->param();
+            $params['username'] = trim($params['username']);
+            $params['salt'] = getRandChar(6);
+            $params['password'] = getEncryptPassword(trim($params['password']), $params['salt']);
+
+            if (UserModel::getByUsername($params['username'])) {
+                $this->returnData['msg'] = '用户已经存在';
+                return json($this->returnData);
+            }
+
+            $params['company_id'] = $this->userInfo['id'];
+
+            $userModel = new UserModel();
+
+            if ($userModel->save($params)) {
+                $this->returnData['msg'] = '开通成功';
+                $this->returnData['code'] = 1;
+
+                // 设置座席
+                NumberStore::where(['id' => $params['number_store_id']])
+                    ->update(['user_id' => $userModel->id]);
+            } else {
+                $this->returnData['msg'] = '开通失败';
+            }
+
+            return json($this->returnData);
+        }
+
+        $axbNumber = NumberStore::where(['company_id' => $this->userInfo['id'], 'user_id' => 0, 'status' => 1])->select();
+
+        $this->view->assign('axbNumbers', $axbNumber);
+
         return $this->view->fetch();
     }
 

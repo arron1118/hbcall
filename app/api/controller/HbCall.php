@@ -28,16 +28,17 @@ class HbCall extends \app\common\controller\ApiController
         $mobile = trim($mobile);
 
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            $this->returnData['msg'] = '请输入正确的手机号';
+            $this->returnData['msg'] = '呼叫打败';
+            $this->returnData['sub_msg'] = '请输入正确的手机号';
             return json($this->returnData);
         }
 
         $userInfo = $this->getUserInfo();
-        $userInfo = \app\common\model\User::find($userInfo['id']);
+        $userInfo = \app\common\model\User::with('axbNumber')->find($userInfo['id']);
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [
             'mobile' => $mobile,
-            'axb_number' => $userInfo['axb_number']
+            'axb_number' => $userInfo['number']
         ]);
         $response = json_decode($curl->response, true);
 

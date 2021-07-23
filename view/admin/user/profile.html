@@ -1,0 +1,81 @@
+{extend name="public/base" /}
+{block name="css"}
+<link rel="stylesheet" href="__STATIC__/lib/bootstrap/css/bootstrap.min.css" media="all">
+<link rel="stylesheet" href="__STATIC__/lib/bootstrap/font/bootstrap-icons.css" media="all">
+{/block}
+{block name="body"}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="container-fluid ">
+            <div class="row mt-5 justify-content-center">
+                <div class="col-md-8 col-sm-12">
+                    <form class="layui-form layuimini-form">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label required">昵称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="username" lay-verify="required" placeholder="请输入昵称"  value="{$userProfile.username}" class="layui-input">
+                                <tip>此昵称作为登录账号使用，必填！</tip>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">真实姓名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="realname" placeholder="请输入真实姓名"  value="{$userProfile.realname}" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">登陆IP</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="ip" value="{$userProfile.loginip}" class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">最后登陆</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="time"  value="{$userProfile.logintime}" class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">上次登陆</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="lasttime" value="{$userProfile.prevtime}" class="layui-input" disabled>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+    layui.use(['form', 'miniTab', 'jquery'], function () {
+        let form = layui.form,
+            layer = layui.layer,
+            $ = layui.jquery,
+            miniTab = layui.miniTab;
+
+        //监听提交
+        form.on('submit(saveBtn)', function (data) {
+            $.post('{:url("/user/profile")}', data.field, function (res) {
+                if (res.code) {
+                    layer.msg(res.msg, {icon: 6});
+                } else {
+                    layer.msg(res.msg, {icon: 5});
+                }
+            })
+
+            return false;
+        });
+
+    });
+</script>
+
+{/block}

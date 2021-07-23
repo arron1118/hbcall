@@ -93,22 +93,12 @@
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             let params = data.field;
-            console.log(params);
-            return false;
-            let url = '';
-            $.get(url, params, function (res) {
-                //todo
-                if (res) {
-                    //执行搜索重载
-                    table.reload('currentTableId', {
-                        page: {
-                            curr: 1
-                        }
-                        , where: {
-                            searchParams: params
-                        }
-                    }, 'data');
-                }
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                },
+                where: params
             });
 
             return false;

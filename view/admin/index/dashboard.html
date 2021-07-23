@@ -1,0 +1,131 @@
+{extend name="public/base" /}
+{block name="css"}
+{include file="public/bootstrap" /}
+<style>
+    .lqp-hover:hover .card-img {
+        transform: rotateY(90deg);
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="container-fluid p-4">
+            <!--<div class="row mb-2">
+                <div class="col-md-5 col-sm-12 pb-4">
+                    <div class="card border-0 p-0 border-end">
+                        <div class="card-body py-0">
+                            <p class="card-title mb-4 fw-bold"> Hi，您好<span class="text-primary">{$user.username}</span>！</p>
+                            <div class="row">
+                                <div class="col-3">
+                                    <img src="__STATIC__/images/dashuser.png" style="max-height: 80px;">
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-4">账号：<span class="fw-bold">{$user.username}</span></div>
+                                    <div> 手机：<span class="fw-bold">***********</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-12 text-center my-auto">
+                    <div class="card border-0 p-0 border-end">
+                        <div class="card-body py-0">
+                            <p class="card-title">当前余额/元</p>
+                            <h5 class="card-text my-3 text-success"><i class="fa fa-yen-sign me-2"></i>{$user.balance??''}</h5>
+                            <a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理"
+                               class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill">
+                                <i class="fa fa-wallet me-2"></i>
+                                充值
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="card border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex flex-row align-items-end">
+                                        <img src="__STATIC__/images/22.png" style="max-height: 78px;">
+                                        <div class="ms-3">
+                                            <p class="mb-0">客服咨询</p>
+                                            <p class="fw-bold mb-0">13622850769</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="text-center d-flex flex-row align-items-center">
+                                        <img src="__STATIC__/images/xiaoqiang.png" style="max-height: 78px;">
+                                        <p class="mb-0 ms-3">微信咨询</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+            <div class="row">
+                <div class="card p-0">
+                    <div class="card-header bg-body ">使用情况</div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4 col-sm-12 mb-3">
+                                <div class="card bg-primary lqp-hover" style="height: 250px;">
+                                    <div class="card-body text-light  d-flex flex-column justify-content-center "
+                                         style="background: url('__STATIC__/images/p.png') no-repeat center;background-size: 30%;">
+                                        <p class="">今日消费/元</p>
+                                        <h5 class="fw-bold ">
+                                            <i class="fa fa-yen-sign me-2"></i>
+                                            <span class="l-number">0.00</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12 mb-3">
+                                <div class="card layui-bg-green lqp-hover" style="height: 250px;">
+                                    <div class="card-body text-light  d-flex flex-column justify-content-center "
+                                         style="background: url('__STATIC__/images/s.png') no-repeat center;background-size: 30%;">
+                                        <p class="">本月消费/元</p>
+                                        <h5 class="fw-bold">
+                                            <i class="fa fa-yen-sign me-2"></i>
+                                            <span class="l-number">0.00</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12 mb-3">
+                                <div class="card lqp-hover"
+                                     style="background-color: #d98501; height: 250px; ">
+                                    <div class="card-body text-light  d-flex flex-column justify-content-center "
+                                         style="background: url('__STATIC__/images/w.png') no-repeat center;background-size: 30%;">
+                                        <p class=""> 今年消费/元</p>
+                                        <h5 class="fw-bold">
+                                            <i class="fa fa-yen-sign me-2"></i>
+                                            <span class="l-number">0.00</span></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script src="__STATIC__/js/jquery.rotate.js"></script>
+
+<script>
+    layui.use(['layer', 'miniTab'], function () {
+        let $ = layui.jquery,
+
+            layer = layui.layer,
+            miniTab = layui.miniTab;
+
+        // 在新的Tab窗口打开页面
+        miniTab.listen();
+
+    });
+</script>
+
+{/block}

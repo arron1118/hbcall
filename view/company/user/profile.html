@@ -6,9 +6,9 @@
 {block name="body"}
 <div class="layuimini-container">
     <div class="layuimini-main">
-        <div class="container-fluid m-2">
+        <div class="container-fluid ">
             <div class="row mt-5 justify-content-center">
-                <div class="col-6">
+                <div class="col-md-8 col-sm-12">
                     <form class="layui-form layuimini-form">
                         <div class="layui-form-item">
                             <label class="layui-form-label required">昵称</label>
@@ -24,16 +24,22 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
-                            <label class="layui-form-label">余额</label>
+                            <label class="layui-form-label">余额(￥/元)</label>
                             <div class="layui-input-block">
-                                <input type="text" name="ip" value="{$userProfile.balance}" class="layui-input" disabled>
+                                <input type="text" name="balance" value="{$userProfile.balance}" class="layui-input" disabled>
                                 <tip><a href="{:url('payment/index')}">前往充值>></a></tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">配额</label>
                             <div class="layui-input-block">
-                                <input type="text" name="ip" value="{$userProfile.ration}" class="layui-input" disabled>
+                                <input type="text" name="ration" value="{$userProfile.ration}" class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">费率</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="rate" value="{$userProfile.rate}" class="layui-input" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">

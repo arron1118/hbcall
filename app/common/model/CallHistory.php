@@ -41,11 +41,11 @@ class CallHistory extends \think\Model
 
     public function user()
     {
-        return $this->belongsTo(\app\common\model\User::class);
+        return $this->belongsTo(\app\common\model\User::class)->bind(['user_username' => 'username', 'loginip']);
     }
 
     public function company()
     {
-        return $this->belongsTo(\app\company\model\Company::class);
+        return $this->belongsTo(\app\company\model\Company::class)->bind(['corporation']);
     }
 }

@@ -78,7 +78,7 @@
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: 'username', title: '账号'},
-                {field: 'axb_number', title: '小号', align: "center"},
+                {field: 'number', title: '小号', align: "center"},
                 {field: 'logintime', title: '登录时间', align: "center"},
                 {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
             ]],
@@ -119,7 +119,7 @@
                     title: '开通账号',
                     type: 2,
                     shade: 0.2,
-                    maxmin:true,
+                    maxmin: true,
                     shadeClose: true,
                     area: ['100%', '100%'],
                     content: '{:url("/user/add")}',

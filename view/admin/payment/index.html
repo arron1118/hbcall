@@ -1,0 +1,135 @@
+{extend name="public/base" /}
+{block name="body"}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <!--<fieldset class="table-search-fieldset">
+            <legend>账户充值</legend>
+            <div style="margin: 10px 10px 10px 10px; ">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">支付方式</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="pay_type" value="1" title="微信" checked="">
+                                <input type="radio" name="pay_type" value="2" title="支付宝">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">金额/元</label>
+                            <div class="layui-input-inline">
+                                <input type="number" name="money" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                    lay-filter="data-money-btn">立即充值
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>-->
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'table', 'jquery'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        table.render({
+            elem: '#currentTableId',
+            id: 'paymentTable',
+            url: '{:url("/payment/getOrderList")}',
+            method: 'post',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'payno', title: '订单号'},
+                {field: 'corporation', title: '充值方'},
+                {field: 'amount', title: '充值金额(￥)', align: 'center'},
+                {field: 'create_time', title: '充值时间', align: "center"},
+                {field: 'pay_type', title: '充值方式', align: "center"},
+                {field: 'status', title: '状态', align: "center", templet: function(d) {
+                    if (d.status === '未支付') {
+                        return '<span style="color: #f00;">' + d.status + '</span>';
+                    } else {
+                        return d.status;
+                    }
+                    }},
+            ]],
+            page: {
+                limits: [15, 20, 25, 30],
+                limit: 15
+            },
+            skin: 'line',
+            even: true,
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            if (obj.event === 'gopay') {
+                let payType = obj.data.pay_type === '微信' ? 'wxpay' : (obj.data.pay_type === '支付宝' ? 'alipay' : 'wxpay');
+                pay(payType, obj.data.amount, obj.data.payno);
+            }
+        })
+
+        // 监听操作
+        form.on('submit(data-money-btn)', function (data) {
+            let result = data.field;
+            if (!result.money) {
+                layer.msg('请输入要充值的金额！');
+                return false;
+            }
+
+            if (result.money < 0) {
+                layer.msg('请输入正确的金额！');
+                return false;
+            }
+
+            let payType = result.pay_type === '1' ? 'wxpay' : (result.pay_type === '2' ? 'alipay' : 'wxpay');
+            pay(payType, result.money);
+            return false;
+        });
+
+        // 支付页面
+        let pay = function (payType, amount, payNo = '') {
+            let pay_type = ['wxpay', 'alipay'];
+            if (!pay_type.includes(payType)) {
+                payType = 'wxpay';
+            }
+
+            layer.open({
+                title: '支付',
+                type: 2,
+                area: ['100%', '100%'],
+                content: '/company/payment/' + payType + '?amount=' + amount + '&payno=' + payNo,
+                btn: false,
+                cancel: function (index, layero) {
+                    layer.close(index);
+                    table.reload('paymentTable');
+                }
+            });
+        }
+    });
+</script>
+
+{/block}

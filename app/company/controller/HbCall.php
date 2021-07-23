@@ -39,25 +39,26 @@ class HbCall extends \app\common\controller\CompanyController
             $limit = (int) $this->request->param('limit', 10);
             $holdername = $this->request->param('holdername', '');
             $holdertime = $this->request->param('holdertime', '');
-            $map = ['company_id' => $this->userInfo['id']];
+            $map = [
+                ['company_id', '=', $this->userInfo['id']],
+                ['caller_number', '<>', '']
+            ];
 
             if ($holdername) {
-                $map['user_id'] = '';
+                $map[] = ['username', 'like', '%' . $holdername . '%'];
             }
 
-            $total = CallHistory::where('caller_number != ""')->where($map)->count();
+            if ($holdertime) {
+                $daytime = strtotime($holdertime);
+                $map[] = ['createtime', 'between', [$daytime, $daytime + 86400 - 1]];
+            }
 
-            $historyList = CallHistory::where('caller_number != ""')
-                ->where($map)
+            $total = CallHistory::where($map)->count();
+
+            $historyList = CallHistory::where($map)
                 ->order('starttime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
-
-            foreach ($historyList as $val) {
-                $val->username = User::where(['id' => $val->user_id])->value('username');
-//                $val->bindAttr('user', ['username']);
-            }
-
 
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }

@@ -8,12 +8,12 @@ class User extends \think\Model
 {
     public function getPrevtimeAttr($value)
     {
-        return date($this->getDateFormat(), $value);
+        return $value ? date($this->getDateFormat(), $value) : '-';
     }
 
     public function getLogintimeAttr($value)
     {
-        return date($this->getDateFormat(), $value);
+        return $value ? date($this->getDateFormat(), $value) : '-';
     }
 
     public function getStatusAttr($value)
@@ -33,6 +33,6 @@ class User extends \think\Model
 
     public function axbNumber()
     {
-        return $this->hasOne(\app\common\model\NumberStore::class);
+        return $this->hasOne(\app\common\model\NumberStore::class)->bind(['number']);
     }
 }

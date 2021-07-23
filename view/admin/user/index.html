@@ -1,0 +1,185 @@
+{extend name="public/base" /}
+{block name="body"}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">账号</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="username" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">公司名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="corporation" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">开通账号</button>
+<!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+<!--            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+        </script>
+
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'table'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        table.render({
+            elem: '#currentTableId',
+            url: '{:url("/user/getUserList")}',
+            id: 'userTable',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'username', title: '账号'},
+                {field: 'corporation', title: '公司名称', align: "center"},
+                {field: 'ration', title: '座席', align: "center"},
+                {field: 'rate', title: '费率', align: "center"},
+                {field: 'logintime', title: '登录时间', align: "center"},
+                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+            ]],
+            page: {
+                limits: [10, 20, 30, 40],
+                limit: 10,
+            },
+            skin: 'line',
+            even: true,
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            let params = JSON.stringify(data.field);
+            console.log(params);
+            //执行搜索重载
+            table.reload('userTable', {
+                page: {
+                    curr: 1
+                },
+                where: params
+            });
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                let index = layer.open({
+                    title: '开通账号',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '{:url("/user/add")}',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                let checkStatus = table.checkStatus('currentTableId'),
+                    data = checkStatus.data;
+                    console.log(data);
+                    if(data === '' || data === 'undefind'){
+                        layer.msg('请勾选需要删除的数据');
+                        return false;
+                    }else{
+                        let ids=[],url='';
+                        $(data).each(function (i) {
+                            ids.push(data[i].id);
+                        });
+                        console.log(ids);
+                        $.post(url,ids,function () {
+                            //todo
+                        });
+                    }
+            }
+        });
+
+        //监听表格复选框选择
+        // table.on('checkbox(currentTableFilter)', function (obj) {
+        //     console.log('pi',obj)
+        // });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            console.log(obj);
+            if (obj.event === 'edit') {
+                let index = layer.open({
+                    title: '编辑账号',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '{:url("/user/edit")}?id=' + obj.data.id,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                console.log(obj);
+                console.log(obj.data.id);
+                let id = obj.data.id, url='';
+                layer.confirm('真的删除行么', function (index) {
+                    $.post(url,id,function () {
+                        //todo
+                        obj.del();
+                        layer.close(index);
+                    })
+
+                });
+            }
+        });
+
+
+    });
+</script>
+
+{/block}
