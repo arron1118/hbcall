@@ -80,6 +80,17 @@ class User extends ApiController
         return json($this->returnData);
     }
 
+    public function checkLogin()
+    {
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = 'Success';
+        $this->returnData['data'] = [
+            'login' => $this->isLogin(),
+        ];
+
+        return json($this->returnData);
+    }
+
     public function logout()
     {
         Session::delete('api_user');

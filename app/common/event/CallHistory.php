@@ -25,20 +25,23 @@ class CallHistory
         }
 
         $HistoryModel = new \app\common\model\CallHistory();
-        $callList = $HistoryModel->where($map)->order('id DESC')->limit(50)->select();
+        $callList = $HistoryModel->where($map)->order('id DESC')->limit(2)->select();
         if (!empty($callList)) {
             $curl = new Curl();
             $news = [];
+
             foreach ($callList as $val) {
                 try {
                     $curl->post(Config::get('hbcall.record_api'), [
                         'subid' => $val['subid']
                     ]);
 
+//                    dump($curl->error_code);
+//                    dump($curl->error_message);
                     $response = json_decode($curl->response, true);
 
+//                    dump($response);
                     if (!is_null($response) && $response['status'] && !empty($response['data'])) {
-//                        dump($response);
                         if (!is_array($response['data'])) {
                             $response['data'] = json_decode($response['data'], true);
                         }
@@ -66,7 +69,7 @@ class CallHistory
                         $news[] = $temp;
                     }
                 } catch (\ErrorException $e) {
-//                    dump($e);
+                    dump($e);
                 }
             }
 
