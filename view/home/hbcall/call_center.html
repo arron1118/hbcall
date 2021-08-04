@@ -214,6 +214,7 @@
 
             $.post('{:url("/hbcall/makeCall")}', {mobile: number}, function (res) {
                 if (res.status) {
+                    console.log()
                     let con = `
                             <div style="padding: 50px; line-height: 30px; font-weight: 300;">
                                 <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${res.data.axb_number}</h3> 进行通话。</p>
@@ -266,7 +267,7 @@
                         btnAlign: 'c',
                         closeBtn: 2,
                         moveType: 1,
-                        skin: 'layer-ext-blue',
+                        skin: 'layer-ext-red',
                         content: con
                     })
                 }
