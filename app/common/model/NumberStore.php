@@ -24,6 +24,6 @@ class NumberStore extends \think\Model
 
     public function user()
     {
-        return $this->belongsTo(\app\common\model\User::class);
+        return $this->belongsTo(\app\common\model\User::class)->bind(['number']);
     }
 }

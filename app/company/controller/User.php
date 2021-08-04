@@ -57,16 +57,31 @@ class User extends \app\common\controller\CompanyController
             return json($this->returnData);
         }
 
-        $axbNumber = NumberStore::where(['company_id' => $this->userInfo['id'], 'user_id' => 0, 'status' => 1])->select();
-
-        $this->view->assign('axbNumbers', $axbNumber);
+        $this->view->assign('axbNumbers', $this->getAxbNumbers());
 
         return $this->view->fetch();
     }
 
     public function edit()
     {
+        $userId = $this->request->param('userId');
+        $userInfo = UserModel::with('axbNumber')->find($userId);
+
+        $this->view->assign('userInfo', $userInfo);
+        $this->view->assign('axbNumbers', $this->getAxbNumbers());
         return $this->view->fetch();
+    }
+
+    /**
+     * 返回未分配的小号
+     * @return NumberStore[]|array|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    protected function getAxbNumbers()
+    {
+        return NumberStore::where(['company_id' => $this->userInfo['id'], 'user_id' => 0, 'status' => 1])->select()->toArray();
     }
 
     public function profile()

@@ -34,7 +34,7 @@
             <div class="layui-btn-container">
 
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">开通账号</button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+<!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
             </div>
         </script>
 
@@ -93,21 +93,13 @@
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             let result = JSON.stringify(data.field);
-            console.log(result);
-            //执行搜索重载
-            let url='';
-            $.post(url,result,function () {
-                //todo
-                table.reload('currentTableId', {
-                    page: {
-                        curr: 1
-                    }
-                    , where: {
-                        searchParams: result
-                    }
-                }, 'data');
-                return false;
-            })
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                },
+                where: result
+            }, 'data');
+            return false;
         });
 
         /**
@@ -161,7 +153,7 @@
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '{:url("/user/edit")}',
+                    content: '{:url("/user/edit")}?userId=' + obj.data.id,
                 });
                 $(window).on("resize", function () {
                     layer.full(index);

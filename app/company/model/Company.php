@@ -25,4 +25,9 @@ class Company extends \think\Model
     {
         return $this->hasMany(\app\common\model\User::class)->bind(['corporation']);
     }
+
+    public function axbNumbers()
+    {
+        return $this->hasMany(\app\common\model\User::class);
+    }
 }
