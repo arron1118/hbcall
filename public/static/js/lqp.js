@@ -48,6 +48,7 @@
             if (pageName === 'solution' || pageName === 'about' || pageName === 'cooperate' || pageName === 'news' || pageName === 'buy') {
                 $('.lqp-custorm').addClass('d-none');
             }
+
             //隐藏试用
             if(pageName === 'buy'){
                 $('.lqp-user').addClass('d-none');
