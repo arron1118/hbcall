@@ -19,21 +19,33 @@ class CallHistory
     public function handle()
     {
         $module = app('http')->getName();
-        $map = ['caller_number' => ''];
+        $time = strtotime('2021-07-18');
+        $map = [
+            ['caller_number', '=', '']
+        ];
         if ($module === 'home') {
-            $map['user_id'] = Session::get('user.id');
+            $map[] = ['user_id', '=', Session::get('user.id')];
         }
 
         $HistoryModel = new \app\common\model\CallHistory();
-        $callList = $HistoryModel->where($map)->order('id DESC')->limit(2)->select();
+        $callList = $HistoryModel->where($map)
+            ->whereBetweenTime('createtime', $time, $time + 86400 - 1)
+            ->order('id DESC')
+            ->limit(50)
+            ->select();
+//        dump($HistoryModel->getLastSql());
         if (!empty($callList)) {
             $curl = new Curl();
+            $curl->setHeader('Content-Type', 'application/x-www-form-urlencoded');
             $news = [];
+            $date = date('Ymd', $time);
+//            dump($date);
 
             foreach ($callList as $val) {
                 try {
                     $curl->post(Config::get('hbcall.record_api'), [
-                        'subid' => $val['subid']
+                        'subid' => $val['subid'],
+                        'date' => $date
                     ]);
 
 //                    dump($curl->error_code);
@@ -57,15 +69,16 @@ class CallHistory
                         $val->record_url = $response['data']['recordUrl'];
                         $val->save();*/
                         $temp['id'] = $val->id;
-//                        $temp['callid'] = $response['data']['callid'];
+                        $temp['callid'] = $response['data']['callid'];
                         $temp['caller_number'] = $response['data']['callerNumber'];
                         $temp['starttime'] = strtotime($response['data']['starttime']);
                         $temp['releasetime'] = strtotime($response['data']['releasetime']);
                         $temp['call_duration'] = $response['data']['callDuration'];
-//                        $temp['finish_type'] = $response['data']['finishType'];
-//                        $temp['finish_state'] = $response['data']['finishState'];
-//                        $temp['releasecause'] = $response['data']['releasecause'];
+                        $temp['finish_type'] = $response['data']['finishType'];
+                        $temp['finish_state'] = $response['data']['finishState'];
+                        $temp['releasecause'] = $response['data']['releasecause'];
                         $temp['record_url'] = $response['data']['recordUrl'];
+                        $temp['status'] = 1;
                         $news[] = $temp;
                     }
                 } catch (\ErrorException $e) {

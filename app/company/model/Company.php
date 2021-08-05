@@ -16,6 +16,16 @@ class Company extends \think\Model
         return $value > 0 ? date($this->getDateFormat(), $value) : '-';
     }
 
+    public function getStatusAttr($value)
+    {
+        return $this->getStatusList()[$value];
+    }
+
+    protected function getStatusList()
+    {
+        return [0 => '禁止登录', 1 => '正常'];
+    }
+
     public function payments()
     {
         return $this->hasMany(\app\company\Model\Payment::class)->bind(['corporation']);

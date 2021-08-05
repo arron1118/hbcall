@@ -38,7 +38,7 @@ class Index extends CompanyController
                 return json(['data' => [], 'msg' => lang('Account is incorrect'), 'code' => 0]);
             }
 
-            if (!$user->status) {
+            if (!$user->getData('status')) {
                 return json(['data' => [], 'msg' => lang('Account is locked'), 'code' => 0]);
             }
 
