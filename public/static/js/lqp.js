@@ -17,6 +17,7 @@
         let res = url.lastIndexOf("\/");
         let str = url.substring(res + 1, url.length);//从后面截取最后一个/后面的内容
         let pageName = str.substring(0, str.indexOf('.'));//去掉后缀，预防不同的后缀匹配不到（html,xhtml）
+        console.log('今天',pageName)
         $.getJSON(menuUrl, function (res) {
             // 头部导航
             $.each(res.menuList, function (index, item) {
@@ -45,12 +46,26 @@
 
             //底部
             //隐藏客户模块
-            if (pageName === 'solution' || pageName === 'about' || pageName === 'cooperate' || pageName === 'news' || pageName === 'buy') {
+            let pages = [
+                'solution',
+                'about',
+                'cooperate',
+                'news',
+                'buy',
+                'detailIndex'
+            ];
+            //如果pageName 在pages数组里面
+            if (pages.includes(pageName)) {
                 $('.lqp-custorm').addClass('d-none');
             }
 
             //隐藏试用
-            if(pageName === 'buy'){
+            let pages2=[
+                'buy',
+                'detailIndex'
+            ];
+
+            if(pages2.includes(pageName)){
                 $('.lqp-user').addClass('d-none');
             }
             // 底部导航
