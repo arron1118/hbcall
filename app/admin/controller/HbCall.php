@@ -28,6 +28,7 @@ class HbCall extends \app\common\controller\AdminController
 //        Event::trigger('CallHistory');
 //        $ch = CallHistory::find(1)->bindAttr('user', ['loginip']);
 //        dump($ch->toArray());
+//        dump(date('Y-m-d H:i:s', '1623312780'));
 
         return $this->view->fetch('hbcall/history_list');
     }
