@@ -35,7 +35,6 @@ class Index extends \app\common\controller\PortalController
     {
         return $this->view->fetch();
     }
-
     public function about()
     {
         return $this->view->fetch();
