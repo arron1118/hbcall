@@ -31,7 +31,7 @@ class CallHistory
         $HistoryModel = new \app\common\model\CallHistory();
         $callList = $HistoryModel->where($map)
             // id 为5183后开启
-            ->whereBetweenTime('createtime', $time, $time + 86400 - 1)
+//            ->whereBetweenTime('createtime', $time, $time + 86400 - 1)
             ->order('id asc')
             ->limit(100)
             ->select();
