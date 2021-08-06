@@ -76,13 +76,9 @@
 
         </div>
 
-        <div class="row justify-content-center">
-            <div class="col-4 text-muted" id="loadMore">
-                <div class="card p-4 border-0">
-<!--                    <img class="inline-block" src="__STATIC__/images/more.png" style="width: 150px; height: 150px;"-->
-<!--                         alt="Pug icon">-->
-                
-                </div>
+        <div class="row mt-5 justify-content-center">
+            <div class="col-1 d-grid" id="loadMore">
+                <i class="bi bi-plus-square-dotted me-2 fs-1 text-danger"></i>
             </div>
         </div>
     </div>
@@ -243,7 +239,9 @@
 
         page++;
     });
-
+    $('#loadMore').hover(function () {
+        $(this).css("cursor","pointer")
+    })
     $(".customerBox").slide({
         mainCell: ".customerList ul",
         autoPlay: true,
