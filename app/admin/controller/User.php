@@ -174,4 +174,6 @@ class User extends \app\common\controller\AdminController
         }
         return $this->view->fetch();
     }
+
+
 }

@@ -47,7 +47,7 @@ class User extends ApiController
                 return json($this->returnData);
             }
 
-            if (!$user->status) {
+            if (!$user->getData('status')) {
                 $this->returnData['msg'] = lang('Account is locked');
                 return json($this->returnData);
             }
