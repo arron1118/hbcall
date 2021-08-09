@@ -1,0 +1,189 @@
+{extend name="public/base" /}
+{block name="body"}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">标题</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="newsTitle" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <label class="layui-form-label">发布时间</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="newsTime" class="layui-input" id="newsTitle" placeholder="" autocomplete="off">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarNews">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">发布新闻</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="newsTableId" lay-filter="newsTableFilter" lay-even></table>
+
+        <script type="text/html" id="newsTableBar">
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del">删除</a>
+        </script>
+
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'table','laydate','layer'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            laydate = layui.laydate,
+            layer = layui.layer,
+            table = layui.table;
+            laydate.render({
+                elem: '#newsTitle'
+            });
+
+        table.render({
+            elem: '#newsTableId',
+            url: '{:url("/user/getUserList")}',
+            id: 'userTable',
+            toolbar: '#toolbarNews',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'username', title: '图标'},
+                {field: 'corporation', title: '标题', align: "center"},
+                {field: 'logintime', title: '发布时间', align: "center"},
+                {title: '操作', minWidth: 150, toolbar: '#newsTableBar', align: "center"}
+            ]],
+            page: {
+                limits: [10, 20, 30, 40],
+                limit: 10,
+            },
+            skin: 'line',
+            even: true,
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            let params = JSON.stringify(data.field);
+            console.log(params);
+            //todo
+            //执行搜索重载
+            table.reload('userTable', {
+                page: {
+                    curr: 1
+                },
+                where: params
+            });
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(newsTableFilter)', function (obj) {
+            if (obj.event === 'add') {
+                let index = layer.open({
+                    title: '发布新闻',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '{:url("/news/add")}',
+                });
+                //???
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                let checkStatus = table.checkStatus('newsTableId'),
+
+                    data = checkStatus.data;
+                console.log(checkStatus);
+                console.log(data);
+                return
+                if(data.length<1){
+                    layer.msg('请勾选需要删除的数据');
+                    return false;
+                }else{
+                    let ids=[],url='';
+                    $(data).each(function (i) {
+                        ids.push(data[i].id);
+                    });
+                    console.log(ids);
+                    $.post(url,ids,function () {
+                        //todo
+                    });
+                }
+            }
+        });
+
+
+        table.on('tool(newsTableFilter)', function (obj) {
+            console.log(obj);
+            if (obj.event === 'edit') {
+                let index = layer.open({
+                    title: '编辑新闻',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '{:url("/news/edit")}?id=' + obj.data.id,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'del') {
+                console.log(obj);
+                console.log(obj.data.id);
+                let id = obj.data.id, url='';
+                layer.confirm('真的删除行么', function (index) {
+                    $.post(url,id,function () {
+                        //todo
+                        obj.del();
+                        layer.close(index);
+                    })
+
+                });
+            }
+        });
+
+
+    });
+</script>
+
+{/block}

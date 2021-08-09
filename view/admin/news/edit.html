@@ -1,0 +1,121 @@
+{extend name="public/base" /}
+{block name="css"}
+
+{/block}
+{block name="body"}
+<div class="layui-container" id="lqp">
+    <div class="admin-login-background">
+        <div class="layui-form login-form ">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="newsTitle">新闻标题</label>
+                    <div class="layui-input-block" id="newsTitle">
+                        <input type="text" name="newsTitle" lay-verify="required" placeholder="新闻标题"
+                               autocomplete="off" class="layui-input" value="{}" readonly>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">发布时间</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="newsTime" id="newsTime" lay-verify="date" placeholder=""
+                               autocomplete="off" class="layui-input" value="{}" readonly>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="newsImg">上传图片</label>
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn" id="newsImg">上传</button>
+                        <div class="layui-upload-list" style="padding-left: 110px;">
+                            <img class="layui-upload-img" id="newsImgBox" style="max-height: 300px; width: auto;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-form-item" >
+                    <label class="layui-form-label" for="newsContent">新闻内容</label>
+                    <div class="layui-input-block" id="newsContent">
+                        <textarea placeholder="请输入新闻内容" class="layui-textarea" name="newsContent" style="height: 300px;"></textarea>
+                    </div>
+                </div>
+
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" lay-filter="public">确定
+                    </button>
+                </div>
+
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form','laydate','upload'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            upload = layui.upload,
+            laydate = layui.laydate;
+        //时间框
+        laydate.render({
+            elem: '#newsTime'
+        });
+        //上传图片
+        var uploadInst = upload.render({
+            elem: '#newsImg'
+            , url: '' //改成您自己的上传接口
+            , before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#newsImgBox').attr('src', result); //图片链接（base64）
+                });
+
+                layer.msg('上传中', {icon: 16, time: 0});
+            }
+            , done: function (res) {
+                console.log(res)
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                }
+            }
+            , error: function () {
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            }
+        });
+        // 发布
+        form.on('submit(public)', function (data) {
+            let params = data.field;
+            console.log('ppp');
+            console.log(params);
+            return
+
+            if (params.account === '') {
+                layer.msg('账号不能为空', {icon: 5});
+                return false;
+            }
+            $.post('{:url("/user/add")}', params, function (res) {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 6, time: 2500}, function () {
+                        parent.layer.close(frameIndex);
+                        parent.layui.table.reload('userTable');
+                    });
+                } else {
+                    layer.msg(res.msg, {icon: 5});
+                }
+            });
+
+            return false;
+        });
+
+    });
+</script>
+
+{/block}
