@@ -34,11 +34,12 @@
         <script type="text/html" id="toolbarNews">
             <div class="layui-btn-container">
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">发布新闻</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="imports" id="">批量导入</button>
                 <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
             </div>
         </script>
 
-        <table class="layui-hide" id="newsTableId" lay-filter="newsTableFilter" lay-even></table>
+        <table class="layui-hide" id="newsTableId" lay-filter="newsTableFilter" lay-even lay-data="{id: 'newsTableFilter'}"></table>
 
         <script type="text/html" id="newsTableBar">
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
@@ -50,16 +51,22 @@
 {/block}
 
 {block name="js"}
+<script src="__STATIC__/lib/layui_exts/excel.js"></script>
+
 <script>
-    layui.use(['form', 'table','laydate','layer'], function () {
+    layui.use(['form', 'table','laydate','layer','excel','upload'], function () {
         let $ = layui.jquery,
             form = layui.form,
             laydate = layui.laydate,
             layer = layui.layer,
+            excel = layui.excel,
+            upload = layui.upload,
             table = layui.table;
             laydate.render({
                 elem: '#newsTitle'
             });
+
+
 
         table.render({
             elem: '#newsTableId',
@@ -112,6 +119,7 @@
         /**
          * toolbar监听事件
          */
+        // 表头
         table.on('toolbar(newsTableFilter)', function (obj) {
             if (obj.event === 'add') {
                 let index = layer.open({
@@ -128,12 +136,9 @@
                     layer.full(index);
                 });
             } else if (obj.event === 'delete') {  // 监听删除操作
-                let checkStatus = table.checkStatus('newsTableId'),
-
-                    data = checkStatus.data;
-                console.log(checkStatus);
+               let checkStatus = table.checkStatus('userTable'),
+                   data = checkStatus.data;
                 console.log(data);
-                return
                 if(data.length<1){
                     layer.msg('请勾选需要删除的数据');
                     return false;
@@ -142,15 +147,59 @@
                     $(data).each(function (i) {
                         ids.push(data[i].id);
                     });
-                    console.log(ids);
+                    console.log('删除的ids',ids);
                     $.post(url,ids,function () {
                         //todo
                     });
                 }
+            }else if(obj.event === 'imports'){
+                console.log('pp')
+                // 监听上传文件的事件
+                $('#LAY-excel-import-excel').change(function(e) {
+                    let files = e.target.files;
+                    try {
+                        // 方式一：先读取数据，后梳理数据
+                        // excel.importExcel(files, {}, function(data) {
+                        //     console.log(data);
+                        //     data = excel.filterImportData(data, {
+                        //         'id': 'A'
+                        //         ,'username': 'B'
+                        //         ,'experience': 'C'
+                        //         ,'sex': 'D'
+                        //         ,'score': 'E'
+                        //         ,'city': 'F'
+                        //         ,'classify': 'G'
+                        //         ,'wealth': 'H'
+                        //         ,'sign': 'I'
+                        //     })
+                        //     console.log(data);
+                        // });
+                        // 方式二：可以在读取过程中梳理数据
+                        excel.importExcel(files, {
+                            fields: {
+                                'id': 'A'
+                                ,'username': 'B'
+                                ,'experience': 'C'
+                                ,'sex': 'D'
+                                ,'score': 'E'
+                                ,'city': 'F'
+                                ,'classify': 'G'
+                                ,'wealth': 'H'
+                                ,'sign': 'I'
+                            }
+                        }, function(data) {
+                            console.log(data);
+                        });
+                    } catch (e) {
+                        layer.alert(e.message);
+                    }
+                });
+
+
             }
         });
-
-
+6
+        //表内
         table.on('tool(newsTableFilter)', function (obj) {
             console.log(obj);
             if (obj.event === 'edit') {

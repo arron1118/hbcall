@@ -3,11 +3,16 @@
 <!-- include summernote css/js -->
 <!--<link href="__STATIC__/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
 <!--<link href="__STATIC__/lib/summernote-0.8.18-dist/summernote.min.css" rel="stylesheet">-->
+<style>
+    .layui-form-label{
+        min-width: 100px;
+    }
+</style>
 {/block}
 {block name="body"}
 <div class="layui-container" id="lqp">
     <div class="admin-login-background">
-        <div class="layui-form login-form ">
+        <div class="layui-form">
             <form class="layui-form" action="">
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="newsTitle">新闻标题</label>
@@ -17,44 +22,31 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">发布时间</label>
+                    <label class="layui-form-label">置顶</label>
                     <div class="layui-input-block">
-                        <input type="text" name="newsTime" id="newsTime" lay-verify="date" placeholder=""
-                               autocomplete="off" class="layui-input" value="">
+                        <input type="checkbox" name="top" lay-skin="switch" lay-filter="switchTest" value="1" lay-text="开|关">
                     </div>
                 </div>
-
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="newsImg">上传图片</label>
                     <div class="layui-upload">
-                        <button type="button" class="layui-btn" id="newsImg">上传</button>
-                        <div class="layui-upload-list" style="padding-left: 110px;">
+                        <button type="button" class="layui-btn" id="newsImg" style="margin-left: 12px;">上传</button>
+                        <div class="layui-upload-list" style="padding-left: 112px;">
                             <img class="layui-upload-img" id="newsImgBox" style="max-height: 300px; width: auto;">
                         </div>
                     </div>
                 </div>
-
                 <div class="layui-form-item" >
                     <label class="layui-form-label" for="newsContent">新闻内容</label>
                     <div class="layui-input-block" id="newsContent">
 <!--                        <textarea placeholder="请输入新闻内容" class="layui-textarea" name="newsContent" style="height: 300px;"></textarea>-->
-                        <textarea id="summernote" name="editordata"></textarea>
-
-
+                        <textarea id="summernote" name="content"></textarea>
                     </div>
-
                 </div>
-
-
-
-
-
-                    <div class="layui-input-block">
-                        <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" lay-filter="public">发布
-                        </button>
-                    </div>
-
-
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" lay-filter="public">发布
+                    </button>
+                </div>
             </form>
         </div>
     </div>
@@ -81,14 +73,24 @@
             form = layui.form,
             upload = layui.upload,
             laydate = layui.laydate;
+        //开关
+        //监听指定开关
+        form.on('switch(switchTest)', function(data){
+            console.log(this.checked)
+            // layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+            //     offset: '6px'
+            // });
+            layer.tips('置顶新闻将会出现在列表第一条显示！',data.othis)
+        });
         //编辑框
-        // $('#summernote').summernote({
-        //     placeholder: 'Hello Bootstrap 4',
-        //     tabsize: 2,
-        //     height: 100
-        // });
-        let markupStr = 'hello world';
-        $('#summernote').summernote('code', markupStr);
+        $('#summernote').summernote({
+            placeholder: '请输入新闻内容',
+            tabsize: 2,
+            height: 400,
+            focus: false
+        });
+        let markupStr = 'hello world!!!';
+        // $('#summernote').summernote('code', markupStr);
         //时间框
         laydate.render({
             elem: '#newsTime'
@@ -106,6 +108,7 @@
                 layer.msg('上传中', {icon: 16, time: 0});
             }
             , done: function (res) {
+                //todo
                 console.log(res)
                 if (res.code > 0) {
                     return layer.msg('上传失败');
@@ -125,7 +128,7 @@
             let params = data.field;
             console.log('ppp');
             console.log(params);
-            return
+            return false;
 
             if (params.account === '') {
                 layer.msg('账号不能为空', {icon: 5});

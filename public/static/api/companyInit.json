@@ -40,9 +40,9 @@
           "target": "_self"
         },
         {
-          "title": "发布新闻",
+          "title": "新闻管理",
           "href": "news/index.html",
-          "icon": "fas fa-newspaper",
+          "icon": "fa fa-newspaper",
           "target": "_self"
         }
       ]
