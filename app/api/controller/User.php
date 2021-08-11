@@ -11,6 +11,9 @@ class User extends ApiController
     {
 //        dump($this->getUserInfo());
 //        dump($this->isLogin());
+
+        $login_ip = $this->request->server();
+        dump($login_ip);
     }
 
     public function login()
@@ -30,6 +33,8 @@ class User extends ApiController
             }*/
 
             $param = $this->request->param();
+
+            $login_ip = $this->request->server();
 
             if (!isset($param['username']) || trim($param['username']) === '') {
                 $this->returnData['msg'] = '参数错误：缺少 username';
