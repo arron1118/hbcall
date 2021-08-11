@@ -12,8 +12,8 @@ class User extends ApiController
 //        dump($this->getUserInfo());
 //        dump($this->isLogin());
 
-        $login_ip = $this->request->server();
-        dump($login_ip);
+        $server = $this->request->server();
+        return json($server);
     }
 
     public function login()
