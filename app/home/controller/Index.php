@@ -56,6 +56,9 @@ class Index extends HomeController
 
             $user->save();
 
+            $user->session_id = Session::getId();
+
+
             Session::set('user', $user->toArray());
 
             $this->returnData['code'] = 1;

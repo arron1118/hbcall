@@ -12,8 +12,34 @@ class User extends ApiController
 //        dump($this->getUserInfo());
 //        dump($this->isLogin());
 
+        $sessionId = Session::getId();
+        // dump($this->uuid());
+        dump('session_id: ' . $sessionId);
+        $token1 = hash_hmac('haval256,3', $this->uuid(), substr($sessionId, 0, 22));
+        $token2 = hash_hmac('ripemd320', $this->uuid(), substr($sessionId, 0, 22));
+        dump('token1: ' . $token1);
+        dump('token2: ' . $token2);
         $server = $this->request->server();
-        return json($server);
+//        return json($server);
+    }
+
+    /**
+     * 获取全球唯一标识
+     * @return string
+     */
+    public function uuid()
+    {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
 
     public function login()
