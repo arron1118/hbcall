@@ -14,11 +14,11 @@ class User extends ApiController
 
         $sessionId = Session::getId();
         // dump($this->uuid());
-        dump('session_id: ' . $sessionId);
+//        dump('session_id: ' . $sessionId);
         $token1 = hash_hmac('haval256,3', $this->uuid(), substr($sessionId, 0, 22));
         $token2 = hash_hmac('ripemd320', $this->uuid(), substr($sessionId, 0, 22));
-        dump('token1: ' . $token1);
-        dump('token2: ' . $token2);
+//        dump('token1: ' . $token1);
+//        dump('token2: ' . $token2);
         $server = $this->request->server();
         return json(['code' => 1, 'data' => ['session_id' => $sessionId], 'msg' => '请求成功']);
     }
