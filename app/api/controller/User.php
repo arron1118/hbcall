@@ -20,7 +20,7 @@ class User extends ApiController
         dump('token1: ' . $token1);
         dump('token2: ' . $token2);
         $server = $this->request->server();
-//        return json($server);
+        return json(['code' => 1, 'data' => ['session_id' => $sessionId], 'msg' => '请求成功']);
     }
 
     /**
