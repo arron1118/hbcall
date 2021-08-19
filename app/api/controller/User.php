@@ -21,6 +21,7 @@ class User extends ApiController
 //        dump('token2: ' . $token2);
         $server = $this->request->server();
 //        dump($this->request->header());
+        password_hash();
         return json(['code' => 1, 'data' => ['session_id' => $sessionId], 'header' => $this->request->header(), 'msg' => '请求成功']);
     }
 
