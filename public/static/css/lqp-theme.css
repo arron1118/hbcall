@@ -172,11 +172,11 @@ ul li{
     position: absolute;
     bottom: 0px;
     display: block;
-    width: 365px;
+    width: 368px;
     margin: 1rem 0;
     content: "";
     border-top: 1px solid var(--lqp-primary);
-    left: -322%;
+    left: -327%;
     top: 41px;
 }
 .vertical-level{
@@ -186,18 +186,18 @@ ul li{
     position: absolute;
     bottom: 0px;
     display: block;
-    width: 120px;
+    width: 70px;
     margin: 1rem 0;
     content: "";
     border-top: 1px solid var(--lqp-primary);
     right: 22%;
-    top: 95px;
+    top: 104px;
 }
 .vertical-level:after {
     position: absolute;
     bottom: 0px;
     display: block;
-    height: 162px;
+    height: 170px;
     margin: 1rem 0;
     content: "";
     border-left: 1px solid var(--lqp-primary);
