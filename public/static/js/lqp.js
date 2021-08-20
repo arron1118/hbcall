@@ -17,7 +17,7 @@
         let res = url.lastIndexOf("\/");
         let str = url.substring(res + 1, url.length);//从后面截取最后一个/后面的内容
         let pageName = str.substring(0, str.indexOf('.'));//去掉后缀，预防不同的后缀匹配不到（html,xhtml）
-        console.log('今天',pageName)
+        // console.log('今天',pageName)
         $.getJSON(menuUrl, function (res) {
             // 头部导航
             $.each(res.menuList, function (index, item) {
