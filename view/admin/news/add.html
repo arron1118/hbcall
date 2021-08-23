@@ -4,7 +4,7 @@
 <!--<link href="__STATIC__/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
 <!--<link href="__STATIC__/lib/summernote-0.8.18-dist/summernote.min.css" rel="stylesheet">-->
 <style>
-    .layui-form-label{
+    .layui-form-label {
         min-width: 100px;
     }
 </style>
@@ -24,7 +24,8 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">置顶</label>
                     <div class="layui-input-block">
-                        <input type="checkbox" name="top" lay-skin="switch" lay-filter="switchTest" value="1" lay-text="开|关">
+                        <input type="checkbox" name="top" lay-skin="switch" lay-filter="switchTest" value="1"
+                               lay-text="开|关">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -36,15 +37,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="layui-form-item" >
+                <div class="layui-form-item">
                     <label class="layui-form-label" for="newsContent">新闻内容</label>
                     <div class="layui-input-block" id="newsContent">
-<!--                        <textarea placeholder="请输入新闻内容" class="layui-textarea" name="newsContent" style="height: 300px;"></textarea>-->
+                        <!--                        <textarea placeholder="请输入新闻内容" class="layui-textarea" name="newsContent" style="height: 300px;"></textarea>-->
                         <textarea id="summernote" name="content"></textarea>
                     </div>
                 </div>
                 <div class="layui-input-block">
-                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" lay-filter="public">发布
+                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
+                            lay-filter="public">发布
                     </button>
                 </div>
             </form>
@@ -68,19 +70,19 @@
 <!--<script src="__STATIC__/lib/bootstrap/js/bootstrap.bundle.min.js"></script>-->
 <!--<script src="__STATIC__/lib/summernote-0.8.18-dist/summernote.min.js"></script>-->
 <script>
-    layui.use(['form','laydate','upload', 'jquery'], function () {
+    layui.use(['form', 'laydate', 'upload', 'jquery'], function () {
         let $ = layui.jquery,
             form = layui.form,
             upload = layui.upload,
             laydate = layui.laydate;
         //开关
         //监听指定开关
-        form.on('switch(switchTest)', function(data){
+        form.on('switch(switchTest)', function (data) {
             console.log(this.checked)
             // layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
             //     offset: '6px'
             // });
-            layer.tips('置顶新闻将会出现在列表第一条显示！',data.othis)
+            layer.tips('置顶新闻将会出现在列表第一条显示！', data.othis)
         });
         //编辑框
         $('#summernote').summernote({
@@ -97,31 +99,31 @@
         });
         //上传图片
         let uploadInst = upload.render({
-            elem: '#newsImg'
-            , url: '' //改成您自己的上传接口
-            , before: function (obj) {
+            elem: '#newsImg',
+            url: '{:url("/news/upload")}' ,
+            before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
                     $('#newsImgBox').attr('src', result); //图片链接（base64）
                 });
-
-                layer.msg('上传中', {icon: 16, time: 0});
-            }
-            , done: function (res) {
+            },
+            done: function (res) {
                 //todo
                 console.log(res)
-                if (res.code > 0) {
-                    return layer.msg('上传失败');
+                let icon = 0;
+                if (res.code === 1) {
+                    icon = 1;
                 }
-            }
-            , error: function () {
+                return layer.msg(res.msg, {icon: icon, time: 3000})
+            },
+            error: function () {
                 //演示失败状态，并实现重传
                 var demoText = $('#demoText');
                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
                 demoText.find('.demo-reload').on('click', function () {
                     uploadInst.upload();
                 });
-            }
+            },
         });
         // 发布
         form.on('submit(public)', function (data) {
