@@ -1,8 +1,7 @@
 {extend name="public/base" /}
 {block name="css"}
-<!-- include summernote css/js -->
-<!--<link href="__STATIC__/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">-->
-<!--<link href="__STATIC__/lib/summernote-0.8.18-dist/summernote.min.css" rel="stylesheet">-->
+{include file="public/bootstrap" /}
+<link href="__STATIC__/lib/summernote-0.8.18-dist/summernote-bs4.min.css" rel="stylesheet">
 <style>
     .layui-form-label {
         min-width: 100px;
@@ -17,36 +16,36 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="newsTitle">新闻标题</label>
                     <div class="layui-input-block" id="newsTitle">
-                        <input type="text" name="newsTitle" lay-verify="required" placeholder="新闻标题"
+                        <input type="text" name="title" lay-verify="required" placeholder="新闻标题"
                                autocomplete="off" class="layui-input" value="">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">置顶</label>
                     <div class="layui-input-block">
-                        <input type="checkbox" name="top" lay-skin="switch" lay-filter="switchTest" value="1"
-                               lay-text="开|关">
+                        <input type="checkbox" name="is_top" lay-skin="switch" lay-filter="switchTest" value="1"
+                               lay-text="是|否">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsImg">上传图片</label>
+                    <label class="layui-form-label" for="newsImg">封面</label>
                     <div class="layui-upload">
                         <button type="button" class="layui-btn" id="newsImg" style="margin-left: 12px;">上传</button>
                         <div class="layui-upload-list" style="padding-left: 112px;">
                             <img class="layui-upload-img" id="newsImgBox" style="max-height: 300px; width: auto;">
                         </div>
+                        <input name="cover_img" type="hidden" />
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="newsContent">新闻内容</label>
                     <div class="layui-input-block" id="newsContent">
-                        <!--                        <textarea placeholder="请输入新闻内容" class="layui-textarea" name="newsContent" style="height: 300px;"></textarea>-->
                         <textarea id="summernote" name="content"></textarea>
                     </div>
                 </div>
                 <div class="layui-input-block">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
-                            lay-filter="public">发布
+                            lay-filter="publish">发布
                     </button>
                 </div>
             </form>
@@ -57,33 +56,23 @@
 {/block}
 
 {block name="js"}
-<!-- include libraries(jQuery, bootstrap) -->
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-<!-- include summernote css/js -->
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
-
-<!--<script src="__STATIC__/lib/bootstrap/js/bootstrap.bundle.min.js"></script>-->
-<!--<script src="__STATIC__/lib/summernote-0.8.18-dist/summernote.min.js"></script>-->
+<script src="__STATIC__/lib/summernote-0.8.18-dist/summernote-bs4.min.js"></script>
 <script>
     layui.use(['form', 'laydate', 'upload', 'jquery'], function () {
         let $ = layui.jquery,
             form = layui.form,
-            upload = layui.upload,
-            laydate = layui.laydate;
+            upload = layui.upload;
+
+        let frameIndex = parent.layui.layer.getFrameIndex(window.name);
+
         //开关
         //监听指定开关
         form.on('switch(switchTest)', function (data) {
-            console.log(this.checked)
-            // layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
-            //     offset: '6px'
-            // });
-            layer.tips('置顶新闻将会出现在列表第一条显示！', data.othis)
+            if (this.checked) {
+                layer.tips('置顶新闻将会出现在列表第一条显示！', data.othis)
+            }
         });
+
         //编辑框
         $('#summernote').summernote({
             placeholder: '请输入新闻内容',
@@ -91,12 +80,10 @@
             height: 400,
             focus: false
         });
+
         let markupStr = 'hello world!!!';
         // $('#summernote').summernote('code', markupStr);
-        //时间框
-        laydate.render({
-            elem: '#newsTime'
-        });
+
         //上传图片
         let uploadInst = upload.render({
             elem: '#newsImg',
@@ -108,39 +95,38 @@
                 });
             },
             done: function (res) {
-                //todo
-                console.log(res)
                 let icon = 0;
                 if (res.code === 1) {
                     icon = 1;
+                    $('input[name="cover_img"]').val(res.data?.savePath);
                 }
+
                 return layer.msg(res.msg, {icon: icon, time: 3000})
             },
             error: function () {
                 //演示失败状态，并实现重传
-                var demoText = $('#demoText');
+                let demoText = $('#demoText');
                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
                 demoText.find('.demo-reload').on('click', function () {
                     uploadInst.upload();
                 });
             },
         });
-        // 发布
-        form.on('submit(public)', function (data) {
-            let params = data.field;
-            console.log('ppp');
-            console.log(params);
-            return false;
 
-            if (params.account === '') {
-                layer.msg('账号不能为空', {icon: 5});
+        // 发布
+        form.on('submit(publish)', function (data) {
+            let params = data.field;
+
+            if ($('#summernote').summernote('isEmpty')) {
+                layer.msg('内容不能为空', {icon: 0});
                 return false;
             }
-            $.post('{:url("/user/add")}', params, function (res) {
+
+            $.post('{:url("/news/add")}', params, function (res) {
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 6, time: 2500}, function () {
                         parent.layer.close(frameIndex);
-                        parent.layui.table.reload('userTable');
+                        parent.layui.table.reload('newsTable');
                     });
                 } else {
                     layer.msg(res.msg, {icon: 5});
