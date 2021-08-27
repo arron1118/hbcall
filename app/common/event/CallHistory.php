@@ -20,7 +20,7 @@ class CallHistory
     public function handle()
     {
         $module = app('http')->getName();
-        $time = strtotime('2021-08-23');
+        $time = strtotime('2021-08-26');
         $map = [
             ['status', '=', '0']
         ];
