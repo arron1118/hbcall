@@ -7,6 +7,7 @@ namespace app\home\controller;
 use app\common\model\CallHistory;
 use app\company\model\Company;
 use Curl\Curl;
+use think\db\exception\DbException;
 use think\facade\Config;
 use think\facade\Event;
 use think\facade\Session;
@@ -59,8 +60,10 @@ class HbCall extends \app\common\controller\HomeController
     }
 
     /**
-     * 拨号
      * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
     public function makeCall()
     {
@@ -78,16 +81,20 @@ class HbCall extends \app\common\controller\HomeController
         $response = json_decode($curl->response, true);
 
         if ($response['status']) {
-            $CallHistory = new CallHistory();
-            $CallHistory->user_id = $userInfo['id'];
-            $CallHistory->username = $userInfo['username'];
-            $CallHistory->company_id = $userInfo['company_id'];
-            $CallHistory->company = Company::where(['id' => $userInfo['company_id']])->value('username');
-            $CallHistory->subid = $response['data']['subid'];
-            $CallHistory->axb_number = $response['data']['axb_number'];
-            $CallHistory->called_number = $response['data']['mobile'];
-            $CallHistory->createtime = time();
-            $CallHistory->save();
+            try {
+                $CallHistory = new CallHistory();
+                $CallHistory->user_id = $userInfo['id'];
+                $CallHistory->username = $userInfo['username'];
+                $CallHistory->company_id = $userInfo['company_id'];
+                $CallHistory->company = Company::where(['id' => $userInfo['company_id']])->value('username');
+                $CallHistory->subid = $response['data']['subid'];
+                $CallHistory->axb_number = $response['data']['axb_number'];
+                $CallHistory->called_number = $response['data']['mobile'];
+                $CallHistory->createtime = time();
+                $CallHistory->save();
+            } catch (DbException $dbException) {
+
+            }
         }
 
         return json($response);
