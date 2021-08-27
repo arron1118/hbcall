@@ -130,7 +130,7 @@ class News extends \app\common\controller\AdminController
             return json($this->returnData);
         }
 
-        $res = $this->model::where('id', 'in', $ids)->update(['status' => '-1']);
+        $res = $this->model::where('id', 'in', $ids)->delete();
 
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '删除成功';
@@ -177,7 +177,7 @@ class News extends \app\common\controller\AdminController
             $res = (new $this->model)->saveAll($data);
 
             $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '接收成功';
+            $this->returnData['msg'] = '导入成功';
             $this->returnData['data'] = $res;
 
             return json($this->returnData);
