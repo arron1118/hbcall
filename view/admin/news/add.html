@@ -14,10 +14,28 @@
         <div class="layui-form">
             <form class="layui-form" action="">
                 <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsTitle">新闻标题</label>
+                    <label class="layui-form-label" for="newsTitle">标题</label>
                     <div class="layui-input-block" id="newsTitle">
-                        <input type="text" name="title" lay-verify="required" placeholder="新闻标题"
+                        <input type="text" name="title" lay-verify="required" placeholder="标题"
                                autocomplete="off" class="layui-input" value="">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="keyword">关键词</label>
+                    <div class="layui-input-block" id="keyword">
+                        <input type="text" name="keyword" placeholder="关键词" autocomplete="off" class="layui-input" value="">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="intro">简介</label>
+                    <div class="layui-input-block" id="intro">
+                        <textarea name="intro" rows="4" class="layui-textarea" placeholder="简介"></textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="newsContent">内容</label>
+                    <div class="layui-input-block" id="newsContent">
+                        <textarea id="summernote" name="content"></textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -37,14 +55,8 @@
                         <input name="cover_img" type="hidden" />
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsContent">新闻内容</label>
-                    <div class="layui-input-block" id="newsContent">
-                        <textarea id="summernote" name="content"></textarea>
-                    </div>
-                </div>
                 <div class="layui-input-block">
-                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
+                    <button class="layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
                             lay-filter="publish">发布
                     </button>
                 </div>

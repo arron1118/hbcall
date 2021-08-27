@@ -12,14 +12,14 @@
                         <div class="layui-inline">
                             <label class="layui-form-label">标题</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="newsTitle" autocomplete="off" class="layui-input">
+                                <input type="text" name="title" autocomplete="off" class="layui-input">
                             </div>
                         </div>
 
                         <div class="layui-inline">
                             <label class="layui-form-label">发布时间</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="newsTime" class="layui-input" id="newsTitle" placeholder=""
+                                <input type="text" name="time" class="layui-input" id="newsTitle" placeholder=""
                                        autocomplete="off">
                             </div>
                         </div>
@@ -30,8 +30,7 @@
                             </button>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="background-color: #1e9fff; color: #fff;"
-                                   id="importExcel">批量导入</label>
+                            <div class="layui-btn" id="importExcel">批量导入</div>
                         </div>
                     </div>
                 </form>
@@ -67,6 +66,7 @@
             excel = layui.excel,
             upload = layui.upload,
             table = layui.table;
+
         laydate.render({
             elem: '#newsTitle'
         });
@@ -84,9 +84,8 @@
             choose: function (obj) {
                 let files = obj.pushFile();
                 let fileArr = Object.values(files);// 注意这里的数据需要是数组，所以需要转换一下
-                console.debug(fileArr)
                 // 用完就清理掉，避免多次选中相同文件时出现问题
-                for (var index in files) {
+                for (let index in files) {
                     if (files.hasOwnProperty(index)) {
                         delete files[index];
                     }
@@ -106,44 +105,42 @@
 
         function uploadExcel(files) {
             try {
-                let excel = layui.excel;
                 excel.importExcel(files, {
                     // 读取数据的同时梳理数据
                     fields: {
-                        'newsTitle': 'A',
-                        'thumbnail': 'B',
-                        'author': 'C',
-                        'source': 'D',
-                        'lId': 'E',
-                        'keyword': 'F',
-                        'remark': 'G',
-                        'content': 'H',
-                        'power': 'I',
+                        title: 'A',
+                        cover_img: 'B',
+                        author: 'C',
+                        source: 'D',
+                        lId: 'E',
+                        keyword: 'F',
+                        intro: 'G',
+                        content: 'H',
+                        power: 'I',
                     }
                 }, function (data) {
                     data = Object.values(data);
-                    console.debug(data);
-                    let arr = new Array();
+
+                    let arr = [];
                     let temp = [];
                     for (let item of data) {
                         for (let value in item) {
                             temp.push(item[value]);
                         }
                     }
-                    console.log(temp);
 
                     for (let j = 0; j < temp.length; j++) {
                         if (temp[j].length > 0) {
                             for (let i = 1; i < temp[j].length; i++) {
                                 let tt = {
                                     cId: 0,
-                                    newsTitle: temp[j][i].newsTitle,
-                                    thumbnail: temp[j][i].thumbnail,
+                                    title: temp[j][i].title,
+                                    cover_img: temp[j][i].cover_img,
                                     author: temp[j][i].author,
                                     source: temp[j][i].source,
                                     lId: temp[j][i].lId,
                                     keyword: temp[j][i].keyword,
-                                    remark: temp[j][i].remark,
+                                    intro: temp[j][i].intro,
                                     content: temp[j][i].content,
                                     power: temp[j][i].power,
                                 };
@@ -152,50 +149,28 @@
                         }
                     }
 
-                    console.table(arr);
-
-                    return false;
-
                     $.ajax({
                         async: false,
-                        url: basePath + 'PowerUser/importPowerUserData.action',
+                        url: '{:url("/news/import")}',
                         type: 'post',
                         dataType: "json",
                         contentType: "application/x-www-form-urlencoded",
                         data: {
-                            data: JSON.stringify(arr)
+                            data: arr
                         },
-                        success: function (data) {
-                            if (data.success) {
-                                layer.msg(data.message);
+                        success: function (res) {
+                            let icon = 0;
+                            if (res.code === 1) {
+                                icon = 1;
                                 setTimeout(function () {
                                     layer.closeAll(); //疯狂模式，关闭所有层
                                 }, 1000);
+
                                 //表格导入成功后，重载表格
-                                tableIns.reload('testTerminalConfigReload', {
-                                    url: basePath + 'PowerUser/PowerUserDataTable.action',
-                                    page: {
-                                        limit: 10, // 初始 每页几条数据
-                                        limits: [10, 20, 30]
-                                        // 可以选择的 每页几条数据
-                                    },
-                                    where: {
-                                        cId: selectConcentrator,
-                                        tId: selectTerminal
-                                    },
-                                    parseData: function (res) { //res 即为原始返回的数据
-                                        return {
-                                            "code": 0, //解析接口状态
-                                            "msg": res.message, //解析提示文本
-                                            "count": res.total, //解析数据长度
-                                            "data": res.data //解析数据列表
-                                        };
-                                    }
-                                }, 'data');
-                            } else {
-                                //表格导入失败后，重载文件上传
-                                layer.alert(data.error + "请重新上传", {icon: 2});
+                                table.reload('newsTable');
                             }
+
+                            layer.msg(res.msg, {icon: icon});
                         },
                         error: function (msg) {
                             layer.msg('请联系管理员!!!');
@@ -204,7 +179,6 @@
                 });
             } catch (e) {
                 layer.msg('请联系管理员!!!');
-                // layer.alert(e.message);
             }
         }
 
@@ -232,7 +206,6 @@
                 {field: 'title', title: '标题'},
                 {field: 'is_top', title: '置顶', align: 'center'},
                 {field: 'view', title: '查看', align: "center"},
-                {field: 'create_time', title: '发布时间', align: "center"},
                 {field: 'update_time', title: '更新时间', align: "center"},
                 {title: '操作', minWidth: 150, toolbar: '#newsTableBar', align: "center"}
             ]],
@@ -254,8 +227,10 @@
                 page: {
                     curr: 1
                 },
-                where: params
+                where: data.field
             });
+
+            return false;
         });
 
         /**
@@ -278,67 +253,26 @@
                     layer.full(index);
                 });
             } else if (obj.event === 'delete') {  // 监听删除操作
-                let checkStatus = table.checkStatus('userTable'),
+                let checkStatus = table.checkStatus('newsTable'),
                     data = checkStatus.data;
-                console.log(data);
                 if (data.length < 1) {
                     layer.msg('请勾选需要删除的数据');
                     return false;
-                } else {
-                    let ids = [], url = '';
-                    $(data).each(function (i) {
-                        ids.push(data[i].id);
-                    });
-                    console.log('删除的ids', ids);
-                    $.post(url, ids, function () {
-                        //todo
-                    });
                 }
-            } else if (obj.event === 'imports') {
-                console.log('pp')
-                // 监听上传文件的事件
-                $('#LAY-excel-import-excel').change(function (e) {
-                    console.log('jinlai')
-                    let files = e.target.files;
-                    try {
-                        // 方式一：先读取数据，后梳理数据
-                        // excel.importExcel(files, {}, function(data) {
-                        //     console.log(data);
-                        //     data = excel.filterImportData(data, {
-                        //         'id': 'A'
-                        //         ,'username': 'B'
-                        //         ,'experience': 'C'
-                        //         ,'sex': 'D'
-                        //         ,'score': 'E'
-                        //         ,'city': 'F'
-                        //         ,'classify': 'G'
-                        //         ,'wealth': 'H'
-                        //         ,'sign': 'I'
-                        //     })
-                        //     console.log(data);
-                        // });
-                        // 方式二：可以在读取过程中梳理数据
-                        excel.importExcel(files, {
-                            fields: {
-                                'id': 'A'
-                                , 'username': 'B'
-                                , 'experience': 'C'
-                                , 'sex': 'D'
-                                , 'score': 'E'
-                                , 'city': 'F'
-                                , 'classify': 'G'
-                                , 'wealth': 'H'
-                                , 'sign': 'I'
-                            }
-                        }, function (data) {
-                            console.log(data);
-                        });
-                    } catch (e) {
-                        layer.alert(e.message);
-                    }
+
+                let ids = [];
+                $(data).each(function (i) {
+                    ids.push(data[i].id);
                 });
 
+                layer.confirm('删除 ' + data.length + ' 条数据？确定么', function (index) {
+                    $.post("{:url('/news/delete')}", {ids: ids}, function (res) {
+                        layer.msg(res.msg, {icon: 6});
+                        layer.close(index);
 
+                        table.reload('newsTable');
+                    });
+                });
             }
         });
 
@@ -358,8 +292,8 @@
                     layer.full(index);
                 });
             } else if (obj.event === 'del') {
-                layer.confirm('真的删除行么', function (index) {
-                    $.post("{:url('/news/delete')}", {id: obj.data.id}, function (res) {
+                layer.confirm('真的删除这条数据么', function (index) {
+                    $.post("{:url('/news/delete')}", {ids: obj.data.id}, function (res) {
                         layer.msg(res.msg, {icon: 6});
 
                         obj.del();

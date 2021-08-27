@@ -4,6 +4,7 @@
 namespace app\admin\controller;
 
 
+use think\db\exception\DbException;
 use think\facade\Config;
 use think\facade\Session;
 
@@ -24,6 +25,17 @@ class News extends \app\common\controller\AdminController
             ];
             $page = $this->request->param('page', 1);
             $limit = $this->request->param('limit', 10);
+            $search_title = $this->request->param('title', '');
+            $search_time = $this->request->param('time', '');
+
+            if ($search_title) {
+                $map[] = ['title', 'like', '%' . $search_title . '%'];
+            }
+
+            if ($search_time) {
+                $daytime = strtotime($search_time);
+                $map[] = ['update_time', 'between', [$daytime, $daytime + 86400 - 1]];
+            }
 
             $count = $this->model::where($map)->count();
 
@@ -96,12 +108,12 @@ class News extends \app\common\controller\AdminController
 
         if ($this->request->isPost()) {
             $param = $this->request->param();
-            $param['is_top'] = $param['is_top'] ? 1 : 0;
+            $param['is_top'] = isset($param['is_top']) ?: 0;
             $param['update_time'] = time();
             $news->save($param);
 
             $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '发布成功';
+            $this->returnData['msg'] = '更新成功';
             $this->returnData['data'] = $news->id;
 
             return json($this->returnData);
@@ -111,17 +123,18 @@ class News extends \app\common\controller\AdminController
         return $this->view->fetch();
     }
 
-    public function delete($id = 0)
+    public function delete($ids)
     {
-        if (!$id) {
+        if (!$ids) {
             $this->returnData['msg'] = '未指定ID';
             return json($this->returnData);
         }
 
-        $res = $this->model::update(['id' => $id, 'status' => '-1']);
+        $res = $this->model::where('id', 'in', $ids)->update(['status' => '-1']);
 
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '删除成功';
+        $this->returnData['data'] = $res;
 
         return json($this->returnData);
     }
@@ -140,5 +153,40 @@ class News extends \app\common\controller\AdminController
         $this->returnData['msg'] = '上传成功';
 
         return $this->returnData;
+    }
+
+    public function import()
+    {
+        $data = $this->request->param('data');
+        if (!$data) {
+            $this->returnData['msg'] = '未找到相关数据';
+            return json($this->returnData);
+        }
+
+        $list = [];
+        foreach($data as $key => &$val) {
+            $val['create_time'] = time();
+            $val['update_time'] = time();
+            $val['status'] = 1;
+            $val['author_id'] = $this->userInfo['id'];
+
+            $list[$key] = $val;
+        }
+
+        try {
+            $res = (new $this->model)->saveAll($data);
+
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '接收成功';
+            $this->returnData['data'] = $res;
+
+            return json($this->returnData);
+        } catch (DbException $dbException) {
+            $this->returnData['code'] = $dbException->getCode();
+            $this->returnData['msg'] = $dbException->getMessage();
+            $this->returnData['data'] = $dbException->getData();
+
+            return json($this->returnData);
+        }
     }
 }

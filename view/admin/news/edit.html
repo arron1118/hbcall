@@ -15,17 +15,35 @@
             <form class="layui-form" action="">
                 <input name="id" type="hidden" value="{$news.id}" />
                 <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsTitle">新闻标题</label>
+                    <label class="layui-form-label" for="newsTitle">标题</label>
                     <div class="layui-input-block" id="newsTitle">
-                        <input type="text" name="title" lay-verify="required" placeholder="新闻标题"
+                        <input type="text" name="title" lay-verify="required" placeholder="标题"
                                autocomplete="off" class="layui-input" value="{$news.title}">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-la bel">置顶</label>
+                    <label class="layui-form-label" for="keyword">关键词</label>
+                    <div class="layui-input-block" id="keyword">
+                        <input type="text" name="keyword" placeholder="关键词" autocomplete="off" class="layui-input" value="{$news.keyword}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="intro">简介</label>
+                    <div class="layui-input-block" id="intro">
+                        <textarea name="intro" rows="4" class="layui-textarea" placeholder="简介">{$news.intro}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="newsContent">内容</label>
+                    <div class="layui-input-block" id="newsContent">
+                        <textarea id="summernote" name="content">{$news.content}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">置顶</label>
                     <div class="layui-input-block">
                         <input type="checkbox" name="is_top" lay-skin="switch" {if $news->getData('is_top')}checked{/if} lay-filter="switchTest" value="1"
-                               lay-text="是|否">
+                        lay-text="是|否">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -38,14 +56,8 @@
                         <input name="cover_img" type="hidden" value="{$news.cover_img}" />
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsContent">新闻内容</label>
-                    <div class="layui-input-block" id="newsContent">
-                        <textarea id="summernote" name="content">{$news.content}</textarea>
-                    </div>
-                </div>
                 <div class="layui-input-block">
-                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
+                    <button class="layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
                             lay-filter="publish">发布
                     </button>
                 </div>
@@ -66,20 +78,20 @@
 
         let frameIndex = parent.layui.layer.getFrameIndex(window.name);
 
-        //开关
-        //监听指定开关
-        form.on('switch(switchTest)', function (data) {
-            if (this.checked) {
-                layer.tips('置顶新闻将会出现在列表第一条显示！', data.othis)
-            }
-        });
-
         //编辑框
         $('#summernote').summernote({
             placeholder: '请输入新闻内容',
             tabsize: 2,
             height: 400,
             focus: false
+        });
+
+        //开关
+        //监听指定开关
+        form.on('switch(switchTest)', function (data) {
+            if (this.checked) {
+                layer.tips('置顶新闻将会出现在列表第一条显示！', data.othis)
+            }
         });
 
         let markupStr = 'hello world!!!';
