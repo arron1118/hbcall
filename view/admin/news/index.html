@@ -159,18 +159,17 @@
                             data: arr
                         },
                         success: function (res) {
+                            $('input[name="file"]').val('');
+
                             let icon = 0;
                             if (res.code === 1) {
                                 icon = 1;
-                                setTimeout(function () {
-                                    layer.closeAll(); //疯狂模式，关闭所有层
-                                }, 1000);
 
                                 //表格导入成功后，重载表格
                                 table.reload('newsTable');
                             }
 
-                            layer.msg(res.msg, {icon: icon});
+                            layer.msg(res.msg, {icon: icon, time: 3000});
                         },
                         error: function (msg) {
                             layer.msg('请联系管理员!!!');

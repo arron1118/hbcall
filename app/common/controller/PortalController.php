@@ -6,6 +6,7 @@ namespace app\common\controller;
 
 use think\facade\Session;
 use think\facade\View;
+use think\facade\Config;
 
 class PortalController extends \app\BaseController
 {
@@ -20,6 +21,8 @@ class PortalController extends \app\BaseController
         'data' => []
     ];
 
+    protected $title = '';
+
     public function initialize()
     {
         $this->returnData['msg'] = lang('Unknown error');
@@ -29,6 +32,9 @@ class PortalController extends \app\BaseController
         // 用户登录状态
         $this->userInfo = $this->getUserInfo();
         $this->view->assign('user', $this->userInfo);
+
+        // SEO
+        $this->view->assign('site', Config::get('site'));
     }
 
     protected function getUserInfo()

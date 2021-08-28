@@ -1,0 +1,116 @@
+{extend name="public/base" /}
+
+{block name="css"}
+
+{/block}
+
+{block name="content"}
+
+<div class="container-fluid p-0 mb-5">
+    <div class="card bg-dark text-white text-center" style="border-radius: 0px;">
+        <img src="__STATIC__/images/news/slide.png" class="card-img" alt="..." style="height: auto; min-height: 180px;">
+        <div class="card-img-overlay" style="min-height: 300px;">
+            <h2 class="text-primary">新闻资讯</h2>
+            <h5 class="text-white fs-4">
+                从业十余年，服务10000+坐席
+            </h5>
+        </div>
+    </div>
+</div>
+<div class="container-fluid p-0 mb-5">
+    <div class="container">
+        <div class="row mb-5 text-center">
+            <div class="col-12">
+                <h3>{$top.title}</h3>
+            </div>
+        </div>
+
+        <div class="row  pb-5">
+            <div class="col-5">
+                <img class="img-fluid" src="{$top.cover_img}" style="width: 500px; height: 250px;">
+            </div>
+            <div class="col-7">
+                <p class="fs-5 d-inline-block text-truncate mb-4 text-primary" style="max-width: 100%;">
+                    {$top.title}
+                </p>
+                <div class="mb-5">
+                    <p class="text-muted fs-5 mb-2">{$top.update_time}</p>
+                    <p class="text-muted " style="max-width: 100%;text-overflow: -o-ellipsis-lastline;overflow: hidden;
+                text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 3;line-clamp: 3;-webkit-box-orient: vertical;">
+                        {$top.intro ?: $top.content}
+                    </p>
+
+                </div>
+                <a class="btn btn-danger lqpDetail" href="/news/{$top.id}" target="_blank">查看详情</a>
+            </div>
+        </div>
+        <div class="row">
+            <ul class="lqp-news">
+                {foreach $list as $item => $val}
+                <li class="border-bottom text-muted position-relative">
+                    <div class="row p-2">
+                        <div class="col-2">
+                            <span class="lqp-text-indent fs-4 text-nowrap">{$top.update_time}</span>
+                        </div>
+                        <div class="col-10">
+                            <div class="fs-5 text-truncate text-primary mb-2" style="max-width: 100%;">
+                                <a href="/news/{$val.id}" target="_blank" class="stretched-link">{$val.title}</a>
+                            </div>
+                            <div class="fs-6 d-inline-block text-truncate mb-2" style="max-width: 100%;  ">
+                                {$val.intro ?: $val.content}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-4 offset-5">
+
+                <nav aria-label="...">
+                    <ul class="pagination pagination-sm">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">1</span>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+    let news = $('.lqp-news').find('li');
+    $(news).hover(
+        function () {
+            $(this).css({"background": "#eee"});
+        },
+        function () {
+            $(this).css({"background": ""});
+        }
+    )
+    // 点击进去详情页
+    // $('.lqpDetail').on('click', function () {
+    //     window.location.href = "/portal/detail/detailIndex.html"
+    // })
+    // $(news).on('click', function () {
+    //     window.location.href = "/portal/detail/detailIndex.html"
+    // })
+</script>
+{/block}
+
