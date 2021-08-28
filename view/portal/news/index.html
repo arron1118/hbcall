@@ -17,26 +17,35 @@
         </div>
     </div>
 </div>
-<div class="container-fluid p-0 mb-5">
+<!--后台没有返回数据的时候显示的模板-->
+<div class="container-fluid mb-5">
+    <div class="container text-center">
+            <img class="img-fluid" src="__STATIC__/images/news/noNews.png">
+    </div>
+    <div>没有数据显示的图片--------------------------------------------------------------------------------------------------------------------------------------------</div>
+</div>
+<!--后台有返回数据的时候显示的模板-->
+<div class="container-fluid p-0 mb-5 ">
     <div class="container">
-        <div class="row mb-5 text-center">
-            <div class="col-12">
-                <h3>{$top.title}</h3>
+        <div class="row pb-5">
+            {if $top.cover_img}
+            <div class="col-4">
+                <img class="img-fluid shadow" src="{$top.cover_img}" style="max-width: 500px; height: 250px;">
             </div>
-        </div>
-
-        <div class="row  pb-5">
-            <div class="col-5">
-                <img class="img-fluid" src="{$top.cover_img}" style="width: 500px; height: 250px;">
+            {else /}
+            <div class="col-4">
+                <img class="img-fluid shadow-sm" src="__STATIC__/images/news/noImg.png" style="max-width: 500px; height: 250px;">
             </div>
-            <div class="col-7">
-                <p class="fs-5 d-inline-block text-truncate mb-4 text-primary" style="max-width: 100%;">
+            {/if}
+            <div class="col-8">
+                <p class="d-inline-block text-truncate mb-4 text-primary fs-3" style="max-width: 100%;">
                     {$top.title}
                 </p>
                 <div class="mb-5">
-                    <p class="text-muted fs-5 mb-2">{$top.update_time}</p>
-                    <p class="text-muted " style="max-width: 100%;text-overflow: -o-ellipsis-lastline;overflow: hidden;
-                text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 3;line-clamp: 3;-webkit-box-orient: vertical;">
+                    <p class="text-muted fs-6 mb-2">发布时间：{$top.update_time}</p>
+                    <p
+                       style="max-width: 100%; text-overflow: -o-ellipsis-lastline; overflow: hidden; text-overflow: ellipsis;
+                       display: -webkit-box;-webkit-line-clamp: 3;line-clamp: 3;-webkit-box-orient: vertical;">
                         {$top.intro ?: $top.content}
                     </p>
 
@@ -47,15 +56,24 @@
         <div class="row">
             <ul class="lqp-news">
                 {foreach $list as $item => $val}
-                <li class="border-bottom text-muted position-relative">
+                <li class="border-bottom  position-relative">
                     <div class="row p-2">
+                        {if $val.cover_img}
                         <div class="col-2">
-                            <span class="lqp-text-indent fs-4 text-nowrap">{$top.update_time}</span>
+                            <img class="img-fluid" src="{$val.cover_img}" style="max-height: 120px">
                         </div>
+                        {else /}
+                        <div class="col-2">
+                            <img class="img-fluid" src="__STATIC__/images/news/noImg.png" style="max-height: 120px">
+                        </div>
+
+                        {/if}
+
                         <div class="col-10">
-                            <div class="fs-5 text-truncate text-primary mb-2" style="max-width: 100%;">
+                            <div class="fs-5 text-truncate text-primary mb-3" style="max-width: 100%;">
                                 <a href="/news/{$val.id}" target="_blank" class="stretched-link">{$val.title}</a>
                             </div>
+                            <div class="mb-2"> <span class="lqp-text-indent fs-6 text-nowrap text-muted">发布时间：{$val.update_time}</span></div>
                             <div class="fs-6 d-inline-block text-truncate mb-2" style="max-width: 100%;  ">
                                 {$val.intro ?: $val.content}
                             </div>
@@ -67,7 +85,6 @@
         </div>
         <div class="row">
             <div class="col-4 offset-5">
-
                 <nav aria-label="...">
                     <ul class="pagination pagination-sm">
                         <li class="page-item">
@@ -87,7 +104,6 @@
                         </li>
                     </ul>
                 </nav>
-
             </div>
         </div>
     </div>

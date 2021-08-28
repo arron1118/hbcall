@@ -110,7 +110,7 @@
                 let icon = 0;
                 if (res.code === 1) {
                     icon = 1;
-                    $('input[name="cover_img"]').val(res.data?.savePath);
+                    $('input[name="cover_img"]').val(res['data']['savePath']);
                 }
 
                 return layer.msg(res.msg, {icon: icon, time: 3000})
