@@ -21,7 +21,12 @@ class News
             ->limit(($page - 1) * $limit, $limit)
             ->select()->toArray();
 
-        return ['count' => $count, 'list' => $list, 'top' => $list[0]];
+        $top = [];
+        if ($list) {
+            $top = $list[0];
+        }
+
+        return ['count' => $count, 'list' => $list, 'top' => $top];
     }
 
     public function updateView($id)
