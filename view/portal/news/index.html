@@ -18,13 +18,14 @@
     </div>
 </div>
 <!--后台没有返回数据的时候显示的模板-->
+{if empty($list)}
 <div class="container-fluid mb-5">
     <div class="container text-center">
             <img class="img-fluid" src="__STATIC__/images/news/noNews.png">
     </div>
-    <div>没有数据显示的图片--------------------------------------------------------------------------------------------------------------------------------------------</div>
 </div>
 <!--后台有返回数据的时候显示的模板-->
+{else /}
 <div class="container-fluid p-0 mb-5 ">
     <div class="container">
         <div class="row pb-5">
@@ -108,6 +109,7 @@
         </div>
     </div>
 </div>
+{/if}
 {/block}
 {block name="js"}
 <script>
