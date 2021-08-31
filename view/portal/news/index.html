@@ -18,101 +18,55 @@
     </div>
 </div>
 <!--后台没有返回数据的时候显示的模板-->
-{if empty($list)}
-<div class="container-fluid mb-5">
-    <div class="container text-center">
-            <img class="img-fluid" src="__STATIC__/images/news/noNews.png">
-    </div>
-</div>
+
 <!--后台有返回数据的时候显示的模板-->
-{else /}
+
 <div class="container-fluid p-0 mb-5 ">
     <div class="container">
-        <div class="row pb-5">
-            {if $top.cover_img}
-            <div class="col-4">
-                <img class="img-fluid shadow" src="{$top.cover_img}" style="max-width: 500px; height: 250px;">
-            </div>
-            {else /}
-            <div class="col-4">
-                <img class="img-fluid shadow-sm" src="__STATIC__/images/news/noImg.png" style="max-width: 500px; height: 250px;">
-            </div>
-            {/if}
-            <div class="col-8">
-                <p class="d-inline-block text-truncate mb-4 text-primary fs-3" style="max-width: 100%;">
-                    {$top.title}
-                </p>
-                <div class="mb-5">
-                    <p class="text-muted fs-6 mb-2">发布时间：{$top.update_time}</p>
-                    <p
-                       style="max-width: 100%; text-overflow: -o-ellipsis-lastline; overflow: hidden; text-overflow: ellipsis;
-                       display: -webkit-box;-webkit-line-clamp: 3;line-clamp: 3;-webkit-box-orient: vertical;">
-                        {$top.intro ?: $top.content}
-                    </p>
-
-                </div>
-                <a class="btn btn-danger lqpDetail" href="/news/{$top.id}" target="_blank">查看详情</a>
+        <!-- 无数据时 -->
+        <div class="row no-data d-none">
+            <div class="col text-center">
+                <img class="img-fluid" src="__STATIC__/images/news/noNews.png">
             </div>
         </div>
-        <div class="row">
-            <ul class="lqp-news">
-                {foreach $list as $item => $val}
-                <li class="border-bottom  position-relative">
-                    <div class="row p-2">
-                        {if $val.cover_img}
-                        <div class="col-2">
-                            <img class="img-fluid" src="{$val.cover_img}" style="max-height: 120px">
-                        </div>
-                        {else /}
-                        <div class="col-2">
-                            <img class="img-fluid" src="__STATIC__/images/news/noImg.png" style="max-height: 120px">
-                        </div>
 
-                        {/if}
-
-                        <div class="col-10">
-                            <div class="fs-5 text-truncate text-primary mb-3" style="max-width: 100%;">
-                                <a href="/news/{$val.id}" target="_blank" class="stretched-link">{$val.title}</a>
-                            </div>
-                            <div class="mb-2"> <span class="lqp-text-indent fs-6 text-nowrap text-muted">发布时间：{$val.update_time}</span></div>
-                            <div class="fs-6 d-inline-block text-truncate mb-2" style="max-width: 100%;  ">
-                                {$val.intro ?: $val.content}
-                            </div>
-                        </div>
+        <!-- 有数据时 -->
+        <div class="row news-list">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col">
+                        <ul class="lqp-news">
+                        </ul>
                     </div>
-                </li>
-                {/foreach}
-            </ul>
-        </div>
-        <div class="row">
-            <div class="col-4 offset-5">
-                <nav aria-label="...">
-                    <ul class="pagination pagination-sm">
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li class="page-item active" aria-current="page">
-                            <span class="page-link">1</span>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <nav id="pageList" class="">
+                        </nav>
+                    </div>
+                </div>
             </div>
         </div>
+       <!-- <ul class="pagination">
+            <li class="page-item disabled" id="firstPage">
+                <span class="page-link">首页</span>
+            </li>
+            <li class="page-item"><a class="page-link" href="#" id="">1</a></li>
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">2</span>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">尾页</a>
+            </li>
+
+        </ul>-->
     </div>
 </div>
-{/if}
+
 {/block}
 {block name="js"}
-<script>
+<script lang="js">
     let news = $('.lqp-news').find('li');
     $(news).hover(
         function () {
@@ -122,13 +76,116 @@
             $(this).css({"background": ""});
         }
     )
+
     // 点击进去详情页
-    // $('.lqpDetail').on('click', function () {
-    //     window.location.href = "/portal/detail/detailIndex.html"
-    // })
-    // $(news).on('click', function () {
-    //     window.location.href = "/portal/detail/detailIndex.html"
-    // })
+    let getNewsList = function (p = 1, limit = 1) {
+        $.get('/news/getList', {page: p, limit: limit}, function (res) {
+            if (res.list.length > 0) {
+                $('.no-data').addClass('d-none');
+
+                let newsList = '';
+                $.each(res.list, function (index, item) {
+                    if (item.cover_img === '') {
+                        item.cover_img = '__STATIC__/images/news/noImg.png';
+                    }
+                    let intro = item.intro ? item.intro : item.content;
+
+                    newsList += `
+                        <li class="border-bottom  position-relative">
+                            <div class="row p-2">
+                                <div class="col-2">
+                                    <img class="img-fluid" src="${item.cover_img}" style="max-height: 140px;width: 140px;">
+                                </div>
+
+                                <div class="col-10">
+                                    <div class="fs-5 text-truncate text-primary mb-3" style="max-width: 100%;">
+                                        <a href="/news/${item.id}" target="_blank" class="stretched-link">${item.title}</a>
+                                    </div>
+                                    <div class="mb-2"><span class="lqp-text-indent fs-6 text-nowrap text-muted">发布时间：${item.update_time}</span>
+                                    </div>
+                                    <div class="fs-6 d-inline-block text-truncate mb-2" style="max-width: 100%;  ">
+                                        ${intro}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    `;
+                });
+                $('.lqp-news').html(newsList);
+
+                let Count = res.count;
+                let Pages = Math.ceil(Count / limit);
+                let limitPages = 5;
+                let pageList = '';
+                // TODO 只显示几个页码，待优化
+                let j = 0;
+                for (let i = 1; i <= Pages; i++) {
+                    if (i >= (p - Math.ceil(limitPages / 2))) {
+                        if (j < limitPages) {
+                            if (i === p) {
+                                pageList += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
+                            } else {
+                                pageList += `<li class="page-item"><a class="page-link" data-number="${i}" href="javascript:;">${i}</a></li>`;
+                            }
+                        }
+
+                        j++;
+                    }
+                }
+
+                let prevLi = '';
+                if (p === 1) {
+                    prevLi = `
+                        <li class="page-item disabled" id="firstPage">
+                            <span class="page-link">上一页</span>
+                        </li>
+                    `;
+                } else {
+                    prevLi = `
+                        <li class="page-item">
+                            <a class="page-link" data-number="${p - 1}" href="javascript:;">上一页</a>
+                        </li>
+                    `;
+                }
+
+                let nextLi = '';
+                if (p === Pages) {
+                    nextLi = `
+                        <li class="page-item disabled" id="endPage">
+                            <span class="page-link">下一页</span>
+                        </li>
+                    `;
+                } else {
+                    nextLi = `
+                        <li class="page-item">
+                            <a class="page-link" data-number="${p + 1}" href="javascript:;">下一页</a>
+                        </li>
+                    `;
+                }
+
+                let pageTemplet = `
+                    <ul class="pagination">
+                        ${prevLi}
+                        ${pageList}
+                        ${nextLi}
+                    </ul>
+                `;
+
+                $('#pageList').html(pageTemplet);
+
+                // 点击页码
+                $('a.page-link').on('click',function (e) {
+                    let curPage = $(this).data('number');
+                    getNewsList(curPage);
+                });
+            } else {
+                $('.no-data').removeClass('d-none');
+            }
+        });
+    }
+
+    getNewsList();
+
 </script>
 {/block}
 

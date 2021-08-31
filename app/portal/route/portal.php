@@ -10,6 +10,7 @@ Route::get('case', 'index/case');
 Route::get('about', 'index/about');
 Route::get('buy', 'index/buy');
 Route::get('news$', 'news/index');
+Route::get('news/getList', 'news/getList');
 Route::get('news/:id', 'news/detail');
 
 

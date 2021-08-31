@@ -10,7 +10,6 @@ class News extends \app\common\controller\PortalController
 
     public function index()
     {
-        $this->view->assign(NewsLibrary::getList());
         return $this->view->fetch();
     }
 
@@ -25,5 +24,14 @@ class News extends \app\common\controller\PortalController
             'description' => $news->intro ?: $news->content
         ]);
         return $this->view->fetch();
+    }
+
+    public function getList()
+    {
+        $page = $this->request->param('page', 1);
+        $limit = $this->request->param('limit', 10);
+
+        $list = NewsLibrary::getList($page, $limit);
+        return json($list);
     }
 }
