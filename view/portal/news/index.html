@@ -33,34 +33,38 @@
         <!-- 有数据时 -->
         <div class="row news-list">
             <div class="col-12">
+                <div class="row pb-5 d-none">
+                    <div class="col-4">
+                        <img class="img-fluid shadow" src="" style="max-width: 500px; height: 250px;">
+                    </div>
+                    <div class="col-8">
+                        <p class="d-inline-block text-truncate mb-4 text-primary fs-3" style="max-width: 100%;">
+                        </p>
+                        <div class="mb-5">
+                            <p class="text-muted fs-6 mb-2">发布时间：</p>
+                            <p style="max-width: 100%; text-overflow: -o-ellipsis-lastline; overflow: hidden; text-overflow: ellipsis;
+                       display: -webkit-box;-webkit-line-clamp: 3;line-clamp: 3;-webkit-box-orient: vertical;">
+                            </p>
+
+                        </div>
+                        <a class="btn btn-danger lqpDetail" href="/news/" target="_blank">查看详情</a>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col">
                         <ul class="lqp-news">
                         </ul>
                     </div>
                 </div>
-                <div class="row justify-content-center">
+                <div class="row justify-content-end">
                     <div class="col-6">
-                        <nav id="pageList" class="">
+                        <nav id="pageList" class="float-end">
                         </nav>
                     </div>
                 </div>
             </div>
         </div>
-       <!-- <ul class="pagination">
-            <li class="page-item disabled" id="firstPage">
-                <span class="page-link">首页</span>
-            </li>
-            <li class="page-item"><a class="page-link" href="#" id="">1</a></li>
-            <li class="page-item active" aria-current="page">
-                <span class="page-link">2</span>
-            </li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">尾页</a>
-            </li>
-
-        </ul>-->
     </div>
 </div>
 
@@ -77,7 +81,8 @@
         }
     )
 
-    // 点击进去详情页
+    // 显示页码数量
+    let limitPages = 5;
     let getNewsList = function (p = 1, limit = 1) {
         $.get('/news/getList', {page: p, limit: limit}, function (res) {
             if (res.list.length > 0) {
@@ -115,23 +120,32 @@
 
                 let Count = res.count;
                 let Pages = Math.ceil(Count / limit);
-                let limitPages = 5;
                 let pageList = '';
                 // TODO 只显示几个页码，待优化
-                let j = 0;
-                for (let i = 1; i <= Pages; i++) {
-                    if (i >= (p - Math.ceil(limitPages / 2))) {
-                        if (j < limitPages) {
-                            if (i === p) {
-                                pageList += `<li class="page-item active"><span class="page-link">${i}</span></li>`;
-                            } else {
-                                pageList += `<li class="page-item"><a class="page-link" data-number="${i}" href="javascript:;">${i}</a></li>`;
-                            }
-                        }
-
-                        j++;
+                let start = 1;
+                let _s = p + limitPages;
+                if (Pages < _s) {
+                    start = Pages - limitPages + 1;
+                } else {
+                    start = Math.abs(p - 2);
+                    if (start === 0) {
+                        start = 1;
+                    } else if (start < p) {
+                        start = p;
                     }
                 }
+                let end = start + limitPages;
+                // 截取页码数量
+                let pNum = Array.from(new Array(Pages + 1).keys()).slice(start, end);
+                console.log(pNum);
+                $.each(pNum, function (index, item) {
+                    console.log(item);
+                    if (item === p) {
+                        pageList += `<li class="page-item active"><span class="page-link">${item}</span></li>`;
+                    } else {
+                        pageList += `<li class="page-item"><a class="page-link" data-number="${item}" href="javascript:;">${item}</a></li>`;
+                    }
+                })
 
                 let prevLi = '';
                 if (p === 1) {
