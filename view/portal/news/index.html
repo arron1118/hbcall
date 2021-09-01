@@ -35,7 +35,7 @@
             <div class="col-12">
                 <div class="row pb-5 d-none">
                     <div class="col-4">
-                        <img class="img-fluid shadow" src="" style="max-width: 500px; height: 250px;">
+                        <img class="img-fluid shadow" src="" style="max-width: 500px; height: 200px;">
                     </div>
                     <div class="col-8">
                         <p class="d-inline-block text-truncate mb-4 text-primary fs-3" style="max-width: 100%;">
@@ -43,9 +43,7 @@
                         <div class="mb-5">
                             <p class="text-muted fs-6 mb-2">发布时间：</p>
                             <p style="max-width: 100%; text-overflow: -o-ellipsis-lastline; overflow: hidden; text-overflow: ellipsis;
-                       display: -webkit-box;-webkit-line-clamp: 3;line-clamp: 3;-webkit-box-orient: vertical;">
-                            </p>
-
+                                      display: -webkit-box;-webkit-line-clamp: 3;line-clamp: 3;-webkit-box-orient: vertical;"></p>
                         </div>
                         <a class="btn btn-danger lqpDetail" href="/news/" target="_blank">查看详情</a>
                     </div>
@@ -83,7 +81,7 @@
 
     // 显示页码数量
     let limitPages = 5;
-    let getNewsList = function (p = 1, limit = 1) {
+    let getNewsList = function (p = 1, limit = 5) {
         $.get('/news/getList', {page: p, limit: limit}, function (res) {
             if (res.list.length > 0) {
                 $('.no-data').addClass('d-none');
@@ -108,7 +106,7 @@
                                     </div>
                                     <div class="mb-2"><span class="lqp-text-indent fs-6 text-nowrap text-muted">发布时间：${item.update_time}</span>
                                     </div>
-                                    <div class="fs-6 d-inline-block text-truncate mb-2" style="max-width: 100%;  ">
+                                    <div class="fs-6 d-inline-block text-truncate mb-2" style="max-width: 100%;">
                                         ${intro}
                                     </div>
                                 </div>
