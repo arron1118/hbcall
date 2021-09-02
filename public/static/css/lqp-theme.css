@@ -286,6 +286,13 @@ ul li{
     -webkit-box-orient: vertical;
     height:60px;"
 }
+.lqp-2line{
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+}
 .p-100{
     padding-top: 100px;
     padding-bottom: 100px;
