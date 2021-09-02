@@ -284,7 +284,7 @@ ul li{
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-    height:60px;"
+    height:60px;
 }
 .lqp-2line{
     display: -webkit-box;
