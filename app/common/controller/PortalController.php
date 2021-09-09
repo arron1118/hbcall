@@ -35,6 +35,12 @@ class PortalController extends \app\BaseController
 
         // SEO
         $this->view->assign('site', Config::get('site'));
+
+        $this->view->assign([
+            'title' => '',
+            'keywords' => '',
+            'description' => ''
+        ]);
     }
 
     protected function getUserInfo()

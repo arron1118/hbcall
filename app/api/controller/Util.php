@@ -68,4 +68,9 @@ class Util extends \app\common\controller\ApiController
         dump($users->toArray());
     }
 
+    public function phpinfo()
+    {
+        return phpinfo();
+    }
+
 }
