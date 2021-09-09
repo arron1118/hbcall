@@ -124,6 +124,9 @@
                 let _s = p + limitPages;
                 if (Pages < _s) {
                     start = Pages - limitPages + 1;
+                    if (start < 0) {
+                        start = 1;
+                    }
                 } else {
                     start = Math.abs(p - 2);
                     if (start === 0) {
@@ -135,9 +138,7 @@
                 let end = start + limitPages;
                 // 截取页码数量
                 let pNum = Array.from(new Array(Pages + 1).keys()).slice(start, end);
-                console.log(pNum);
                 $.each(pNum, function (index, item) {
-                    console.log(item);
                     if (item === p) {
                         pageList += `<li class="page-item active"><span class="page-link">${item}</span></li>`;
                     } else {
