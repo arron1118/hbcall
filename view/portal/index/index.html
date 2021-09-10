@@ -197,85 +197,7 @@
             </div>
         </div>
         <div class="row justify-content-center customerList overflow-hidden">
-            <!--             如果多于4个，则添加样式   row-cols-2 gy-5-->
-            <ul class="d-flex flex-row justify-content-between  py-4">
-                <li class="col-3 me-4" style="min-width: 250px;">
-                    <div class="shadow-lg px-0">
-                        <div class="card border-0">
-                            <div class="card-header border-0 p-0" style="min-height: 170px;">
-                                <img src="__STATIC__/images/news/index-news/1.png" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body text-start fs-6">
-                                <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>2020.2.2-12:12:12</div>
-                                <p class="card-title text-truncate fs-3 mb-4">汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</p>
-                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
-                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </li>
-                <li class="col-3 me-4" style="min-width: 250px;">
-                    <div class="shadow-lg px-0">
-                        <div class="card border-0">
-                            <div class="card-header border-0 p-0" style="min-height: 170px;">
-                                <img src="__STATIC__/images/news/index-news/2.png" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body text-start fs-6">
-                                <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>2020.2.2-12:12:12</div>
-                                <p class="card-title text-truncate fs-3 mb-4">汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</p>
-                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
-                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </li>
-                <li class="col-3 me-4" style="min-width: 250px;">
-                    <div class="shadow-lg px-0">
-                        <div class="card border-0">
-                            <div class="card-header border-0 p-0" style="min-height: 170px;">
-                                <img src="__STATIC__/images/news/index-news/3.png" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body text-start fs-6">
-                                <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>2020.2.2-12:12:12</div>
-                                <p class="card-title text-truncate fs-3 mb-4">汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</p>
-                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
-                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </li>
-                <li class="col-3 me-4" style="min-width: 250px;">
-                    <div class="shadow-lg px-0">
-                        <div class="card border-0">
-                            <div class="card-header border-0 p-0" style="min-height: 170px;">
-                                <img src="__STATIC__/images/news/index-news/4.png" class="card-img-top" alt="...">
-                            </div>
-                            <div class="card-body text-start fs-6">
-                                <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>2020.2.2-12:12:12</div>
-                                <p class="card-title text-truncate fs-3 mb-4">汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布汇邦CRM系统V3.5版正式发布</p>
-                                <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
-                                    汇邦猎头人才管理系统是东莞汇邦软件科技有
-                                    汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有
-                                    汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有 汇邦猎头人才管理系统是东莞汇邦软件科技有
-
-
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </li>
-
+            <ul class="d-flex flex-row justify-content-between  py-4 lqp-news">
             </ul>
         </div>
     </div>
@@ -285,15 +207,51 @@
 
 {block name="js"}
 <script>
-    $(".customerBox").slide({
-        mainCell: ".customerList ul",
-        autoPlay: true,
-        effect: "leftMarquee",
-        vis: 5,
-        interTime: 50,
-        trigger: "click"
-    });
-    //vis:5 当数量=5||>5的时候才滚动
+    let getNewsList = function (p = 1, limit = 6) {
+        $.get('/news/getList', {page: p, limit: limit}, function (res) {
+            if(res.list.length > 0){
+                let newsList = '';
+                $.each(res.list, function (index, item) {
+                    // 处理照片
+                    let imgNumber = Math.floor(Math.random()*10+1);
+                     console.log('随机数',imgNumber);
+
+                    newsList += `
+                            <li class="col-3 me-4" style="min-width: 250px;">
+                                <div class="shadow-lg px-0">
+                                    <div class="card border-0">
+                                        <div class="card-header border-0 p-0" style="min-height: 170px;">
+                                            <img src="__STATIC__/images/news/index-news/`+imgNumber+`.png" class="card-img-top" alt="...">
+                                        </div>
+                                        <div class="card-body text-start fs-6">
+                                            <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>${item.update_time}</div>
+                                             <a href="/news/${item.id}" target="_blank" class="stretched-link card-title text-truncate fs-6 mb-4">${item.title}</a>
+                                            <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
+                                                ${item.intro}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </li>
+                    `;
+                });
+                $('.lqp-news').html(newsList);
+
+                //vis:5 当数量=5||>5的时候才滚动.创建完元素再调用
+                $(".customerBox").slide({
+                    mainCell: ".customerList ul",
+                    autoPlay: true,
+                    effect: "leftMarquee",
+                    vis: 5,
+                    interTime: 50,
+                    trigger: "click"
+                });
+
+            }
+
+        })}
+    getNewsList();
 
 </script>
 {/block}
