@@ -207,14 +207,15 @@
 
 {block name="js"}
 <script>
-    let getNewsList = function (p = 1, limit = 4) {
+    let getNewsList = function (p = 1, limit = 6) {
         $.get('/news/getList', {page: p, limit: limit}, function (res) {
             if(res.list.length > 0){
                 let newsList = '';
                 $.each(res.list, function (index, item) {
                     // 处理照片
-                    let imgNumber = Math.floor(Math.random()*10+1);
-                     console.log('随机数',imgNumber);
+                    let imgNumber = Math.ceil(Math.random()*10);
+                    let temp = Array.Array.from(new Array(10).keys());
+                     console.log('随机数', temp);
                     let intro = item.intro ? item.intro : item.content;
                     newsList += `
                             <li class="col-3 me-4" style="min-width: 250px;">
@@ -225,7 +226,7 @@
                                         </div>
                                         <div class="card-body text-start fs-6 w-100">
                                             <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>${item.update_time}</div>
-                                            <div class="mb-3"><a href="/news/${item.id}" target="_blank" class="stretched-link card-title lqp-1line fs-5 mb-4">${item.title}</a></div>
+                                            <div class="mb-3"><a href="/news/${item.id}.html" target="_blank" class="stretched-link card-title lqp-1line fs-5 mb-4">${item.title}</a></div>
                                             <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
                                                 ${intro}
                                             </div>
