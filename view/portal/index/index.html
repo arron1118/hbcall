@@ -215,7 +215,7 @@
                     // 处理照片
                     let imgNumber = Math.floor(Math.random()*10+1);
                      console.log('随机数',imgNumber);
-
+                    let intro = item.intro ? item.intro : item.content;
                     newsList += `
                             <li class="col-3 me-4" style="min-width: 250px;">
                                 <div class="shadow-lg px-0">
@@ -225,9 +225,9 @@
                                         </div>
                                         <div class="card-body text-start fs-6">
                                             <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>${item.update_time}</div>
-                                             <a href="/news/${item.id}" target="_blank" class="stretched-link card-title text-truncate fs-6 mb-4">${item.title}</a>
+                                             <a href="/news/${item.id}" target="_blank" class="stretched-link card-title text-truncate fs-4 mb-4">${item.title}</a>
                                             <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
-                                                ${item.intro}
+                                                ${intro}
                                             </div>
                                         </div>
 
