@@ -207,7 +207,7 @@
 
 {block name="js"}
 <script>
-    let getNewsList = function (p = 1, limit = 6) {
+    let getNewsList = function (p = 1, limit = 4) {
         $.get('/news/getList', {page: p, limit: limit}, function (res) {
             if(res.list.length > 0){
                 let newsList = '';
@@ -223,9 +223,9 @@
                                         <div class="card-header border-0 p-0" style="min-height: 170px;">
                                             <img src="__STATIC__/images/news/index-news/`+imgNumber+`.png" class="card-img-top" alt="...">
                                         </div>
-                                        <div class="card-body text-start fs-6">
+                                        <div class="card-body text-start fs-6 w-100">
                                             <div class="text-muted"><i class="bi bi-calendar2-date pe-2 text-primary"></i>${item.update_time}</div>
-                                             <a href="/news/${item.id}" target="_blank" class="stretched-link card-title text-truncate fs-4 mb-4">${item.title}</a>
+                                            <div class="mb-3"><a href="/news/${item.id}" target="_blank" class="stretched-link card-title lqp-1line fs-5 mb-4">${item.title}</a></div>
                                             <div class="card-text overflow-hidden text-muted overflow-hidden lqp-3line">
                                                 ${intro}
                                             </div>
