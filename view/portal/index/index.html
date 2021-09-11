@@ -213,9 +213,8 @@
                 let newsList = '';
                 $.each(res.list, function (index, item) {
                     // 处理照片
-                    let imgNumber = Math.ceil(Math.random()*10);
-                    let temp = Array.Array.from(new Array(10).keys());
-                     console.log('随机数', temp);
+                    let imgNumber = Math.floor(Math.random() * limit);
+                     console.log('随机数', imgNumber);
                     let intro = item.intro ? item.intro : item.content;
                     newsList += `
                             <li class="col-3 me-4" style="min-width: 250px;">
