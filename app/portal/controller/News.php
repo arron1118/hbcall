@@ -25,8 +25,8 @@ class News extends \app\common\controller\PortalController
         $this->view->assign([
             'news' => $news,
             'title' => $news->title,
-            'keywords' => $news->keyword ?: $news->content,
-            'description' => $news->intro ?: $news->content
+            'keywords' => $news->keyword ?: $news->title,
+            'description' => $news->intro ?: $news->title
         ]);
         return $this->view->fetch();
     }
