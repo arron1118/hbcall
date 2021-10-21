@@ -24,6 +24,13 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
+                            <label class="layui-form-label required">手机号</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="phone" lay-verify="required|phone" placeholder="请输入手机号"  value="{$userProfile.phone}" class="layui-input">
+                                <tip>手机号用于拨号，请认真填写</tip>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">登陆IP</label>
                             <div class="layui-input-block">
                                 <input type="text" name="ip" value="{$userProfile.loginip}" class="layui-input" disabled>

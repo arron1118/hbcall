@@ -73,10 +73,16 @@ class HbCall extends \app\common\controller\HomeController
             return json(['data' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
         }
         $userInfo = \app\common\model\User::with('axbNumber')->find($this->userInfo['id']);
+
+        if ($userInfo['phone'] === '') {
+            return json(['data' => '请先在个人资料中填写手机号', 'info' => '温馨提示', 'status' => 0]);
+        }
+
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [
-            'mobile' => $mobile,
-            'axb_number' => $userInfo['number']
+            'telA' => $userInfo['phone'],   // 主叫
+            'telB' => $mobile,    // 被叫
+            'telX' => $userInfo['number'],   // 小号
         ]);
         $response = json_decode($curl->response, true);
 

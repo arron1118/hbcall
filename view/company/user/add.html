@@ -121,6 +121,14 @@
                 </div>
 
                 <div class="layui-form-item">
+                    <label class="layui-form-label" for="phone">手机号</label>
+                    <div class="layui-input-block" id="phone">
+                        <input type="text" name="phone" lay-verify="required|phone" placeholder="手机号"
+                               autocomplete="off" class="layui-input" value="">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
                     <label class="layui-form-label" for="account">账号</label>
                     <div class="layui-input-block" id="account">
                         <input type="text" name="username" lay-verify="required|account" placeholder="账号"
@@ -160,6 +168,10 @@
             console.log(params);
             if (params.number_store_id === '') {
                 layer.msg('请选择小号');
+                return false;
+            }
+            if (params.phone === '') {
+                layer.msg('请输入手机号');
                 return false;
             }
             if (params.username === '') {

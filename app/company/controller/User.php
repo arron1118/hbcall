@@ -39,6 +39,11 @@ class User extends \app\common\controller\CompanyController
                 return json($this->returnData);
             }
 
+            if (UserModel::getByPhone($params['phone'])) {
+                $this->returnData['msg'] = '手机号已经存在';
+                return json($this->returnData);
+            }
+
             $params['company_id'] = $this->userInfo['id'];
 
             $userModel = new UserModel();
@@ -64,8 +69,47 @@ class User extends \app\common\controller\CompanyController
 
     public function edit()
     {
-        $userId = $this->request->param('userId');
+        $userId = $this->request->param('id');
         $userInfo = UserModel::with('axbNumber')->find($userId);
+
+        if ($this->request->isPost()) {
+            $params = $this->request->param();
+            $params['username'] = trim($params['username']);
+
+            $existsName = UserModel::where('id <> ' . $params['id'] . ' and username = "' . $params['username'] . '"')->count();
+            if ($existsName > 0) {
+                $this->returnData['msg'] = '用户已经存在';
+                return json($this->returnData);
+            }
+
+            if (UserModel::where('id <> ' . $params['id'] . ' and phone = "' . $params['phone'] . '"')->count() > 0) {
+                $this->returnData['msg'] = '手机号已经存在';
+                return json($this->returnData);
+            }
+
+            if ($params['password'] !== $userInfo->password) {
+                $params['salt'] = getRandChar(6);
+                $userInfo->password = getEncryptPassword(trim($params['password']), $params['salt']);
+            }
+
+            $userInfo->username = $params['username'];
+            $userInfo->phone = $params['phone'];
+
+            if ($userInfo->save()) {
+                $this->returnData['msg'] = '保存成功';
+                $this->returnData['code'] = 1;
+
+                // 设置座席
+                if (!empty($params['number_store_id'])) {
+                    NumberStore::where(['id' => $params['number_store_id']])
+                        ->update(['user_id' => $userModel->id]);
+                }
+            } else {
+                $this->returnData['msg'] = '保存失败';
+            }
+
+            return json($this->returnData);
+        }
 
         $this->view->assign('userInfo', $userInfo);
         $this->view->assign('axbNumbers', $this->getAxbNumbers());
