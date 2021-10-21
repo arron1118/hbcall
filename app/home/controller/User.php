@@ -17,15 +17,29 @@ class User extends \app\common\controller\HomeController
         if ($this->request->isPost()) {
             $username = trim($this->request->param('username'));
             $realname = trim($this->request->param('realname'));
+            $phone = trim($this->request->param('phone'));
             if (empty($username)) {
                 $this->returnData['msg'] = '请输入昵称';
                 return json($this->returnData);
             }
+
+            if (UserModel::where([['id', '<>', $this->userInfo['id']], ['username', '=', $username]])->count() > 0) {
+                $this->returnData['msg'] = '昵称已存在';
+                return json($this->returnData);
+            }
+
+            if (UserModel::where([['id', '<>', $this->userInfo['id']], ['phone', '=', $phone]])->count() > 0) {
+                $this->returnData['msg'] = '手机号已存在';
+                return json($this->returnData);
+            }
+
             $user->username = $username;
             $user->realname = $realname;
+            $user->phone = $phone;
             $user->save();
             Session::set('user.username', $username);
             Session::set('user.realname', $realname);
+            Session::set('user.phone', $phone);
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = '操作成功';
