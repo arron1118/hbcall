@@ -115,7 +115,11 @@
                         <select name="number_store_id" {if empty($axbNumbers)} disabled {/if}>
                             <option value="">{if empty($axbNumbers)}不可用{/if}</option>
                             {foreach $axbNumbers as $val}
-                            <option value="{$val.id}">{$val.number}</option>
+                                {if $userInfo.xnumber === $val.number}
+                                    <option value="{$val.id}" selected>{$val.number}</option>
+                                {else}
+                                    <option value="{$val.id}">{$val.number}</option>
+                                {/if}
                             {/foreach}
                         </select>
                     </div>

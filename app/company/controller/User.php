@@ -3,11 +3,12 @@
 
 namespace app\company\controller;
 
-
 use app\common\model\NumberStore;
+use app\common\model\UserXnumber;
 use app\company\model\Company;
 use app\common\model\User as UserModel;
 use think\facade\Session;
+use function Composer\Autoload\includeFile;
 
 class User extends \app\common\controller\CompanyController
 {
@@ -53,8 +54,9 @@ class User extends \app\common\controller\CompanyController
                 $this->returnData['code'] = 1;
 
                 // 设置座席
-                NumberStore::where(['id' => $params['number_store_id']])
-                    ->update(['user_id' => $userModel->id]);
+                if (!empty($params['number_store_id'])) {
+                    (new UserXnumber())->save(['user_id' => $userModel->id, 'xnumber' => $this->getAxbNumber($params['number_store_id'])]);
+                }
             } else {
                 $this->returnData['msg'] = '开通失败';
             }
@@ -101,8 +103,13 @@ class User extends \app\common\controller\CompanyController
 
                 // 设置座席
                 if (!empty($params['number_store_id'])) {
-                    NumberStore::where(['id' => $params['number_store_id']])
-                        ->update(['user_id' => $userModel->id]);
+                    $UserXnumber = UserXnumber::where('user_id', $userInfo->id)->find();
+                    if ($UserXnumber) {
+                        $UserXnumber->xnumber = $this->getAxbNumber($params['number_store_id']);
+                        $UserXnumber->save();
+                    } else {
+                        (new UserXnumber())->save(['xnumber' => $this->getAxbNumber($params['number_store_id']), 'user_id' => $userInfo->id]);
+                    }
                 }
             } else {
                 $this->returnData['msg'] = '保存失败';
@@ -117,7 +124,7 @@ class User extends \app\common\controller\CompanyController
     }
 
     /**
-     * 返回未分配的小号
+     * 返回的小号列表
      * @return NumberStore[]|array|\think\Collection
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
@@ -125,7 +132,17 @@ class User extends \app\common\controller\CompanyController
      */
     protected function getAxbNumbers()
     {
-        return NumberStore::where(['company_id' => $this->userInfo['id'], 'user_id' => 0, 'status' => 1])->select()->toArray();
+        return NumberStore::where(['company_id' => $this->userInfo['id'], 'status' => 1])->select()->toArray();
+    }
+
+    /**
+     * 返回小号
+     * @param $id
+     * @return mixed
+     */
+    protected function getAxbNumber($id)
+    {
+        return NumberStore::where('id', $id)->value('number');
     }
 
     public function profile()

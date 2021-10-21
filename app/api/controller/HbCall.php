@@ -44,19 +44,20 @@ class HbCall extends \app\common\controller\ApiController
         $curl->post(Config::get('hbcall.call_api'), [
             'telA' => $userInfo['phone'],
             'telB' => $mobile,
-            'telX' => $userInfo['number']
+            'telX' => $userInfo['xnumber']
         ]);
         $response = json_decode($curl->response, true);
 
-        if ($response['status']) {
+        if ($response['code'] === 1000) {
             $CallHistory = new CallHistory();
             $CallHistory->user_id = $userInfo['id'];
             $CallHistory->username = $userInfo['username'];
             $CallHistory->company_id = $userInfo['company_id'];
             $CallHistory->company = Company::where(['id' => $userInfo['company_id']])->value('username');
             $CallHistory->subid = $response['data']['subid'];
-            $CallHistory->axb_number = $response['data']['axb_number'];
-            $CallHistory->called_number = $response['data']['mobile'];
+            $CallHistory->caller_number = $userInfo['phone'];
+            $CallHistory->axb_number = $userInfo['number'];
+            $CallHistory->called_number = $mobile;
             $CallHistory->createtime = time();
             $CallHistory->save();
 

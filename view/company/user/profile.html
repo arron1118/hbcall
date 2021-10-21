@@ -27,7 +27,7 @@
                             <label class="layui-form-label">余额(￥/元)</label>
                             <div class="layui-input-block">
                                 <input type="text" name="balance" value="{$userProfile.balance}" class="layui-input" disabled>
-                                <tip><a href="{:url('payment/index')}">前往充值>></a></tip>
+                                <tip><a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理">前往充值>></a></tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -80,6 +80,8 @@
             layer = layui.layer,
             $ = layui.jquery,
             miniTab = layui.miniTab;
+
+        miniTab.listen();
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {

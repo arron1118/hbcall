@@ -33,6 +33,6 @@ class User extends \think\Model
 
     public function axbNumber()
     {
-        return $this->hasOne(\app\common\model\NumberStore::class)->bind(['number']);
+        return $this->hasOne(UserXnumber::class)->bind(['xnumber']);
     }
 }

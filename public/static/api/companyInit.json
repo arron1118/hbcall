@@ -38,12 +38,6 @@
           "href": "payment/index.html",
           "icon": "fa fa-yen-sign",
           "target": "_self"
-        },
-        {
-          "title": "新闻管理",
-          "href": "news/index.html",
-          "icon": "fa fa-newspaper",
-          "target": "_self"
         }
       ]
     }

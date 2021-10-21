@@ -70,23 +70,27 @@ class HbCall extends \app\common\controller\HomeController
         $mobile = $this->request->param('mobile');
         $mobile = trim($mobile);
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            return json(['data' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
+            return json(['data' => [], 'msg' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
         }
         $userInfo = \app\common\model\User::with('axbNumber')->find($this->userInfo['id']);
 
         if ($userInfo['phone'] === '') {
-            return json(['data' => '请先在个人资料中填写手机号', 'info' => '温馨提示', 'status' => 0]);
+            return json(['data' => [], 'msg' => '请前往个人资料中<a href="javascript:;" layuimini-content-href="user/profile.html" data-title="基本资料">填写手机号</a>', 'info' => '温馨提示', 'status' => 0]);
+        }
+
+        if (!$userInfo['xnumber']) {
+            return json(['data' => [], 'msg' => '未分配小号，请联系管理员分配小号后再重试', 'info' => '温馨提示', 'status' => 0]);
         }
 
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [
             'telA' => $userInfo['phone'],   // 主叫
             'telB' => $mobile,    // 被叫
-            'telX' => $userInfo['number'],   // 小号
+            'telX' => $userInfo['xnumber'],   // 小号
         ]);
         $response = json_decode($curl->response, true);
 
-        if ($response['status']) {
+        if ($response['code'] === 1000) {
             try {
                 $CallHistory = new CallHistory();
                 $CallHistory->user_id = $userInfo['id'];
@@ -94,8 +98,9 @@ class HbCall extends \app\common\controller\HomeController
                 $CallHistory->company_id = $userInfo['company_id'];
                 $CallHistory->company = Company::where(['id' => $userInfo['company_id']])->value('username');
                 $CallHistory->subid = $response['data']['subid'];
-                $CallHistory->axb_number = $response['data']['axb_number'];
-                $CallHistory->called_number = $response['data']['mobile'];
+                $CallHistory->caller_number = $userInfo['phone'];
+                $CallHistory->axb_number = $userInfo['xnumber'];
+                $CallHistory->called_number = $mobile;
                 $CallHistory->createtime = time();
                 $CallHistory->save();
             } catch (DbException $dbException) {

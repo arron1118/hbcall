@@ -60,9 +60,12 @@
 {block name="js"}
 
 <script>
-    layui.use(['layer',], function () {
+    layui.use(['layer', 'miniTab'], function () {
         let $ = layui.jquery,
-            layer = layui.layer;
+            layer = layui.layer,
+            miniTab = layui.miniTab;
+
+        miniTab.listen();
 
         // cookie
         let cookie = function (key = null, val = null, obj = {}) {
@@ -213,11 +216,10 @@
             }
 
             $.post('{:url("/hbcall/makeCall")}', {mobile: number}, function (res) {
-                if (res.status) {
-                    console.log()
+                if (res.code === 1000) {
                     let con = `
                             <div style="padding: 50px; line-height: 30px; font-weight: 300;">
-                                <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${res.data.axb_number}</h3> 进行通话。</p>
+                                <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${res.data.xNumber}</h3> 进行通话。</p>
                             </div>
                         `;
                     layer.config({
@@ -253,13 +255,13 @@
                 } else {
                     let con = `
                         <div style="padding: 50px; line-height: 30px; font-weight: 300;">
-                            <p>${res.data}</p>
+                            <p>${res.msg}</p>
                         </div>
                     `;
                     layer.config({
                         extend: 'skin/red.css',
                     }).open({
-                        title: res.info,
+                        title: res.info ?? '温馨提示',
                         type: 1,
                         area: '400px',
                         shade: 0.8,
