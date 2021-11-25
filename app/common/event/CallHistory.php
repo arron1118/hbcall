@@ -20,7 +20,7 @@ class CallHistory
     public function handle()
     {
         $module = app('http')->getName();
-        $time = strtotime('2021-08-26');
+        $time = strtotime('2021-11-25');
         $map = [
             ['status', '=', '0']
         ];
@@ -56,7 +56,7 @@ class CallHistory
 
 //                    dump($val->toArray());
                     dump($response);
-                    if (!is_null($response) && $response['status']) {
+                    if (!is_null($response) && $response['code'] === 1000) {
                         if (!empty($response['data'])) {
                             if (!is_array($response['data'])) {
                                 $response['data'] = json_decode($response['data'], true);
@@ -70,7 +70,7 @@ class CallHistory
                                 $val->releasecause = $response['data']['releasecause'];
                             }
 
-                            $val->caller_number = $response['data']['callerNumber'];
+//                            $val->caller_number = $response['data']['callerNumber'];
                             $val->starttime = strtotime($response['data']['starttime']);
                             $val->releasetime = strtotime($response['data']['releasetime']);
                             $val->call_duration = $response['data']['callDuration'];
