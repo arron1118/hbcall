@@ -69,7 +69,7 @@ class CallHistory
                     $response = json_decode($curl->response, true);
 
 //                    dump($val->toArray());
-                    dump($response);
+//                    dump($response);
                     if (!is_null($response) && $response['code'] === 1000) {
                         $returnData['success'] += 1;
                         if (!empty($response['data'])) {
