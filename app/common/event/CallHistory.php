@@ -24,6 +24,7 @@ class CallHistory
         $month = $request::param('month', date('m'));
         $day = $request::param('day', date('d'));
         $date = $year . '-' . $month . '-' . $day;
+        $uid = $request::param('uid', 0);
 
         $module = app('http')->getName();
         $time = strtotime($date);
@@ -34,14 +35,21 @@ class CallHistory
             $map[] = ['user_id', '=', Session::get('user.id')];
         }
 
+        if ($uid) {
+            $map[] = ['user_id', '=', $uid];
+        }
+
         $HistoryModel = new \app\common\model\CallHistory();
-        $callList = $HistoryModel->where($map)
+        $callList = $HistoryModel->where($map);
             // id 为5183后开启
-            ->whereBetweenTime('createtime', $time, $time + 86400 - 1)
-            ->order('id asc')
-            ->limit(100)
-            ->select();
-        dump($HistoryModel->getLastSql());
+        if (!$uid) {
+            $callList->whereBetweenTime('createtime', $time, $time + 86400 - 1);
+        }
+
+        $callList = $callList->order('id asc')->limit(100)->select();
+//        dump($callList);
+//        dump($HistoryModel->getLastSql());
+        $returnData = ['total' => count($callList), 'success' => 0, 'error' => 0];
         if (!empty($callList)) {
             $curl = new Curl();
             $curl->setHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -63,6 +71,7 @@ class CallHistory
 //                    dump($val->toArray());
                     dump($response);
                     if (!is_null($response) && $response['code'] === 1000) {
+                        $returnData['success'] += 1;
                         if (!empty($response['data'])) {
                             if (!is_array($response['data'])) {
                                 $response['data'] = json_decode($response['data'], true);
@@ -126,9 +135,12 @@ class CallHistory
                         }
                     }
                 } catch (\ErrorException $e) {
+                    $returnData['error'] += 1;
                     dump($e);
                 }
             }
+
+            dump('总共：' . $returnData['total'] . ' 成功：' . $returnData['success'] . ' 失败：' . $returnData['error']);
 
 //            dump($news);
             if (!empty($news)) {
