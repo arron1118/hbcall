@@ -7,6 +7,7 @@ namespace app\common\event;
 use app\company\model\Company;
 use Curl\Curl;
 use think\facade\Config;
+use think\facade\Request;
 use think\facade\Session;
 
 /**
@@ -17,10 +18,15 @@ use think\facade\Session;
 class CallHistory
 {
 
-    public function handle()
+    public function handle(Request $request)
     {
+        $year = $request::param('year', date('Y'));
+        $month = $request::param('month', date('m'));
+        $day = $request::param('day', date('d'));
+        $date = $year . '-' . $month . '-' . $day;
+
         $module = app('http')->getName();
-        $time = strtotime('2021-11-25');
+        $time = strtotime($date);
         $map = [
             ['status', '=', '0']
         ];
