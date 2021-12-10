@@ -82,7 +82,9 @@
                 {field: 'username', title: '操作人', align: "center"},
                 {field: 'starttime', title: '开始时间', align: "center"},
                 {field: 'releasetime', title: '挂断时间', align: "center"},
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+                {title: '录音', minWidth: 150, align: "center", templet: function (row) {
+                        return row.record_url ? "<audio style='width: 100%; height: 100%;' src='" + row.record_url + "' autoplay controls>您的浏览器不支持 audio 标签。</audio>" : '';
+                    }}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
