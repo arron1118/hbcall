@@ -67,37 +67,6 @@
 
         miniTab.listen();
 
-        // cookie
-        let cookie = function (key = null, val = null, obj = {}) {
-            if (key === null) {
-                let val = [];
-                let cookie = document.cookie.split('; ');
-                $.each(cookie, function (index, item) {
-                    let i = item.split('=');
-                    val[i[0]] = i[1];
-                })
-
-                return val;
-            } else {
-                if (val === null) {
-                    let val = '';
-                    let cookie = document.cookie.split('; ');
-                    $.each(cookie, function (index, item) {
-                        let i = item.split('=');
-                        if (i[0] === key) {
-                            val = i[1];
-                            return;
-                        }
-                    })
-
-                    return val;
-                } else {
-                    document.cookie = key + '=' + val;
-                    return true;
-                }
-            }
-        }
-
 
         // 输入框获取焦点
         let inputFocus = function () {

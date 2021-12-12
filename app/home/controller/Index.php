@@ -4,6 +4,7 @@ namespace app\home\controller;
 
 use app\common\controller\HomeController;
 use app\common\model\User;
+use app\company\model\Company;
 use arron\Random;
 use think\facade\Session;
 
@@ -14,8 +15,18 @@ class Index extends HomeController
         return $this->view->fetch();
     }
 
+    public function getCompanyBalance()
+    {
+        $balance = Company::where('id', '=', session::get('user.company_id'))->value('balance');
+        return json($balance);
+    }
+
     public function login()
     {
+        /*$salt = getRandChar(6);
+        $pwd = getEncryptPassword('123456', 'Oh1sJU');
+        dump($salt);
+        dump($pwd);*/
         if ($this->isLogin()) {
             return redirect((string) url('/index'));
         }

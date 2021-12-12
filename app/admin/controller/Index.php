@@ -6,6 +6,7 @@ use app\common\controller\AdminController;
 use app\admin\model\admin;
 use arron\Random;
 use think\facade\Session;
+use app\common\model\Expense;
 
 class Index extends AdminController
 {
@@ -16,6 +17,8 @@ class Index extends AdminController
 
     public function dashboard()
     {
+        $this->view->assign(getCosts());
+
         return $this->view->fetch();
     }
 
