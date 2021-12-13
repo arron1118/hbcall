@@ -6,6 +6,7 @@ use app\common\controller\HomeController;
 use app\common\model\User;
 use app\company\model\Company;
 use arron\Random;
+use think\facade\Cookie;
 use think\facade\Session;
 
 class Index extends HomeController
@@ -27,6 +28,8 @@ class Index extends HomeController
         $pwd = getEncryptPassword('123456', 'Oh1sJU');
         dump($salt);
         dump($pwd);*/
+//        Cookie::delete('thinkphp_show_page_trace');
+//        dump(Cookie::get());
         if ($this->isLogin()) {
             return redirect((string) url('/index'));
         }
@@ -69,8 +72,11 @@ class Index extends HomeController
 
             $user->session_id = Session::getId();
 
-
             Session::set('user', $user->toArray());
+
+            $balance = Company::where('id', '=', session::get('user.company_id'))->value('balance');
+            Cookie::set('balance', $balance);
+            Cookie::set('balance_tips', '');
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('Logined');
@@ -83,6 +89,8 @@ class Index extends HomeController
     public function logout()
     {
         Session::delete('user');
+        Cookie::delete('balance_tips');
+        Cookie::delete('balance');
         return redirect((string) url('/index'));
     }
 
