@@ -17,7 +17,7 @@ class Index extends CompanyController
     public function dashboard()
     {
         $costs = getCosts(Session::get('company.id'));
-        dump($costs);
+//        dump($costs);
         $this->view->assign($costs);
         return $this->view->fetch();
     }
