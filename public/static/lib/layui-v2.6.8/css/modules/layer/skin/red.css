@@ -3,3 +3,7 @@ body .layer-ext-red .layui-layer-title {
     color: #fff;
 }
 
+body .layer-ext-red .layui-layer-close {
+    color: #fff
+}
+

@@ -49,12 +49,13 @@
             tipIndex = layer.config({
                 extend: 'skin/red.css',
             }).open({
+                type: 1,
                 title: '温馨提示',
-                content: '您的余额已经不足，请联系及时充值！',
+                content: '<div style="padding: 30px 20px;">您的余额已经不足，请联系管理员及时充值！</div>',
                 offset: 'rt',
                 shade: false,
-                closeBtn: 0,
-                skin: 'layui-layer-lan',
+                closeBtn: 1,
+                skin: 'layer-ext-red'
             });
         }
 
