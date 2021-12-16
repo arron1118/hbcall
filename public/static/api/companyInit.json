@@ -38,6 +38,12 @@
           "href": "payment/index.html",
           "icon": "fa fa-yen-sign",
           "target": "_self"
+        },
+        {
+          "title": "通话记录报表",
+          "href": "report/index.html",
+          "icon": "fa fa-yen-sign",
+          "target": "_self"
         }
       ]
     }

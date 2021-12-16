@@ -1,0 +1,44 @@
+{extend name="public/base" /}
+{block name="body"}
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <table class="layui-table" id="currentTableId">
+            <caption><h2 style="padding-bottom: 1rem">呼叫中心统计报表</h2></caption>
+            <thead>
+                <tr>
+                    <th class="text-center">用户编号</th>
+                    <th class="text-center">用户名称</th>
+                    <th class="text-center">拨号次数</th>
+                    <th class="text-center">接通次数（通话时长 > 0秒）</th>
+                    <th class="text-center">有效呼叫（通话时长 > 30秒）</th>
+                </tr>
+            </thead>
+            {foreach $reportData as $key => $item}
+                <tr>
+                    <td class="text-center">{$item.id}</td>
+                    <td class="text-center">{$item.username}</td>
+                    <td class="text-center">{$item.total}</td>
+                    <td class="text-center">{$item.total1}</td>
+                    <td class="text-center">{$item.total2}</td>
+                </tr>
+            {/foreach}
+        </table>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'table', 'laydate'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            laydate = layui.laydate,
+            table = layui.table;
+
+
+
+    });
+</script>
+{/block}
