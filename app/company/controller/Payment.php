@@ -23,6 +23,7 @@ class Payment extends \app\common\controller\CompanyController
 
     public function index()
     {
+
         /**
          * 检查微信订单是否已支付
          */
@@ -80,11 +81,12 @@ class Payment extends \app\common\controller\CompanyController
     public function getOrderList()
     {
         if ($this->request->isPost()) {
+            $cid = Session::get('company.id');
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
             $total = $this->model->count();
 
-            $historyList = $this->model->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $historyList = $this->model->where('company_id', '=', $cid)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
     }

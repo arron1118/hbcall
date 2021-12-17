@@ -1,0 +1,116 @@
+{extend name="public/base" /}
+{block name="css"}
+{include file="public/bootstrap" /}
+{/block}
+{block name="body"}
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space30" id="demo-box" style="margin: 0 auto;">
+            <div class="layui-col-xs9 layui-col-md3">
+                <div class="card">
+                    <div class="card-header">公司列表</div>
+                    <ul class="list-group list-group-flush company-list">
+                        {foreach $companies as $key => $item}
+                        <li class="list-group-item {$key === 0 ? 'active' : ''}" data-id="{$item.id}" data-name="{$item.corporation}">{$item.corporation}</li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+            <div class="layui-col-xs12 layui-col-md9">
+                <div style="margin: 10px 10px 10px 10px">
+                    <form class="layui-form" action="" lay-filter="search">
+                        <div class="layui-form-item">
+                            <div class="layui-inline">
+                                <label class="layui-form-label" style="width: 150px;">日期范围</label>
+                                <div class="layui-inline" id="datetime">
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                                    </div>
+                                    <div class="layui-form-mid">-</div>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                                    </div>
+                                </div>
+
+                                <div class="layui-inline">
+                                    <button type="submit" class="layui-btn layui-btn-primary btn-search" lay-submit="" lay-filter="searchSubmit"><i class="layui-icon"></i> 搜 索
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <table class="layui-table" id="currentTableId">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'table', 'laydate', 'jquery'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            laydate = layui.laydate,
+            table = layui.table;
+
+
+        //日期范围
+        laydate.render({
+            elem: '#datetime'
+            //设置开始日期、日期日期的 input 选择器
+            //数组格式为 2.6.6 开始新增，之前版本直接配置 true 或任意分割字符即可
+            ,range: ['#startDate', '#endDate']
+        });
+
+        table.render({
+            elem: '#currentTableId',
+            url: '{:url("/Report/getReport")}',
+            method: 'post',
+            where: {cid: $('.company-list li:first').data('id')},
+            //异步请求，格式化数据
+            parseData: function (res) {
+                console.log(res);
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.data,
+                    'count': res.total
+                }
+            },
+            cols: [[
+                {field: 'id', title: '编号', align: "center"},
+                {field: 'username', title: '用户名称', align: "center"},
+                {field: 'total', title: '拨号次数', sort: true, align: "center"},
+                {field: 'total1', title: '接通次数（通话时长 > 0秒）', align: "center"},
+                {field: 'total2', title: '有效呼叫（通话时长 > 30秒）', align: "center"}
+            ]],
+        });
+
+        form.on('submit(searchSubmit)', function (data) {
+            let params = data.field;
+            params.cid = $('.company-list li.active').data('id');
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                where: params
+            });
+
+            return false;
+        });
+
+        $('.company-list li').on('click', function () {
+            $(this).addClass('active').siblings().removeClass('active');
+            //执行搜索重载
+            table.reload('currentTableId', {
+                where: {cid: $(this).data('id')}
+            });
+        });
+    });
+</script>
+{/block}

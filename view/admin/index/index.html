@@ -109,11 +109,10 @@
 
 {block name="js"}
 <script>
-    layui.use(['jquery', 'layer', 'miniAdmin','miniTongji'], function () {
+    layui.use(['jquery', 'layer', 'miniAdmin'], function () {
         var $ = layui.jquery,
             layer = layui.layer,
-            miniAdmin = layui.miniAdmin,
-            miniTongji = layui.miniTongji;
+            miniAdmin = layui.miniAdmin;
 
         var options = {
             iniUrl: "__STATIC__/api/companyInit.json",    // 初始化接口
@@ -127,16 +126,6 @@
             maxTabNum: 20,              // 最大的tab打开数量
         };
         miniAdmin.render(options);
-
-        // 百度统计代码，只统计指定域名
-        /*miniTongji.render({
-            specific: true,
-            domains: [
-                '99php.cn',
-                'layuimini.99php.cn',
-                'layuimini-onepage.99php.cn',
-            ],
-        });*/
 
     });
 </script>
