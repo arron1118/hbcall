@@ -27,7 +27,7 @@ class Report extends \app\common\controller\CompanyController
         }
 
         if ($startDate && $endDate) {
-            $where .= ' and (createtime between ' . strtotime($startDate) . ' and ' . strtotime($endDate) . ')';
+            $where .= ' and (createtime between ' . strtotime($startDate) . ' and ' . (strtotime($endDate) + 24 * 3600) . ')';
         }
 
         $user = $this->userInfo;
@@ -40,8 +40,8 @@ from hbcall_user u
                     group by user_id) ch on u.id = ch.user_id
 left join (select count(id) as total1, user_id from hbcall_call_history where call_duration > 0 {$where} group by user_id) lch on lch.user_id=u.id
 left join (select count(id) as total2, user_id from hbcall_call_history where call_duration > 30 {$where} group by user_id) gch on gch.user_id=u.id
-where company_id={$user['id']}
-order by total desc
+where total > 0 and company_id={$user['id']}
+-- order by total desc
 SQL;
 
         $this->returnData['code'] = 1;

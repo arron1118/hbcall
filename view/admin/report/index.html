@@ -11,14 +11,15 @@
                 <div class="card">
                     <div class="card-header">公司列表</div>
                     <ul class="list-group list-group-flush company-list">
+                        <li class="list-group-item active" data-id="0" data-name="全部">全部</li>
                         {foreach $companies as $key => $item}
-                        <li class="list-group-item {$key === 0 ? 'active' : ''}" data-id="{$item.id}" data-name="{$item.corporation}">{$item.corporation}</li>
+                        <li class="list-group-item" data-id="{$item.id}" data-name="{$item.corporation}">{$item.corporation}</li>
                         {/foreach}
                     </ul>
                 </div>
             </div>
             <div class="layui-col-xs12 layui-col-md9">
-                <div style="margin: 10px 10px 10px 10px">
+                <div style="margin: 10px">
                     <form class="layui-form" action="" lay-filter="search">
                         <div class="layui-form-item">
                             <div class="layui-inline">
@@ -42,6 +43,8 @@
                     </form>
                 </div>
 
+                <div id="chart" style="height: 350px; margin-bottom: .75rem; "></div>
+
                 <table class="layui-table" id="currentTableId">
                 </table>
             </div>
@@ -52,6 +55,7 @@
 {/block}
 
 {block name="js"}
+<script src="__STATIC__/lib/echarts/echarts.min.js"></script>
 <script>
     layui.use(['form', 'table', 'laydate', 'jquery'], function () {
         let $ = layui.jquery,
@@ -59,6 +63,7 @@
             laydate = layui.laydate,
             table = layui.table;
 
+        const chart = echarts.init($('#chart')[0])
 
         //日期范围
         laydate.render({
@@ -75,7 +80,76 @@
             where: {cid: $('.company-list li:first').data('id')},
             //异步请求，格式化数据
             parseData: function (res) {
-                console.log(res);
+                chart.setOption({
+                    title: {
+                        text: '拨号统计',
+                    },
+                    dataset: [
+                        {
+                            source: res.data
+                        }
+                    ],
+                    legend: {},
+                    tooltip: {
+                        trigger: 'axis',
+                    },
+                    toolbox: {
+                        feature: {
+                            restore: { title: '还原' },
+                            saveAsImage: { title: '保存图片' },
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        axisLabel: {
+                            rotate: 45
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        boundaryGap: [0, '100%'],
+                        // max: 'dataMax'
+                    },
+                    grid: {
+                        bottom: 10,
+                        left: 0,
+                        right: 10,
+                        containLabel: true
+                    },
+                    series: [
+                        {
+                            name: '拨号次数',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'total'
+                            },
+                            areaStyle: {
+                            }
+                        },
+                        {
+                            name: '接通次数',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'total1'
+                            },
+                            areaStyle: {
+                            }
+                        },
+                        {
+                            name: '有效呼叫',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'total2'
+                            },
+                            areaStyle: {
+                            }
+                        }
+                    ]
+                })
                 return {
                     'code': 0,
                     'msg': '',
@@ -84,7 +158,7 @@
                 }
             },
             cols: [[
-                {field: 'id', title: '编号', align: "center"},
+                {field: 'id', title: '用户编号', align: "center"},
                 {field: 'username', title: '用户名称', align: "center"},
                 {field: 'total', title: '拨号次数', sort: true, align: "center"},
                 {field: 'total1', title: '接通次数（通话时长 > 0秒）', align: "center"},

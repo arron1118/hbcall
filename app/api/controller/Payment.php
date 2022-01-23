@@ -89,7 +89,7 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->status = 1;
                 $paymentModel->save();
 
-
+                // todo 更新用户余额
             }
 
             ThinkLog::info('Wechat return result ' . $data->toJson());

@@ -1,37 +1,40 @@
 {extend name="public/base" /}
 {block name="body"}
 
-<div class="layuimini-container">
+<div class="layuimini-container" style="margin-bottom: .75rem; ">
     <div class="layuimini-main">
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form" action="" lay-filter="search">
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">日期范围</label>
-                            <div class="layui-inline" id="datetime">
-                                <div class="layui-input-inline">
-                                    <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
-                                </div>
-                                <div class="layui-form-mid">-</div>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
-                                </div>
-                            </div>
-
-                            <div class="layui-inline">
-                                <button type="submit" class="layui-btn layui-btn-primary btn-search" lay-submit="" lay-filter="searchSubmit"><i class="layui-icon"></i> 搜 索
-                                </button>
-                            </div>
+        <form class="layui-form" action="" lay-filter="search">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">日期范围</label>
+                    <div class="layui-inline" id="datetime">
+                        <div class="layui-input-inline">
+                            <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
                         </div>
                     </div>
-                </form>
-            </div>
-        </fieldset>
 
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-primary btn-search" lay-submit="" lay-filter="searchSubmit"><i class="layui-icon"></i> 搜 索
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="layuimini-container" style="margin-bottom: .75rem; ">
+    <div class="layuimini-main">
+        <div id="chart" style=" height: 350px; "></div>
+    </div>
+</div>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
         <table class="layui-table" id="currentTableId">
-            <caption><h2 style="padding-bottom: 1rem">呼叫中心统计报表</h2></caption>
         </table>
     </div>
 </div>
@@ -39,6 +42,7 @@
 {/block}
 
 {block name="js"}
+<script src="__STATIC__/lib/echarts/echarts.min.js"></script>
 <script>
     layui.use(['form', 'table', 'laydate'], function () {
         let $ = layui.jquery,
@@ -46,6 +50,7 @@
             laydate = layui.laydate,
             table = layui.table;
 
+        const chart = echarts.init($('#chart')[0])
 
         //日期范围
         laydate.render({
@@ -61,7 +66,76 @@
             method: 'post',
             //异步请求，格式化数据
             parseData: function (res) {
-                console.log(res);
+                chart.setOption({
+                    title: {
+                        text: '拨号统计',
+                    },
+                    dataset: [
+                        {
+                            source: res.data
+                        }
+                    ],
+                    legend: {},
+                    tooltip: {
+                        trigger: 'axis',
+                    },
+                    toolbox: {
+                        feature: {
+                            restore: { title: '还原' },
+                            saveAsImage: { title: '保存图片' },
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        axisLabel: {
+                            rotate: 45
+                        }
+                    },
+                    yAxis: {
+                        type: 'value',
+                        boundaryGap: [0, '100%'],
+                        // max: 'dataMax'
+                    },
+                    grid: {
+                        bottom: 10,
+                        left: 0,
+                        right: 10,
+                        containLabel: true
+                    },
+                    series: [
+                        {
+                            name: '拨号次数',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'total'
+                            },
+                            areaStyle: {
+                            }
+                        },
+                        {
+                            name: '接通次数',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'total1'
+                            },
+                            areaStyle: {
+                            }
+                        },
+                        {
+                            name: '有效呼叫',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'total2'
+                            },
+                            areaStyle: {
+                            }
+                        }
+                    ]
+                })
                 return {
                     'code': 0,
                     'msg': '',
@@ -80,7 +154,6 @@
 
         form.on('submit(searchSubmit)', function (data) {
             let params = data.field;
-            console.log(params);
 
             //执行搜索重载
             table.reload('currentTableId', {
