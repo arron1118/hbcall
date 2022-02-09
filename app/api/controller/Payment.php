@@ -135,6 +135,7 @@ class Payment extends \app\common\controller\ApiController
      */
     protected function updateUserAmount($paymentModel)
     {
+        ThinkLog::info('amount > ' . $paymentModel->amount);
         $userInfo = \app\company\model\Company::find(Session::get('company.id'));
         $userInfo->balance = $userInfo->balance + $paymentModel->amount;
         $userInfo->save();

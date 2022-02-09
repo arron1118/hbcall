@@ -30,7 +30,6 @@ class Payment extends \app\common\controller\CompanyController
                  * 检查微信订单是否已支付
                  */
                 $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
-                dump($data);
                 if ($data->trade_state === 'SUCCESS') {
                     $mt = mktime(
                         substr($data->time_end, 8, 2),
@@ -54,13 +53,13 @@ class Payment extends \app\common\controller\CompanyController
                  */
                 try {
                     $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
-                    dump($data);
                     if ($data->trade_status === 'TRADE_SUCCESS') {
                         $value->pay_time = strtotime($data->send_pay_date);
                         $value->payment_no = $data->trade_no;
                         $value->status = 1;
                         $value->save();
                     } elseif ($data->trade_status === 'TRADE_CLOSED') {
+                        $value->payment_no = $data->trade_no;
                         $value->status = 2;
                         $value->save();
                     }
