@@ -92,6 +92,9 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->save();
 
                 $this->updateUserAmount($paymentModel);
+//                $userInfo = Company::find(Session::get('company.id'));
+//                $userInfo->balance = $userInfo->balance + $paymentModel->amount;
+//                $userInfo->save();
             }
 
 //            ThinkLog::info('Wechat return result ' . $data->toJson());
@@ -117,10 +120,10 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->status = 1;
                 $paymentModel->save();
 
-//                $this->updateUserAmount($paymentModel);
-                $userInfo = Company::find(Session::get('company.id'));
-                $userInfo->balance = $userInfo->balance + $paymentModel->amount;
-                $userInfo->save();
+                $this->updateUserAmount($paymentModel);
+//                $userInfo = Company::find(Session::get('company.id'));
+//                $userInfo->balance = $userInfo->balance + $paymentModel->amount;
+//                $userInfo->save();
             }
 
 //            ThinkLog::info('alipay notify info > ' . $data->all());
@@ -140,7 +143,7 @@ class Payment extends \app\common\controller\ApiController
     protected function updateUserAmount($paymentModel)
     {
         ThinkLog::info('amount > ' . $paymentModel->amount);
-        $userInfo = Company::find(Session::get('company.id'));
+        $userInfo = Company::find($paymentModel->company_id);
         $userInfo->balance = $userInfo->balance + $paymentModel->amount;
         $userInfo->save();
     }
