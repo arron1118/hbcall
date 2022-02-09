@@ -27,7 +27,7 @@ class Payment extends \think\Model
 
     public function getPayTypeList()
     {
-        return [1 => '微信', 2 => '支付宝'];
+        return [1 => '微信', 2 => '支付宝', 3 => '手动充值'];
     }
 
     public function getStatusAttr($value)
