@@ -117,7 +117,10 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->status = 1;
                 $paymentModel->save();
 
-                $this->updateUserAmount($paymentModel);
+//                $this->updateUserAmount($paymentModel);
+                $userInfo = Company::find(Session::get('company.id'));
+                $userInfo->balance = $userInfo->balance + $paymentModel->amount;
+                $userInfo->save();
             }
 
 //            ThinkLog::info('alipay notify info > ' . $data->all());
