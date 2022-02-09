@@ -3,6 +3,7 @@
 
 namespace app\api\controller;
 
+use app\company\model\Company;
 use think\facade\Config;
 use think\facade\Session;
 use Yansongda\Pay\Pay;
@@ -136,7 +137,7 @@ class Payment extends \app\common\controller\ApiController
     protected function updateUserAmount($paymentModel)
     {
         ThinkLog::info('amount > ' . $paymentModel->amount);
-        $userInfo = \app\company\model\Company::find(Session::get('company.id'));
+        $userInfo = Company::find(Session::get('company.id'));
         $userInfo->balance = $userInfo->balance + $paymentModel->amount;
         $userInfo->save();
     }
