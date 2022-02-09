@@ -37,7 +37,7 @@ class Payment extends \think\Model
 
     public function getStatusList()
     {
-        return ['未支付', '已支付'];
+        return ['未支付', '已支付', '已关闭'];
     }
 
     public function company()

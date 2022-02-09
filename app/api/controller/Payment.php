@@ -90,7 +90,6 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->status = 1;
                 $paymentModel->save();
 
-                // todo 更新用户余额
                 $this->updateUserAmount($paymentModel);
             }
 
