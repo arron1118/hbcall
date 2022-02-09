@@ -3,6 +3,7 @@
 
 namespace app\common\controller;
 
+use app\company\model\Company;
 use think\facade\Session;
 use think\facade\View;
 
@@ -28,7 +29,7 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
-        $this->userInfo = Session::get('company');
+        $this->userInfo = Company::find(Session::get('company.id'));
         $this->view->assign('user', $this->userInfo);
     }
 

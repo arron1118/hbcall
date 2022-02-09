@@ -4,6 +4,7 @@
 namespace app\api\controller;
 
 use think\facade\Config;
+use think\facade\Session;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Log;
 use chillerlan\QRCode\QRCode;
@@ -90,10 +91,11 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->save();
 
                 // todo 更新用户余额
+                $this->updateUserAmount($paymentModel);
             }
 
-            ThinkLog::info('Wechat return result ' . $data->toJson());
-            Log::debug('Wechat notify', $data->all());
+//            ThinkLog::info('Wechat return result ' . $data->toJson());
+//            Log::debug('Wechat notify', $data->all());
         } catch (\Exception $e) {
             // $e->getMessage();
         }
@@ -114,13 +116,29 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->payment_no = $data->trade_no;
                 $paymentModel->status = 1;
                 $paymentModel->save();
+
+                $this->updateUserAmount($paymentModel);
             }
 
-            ThinkLog::info('alipay notify info > ' . $data->all());
+//            ThinkLog::info('alipay notify info > ' . $data->all());
         } catch (\Exception $e) {
         }
 
         return $alipay->success()->send();
+    }
+
+    /**
+     * 更新用户余额
+     * @param $patmentModel
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    protected function updateUserAmount($paymentModel)
+    {
+        $userInfo = \app\company\model\Company::find(Session::get('company.id'));
+        $userInfo->balance = $userInfo->balance + $paymentModel->amount;
+        $userInfo->save();
     }
 
     public function alipayReturn()
