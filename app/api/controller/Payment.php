@@ -5,11 +5,7 @@ namespace app\api\controller;
 
 use app\company\model\Company;
 use think\facade\Config;
-use think\facade\Session;
 use Yansongda\Pay\Pay;
-use Yansongda\Pay\Log;
-use chillerlan\QRCode\QRCode;
-use think\facade\Log as ThinkLog;
 use app\company\model\Payment as PaymentModel;
 
 class Payment extends \app\common\controller\ApiController
@@ -60,7 +56,6 @@ class Payment extends \app\common\controller\ApiController
         // 支付
 
         return Pay::alipay(Config::get('alipay'))->web($order)->send();
-//        dump($alipay);
     }
 
     /**
@@ -92,13 +87,7 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->save();
 
                 $this->updateUserAmount($paymentModel);
-//                $userInfo = Company::find(Session::get('company.id'));
-//                $userInfo->balance = $userInfo->balance + $paymentModel->amount;
-//                $userInfo->save();
             }
-
-//            ThinkLog::info('Wechat return result ' . $data->toJson());
-//            Log::debug('Wechat notify', $data->all());
         } catch (\Exception $e) {
             // $e->getMessage();
         }
@@ -121,12 +110,7 @@ class Payment extends \app\common\controller\ApiController
                 $paymentModel->save();
 
                 $this->updateUserAmount($paymentModel);
-//                $userInfo = Company::find(Session::get('company.id'));
-//                $userInfo->balance = $userInfo->balance + $paymentModel->amount;
-//                $userInfo->save();
             }
-
-//            ThinkLog::info('alipay notify info > ' . $data->all());
         } catch (\Exception $e) {
         }
 
@@ -142,7 +126,6 @@ class Payment extends \app\common\controller\ApiController
      */
     protected function updateUserAmount($paymentModel)
     {
-        ThinkLog::info('amount > ' . $paymentModel->amount);
         $userInfo = Company::find($paymentModel->company_id);
         $userInfo->balance = $userInfo->balance + $paymentModel->amount;
         $userInfo->save();
