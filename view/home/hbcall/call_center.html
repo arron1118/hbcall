@@ -15,28 +15,47 @@
                 呼叫中心
             </div>-->
             <div class="row mt-3 justify-content-center">
-<!--                <div class="col-sm-12 col-md-4 col-lg-5">-->
-<!--                    <div class="list-group list-group-flush">-->
-<!--                        <div class="list-group-item">13888888888</div>-->
-<!--                        <div class="list-group-item">19868115646</div>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div class="col-sm-12 col-md-4 col-lg-5">
+                    <div class="layui-tab layui-tab-card">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this">历史记录</li>
+                            <li>客户管理</li>
+                        </ul>
+                        <div class="layui-tab-content p-3 pt-0 overflow-scroll" style="max-height: 750px;">
+                            <div class="layui-tab-item layui-show">
+                                <div class="call-history-list"></div>
+                            </div>
+                            <div class="layui-tab-item">
+                                <div class="import-description mb-3">
+                                    <button class="btn btn-primary btn-sm" id="importExcel"><i
+                                            class="fa fa-file-import"></i> 导入客户
+                                    </button>
+                                    <span class="ms-3 check-rules"><i class="fa fa-info-circle"></i> 导入说明</span>
+                                </div>
+                                <div class="customer-list list-group list-group-flush">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-sm-12 col-md-8 col-lg-7">
                     <div class="row justify-content-center mb-5">
                         <div class="col-md-9 col-sm-12 col-lg-7 ">
                             <div class="row pb-3" style="background-color: #f4f4f4;">
                                 <div class="col">
-                                    <div class="row ">
+                                    <div class="row">
                                         <div class="col p-0">
                                             <input type="text" name="phone" value=""
                                                    placeholder="请输入号码"
-                                                   class="w-100 callinginput fs-1 border-0 text-center py-5 bg-transparent" id="input"
+                                                   class="w-100 callinginput fs-1 border-0 text-center py-5 bg-transparent"
+                                                   id="input"
                                                    onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''">
                                         </div>
                                     </div>
 
                                     <!-- 拨号键 -->
-                                    <div class="row row-cols-3 gy-5 py-4 justify-content-center fs-1" id="phone-numbers"></div>
+                                    <div class="row row-cols-3 gy-5 py-4 justify-content-center fs-1"
+                                         id="phone-numbers"></div>
                                 </div>
                             </div>
                         </div>
@@ -64,15 +83,17 @@
 
 {/block}
 {block name="js"}
-
+<script src="__STATIC__/lib/layui_exts/excel.js"></script>
 <script>
-    layui.use(['layer', 'miniTab'], function () {
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload'], function () {
         let $ = layui.jquery,
             layer = layui.layer,
-            miniTab = layui.miniTab;
+            miniTab = layui.miniTab,
+            element = layui.element,
+            excel = layui.excel,
+            upload = layui.upload;
 
         miniTab.listen();
-
 
         // 输入框获取焦点
         let inputFocus = function () {
@@ -84,67 +105,73 @@
         // 生成拨号按键
         let btnSize = 4;    // 按键大小 单位：1rem = 16px
         let buildPhoneNumber = function () {
-              let phoneNumbersDiv = $('#phone-numbers');
-              let isPhoneIcon = false;
-              let cssClass = 'align-middle cursor rounded-circle  d-inline-block';
-              let css = {width: btnSize + 'rem', height: btnSize + 'rem', 'line-height': btnSize + 'rem', cursor: 'pointer', backgroundColor: "rgb(228, 228, 228)"};
-              for (let i = 1; i < 14; i++) {
-                  let col = $('<div />', {
-                      class: 'col text-center'
-                  });
-                  let text = i;
+            let phoneNumbersDiv = $('#phone-numbers');
+            let isPhoneIcon = false;
+            let cssClass = 'align-middle cursor rounded-circle d-inline-block';
+            let css = {
+                width: btnSize + 'rem',
+                height: btnSize + 'rem',
+                'line-height': btnSize + 'rem',
+                cursor: 'pointer',
+                backgroundColor: "rgb(228, 228, 228)"
+            };
+            for (let i = 1; i < 14; i++) {
+                let col = $('<div />', {
+                    class: 'col text-center'
+                });
+                let text = i;
 
-                  // * 键
-                  if (i === 10) {
-                      text = `<i class="fa fa-asterisk"></i>`
-                      col.append($('<span />', {
-                          class: cssClass + ' fs-4'
-                      }).css(css).html(text));
-                  }
+                // * 键
+                if (i === 10) {
+                    text = `<i class="fa fa-asterisk"></i>`
+                    col.append($('<span />', {
+                        class: cssClass + ' fs-4'
+                    }).css(css).html(text));
+                }
 
-                  if (i === 11) {
-                      text = 0;
-                  }
+                if (i === 11) {
+                    text = 0;
+                }
 
-                  // 删除键
-                  if (i === 12) {
-                      text = `<i class="fa fa-backspace text-sm-center small"></i>`;
-                      col.append($('<span />', {
-                          class: cssClass + ' fs-3'
-                      }).css(css).html(text).on('click', function (e) {
-                          callinginput.val('');
-                          inputFocus();
-                      }));
-                  }
+                // 删除键
+                if (i === 12) {
+                    text = `<i class="fa fa-backspace text-sm-center small"></i>`;
+                    col.append($('<span />', {
+                        class: cssClass + ' fs-3'
+                    }).css(css).html(text).on('click', function (e) {
+                        callinginput.val('');
+                        inputFocus();
+                    }));
+                }
 
-                  // 拨号键
-                  if (i === 13) {
-                      isPhoneIcon = true;
-                      text = `<i class="fa fa-phone"></i>`;
-                      css.backgroundColor = 'rgb(8, 86, 246)';
-                      css.color = '#fff';
-                      col.append($('<span />', {
-                          class: cssClass + ' fs-2'
-                      }).css(css).html(text).on('click', function (e) {
-                          makeCall();
-                      }));
-                  } else {
-                      isPhoneIcon = false;
-                  }
+                // 拨号键
+                if (i === 13) {
+                    isPhoneIcon = true;
+                    text = `<i class="fa fa-phone"></i>`;
+                    css.backgroundColor = 'rgb(8, 86, 246)';
+                    css.color = '#fff';
+                    col.append($('<span />', {
+                        class: cssClass + ' fs-2'
+                    }).css(css).html(text).on('click', function (e) {
+                        makeCall(callinginput.val(), createItem({called_number: callinginput.val()}));
+                    }));
+                } else {
+                    isPhoneIcon = false;
+                }
 
-                  if (Number.isFinite(text)) {
-                      col.append($('<span />', {
-                          class: cssClass,
-                          'data-value': text
-                      }).css(css).html(text).on('click', function (e) {
-                          if (callinginput.val().length < 11) {
-                              callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
-                          }
-                      }));
-                  }
+                if (Number.isFinite(text)) {
+                    col.append($('<span />', {
+                        class: cssClass,
+                        'data-value': text
+                    }).css(css).html(text).on('click', function (e) {
+                        if (callinginput.val().length < 11) {
+                            callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
+                        }
+                    }));
+                }
 
-                  phoneNumbersDiv.append(col);
-              }
+                phoneNumbersDiv.append(col);
+            }
         };
         buildPhoneNumber();
 
@@ -156,7 +183,7 @@
                     return false
                 }
             } else if (e.keyCode === 13) {
-                makeCall();
+                makeCall($(this).val(), createItem({called_number: $(this).val()}));
             }
         })
 
@@ -182,9 +209,7 @@
             return pattern.test(phone);
         }
 
-        let makeCall = function () {
-            let number = callinginput.val();
-
+        let makeCall = function (number, addList = null) {
             if (number.length < 11 || !isPhoneNo(number)) {
                 layer.msg('请输入正确的号码', {icon: 2});
                 return false;
@@ -192,6 +217,10 @@
 
             $.post('{:url("/hbcall/makeCall")}', {mobile: number}, function (res) {
                 if (res.code === 1000) {
+                    // 计数拨号次数
+                    if (addList) {
+                        $('.call-history-list .list-group').prepend($(addList))
+                    }
                     let con = `
                             <div style="padding: 50px; line-height: 30px; font-weight: 300;">
                                 <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${res.data.xNumber}</h3> 进行通话。</p>
@@ -249,7 +278,210 @@
                     })
                 }
             });
+        }
 
+        // 呼叫历史
+        $.post('{:url("/hbcall/getCallHistory")}', {}, function (res) {
+            if (res.code === 1) {
+                let div = $('<div />', {
+                    class: 'list-group list-group-flush'
+                });
+                res.rows.forEach((item, index) => {
+                    div.append(createItem(item))
+                })
+
+                $('.call-history-list').append(div)
+            }
+        })
+        let createItem = function (item) {
+            return $('<a />', {
+                href: 'javascript:;',
+                class: 'list-group-item call-history-item',
+                click: function () {
+                    makeCall(item.called_number, createItem(item))
+                },
+                mouseover: function () {
+                    $(this).children('.click-call').removeClass('d-none')
+                },
+                mouseout: function () {
+                    $(this).children('.click-call').addClass('d-none')
+                }
+            }).append($('<span />', {
+                class: 'phone float-start',
+                text: item.called_number
+            })).append($('<span />', {
+                class: 'click-call text-primary d-none float-end',
+                text: '点击拨号'
+            }))
+        }
+        let createCustomerItem = function (item) {
+            return $('<a />', {
+                href: 'javascript:;',
+                class: 'list-group-item call-history-item',
+                click: function () {
+                    makeCall(item.called_number, createItem(item))
+                },
+                mouseover: function () {
+                    $(this).children('.click-call').removeClass('d-none')
+                },
+                mouseout: function () {
+                    $(this).children('.click-call').addClass('d-none')
+                }
+            }).append($('<span />', {
+                class: 'phone float-start',
+                text: item.title
+            })).append($('<span />', {
+                class: 'phone ms-3',
+                text: item.phone
+            })).append($('<span />', {
+                class: 'click-call text-primary d-none float-end',
+                text: '点击拨号'
+            }))
+        }
+
+        // 导入客户
+        $('.check-rules').on('click', function () {
+            layer.open({
+                type: 1,
+                title: false,
+                skin: 'layui-layer-rim',
+                area: ['420px', '300px'],
+                content: `<div class="p-3">
+                           注：只能上传Excel表格，格式为 ['客户名称', '电话号码']
+                           <img src="__STATIC__/images/customer-example-excel.png" class="pt-3" />
+                </div>`
+            })
+        })
+        upload.render({
+            elem: '#importExcel',
+            url: '',
+            accept: 'file', //普通文件
+            exts: 'xls|excel|xlsx', //导入表格
+            auto: false,  //选择文件后不自动上传
+            before: function (obj) {
+                layer.load(); //上传loading
+            },
+            // 选择文件回调
+            choose: function (obj) {
+                let files = obj.pushFile();
+                let fileArr = Object.values(files);// 注意这里的数据需要是数组，所以需要转换一下
+                // 用完就清理掉，避免多次选中相同文件时出现问题
+                for (let index in files) {
+                    if (files.hasOwnProperty(index)) {
+                        delete files[index];
+                    }
+                }
+                uploadExcel(fileArr); // 如果只需要最新选择的文件，可以这样写： uploadExcel([files.pop()])
+            },
+            error: function () {
+                setTimeout(function () {
+                    layer.msg("上传失败！", {
+                        icon: 1
+                    });
+                    //关闭所有弹出层
+                    layer.closeAll(); //疯狂模式，关闭所有层
+                }, 1000);
+            }
+        });
+
+        let arr = [];
+        let uploadExcel = function (files) {
+            try {
+                excel.importExcel(files, {
+                    // 读取数据的同时梳理数据
+                    fields: {
+                        title: 'A',
+                        phone: 'B',
+                        comment: 'C'
+                    }
+                }, function (data) {
+                    data = Object.values(data);
+                    let errors = [];
+                    let errTable = $('<table />', { class: 'layui-table' }).append($('<tr />')
+                        .append($('<td />', { text: '错误行' }))
+                        .append($('<td />', { text: '错误信息' }))
+                    );
+                    let list = []
+                    let createErrTr = function (item) {
+                        return $('<tr />').append($('<td />', { text: item.errorRow })).append($('<td />', { text: item.errorMsg }))
+                    }
+                    $.each(data[0], (index, item) => {
+                        if (item.length > 0) {
+                            $.each(item, (index2, item2) => {
+                                if (index2 > 0) {
+                                    if (item2.title !== '' && isPhoneNo(item2.phone)) {
+                                        let e = false
+                                        $.each(arr, function (currIndex, currItem) {
+                                            if (currItem.phone === item2.phone) {
+                                                e = true
+                                                item2.errorRow = index2 + 1
+                                                item2.errorMsg = '重复的联系电话'
+                                                errors.push(item2)
+                                                errTable.append(item2)
+                                            }
+                                        })
+
+                                        if (!e) {
+                                            arr.push(item2)
+                                            list.push(item2)
+                                            $('.customer-list').prepend(createCustomerItem(item2))
+                                        }
+                                    } else {
+                                        item2.errorRow = index2 + 1
+                                        item2.errorMsg = '未提供正确的客户名称或联系电话'
+                                        errors.push(item2)
+                                        errTable.append(createErrTr(item2))
+                                    }
+                                }
+                            })
+                        }
+                    })
+
+                    let successNum = list.length
+                    let errNum = errors.length
+                    if (list.length > 0) {
+                        $.ajax({
+                            async: false,
+                            url: '{:url("/hbcall/importCustomer")}',
+                            type: 'post',
+                            dataType: "json",
+                            contentType: "application/x-www-form-urlencoded",
+                            data: {
+                                customers: arr
+                            },
+                            success: function (res) {
+                                let icon = 0;
+                                if (res.code === 1) {
+                                    icon = 1;
+                                    // todo
+                                    // $('.customer-list').append($(''))
+                                }
+
+                                layer.msg(res.msg, {icon: icon, time: 3000});
+                            },
+                            error: function (msg) {
+                                layer.msg('请联系管理员!!!');
+                            }
+                        });
+                    }
+
+                    console.log(errors)
+                    if (errors.length > 0) {
+                        layer.open({
+                            type: 1,
+                            title: false,
+                            skin: 'layui-layer-rim',
+                            area: ['420px', '300px'],
+                            content: `<div class="p-3 err-container"><div class="p-3"><p><span class="float-start">成功：${successNum}</span>  <span class="float-end">错误：${errNum}</span></p></div></div>`,
+                            success: function (layero, index) {
+                                $(layero).find('.err-container').append(errTable)
+                            }
+                        })
+                    }
+                });
+            } catch (e) {
+                layer.msg('请联系管理员!!!');
+            }
         }
     });
 </script>

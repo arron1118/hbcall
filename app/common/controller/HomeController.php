@@ -3,6 +3,7 @@
 
 namespace app\common\controller;
 
+use app\common\model\User;
 use think\facade\Event;
 use think\facade\Session;
 use think\facade\View;
@@ -31,13 +32,13 @@ class HomeController extends \app\BaseController
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
 
-        $this->userInfo = Session::get('user');
+        $this->userInfo = User::find(Session::get('user.id'));
         $this->view->assign('user', $this->userInfo);
     }
 
     protected function getUserInfo()
     {
-        return Session::get('user');
+        return User::find(Session::get('user.id'));
     }
 
     public function isLogin()

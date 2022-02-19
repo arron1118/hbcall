@@ -4,6 +4,8 @@
 namespace app\company\model;
 
 
+use app\common\model\Customer;
+
 class Company extends \think\Model
 {
     public function getPrevtimeAttr($value)
@@ -39,5 +41,10 @@ class Company extends \think\Model
     public function axbNumbers()
     {
         return $this->hasMany(\app\common\model\User::class);
+    }
+
+    public function customer()
+    {
+        return $this->hasMany(Customer::class);
     }
 }

@@ -1,17 +1,14 @@
 <?php
 
-
 namespace app\common\model;
-
 
 use app\company\model\Company;
 
-class Expense extends \think\Model
+class Customer extends \think\Model
 {
-
     public function getCreatetimeAttr($value)
     {
-        return date($this->getDateFormat(), $value);
+        return $value ? date($this->getDateFormat(), $value) : '-';
     }
 
     public function user()

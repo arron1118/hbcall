@@ -5,6 +5,7 @@ namespace app\home\controller;
 
 
 use app\common\model\CallHistory;
+use app\common\model\Customer;
 use app\company\model\Company;
 use Curl\Curl;
 use think\db\exception\DbException;
@@ -26,6 +27,20 @@ class HbCall extends \app\common\controller\HomeController
         return $this->view->fetch();
     }
 
+    public function getCallHistory()
+    {
+        if ($this->request->isPost()) {
+            $callHistory = CallHistory::field('called_number')
+                ->where('user_id', '=', $this->userInfo->id)
+                ->order('id', 'desc')
+                ->limit(20)
+                ->select();
+            return json(['rows' => $callHistory, 'msg' => '', 'code' => 1]);
+        }
+
+        return $this->returnData;
+    }
+
     public function callHistoryList()
     {
         /**
@@ -39,8 +54,8 @@ class HbCall extends \app\common\controller\HomeController
     public function getHistoryList()
     {
         if ($this->request->isPost()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
+            $page = (int)$this->request->param('page', 1);
+            $limit = (int)$this->request->param('limit', 10);
             $holdertime = $this->request->param('holdertime', '');
             $map = [
                 ['user_id', '=', $this->userInfo['id']],
@@ -54,9 +69,10 @@ class HbCall extends \app\common\controller\HomeController
             }
 
             $total = CallHistory::where($map)->count();
-            $historyList = CallHistory::where($map)->order('starttime DESC, id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $historyList = CallHistory::with('expense')->where($map)->order('starttime DESC, id DESC')->limit(($page - 1) * $limit, $limit)->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
+        return $this->returnData;
     }
 
     /**
@@ -109,5 +125,40 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         return json($response);
+    }
+
+    public function importCustomer()
+    {
+        if ($this->request->isPost()) {
+            $data = $this->request->param('customers');
+            if (!$data) {
+                $this->returnData['msg'] = '未找到相关数据';
+                return json($this->returnData);
+            }
+
+            foreach($data as $key => &$val) {
+                $val['createtime'] = time();
+                $val['company_id'] = $this->userInfo->company_id;
+                $val['user_id'] = $this->userInfo->id;
+            }
+
+            try {
+                $res = (new Customer())->saveAll($data);
+
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '导入成功';
+                $this->returnData['data'] = $res;
+
+                return json($this->returnData);
+            } catch (DbException $dbException) {
+                $this->returnData['code'] = $dbException->getCode();
+                $this->returnData['msg'] = $dbException->getMessage();
+                $this->returnData['data'] = $dbException->getData();
+
+                return json($this->returnData);
+            }
+        }
+
+        return $this->returnData;
     }
 }

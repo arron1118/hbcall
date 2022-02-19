@@ -35,4 +35,14 @@ class User extends \think\Model
     {
         return $this->hasOne(UserXnumber::class)->bind(['xnumber']);
     }
+
+    public function callHistory()
+    {
+        return $this->hasMany(CallHistory::class);
+    }
+
+    public function customer()
+    {
+        return $this->hasMany(Customer::class);
+    }
 }

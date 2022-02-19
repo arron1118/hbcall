@@ -53,7 +53,7 @@ class HbCall extends \app\common\controller\AdminController
 
             $total = CallHistory::where($map)->count();
 
-            $historyList = CallHistory::where($map)
+            $historyList = CallHistory::with('expense')->where($map)
                 ->order('starttime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
