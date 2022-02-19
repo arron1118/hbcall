@@ -319,7 +319,7 @@
                 href: 'javascript:;',
                 class: 'list-group-item call-history-item',
                 click: function () {
-                    makeCall(item.called_number, createItem(item))
+                    makeCall(item.phone, createItem({ called_number: item.phone }))
                 },
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
