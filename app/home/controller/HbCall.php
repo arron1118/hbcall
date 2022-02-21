@@ -18,11 +18,12 @@ class HbCall extends \app\common\controller\HomeController
 
     public function callCenter()
     {
-        /*$str = '2021/06/20';
-        $strTime = strtotime($str);
-        dump((bool)$strTime);
-        $next = date('Y-m-d H:i:s', $strTime + 86400 - 1);
-        dump($next);*/
+//        $str = '2021/06/20';
+//        $strTime = strtotime($str);
+//        dump((bool)$strTime);
+//        $next = date('Y-m-d H:i:s', $strTime + 86400 - 1);
+//        dump($next);
+//        dump(public_path());
 
         return $this->view->fetch();
     }
@@ -137,9 +138,10 @@ class HbCall extends \app\common\controller\HomeController
             if ($lastData->toArray()) {
                 $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))));
                 $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))) + 3600 * 24 - 1);
-                $res = Customer::field('title, phone')
+                $res = Customer::field('title, phone, called_count')
                     ->where($where)
                     ->whereBetweenTime('createtime', $lastDateStart, $lastDateEnd)
+                    ->order('called_count')
                     ->order('id', 'desc')
                     ->select();
                 $this->returnData['data'] = $res;
@@ -206,5 +208,23 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         return json($this->returnData);
+    }
+
+    public function updateCustomerCalledCount()
+    {
+        if ($this->request->isPost()) {
+            $phone = $this->request->param('phone');
+            $where = [
+                'user_id' => $this->userInfo->id,
+                'phone' => $phone
+            ];
+            Customer::where($where)->inc('called_count')->update();
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $file = './static/images/customer-example-template.xlsx';
+        return download($file, '客户管理.xlsx')->expire(300);
     }
 }

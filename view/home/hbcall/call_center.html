@@ -27,16 +27,16 @@
                             </div>
                             <div class="layui-tab-item">
                                 <div class="import-description mb-3">
-                                    <button class="btn btn-danger btn-sm clear-customer"><i
-                                            class="fa fa-trash"></i> 清空
+                                    <button class="btn btn-primary btn-sm" id="importExcel">
+                                        <i class="fa fa-file-import"></i> 导入客户
                                     </button>
-                                    <button class="btn btn-primary btn-sm" id="importExcel"><i
-                                            class="fa fa-file-import"></i> 导入客户
+                                    <button class="btn btn-danger btn-sm clear-customer">
+                                        <i class="fa fa-trash"></i> 清空
                                     </button>
-                                    <span class="ms-3 check-rules"><i class="fa fa-info-circle"></i> 导入说明</span>
+                                    <a href="{:url('/HbCall/downloadTemplate')}" class="btn btn-info btn-sm download-template">下载模板</a>
+                                    <a href="javascript:;" class="ms-3 check-rules"><i class="fa fa-info-circle"></i> 导入说明</a>
                                 </div>
-                                <div class="customer-list list-group list-group-flush">
-                                </div>
+                                <div class="customer-list list-group list-group-flush"></div>
                             </div>
                         </div>
                     </div>
@@ -105,6 +105,7 @@
         inputFocus();
 
         let callinginput = $('.callinginput');
+        let customerContainer = $('.customer-list');
         // 生成拨号按键
         let btnSize = 4;    // 按键大小 单位：1rem = 16px
         let buildPhoneNumber = function () {
@@ -212,14 +213,27 @@
             return pattern.test(phone);
         }
 
-        let makeCall = function (number, addList = null) {
+        let makeCall = function (number, addList = null, customerCalled = null) {
             if (number.length < 11 || !isPhoneNo(number)) {
-                layer.msg('请输入正确的号码', {icon: 2});
+                layer.msg('请输入正确的号码', { icon: 2 });
                 return false;
             }
 
             $.post('{:url("/hbcall/makeCall")}', {mobile: number}, function (res) {
                 if (res.code === 1000) {
+                    console.log(customerCalled)
+                    if (customerCalled) {
+                        // 更新客户拨号记录
+                        $.post('{:url("/HbCall/updateCustomerCalledCount")}', { phone: number }, function (r) {
+                        })
+
+                        $(customerCalled).addClass('text-black-50')
+                        $(customerCalled).find('.click-call').before($('<span />', {
+                            class: 'called-customer ms-3 float-end',
+                            text: '已拨'
+                        }))
+                        customerContainer.append(customerCalled)
+                    }
                     // 计数拨号次数
                     if (addList) {
                         $('.call-history-list .list-group').prepend($(addList))
@@ -319,12 +333,16 @@
             }))
         }
         // 创建客户列表
-        let createCustomerItem = function (item) {
-            return $('<a />', {
+        let createCustomerItem = function (item, isCalled = false) {
+            let aClass = 'list-group-item call-history-item';
+            if (isCalled) {
+                aClass += ' text-black-50'
+            }
+            let listItem = $('<a />', {
                 href: 'javascript:;',
-                class: 'list-group-item call-history-item',
+                class: aClass,
                 click: function () {
-                    makeCall(item.phone, createItem({ called_number: item.phone }))
+                    makeCall(item.phone, createItem({ called_number: item.phone }), this)
                 },
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
@@ -338,10 +356,21 @@
             })).append($('<span />', {
                 class: 'phone ms-3',
                 text: item.phone
-            })).append($('<span />', {
+            }))
+
+            if (isCalled) {
+                listItem.append($('<span />', {
+                    class: 'called-customer ms-3 float-end',
+                    text: '已拨'
+                }))
+            }
+
+            listItem.append($('<span />', {
                 class: 'click-call text-primary d-none float-end',
                 text: '点击拨号'
             }))
+
+            return listItem
         }
 
         // 导入客户
@@ -390,13 +419,18 @@
         });
 
         let customerList = [];
-        let customerContainer = $('.customer-list');
         let importCount = 0;
         $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
             if (res.code === 1 && res.data.length > 0) {
+                console.log(res.data)
                 customerList = res.data
+                let isCalled = false
                 $.each(res.data, (index, item) => {
-                    customerContainer.prepend(createCustomerItem(item))
+                    if (item.called_count > 0) {
+                        isCalled = true
+                    }
+                    console.log(item)
+                    customerContainer.prepend(createCustomerItem(item, isCalled))
                 })
             }
         })
@@ -516,6 +550,13 @@
                 layer.msg(res.msg, {icon: icon, time: 3000});
             })
         })
+
+        // 下载客户管理模板
+        /*$('.download-template').on('click', function () {
+            $.get('{:url("/HbCall/downloadTemplate")}', {}, res => {
+                console.log(res)
+            })
+        })*/
     });
 </script>
 
