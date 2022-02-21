@@ -27,6 +27,9 @@
                             </div>
                             <div class="layui-tab-item">
                                 <div class="import-description mb-3">
+                                    <button class="btn btn-danger btn-sm clear-customer"><i
+                                            class="fa fa-trash"></i> 清空
+                                    </button>
                                     <button class="btn btn-primary btn-sm" id="importExcel"><i
                                             class="fa fa-file-import"></i> 导入客户
                                     </button>
@@ -293,6 +296,7 @@
                 $('.call-history-list').append(div)
             }
         })
+        // 创建历史列表
         let createItem = function (item) {
             return $('<a />', {
                 href: 'javascript:;',
@@ -314,6 +318,7 @@
                 text: '点击拨号'
             }))
         }
+        // 创建客户列表
         let createCustomerItem = function (item) {
             return $('<a />', {
                 href: 'javascript:;',
@@ -384,7 +389,17 @@
             }
         });
 
-        let arr = [];
+        let customerList = [];
+        let customerContainer = $('.customer-list');
+        let importCount = 0;
+        $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
+            if (res.code === 1 && res.data.length > 0) {
+                customerList = res.data
+                $.each(res.data, (index, item) => {
+                    customerContainer.prepend(createCustomerItem(item))
+                })
+            }
+        })
         let uploadExcel = function (files) {
             try {
                 excel.importExcel(files, {
@@ -395,6 +410,12 @@
                         comment: 'C'
                     }
                 }, function (data) {
+                    if (importCount === 0) {
+                        customerList = []
+                        customerContainer.html('')
+                    }
+                    importCount++
+
                     data = Object.values(data);
                     let errors = [];
                     let errTable = $('<table />', { class: 'layui-table' }).append($('<tr />')
@@ -411,20 +432,22 @@
                                 if (index2 > 0) {
                                     if (item2.title !== '' && isPhoneNo(item2.phone)) {
                                         let e = false
-                                        $.each(arr, function (currIndex, currItem) {
-                                            if (currItem.phone === item2.phone) {
+                                        $.each(customerList, function (currIndex, currItem) {
+                                            if (parseInt(currItem.phone) === item2.phone) {
                                                 e = true
                                                 item2.errorRow = index2 + 1
                                                 item2.errorMsg = '重复的联系电话'
                                                 errors.push(item2)
-                                                errTable.append(item2)
+                                                errTable.append(createErrTr(item2))
+                                                // 跳出循环
+                                                return false
                                             }
                                         })
 
                                         if (!e) {
-                                            arr.push(item2)
+                                            customerList.push(item2)
                                             list.push(item2)
-                                            $('.customer-list').prepend(createCustomerItem(item2))
+                                            customerContainer.prepend(createCustomerItem(item2))
                                         }
                                     } else {
                                         item2.errorRow = index2 + 1
@@ -447,7 +470,7 @@
                             dataType: "json",
                             contentType: "application/x-www-form-urlencoded",
                             data: {
-                                customers: arr
+                                customers: customerList
                             },
                             success: function (res) {
                                 let icon = 0;
@@ -465,7 +488,6 @@
                         });
                     }
 
-                    console.log(errors)
                     if (errors.length > 0) {
                         layer.open({
                             type: 1,
@@ -483,6 +505,17 @@
                 layer.msg('请联系管理员!!!');
             }
         }
+        $('.clear-customer').on('click', function () {
+            $.post('{:url("/HbCall/deleteCustomer")}', { customerList: customerList }, res => {
+                let icon = 0;
+                if (res.code === 1) {
+                    icon = 1;
+                    customerContainer.html('')
+                }
+
+                layer.msg(res.msg, {icon: icon, time: 3000});
+            })
+        })
     });
 </script>
 

@@ -38,7 +38,7 @@ class HbCall extends \app\common\controller\HomeController
             return json(['rows' => $callHistory, 'msg' => '', 'code' => 1]);
         }
 
-        return $this->returnData;
+        return json($this->returnData);
     }
 
     public function callHistoryList()
@@ -72,7 +72,7 @@ class HbCall extends \app\common\controller\HomeController
             $historyList = CallHistory::with('expense')->where($map)->order('starttime DESC, id DESC')->limit(($page - 1) * $limit, $limit)->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
-        return $this->returnData;
+        return json($this->returnData);
     }
 
     /**
@@ -127,6 +127,32 @@ class HbCall extends \app\common\controller\HomeController
         return json($response);
     }
 
+    public function getCustomerList()
+    {
+        if ($this->request->isPost()) {
+            $where = [
+                'user_id' => $this->userInfo->id
+            ];
+            $lastData = Customer::where($where)->order('id', 'desc')->findOrEmpty();
+            if ($lastData->toArray()) {
+                $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))));
+                $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))) + 3600 * 24 - 1);
+                $res = Customer::field('title, phone')
+                    ->where($where)
+                    ->whereBetweenTime('createtime', $lastDateStart, $lastDateEnd)
+                    ->order('id', 'desc')
+                    ->select();
+                $this->returnData['data'] = $res;
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = 'success';
+                return json($this->returnData);
+            }
+
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
     public function importCustomer()
     {
         if ($this->request->isPost()) {
@@ -160,5 +186,25 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         return $this->returnData;
+    }
+
+    public function deleteCustomer ()
+    {
+        if ($this->request->isPost()) {
+            $data = $this->request->param('customerList');
+            $where = [
+                'user_id' => $this->userInfo->id,
+            ];
+
+            foreach ($data as $val) {
+                $where = array_merge($where, $val);
+                Customer::where($where)->delete();
+            }
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '清除成功';
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
     }
 }
