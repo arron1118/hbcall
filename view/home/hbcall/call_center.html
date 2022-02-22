@@ -221,17 +221,19 @@
 
             $.post('{:url("/hbcall/makeCall")}', {mobile: number}, function (res) {
                 if (res.code === 1000) {
-                    console.log(customerCalled)
                     if (customerCalled) {
                         // 更新客户拨号记录
                         $.post('{:url("/HbCall/updateCustomerCalledCount")}', { phone: number }, function (r) {
                         })
 
                         $(customerCalled).addClass('text-black-50')
-                        $(customerCalled).find('.click-call').before($('<span />', {
-                            class: 'called-customer ms-3 float-end',
-                            text: '已拨'
-                        }))
+
+                        if ($(customerCalled).find('.called-customer').length === 0) {
+                            $(customerCalled).find('.click-call').before($('<span />', {
+                                class: 'called-customer ms-3 float-end',
+                                text: '已拨'
+                            }))
+                        }
                         customerContainer.append(customerCalled)
                     }
                     // 计数拨号次数
@@ -422,15 +424,13 @@
         let importCount = 0;
         $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
             if (res.code === 1 && res.data.length > 0) {
-                console.log(res.data)
                 customerList = res.data
                 let isCalled = false
                 $.each(res.data, (index, item) => {
                     if (item.called_count > 0) {
                         isCalled = true
                     }
-                    console.log(item)
-                    customerContainer.prepend(createCustomerItem(item, isCalled))
+                    customerContainer.append(createCustomerItem(item, isCalled))
                 })
             }
         })
