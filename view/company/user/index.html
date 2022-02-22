@@ -5,25 +5,28 @@
 
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
+            <div style="margin: 10px;">
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
 
                         <div class="layui-inline">
                             <label class="layui-form-label">账号</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="account" autocomplete="off" class="layui-input">
+                                <input type="text" name="username" autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-inline">
-                            <label class="layui-form-label">持有人</label>
+                            <label class="layui-form-label">手机号</label>
                             <div class="layui-input-inline">
-                                <input type="text" name="holder" autocomplete="off" class="layui-input">
+                                <input type="text" name="phone" autocomplete="off" class="layui-input">
                             </div>
                         </div>
 
                         <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                            <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
                         </div>
                     </div>
                 </form>
@@ -93,15 +96,24 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            let result = JSON.stringify(data.field);
-            table.reload('currentTableId', {
+            table.reload('userTable', {
                 page: {
                     curr: 1
                 },
-                where: result
+                where: data.field
             }, 'data');
+
             return false;
         });
+
+        $('button[type="reset"]').on('click', function () {
+            table.reload('userTable', {
+                page: {
+                    curr: 1
+                },
+                where: {}
+            }, false)
+        })
 
         /**
          * toolbar监听事件
@@ -114,6 +126,7 @@
                     shade: 0.2,
                     maxmin: true,
                     shadeClose: true,
+                    anim: 2,
                     area: ['100%', '100%'],
                     content: '{:url("/user/add")}',
                 });

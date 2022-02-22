@@ -19,12 +19,29 @@ class User extends \app\common\controller\CompanyController
 
     public function getUserList()
     {
-        $page = (int) $this->request->param('page', 1);
-        $limit = (int) $this->request->param('limit', 10);
-        $map = ['company_id' => Session::get('company.id')];
-        $total = UserModel::where($map)->count();
-        $userList = UserModel::with('axbNumber')->where($map)->limit(($page - 1) * $limit, $limit)->select();
-        return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+        if ($this->request->isAjax()) {
+            $page = (int) $this->request->param('page', 1);
+            $limit = (int) $this->request->param('limit', 10);
+            $username = $this->request->param('username', '');
+            $phone = $this->request->param('phone', '');
+            $map = [
+                ['company_id', '=', $this->userInfo->id]
+            ];
+
+            if ($username) {
+                $map[] = ['username', 'like', '%' . $username . '%'];
+            }
+
+            if ($phone) {
+                $map[] = ['phone', 'like', '%' . $phone . '%'];
+            }
+            $total = UserModel::where($map)->count();
+            $userList = UserModel::with('axbNumber')->where($map)->limit(($page - 1) * $limit, $limit)->select();
+
+            return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+        }
+
+        return json($this->returnData);
     }
 
     public function add()

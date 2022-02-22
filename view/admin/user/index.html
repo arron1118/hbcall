@@ -2,10 +2,9 @@
 {block name="body"}
 <div class="layuimini-container">
     <div class="layuimini-main">
-
         <fieldset class="table-search-fieldset">
             <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
+            <div style="margin: 10px">
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-form-item">
 
@@ -24,7 +23,10 @@
                         </div>
 
                         <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                            <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
                         </div>
                     </div>
                 </form>
@@ -80,12 +82,15 @@
                 {field: 'username', title: '账号'},
                 {field: 'corporation', title: '公司名称', align: "center"},
                 {field: 'ration', title: '座席', align: "center"},
+                {field: 'limit_user', title: '限制用户数量', align: "center"},
+                {field: 'user_count', title: '已开通用户', align: "center"},
                 {field: 'rate', title: '费率(￥)', align: "center"},
                 {field: 'balance', title: '余额(￥)', align: "center", templet: function (row) {
                     return row.balance < 0 ? '<div class="layui-bg-red">' + row.balance + '</div>' : row.balance;
                     }},
-                {field: 'logintime', title: '登录时间', align: "center"},
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+                {field: 'logintime', title: '最后登录', align: "center"},
+                {field: 'status', title: '状态', align: "center"},
+                {title: '操作', toolbar: '#currentTableBar', align: "center", fixed: 'right'}
             ]],
             page: {
                 limits: [10, 20, 30, 40],
@@ -97,16 +102,25 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            let params = JSON.stringify(data.field);
-            console.log(params);
             //执行搜索重载
             table.reload('userTable', {
                 page: {
                     curr: 1
                 },
-                where: params
+                where: data.field
             });
+
+            return false
         });
+
+        $('button[type="reset"]').on('click', function () {
+            table.reload('userTable', {
+                page: {
+                    curr: 1
+                },
+                where: {}
+            }, false)
+        })
 
         /**
          * toolbar监听事件
@@ -157,8 +171,8 @@
                     title: '编辑账号',
                     type: 2,
                     shade: 0.2,
-                    maxmin: true,
                     shadeClose: true,
+                    anim: 2,
                     area: ['100%', '100%'],
                     content: '{:url("/user/edit")}?id=' + obj.data.id,
                 });

@@ -3,6 +3,7 @@
 
 namespace app\common\controller;
 
+use app\admin\model\Admin;
 use think\facade\Session;
 use think\facade\View;
 
@@ -28,7 +29,7 @@ class AdminController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
-        $this->userInfo = Session::get('admin');
+        $this->userInfo = Admin::find(Session::get('admin.id'));
         $this->view->assign('user', $this->userInfo);
     }
 

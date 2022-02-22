@@ -18,12 +18,27 @@ class User extends \app\common\controller\AdminController
 
     public function getUserList()
     {
-        $page = (int) $this->request->param('page', 1);
-        $limit = (int) $this->request->param('limit', 10);
-        $map = [];
-        $total = UserModel::where($map)->count();
-        $userList = UserModel::where($map)->limit(($page - 1) * $limit, $limit)->select();
-        return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+        if ($this->request->isAjax()) {
+            $page = (int) $this->request->param('page', 1);
+            $limit = (int) $this->request->param('limit', 10);
+            $username = $this->request->param('username', '');
+            $corporation = $this->request->param('corporation', '');
+            $map = [];
+
+            if ($username) {
+                $map[] = ['username', 'like', '%' . $username . '%'];
+            }
+
+            if ($corporation) {
+                $map[] = ['corporation', 'like', '%' . $corporation . '%'];
+            }
+
+            $total = UserModel::where($map)->count();
+            $userList = UserModel::withCount('user')->where($map)->limit(($page - 1) * $limit, $limit)->select();
+            return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+        }
+
+        return json($this->returnData);
     }
 
     public function add()
@@ -112,6 +127,7 @@ class User extends \app\common\controller\AdminController
 
             $userInfo->ration = $data['ration'];
             $userInfo->rate = $data['rate'];
+            $userInfo->limit_user = $data['limit_user'];
             $userInfo->save();
 
             $this->returnData['code'] = 1;

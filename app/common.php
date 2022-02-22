@@ -59,6 +59,8 @@ function getCosts($company_id = 0, $user_id = 0)
     $year_last_day = '-31';
     $today_start = strtotime('today');  // 当天起始
     $today_end = strtotime('tomorrow') - 1; // 当天结束
+    $yesterdayStart = strtotime('yesterday');  // 昨日起始
+    $yesterdayEnd = strtotime('today') - 1;    // 昨日结束
     $next_month = $current_month + 1;   // 下月
     $current_month_start = strtotime($current_year . '-' . $current_month . $first_day);    // 当月起始
     // 当月结束
@@ -74,28 +76,34 @@ function getCosts($company_id = 0, $user_id = 0)
     $expenseModel = \app\common\model\Expense::class;
     // 当日消费
     $current_day_cost = $expenseModel::whereBetween('createtime', [$today_start, $today_end]);
+    // 昨日消费
+    $yesterday_cost = $expenseModel::whereBetween('createtime', [$yesterdayStart, $yesterdayEnd]);
     // 本月消费
     $current_month_cost = $expenseModel::whereBetween('createtime', [$current_month_start, $current_month_end]);
     // 当年消费
     $current_year_cost = $expenseModel::whereBetween('createtime', [$current_year_start, $current_year_end]);
     if ($company_id > 0) {
         $current_day_cost->where('company_id', '=', $company_id);
+        $yesterday_cost->where('company_id', '=', $company_id);
         $current_month_cost->where('company_id', '=', $company_id);
         $current_year_cost->where('company_id', '=', $company_id);
     }
 
     if ($user_id > 0) {
         $current_day_cost->where('user_id', '=', $user_id);
+        $yesterday_cost->where('user_id', '=', $user_id);
         $current_month_cost->where('user_id', '=', $user_id);
         $current_year_cost->where('user_id', '=', $user_id);
     }
 
     $current_day_cost = $current_day_cost->sum('cost');
+    $yesterday_cost = $yesterday_cost->sum('cost');
     $current_month_cost = $current_month_cost->sum('cost');
     $current_year_cost = $current_year_cost->sum('cost');
 
     return [
         'current_day_cost' => $current_day_cost,
+        'yesterday_cost' => $yesterday_cost,
         'current_month_cost' => $current_month_cost,
         'current_year_cost' => $current_year_cost
     ];

@@ -5,6 +5,7 @@ namespace app\company\model;
 
 
 use app\common\model\Customer;
+use app\common\model\User;
 
 class Company extends \think\Model
 {
@@ -28,19 +29,19 @@ class Company extends \think\Model
         return [0 => '禁止登录', 1 => '正常'];
     }
 
-    public function payments()
+    public function payment()
     {
-        return $this->hasMany(\app\company\Model\Payment::class)->bind(['corporation']);
+        return $this->hasMany(Payment::class);
     }
 
-    public function users()
+    public function user()
     {
-        return $this->hasMany(\app\common\model\User::class)->bind(['corporation']);
+        return $this->hasMany(User::class);
     }
 
     public function axbNumbers()
     {
-        return $this->hasMany(\app\common\model\User::class);
+        return $this->hasMany(User::class);
     }
 
     public function customer()

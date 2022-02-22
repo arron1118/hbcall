@@ -37,9 +37,10 @@
     .admin-login-background {
         position: absolute;
         left: 50%;
-        top: 40%;
-        margin-left: -180px;
+        top: 20%;
+        margin-left: -250px;
         margin-top: -100px;
+        width: 500px;
     }
 
     .logo-title {
@@ -70,32 +71,14 @@
         position: absolute;
         left: 1px;
         top: 1px;
-        width: 58px;
-        line-height: 36px;
+        width: 100px;
+        line-height: 20px;
         text-align: center;
         color: #565656;
     }
 
-    .login-form .layui-form-item input {
-        padding-left: 36px;
-    }
-
-    .captcha {
-        width: 60%;
-        display: inline-block;
-    }
-
-    .captcha-img {
-        display: inline-block;
-        width: 34%;
-        float: right;
-    }
-
-    .captcha-img img {
-        height: 34px;
-        border: 1px solid #e6e6e6;
-        height: 36px;
-        width: 100%;
+    .layui-form-item .layui-input-block {
+        margin-left: 130px;
     }
 </style>
 {/block}
@@ -103,7 +86,7 @@
 <div class="layui-container" id="lqp">
     <div class="admin-login-background ">
         <div class="layui-form login-form ">
-            <form class="layui-form" action="">
+            <form class="layui-form layuimini-form" action="">
                 <div class="layui-form-item logo-title">
                     <h1>开通账号</h1>
                 </div>
@@ -121,10 +104,11 @@
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label" for="phone">手机号</label>
+                    <label class="layui-form-label" for="phone">手机号<span class="text-danger" style="margin: 0 5px;">*</span></label>
                     <div class="layui-input-block" id="phone">
                         <input type="text" name="phone" lay-verify="required|phone" placeholder="手机号"
                                autocomplete="off" class="layui-input" value="">
+                        <tip>提示：必须提供正确的手机号才能进行拨号</tip>
                     </div>
                 </div>
 

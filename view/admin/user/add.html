@@ -37,9 +37,10 @@
     .admin-login-background {
         position: absolute;
         left: 50%;
-        top: 40%;
-        margin-left: -180px;
+        top: 20%;
+        margin-left: -250px;
         margin-top: -100px;
+        width: 500px;
     }
 
     .logo-title {
@@ -70,32 +71,14 @@
         position: absolute;
         left: 1px;
         top: 1px;
-        width: 58px;
-        line-height: 36px;
+        width: 100px;
+        line-height: 20px;
         text-align: center;
         color: #565656;
     }
 
-    .login-form .layui-form-item input {
-        padding-left: 36px;
-    }
-
-    .captcha {
-        width: 60%;
-        display: inline-block;
-    }
-
-    .captcha-img {
-        display: inline-block;
-        width: 34%;
-        float: right;
-    }
-
-    .captcha-img img {
-        height: 34px;
-        border: 1px solid #e6e6e6;
-        height: 36px;
-        width: 100%;
+    .layui-form-item .layui-input-block {
+        margin-left: 130px;
     }
 </style>
 {/block}
@@ -103,7 +86,7 @@
 <div class="layui-container" id="lqp">
     <div class="admin-login-background">
         <div class="layui-form login-form ">
-            <form class="layui-form" action="">
+            <form class="layui-form layuimini-form" action="">
                 <div class="layui-form-item logo-title">
                     <h1>开通账号</h1>
                 </div>
@@ -126,6 +109,15 @@
                     <div class="layui-input-block" id="ration">
                         <input type="number" name="ration" min="0" placeholder="0"
                                autocomplete="off" class="layui-input" value="">
+                        <tip>提示：1个小号为1个座席</tip>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="limit_user">限制用户数</label>
+                    <div class="layui-input-block" id="limit_user">
+                        <input type="number" name="limit_user" min="0" placeholder="0"
+                               autocomplete="off" class="layui-input" value="">
+                        <tip>提示：0 为无限制开通拨号用户</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -133,6 +125,7 @@
                     <div class="layui-input-block" id="rate">
                         <input type="number" name="rate" min="0" placeholder="0"
                                autocomplete="off" class="layui-input" value="">
+                        <tip>提示：用于计算话费</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -144,7 +137,7 @@
                 </div>
                 <div class="layui-form-item mt-3">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
-                            lay-filter="open">开通
+                            lay-filter="open">开 通
                     </button>
                 </div>
             </form>
