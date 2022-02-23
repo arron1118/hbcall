@@ -52,7 +52,8 @@
                 'cooperate',
                 'news',
                 'buy',
-                'detailIndex'
+                'detailIndex',
+                'case'
             ];
             //如果pageName 在pages数组里面
             if (pages.includes(pageName)) {
