@@ -1,38 +1,36 @@
 {extend name="public/base" /}
+{block name="css"}
+    {include file="public/bootstrap" /}
+{/block}
 {block name="body"}
+<div class="row">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+
+            <div class="layui-inline">
+                <label class="layui-form-label">账号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="username" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">手机号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="phone" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-inline">
+                <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+            </div>
+            <div class="layui-inline">
+                <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
+            </div>
+        </div>
+    </form>
+</div>
 <div class="layuimini-container">
     <div class="layuimini-main">
-
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px;">
-                <form class="layui-form layui-form-pane" action="">
-                    <div class="layui-form-item">
-
-                        <div class="layui-inline">
-                            <label class="layui-form-label">账号</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="username" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">手机号</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="phone" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
-                        </div>
-                        <div class="layui-inline">
-                            <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </fieldset>
-
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
 
@@ -94,25 +92,23 @@
             even: true,
         });
 
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
+        let search = function (params) {
             table.reload('userTable', {
                 page: {
                     curr: 1
                 },
-                where: data.field
-            }, 'data');
+                where: params
+            })
+        }
 
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            search(data.field)
             return false;
         });
 
         $('button[type="reset"]').on('click', function () {
-            table.reload('userTable', {
-                page: {
-                    curr: 1
-                },
-                where: {}
-            }, false)
+            search({})
         })
 
         /**
@@ -120,23 +116,28 @@
          */
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
-                let index = layer.open({
-                    title: '开通账号',
-                    type: 2,
-                    shade: 0.2,
-                    maxmin: true,
-                    shadeClose: true,
-                    anim: 2,
-                    area: ['100%', '100%'],
-                    content: '{:url("/user/add")}',
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
+                $.post('{:url("/User/checkLimitUser")}', {}, function (res) {
+                    if (res.code === 1) {
+                        let index = layer.open({
+                            title: '开通账号',
+                            type: 2,
+                            shade: 0.2,
+                            maxmin: true,
+                            shadeClose: true,
+                            anim: 2,
+                            area: ['100%', '100%'],
+                            content: '{:url("/user/add")}',
+                        });
+                        $(window).on("resize", function () {
+                            layer.full(index);
+                        });
+                    } else {
+                        layer.msg(res.msg, { icon: 0 })
+                    }
+                })
             } else if (obj.event === 'delete') {  // 监听删除操作
                 let checkStatus = table.checkStatus('currentTableId'),
                     data = checkStatus.data;
-                    console.log(data);
                     if(data == '' || data == 'undefind'){
                         layer.msg('请勾选需要删除的数据');
                         return false;
@@ -174,14 +175,18 @@
                 });
                 return false;
             } else if (obj.event === 'delete') {
-                console.log(obj);
-                console.log(obj.data.id);
-                let id = obj.data.id, url='';
-                layer.confirm('真的删除行么', function (index) {
-                    $.post(url,id,function () {
-                        //todo
-                        obj.del();
-                        layer.close(index);
+                let id = obj.data.id;
+                layer.confirm('真的删除行么？删除后不可恢复', function (index) {
+                    $.post('{:url("/User/del")}', { id: id }, function (res) {
+                        let icon = 0;
+                        if (res.code === 1) {
+                            icon = 1
+                            obj.del()
+                        }
+
+                        layer.msg(res.msg, { icon: icon }, function () {
+                            layer.closeAll();
+                        })
                     })
 
                 });

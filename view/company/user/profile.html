@@ -13,51 +13,60 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label required">昵称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="username" lay-verify="required" placeholder="请输入昵称"  value="{$userProfile.username}" class="layui-input">
-                                <tip>此昵称作为登录账号使用，必填！</tip>
+                                <input type="text" name="username" lay-verify="required" placeholder="请输入昵称"  value="{$user.username}" class="layui-input" readonly>
+                                <tip>此昵称作为登录账号使用，暂不支持更改！</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">真实姓名</label>
                             <div class="layui-input-block">
-                                <input type="text" name="realname" placeholder="请输入真实姓名"  value="{$userProfile.realname}" class="layui-input">
+                                <input type="text" name="realname" placeholder="请输入真实姓名"  value="{$user.realname}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">余额(￥/元)</label>
                             <div class="layui-input-block">
-                                <input type="text" name="balance" value="{$userProfile.balance}" class="layui-input" disabled>
+                                <input type="text" name="balance" value="{$user.balance}" class="layui-input" disabled>
                                 <tip><a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理">前往充值>></a></tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">配额</label>
                             <div class="layui-input-block">
-                                <input type="text" name="ration" value="{$userProfile.ration}" class="layui-input" disabled>
+                                <input type="text" name="ration" value="{$user.ration}" class="layui-input" disabled>
+                                <tip>提示：1个小号为1个座席</tip>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">限制用户数</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="limit_user" value="{$user.limit_user}" class="layui-input" disabled>
+                                <tip>提示：0 为无限制开通拨号用户</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">费率</label>
                             <div class="layui-input-block">
-                                <input type="text" name="rate" value="{$userProfile.rate}" class="layui-input" disabled>
+                                <input type="text" name="rate" value="{$user.rate}" class="layui-input" disabled>
+                                <tip>提示：用于计算话费</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">登陆IP</label>
                             <div class="layui-input-block">
-                                <input type="text" name="ip" value="{$userProfile.loginip}" class="layui-input" disabled>
+                                <input type="text" name="ip" value="{$user.loginip}" class="layui-input" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">最后登陆</label>
                             <div class="layui-input-block">
-                                <input type="text" name="time"  value="{$userProfile.logintime}" class="layui-input" disabled>
+                                <input type="text" name="time"  value="{$user.logintime}" class="layui-input" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">上次登陆</label>
                             <div class="layui-input-block">
-                                <input type="text" name="lasttime" value="{$userProfile.prevtime}" class="layui-input" disabled>
+                                <input type="text" name="lasttime" value="{$user.prevtime}" class="layui-input" disabled>
                             </div>
                         </div>
 

@@ -108,3 +108,29 @@ function getCosts($company_id = 0, $user_id = 0)
         'current_year_cost' => $current_year_cost
     ];
 }
+
+function showMsg($msg, $options = [])
+{
+    $defaultOptions = [
+        'icon' => 0,
+        'time' => '2500'
+    ];
+    $options = array_merge($defaultOptions, $options);
+    $optionsToJson = json_encode($options);
+    $html = <<<HTML
+<link href="/static/lib/layui-v2.6.8/css/layui.css" rel="stylesheet" />
+<script src="/static/lib/layui-v2.6.8/layui.js"></script>
+<script src="/static/js/lay-config.js"></script>
+<script>
+    layui.use(['jquery', 'layer'], function () {
+        let $ = layui.jquery,
+            layer = layui.layer;
+        
+        layer.msg("{$msg}", $optionsToJson)
+    })
+</script>
+HTML;
+
+    echo $html;
+    exit();
+}

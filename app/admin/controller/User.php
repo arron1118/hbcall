@@ -59,6 +59,11 @@ class User extends \app\common\controller\AdminController
                 return json($this->returnData);
             }
 
+            if (intval($params['ration']) === 0) {
+                $this->returnData['msg'] = '座席不能为 0';
+                return json($this->returnData);
+            }
+
             if ($params['ration'] > 0 && NumberStore::where('status', '=', '0')->count() < $params['ration']) {
                 $this->returnData['msg'] = '剩余座席不足';
                 return json($this->returnData);
@@ -93,7 +98,7 @@ class User extends \app\common\controller\AdminController
             $this->returnData['msg'] = '错误参数: ' . $userId;
             return json($this->returnData);
         }
-        $userInfo = UserModel::find($userId);
+        $userInfo = UserModel::withCount('user')->find($userId);
         if (!$userInfo) {
             $this->returnData['msg'] = '未找到数据';
             return json($this->returnData);
@@ -101,6 +106,17 @@ class User extends \app\common\controller\AdminController
 
         if ($this->request->isAjax()) {
             $data = $this->request->param();
+
+            if (intval($data['limit_user']) !== 0 && $userInfo->user_count > $data['limit_user']) {
+                $this->returnData['msg'] = '该公司已开通用户数大于限制用户数';
+                return json($this->returnData);
+            }
+
+            if (intval($data['ration']) === 0) {
+                $this->returnData['msg'] = '座席不能为 0';
+                return json($this->returnData);
+            }
+
             // 设置座席
             if ($data['ration'] > 0) {
                 $hasNumbers = NumberStore::where('company_id', '=', $userId)->count();
@@ -125,13 +141,18 @@ class User extends \app\common\controller\AdminController
                 }
             }
 
+            if ($data['password'] !== $userInfo->password) {
+                $userInfo->password = getEncryptPassword(trim($data['password']), $userInfo->salt);
+            }
+
             $userInfo->ration = $data['ration'];
             $userInfo->rate = $data['rate'];
             $userInfo->limit_user = $data['limit_user'];
-            $userInfo->save();
+            if ($userInfo->save()) {
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '更新完成';
+            }
 
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '更新完成';
             return json($this->returnData);
         }
         $this->view->assign('userInfo', $userInfo);

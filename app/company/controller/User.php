@@ -36,11 +36,22 @@ class User extends \app\common\controller\CompanyController
                 $map[] = ['phone', 'like', '%' . $phone . '%'];
             }
             $total = UserModel::where($map)->count();
-            $userList = UserModel::with('axbNumber')->where($map)->limit(($page - 1) * $limit, $limit)->select();
+            $userList = UserModel::with('userXnumber')->where($map)->limit(($page - 1) * $limit, $limit)->select();
 
             return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
         }
 
+        return json($this->returnData);
+    }
+
+    public function checkLimitUser()
+    {
+        if ($this->userInfo->user_count === $this->userInfo->limit_user) {
+            $this->returnData['msg'] = '已经达到限制开通用户数量';
+            return json($this->returnData);
+        }
+
+        $this->returnData['code'] = 1;
         return json($this->returnData);
     }
 
@@ -51,6 +62,11 @@ class User extends \app\common\controller\CompanyController
             $params['username'] = trim($params['username']);
             $params['salt'] = getRandChar(6);
             $params['password'] = getEncryptPassword(trim($params['password']), $params['salt']);
+
+            if ($this->userInfo->user_count === $this->userInfo->limit_user) {
+                $this->returnData['msg'] = '已经达到限制开通用户数量';
+                return json($this->returnData);
+            }
 
             if (UserModel::getByUsername($params['username'])) {
                 $this->returnData['msg'] = '用户已经存在';
@@ -89,7 +105,7 @@ class User extends \app\common\controller\CompanyController
     public function edit()
     {
         $userId = $this->request->param('id');
-        $userInfo = UserModel::with('axbNumber')->find($userId);
+        $userInfo = UserModel::with('userXnumber')->find($userId);
 
         if ($this->request->isPost()) {
             $params = $this->request->param();
@@ -107,8 +123,7 @@ class User extends \app\common\controller\CompanyController
             }
 
             if ($params['password'] !== $userInfo->password) {
-                $params['salt'] = getRandChar(6);
-                $userInfo->password = getEncryptPassword(trim($params['password']), $params['salt']);
+                $userInfo->password = getEncryptPassword(trim($params['password']), $userInfo->salt);
             }
 
             $userInfo->username = $params['username'];
@@ -140,6 +155,28 @@ class User extends \app\common\controller\CompanyController
         return $this->view->fetch();
     }
 
+    public function del()
+    {
+        if ($this->request->isPost()) {
+            $userId = $this->request->param('id', 0);
+            if (!$userId) {
+                $this->returnData['msg'] = '未提供正确的ID';
+                return json($this->returnData);
+            }
+
+            $userInfo = UserModel::with('userXnumber')->find($userId);
+            if ($userInfo->userXnumber()->delete()) {
+                $userInfo->delete();
+            }
+
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '删除成功';
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
+
     /**
      * 返回的小号列表
      * @return NumberStore[]|array|\think\Collection
@@ -164,23 +201,17 @@ class User extends \app\common\controller\CompanyController
 
     public function profile()
     {
-        $user = Company::find(Session::get('company.id'));
-
         if ($this->request->isPost()) {
-            $username = trim($this->request->param('username'));
             $realname = trim($this->request->param('realname'));
             if (empty($username)) {
                 return json(['msg' => '请输入昵称', 'code' => 0]);
             }
-            $user->username = $username;
-            $user->realname = $realname;
-            $user->save();
-            Session::set('company.username', $username);
+            $this->userInfo->realname = $realname;
+            $this->userInfo->save();
             Session::set('company.realname', $realname);
 
             return json(['msg' => '操作成功', 'code' => 1]);
         }
-        $this->view->assign('userProfile', $user);
         return $this->view->fetch();
     }
 
@@ -207,9 +238,11 @@ class User extends \app\common\controller\CompanyController
                 return json(['msg' => '输入的确认密码有误', 'code' => 0]);
             }
             $user->password = getEncryptPassword($confirm_password, $user->salt);
-            $user->save();
+            if ($user->save()) {
+                return json(['msg' => '操作成功', 'code' => 1]);
+            }
 
-            return json(['msg' => '操作成功', 'code' => 1]);
+            return json($this->returnData);
         }
         return $this->view->fetch();
     }

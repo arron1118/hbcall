@@ -168,7 +168,6 @@
             }
 
             $.post("{:url('/user/add')}", params, function (res) {
-                console.log(res)
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 6, time: 2500}, function () {
                         parent.layer.close(frameIndex);
