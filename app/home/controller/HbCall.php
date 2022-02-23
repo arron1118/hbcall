@@ -89,7 +89,7 @@ class HbCall extends \app\common\controller\HomeController
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
             return json(['data' => [], 'msg' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
         }
-        $userInfo = \app\common\model\User::with('axbNumber')->find($this->userInfo['id']);
+        $userInfo = \app\common\model\User::with('userXnumber')->find($this->userInfo['id']);
 
         if ($userInfo['phone'] === '') {
             return json(['data' => [], 'msg' => '请前往个人资料中<a href="javascript:;" layuimini-content-href="user/profile.html" data-title="基本资料">填写手机号</a>', 'info' => '温馨提示', 'status' => 0]);
