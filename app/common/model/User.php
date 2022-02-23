@@ -31,9 +31,9 @@ class User extends \think\Model
         return $this->belongsTo(\app\company\model\Company::class, 'company_id');
     }
 
-    public function axbNumber()
+    public function userXnumber()
     {
-        return $this->hasOne(UserXnumber::class)->bind(['xnumber']);
+        return $this->hasOne(UserXnumber::class, 'user_id')->bind(['xnumber']);
     }
 
     public function callHistory()

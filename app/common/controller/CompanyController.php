@@ -29,7 +29,7 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
-        $this->userInfo = Company::find(Session::get('company.id'));
+        $this->userInfo = Company::withCount('user')->find(Session::get('company.id'));
         $this->view->assign('user', $this->userInfo);
     }
 

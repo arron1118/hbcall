@@ -13,8 +13,8 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label required">昵称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="username" lay-verify="required" placeholder="请输入昵称"  value="{$userProfile.username}" class="layui-input">
-                                <tip>此昵称作为登录账号使用，必填！</tip>
+                                <input type="text" name="username" lay-verify="required" placeholder="请输入昵称"  value="{$userProfile.username}" class="layui-input" readonly>
+                                <tip>此昵称作为登录账号使用，暂不支持更改</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -72,11 +72,12 @@
         //监听提交
         form.on('submit(saveBtn)', function (data) {
             $.post('{:url("/user/profile")}', data.field, function (res) {
+                let icon = 5
                 if (res.code) {
-                    layer.msg(res.msg, {icon: 6});
-                } else {
-                    layer.msg(res.msg, {icon: 5});
+                    icon = 6
                 }
+
+                layer.msg(res.msg, { icon: icon });
             })
 
             return false;

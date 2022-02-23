@@ -154,7 +154,10 @@
         // 进行登录操作
         form.on('submit(edit)', function (data) {
             let params = data.field;
-            console.log(params);
+            if (!params.number_store_id) {
+                layer.msg('请选择小号')
+                return false
+            }
             if (params.phone === '') {
                 layer.msg('手机号不能为空');
                 return false;
@@ -169,7 +172,6 @@
             }
 
             $.post("{:url('/user/edit')}", params, function (res) {
-                console.log(res)
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 6, time: 2500}, function () {
                         parent.layer.close(frameIndex);

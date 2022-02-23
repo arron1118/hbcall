@@ -37,19 +37,19 @@ class HbCall extends \app\common\controller\CompanyController
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $holdername = $this->request->param('holdername', '');
-            $holdertime = $this->request->param('holdertime', '');
+            $username = $this->request->param('username', '');
+            $date = $this->request->param('date', '');
             $map = [
                 ['company_id', '=', $this->userInfo['id']],
                 ['caller_number', '<>', '']
             ];
 
-            if ($holdername) {
-                $map[] = ['username', 'like', '%' . $holdername . '%'];
+            if ($username) {
+                $map[] = ['username', 'like', '%' . $username . '%'];
             }
 
-            if ($holdertime) {
-                $daytime = strtotime($holdertime);
+            if ($date) {
+                $daytime = strtotime($date);
                 $map[] = ['createtime', 'between', [$daytime, $daytime + 86400 - 1]];
             }
 

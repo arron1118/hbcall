@@ -86,7 +86,7 @@
 <div class="layui-container" id="lqp">
     <div class="admin-login-background ">
         <div class="layui-form login-form ">
-            <form class="layui-form" action="">
+            <form class="layui-form layuimini-form" action="">
                 <input type="hidden" name="id" value="{$userInfo.id}" />
                 <div class="layui-form-item logo-title">
                     <h1>编辑账号</h1>
@@ -102,7 +102,7 @@
                     <label class="layui-form-label" for="password">密码</label>
                     <div class="layui-input-block" id="password">
                         <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                               autocomplete="off" class="layui-input" value="{$userInfo.password}" readonly>
+                               autocomplete="off" class="layui-input" value="{$userInfo.password}">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -110,6 +110,7 @@
                     <div class="layui-input-block" id="ration">
                         <input type="number" name="ration" min="0" placeholder="0"
                                autocomplete="off" class="layui-input" value="{$userInfo.ration}">
+                        <tip>提示：1个小号为1个座席</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -117,6 +118,7 @@
                     <div class="layui-input-block" id="limit_user">
                         <input type="number" name="limit_user" min="0" placeholder="0"
                                autocomplete="off" class="layui-input" value="{$userInfo.limit_user}">
+                        <tip>提示：0 为无限制开通拨号用户</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -124,6 +126,7 @@
                     <div class="layui-input-block" id="rate">
                         <input type="number" name="rate" min="0" placeholder="0"
                                autocomplete="off" class="layui-input" value="{$userInfo.rate}">
+                        <tip>提示：用于计算话费</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
