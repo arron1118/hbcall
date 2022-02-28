@@ -23,12 +23,10 @@ class Payment extends \app\common\controller\CompanyController
 
     public function index()
     {
-        $notpay = $this->model->where(['company_id' => Session::get('company.id'), 'status' => 0])->select();
+        /*$notpay = $this->model->where(['company_id' => Session::get('company.id'), 'status' => 0])->select();
         foreach ($notpay as $key => $value) {
             if ($value->getData('pay_type') === 1) {
-                /**
-                 * 检查微信订单是否已支付
-                 */
+                // 检查微信订单是否已支付
                 $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
                 if ($data->trade_state === 'SUCCESS') {
                     $mt = mktime(
@@ -48,9 +46,7 @@ class Payment extends \app\common\controller\CompanyController
                     $value->save();
                 }
             } elseif ($value->getData('pay_type') === 2) {
-                /**
-                 * 检查支付宝订单是否已支付
-                 */
+                // 检查支付宝订单是否已支付
                 try {
                     $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
                     if ($data->trade_status === 'TRADE_SUCCESS') {
@@ -70,7 +66,7 @@ class Payment extends \app\common\controller\CompanyController
                     }
                 }
             }
-        }
+        }*/
 
         return $this->view->fetch();
     }
