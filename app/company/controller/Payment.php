@@ -4,10 +4,9 @@
 namespace app\company\controller;
 
 use chillerlan\QRCode\QRCode;
-use think\Collection;
 use think\facade\Config;
+use think\facade\Log;
 use think\facade\Session;
-use think\response\Json;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Exceptions\GatewayException;
 
@@ -28,6 +27,7 @@ class Payment extends \app\common\controller\CompanyController
             if ($value->getData('pay_type') === 1) {
                 // 检查微信订单是否已支付
                 $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
+                Log::info(json_encode($data));
                 if ($data->trade_state === 'SUCCESS') {
                     $mt = mktime(
                         substr($data->time_end, 8, 2),
@@ -49,6 +49,7 @@ class Payment extends \app\common\controller\CompanyController
                 // 检查支付宝订单是否已支付
                 try {
                     $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
+                    Log::info(json_encode($data));
                     if ($data->trade_status === 'TRADE_SUCCESS') {
                         $value->pay_time = strtotime($data->send_pay_date);
                         $value->payment_no = $data->trade_no;

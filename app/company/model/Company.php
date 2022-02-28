@@ -6,6 +6,7 @@ namespace app\company\model;
 
 use app\common\model\Customer;
 use app\common\model\User;
+use app\common\model\Expense;
 
 class Company extends \think\Model
 {
@@ -39,9 +40,9 @@ class Company extends \think\Model
         return $this->hasMany(User::class);
     }
 
-    public function axbNumbers()
+    public function expense()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(Expense::class);
     }
 
     public function customer()

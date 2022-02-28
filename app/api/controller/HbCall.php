@@ -34,7 +34,7 @@ class HbCall extends \app\common\controller\ApiController
         }
 
         $userInfo = $this->getUserInfo();
-        $userInfo = \app\common\model\User::with('axbNumber')->find($userInfo['id']);
+        $userInfo = \app\common\model\User::with('userXnumber')->find($userInfo['id']);
         if ($userInfo['phone'] === '') {
             $this->returnData['msg'] = '呼叫失败';
             $this->returnData['sub_msg'] = '请先在个人资料中填写手机号';
