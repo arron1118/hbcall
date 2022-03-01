@@ -34,7 +34,10 @@ class User extends \app\common\controller\AdminController
             }
 
             $total = UserModel::where($map)->count();
-            $userList = UserModel::withCount('user')->where($map)->limit(($page - 1) * $limit, $limit)->select();
+            $userList = UserModel::withCount('user')
+                ->where($map)->order('id', 'desc')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
             return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
         }
 

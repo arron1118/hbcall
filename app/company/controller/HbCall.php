@@ -22,13 +22,6 @@ class HbCall extends \app\common\controller\CompanyController
 
     public function callHistoryList()
     {
-        /**
-         * 获取通话记录  暂时放在这里，后期用定时任务实现
-         */
-//        Event::trigger('CallHistory');
-//        $ch = CallHistory::find(1)->bindAttr('user', ['loginip']);
-//        dump($ch->toArray());
-
         return $this->view->fetch('hbcall/history_list');
     }
 
@@ -38,7 +31,15 @@ class HbCall extends \app\common\controller\CompanyController
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
             $username = $this->request->param('username', '');
+            $userId = (int) $this->request->param('user_id', 0);
             $date = $this->request->param('date', '');
+            $operate = $this->request->param('operate', '');
+            $duration = $this->request->param('duration', '');
+            $op = [
+                'eq' => '=',
+                'gt' => '>',
+                'lt' => '<'
+            ];
             $map = [
                 ['company_id', '=', $this->userInfo['id']],
                 ['caller_number', '<>', '']
@@ -48,14 +49,23 @@ class HbCall extends \app\common\controller\CompanyController
                 $map[] = ['username', 'like', '%' . $username . '%'];
             }
 
+            if ($userId > 0) {
+                $map[] = ['user_id', '=', $userId];
+            }
+
             if ($date) {
                 $daytime = strtotime($date);
                 $map[] = ['createtime', 'between', [$daytime, $daytime + 86400 - 1]];
             }
 
+            if ($duration !== '' && $operate !== '') {
+                $map[] = ['call_duration', $op[$operate], $duration];
+            }
+
             $total = CallHistory::where($map)->count();
 
-            $historyList = CallHistory::with('expense')->where($map)
+            $historyList = CallHistory::with('expense')
+                ->where($map)
                 ->order('starttime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();

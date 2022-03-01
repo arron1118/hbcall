@@ -1,35 +1,40 @@
 {extend name="public/base" /}
+{block name="css"}
+    {include file="public/bootstrap" /}
+{/block}
 {block name="body"}
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <fieldset class="table-search-fieldset">
-            <legend>账户充值</legend>
-            <div style="margin: 10px 10px 10px 10px; ">
-                <form class="layui-form layui-form-pane" action="">
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">支付方式</label>
-                            <div class="layui-input-block">
-                                <input type="radio" name="pay_type" value="1" title="微信" checked="">
-                                <input type="radio" name="pay_type" value="2" title="支付宝">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <label class="layui-form-label">金额/元</label>
-                            <div class="layui-input-inline">
-                                <input type="number" name="money" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-normal" lay-submit
-                                    lay-filter="data-money-btn">立即充值
-                            </button>
+<div class="container-fluid">
+    <div class="row bg-white mb-3 shadow-sm rounded-3">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">支付方式</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="pay_type" value="1" title="微信" checked="">
+                            <input type="radio" name="pay_type" value="2" title="支付宝">
                         </div>
                     </div>
-                </form>
-            </div>
-        </fieldset>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">金额/元</label>
+                        <div class="layui-input-inline">
+                            <input type="number" min="0" name="money" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-money-btn">立即充值
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
     </div>
 </div>
@@ -63,17 +68,19 @@
                 }
             },
             cols: [[
-                {type: "checkbox", width: 50},
-                {field: 'payno', title: '订单号'},
-                {field: 'amount', title: '充值金额(￥)'},
+                // {type: "checkbox", width: 50},
+                {field: 'payno', title: '订单号', align: 'center'},
+                {field: 'amount', title: '充值金额(￥)', align: 'center'},
                 {field: 'create_time', title: '充值时间', align: "center"},
                 {field: 'pay_type', title: '充值方式', align: "center"},
                 {field: 'status', title: '状态', align: "center", templet: function(d) {
                     if (d.status === '未支付') {
                         // return '<span style="color: #f00;">' + d.status + '</span>';
                         return '<span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>';
+                    } else if (d.status === '已关闭') {
+                        return '<span class="text-danger">' + d.status + '</span>';
                     } else {
-                        return d.status;
+                        return '<span class="text-info">' + d.status + '</span>';
                     }
                     }},
             ]],
@@ -96,12 +103,12 @@
         form.on('submit(data-money-btn)', function (data) {
             let result = data.field;
             if (!result.money) {
-                layer.msg('请输入要充值的金额！');
+                layer.msg('请输入要充值的金额！', { icon: 0 });
                 return false;
             }
 
-            if (result.money < 0) {
-                layer.msg('请输入正确的金额！');
+            if (result.money <= 0) {
+                layer.msg('请输入正确的金额！', { icon: 0 });
                 return false;
             }
 

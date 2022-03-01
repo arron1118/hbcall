@@ -9,6 +9,7 @@ use app\common\model\User;
 use Curl\Curl;
 use think\facade\Config;
 use think\facade\Event;
+use think\facade\Log;
 use think\facade\Session;
 use think\facade\Db;
 
@@ -22,14 +23,6 @@ class HbCall extends \app\common\controller\AdminController
 
     public function callHistoryList()
     {
-        /**
-         * 获取通话记录  暂时放在这里，后期用定时任务实现
-         */
-//        Event::trigger('CallHistory');
-//        $ch = CallHistory::find(1)->bindAttr('user', ['loginip']);
-//        dump($ch->toArray());
-//        dump(date('Y-m-d H:i:s', '1628265599'));
-
         return $this->view->fetch('hbcall/history_list');
     }
 
@@ -38,22 +31,37 @@ class HbCall extends \app\common\controller\AdminController
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $holdername = $this->request->param('holdername', '');
-            $holdertime = $this->request->param('holdertime', '');
-            $map = [['caller_number', '<>', '']];
+            $username = $this->request->param('username', '');
+            $datetime = $this->request->param('datetime', '');
+            $operate = $this->request->param('operate', '');
+            $duration = $this->request->param('duration', '');
+            $op = [
+                'eq' => '=',
+                'gt' => '>',
+                'lt' => '<'
+            ];
+            $map = [
+                ['caller_number', '<>', '']
+            ];
 
-            if ($holdername) {
-                $map[] = ['username', 'like', '%' . $holdername . '%'];
+            if ($username) {
+                $map[] = ['username', 'like', '%' . $username . '%'];
             }
 
-            if ($holdertime) {
-                $daytime = strtotime($holdertime);
+            if ($datetime) {
+                $daytime = strtotime($datetime);
                 $map[] = ['createtime', 'between', [$daytime, $daytime + 86400 - 1]];
+            }
+
+            if ($duration !== '' && $operate !== '') {
+                $map[] = ['call_duration', $op[$operate], $duration];
+
             }
 
             $total = CallHistory::where($map)->count();
 
-            $historyList = CallHistory::with('expense')->where($map)
+            $historyList = CallHistory::with('expense')
+                ->where($map)
                 ->order('starttime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();

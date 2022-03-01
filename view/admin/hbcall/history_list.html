@@ -1,38 +1,56 @@
 {extend name="public/base" /}
+{block name="css"}
+    {include file="public/bootstrap" /}
+{/block}
 {block name="body"}
+<div class="container-fluid">
+    <div class="row bg-white rounded-3 shadow-sm mb-3">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">操作人</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="username" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="datetime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">通话时长</label>
+                        <div class="layui-input-inline">
+                            <select name="operate">
+                                <option value="">请选择操作符</option>
+                                <option value="eq">等于</option>
+                                <option value="gt">大于</option>
+                                <option value="lt">小于</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="number" name="duration" class="layui-input" value="" placeholder="秒" min="0">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div class="layuimini-container">
     <div class="layuimini-main">
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">操作人</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="holdername" class="layui-input">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <label class="layui-form-label">开始时间</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit
-                                    lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </fieldset>
-
-
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
         <script type="text/html" id="currentTableBar">
@@ -53,7 +71,10 @@
             table = layui.table;
 
         laydate.render({
-            elem: '#startTime'
+            elem: '#startTime',
+            done: function (value) {
+                search({ datetime: value })
+            }
         });
 
         table.render({
@@ -77,10 +98,10 @@
             },
             cols: [[
                 {field: 'subid', title: '编号', align: "center"},
-                {field: 'called_number', title: '被叫号码', align: "center"},
-                {field: 'call_duration', title: '通话时长（分）', sort: true, align: "center"},
                 {field: 'username', title: '操作人', align: "center"},
-                {field: 'starttime', title: '开始时间', align: "center"},
+                {field: 'called_number', title: '被叫号码', align: "center"},
+                {field: 'starttime', title: '呼叫时间', align: "center"},
+                {field: 'call_duration', title: '通话时长（分）', sort: true, align: "center"},
                 {field: 'cost', title: '消费金额（￥/元）', align: "center"},
                 {title: '录音', minWidth: 150, align: "center", templet: function (row) {
                         return row.record_url ? "<audio style='width: 100%; height: 100%;' src='" + row.record_url + "' autoplay controls>您的浏览器不支持 audio 标签。</audio>" : '';
@@ -92,11 +113,7 @@
             },
         });
 
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            let params = data.field;
-            console.log(params);
-
+        let search = function (params = {}) {
             //执行搜索重载
             table.reload('currentTableId', {
                 page: {
@@ -104,27 +121,26 @@
                 },
                 where: params
             });
+        }
+
+        $('button[type="reset"]').on('click', function () {
+            search();
+        })
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            if (data.field.username === "" && data.field.datetime === "" && data.field.duration === "") {
+                layer.msg('搜索内容不能为空', { icon: 0 })
+                return false
+            }
+
+            if (data.field.duration !== "" && data.field.operate === "") {
+                layer.msg('请选择操作符', { icon: 0 })
+                return false
+            }
+            search(data.field);
 
             return false;
-        });
-
-        table.on('tool(currentTableFilter)', function (obj) {
-            let data = obj.data;
-            if (obj.event === 'edit') {
-                let index = layer.open({
-                    title: '编辑用户',
-                    type: 2,
-                    shade: 0.2,
-                    maxmin: true,
-                    shadeClose: true,
-                    area: ['100%', '100%'],
-                    content: '../page/table/edit.html',
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
-                return false;
-            }
         });
 
     });

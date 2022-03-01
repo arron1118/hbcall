@@ -1,26 +1,31 @@
 {extend name="public/base" /}
+{block name="css"}
+    {include file="public/bootstrap" /}
+{/block}
 {block name="body"}
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
-                    <div class="layui-form-item">
-                        <div class="layui-inline">
-                            <label class="layui-form-label">开始时间</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
-                            </div>
-                        </div>
-
-                        <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+<div class="container-fluid">
+    <div class="row bg-white rounded-3 shadow-sm mb-3">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
                         </div>
                     </div>
-                </form>
-            </div>
-        </fieldset>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        <button type-="reset" class="layui-btn layui-btn-primary">重 置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="layuimini-container">
+    <div class="layuimini-main">
 
 
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>

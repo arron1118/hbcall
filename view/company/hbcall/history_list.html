@@ -3,33 +3,57 @@
     {include file="public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="row">
-    <form class="layui-form layui-form-pane" action="">
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">操作人</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="username" class="layui-input">
-                </div>
-            </div>
+<div class="container-fluid">
+    <div class="row bg-white rounded-3 mb-3 shadow-sm">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="" id="searchForm">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">操作人</label>
+                        <div class="layui-input-inline">
+                            <select name="user_id" lay-filter="selectUser" form="searchForm">
+                                <option value="0" selected>全部</option>
+                                {foreach $user->user as $val}
+                                <option value="{$val.id}">{$val.username}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
 
-            <div class="layui-inline">
-                <label class="layui-form-label">开始时间</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="date" class="layui-input" id="startTime" placeholder="" autocomplete="off">
-                </div>
-            </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">开始时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="date" class="layui-input" id="startTime" placeholder="" autocomplete="off">
+                        </div>
+                    </div>
 
-            <div class="layui-inline">
-                <button type="submit" class="layui-btn layui-btn-normal" lay-submit
-                        lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
-                </button>
-            </div>
-            <div class="layui-inline">
-                <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
-            </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">通话时长</label>
+                        <div class="layui-input-inline">
+                            <select name="operate">
+                                <option value="">请选择操作符</option>
+                                <option value="eq">等于</option>
+                                <option value="gt">大于</option>
+                                <option value="lt">小于</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="number" name="duration" class="layui-input" value="" placeholder="秒" min="0">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                        </button>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 <div class="layuimini-container">
     <div class="layuimini-main">
@@ -41,7 +65,6 @@
 
     </div>
 </div>
-
 {/block}
 
 {block name="js"}
@@ -55,7 +78,8 @@
         laydate.render({
             elem: '#startTime',
             done: function (value, date, endDate) {
-                search({ date: value })
+                let data = Object.assign({}, { date: value }, form.val('searchForm'))
+                search(data)
             }
         });
 
@@ -95,7 +119,7 @@
             },
         });
 
-        let search = function (params) {
+        let search = function (params = {}) {
             //执行搜索重载
             table.reload('currentTableId', {
                 page: {
@@ -105,9 +129,23 @@
             });
         }
 
+        form.on('select(selectUser)', function (data) {
+            search({ user_id: data.value })
+        })
+
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            search(data.field)
+            if (data.field.date === "" && data.field.duration === "") {
+                layer.msg('搜索内容不能为空', { icon: 0 })
+                return false
+            }
+
+            if (data.field.duration !== "" && data.field.operate === "") {
+                layer.msg('请选择操作符', { icon: 0 })
+                return false
+            }
+
+            search(data.field);
             return false;
         });
 
