@@ -18,7 +18,7 @@ class Payment
             $where['company_id'] = $cid;
         }
 
-        $notpay = $this->model->where($where)->select();
+        $notpay = \app\company\model\Payment::where($where)->select();
         foreach ($notpay as $key => $value) {
             if ($value->getData('pay_type') === 1) {
                 // 检查微信订单是否已支付
