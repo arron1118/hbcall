@@ -79,14 +79,16 @@ class Payment extends \app\common\controller\ApiController
                     substr($data->time_end, 6, 2),
                     substr($data->time_end, 0, 4)
                 );
-                $paymentModel = PaymentModel::where('payno', $data->out_trade_no)->find();
+                $paymentModel = PaymentModel::where(['payno' => $data->out_trade_no, 'status' => 0])->findOrEmpty();
 //            $paymentModel->startTrans();
-                $paymentModel->pay_time = $mt;
-                $paymentModel->payment_no = $data->transaction_id;
-                $paymentModel->status = 1;
-                $paymentModel->save();
+                if (!$paymentModel->isEmpty()) {
+                    $paymentModel->pay_time = $mt;
+                    $paymentModel->payment_no = $data->transaction_id;
+                    $paymentModel->status = 1;
+                    $paymentModel->save();
 
-                $this->updateUserAmount($paymentModel);
+                    $this->updateUserAmount($paymentModel);
+                }
             }
         } catch (\Exception $e) {
             // $e->getMessage();
@@ -103,13 +105,15 @@ class Payment extends \app\common\controller\ApiController
             $data = $alipay->verify();
 
             if ($data->trade_status === 'TRADE_SUCCESS') {
-                $paymentModel = PaymentModel::where('payno', $data->out_trade_no)->find();
-                $paymentModel->pay_time = strtotime($data->gmt_payment);
-                $paymentModel->payment_no = $data->trade_no;
-                $paymentModel->status = 1;
-                $paymentModel->save();
+                $paymentModel = PaymentModel::where(['payno' => $data->out_trade_no, 'status' => 0])->findOrEmpty();
+                if (!$paymentModel->isEmpty()) {
+                    $paymentModel->pay_time = strtotime($data->gmt_payment);
+                    $paymentModel->payment_no = $data->trade_no;
+                    $paymentModel->status = 1;
+                    $paymentModel->save();
 
-                $this->updateUserAmount($paymentModel);
+                    $this->updateUserAmount($paymentModel);
+                }
             }
         } catch (\Exception $e) {
         }
@@ -127,7 +131,7 @@ class Payment extends \app\common\controller\ApiController
     protected function updateUserAmount($paymentModel)
     {
         $userInfo = Company::find($paymentModel->company_id);
-        $userInfo->balance = $userInfo->balance + $paymentModel->amount;
+        $userInfo->balance = (float)$userInfo->balance + (float)$paymentModel->amount;
         $userInfo->save();
     }
 

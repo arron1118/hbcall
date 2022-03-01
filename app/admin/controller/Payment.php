@@ -6,6 +6,7 @@ namespace app\admin\controller;
 use chillerlan\QRCode\QRCode;
 use think\Collection;
 use think\facade\Config;
+use think\facade\Event;
 use think\facade\Session;
 use think\response\Json;
 use Yansongda\Pay\Pay;
@@ -23,52 +24,7 @@ class Payment extends \app\common\controller\AdminController
 
     public function index()
     {
-        /*$notpay = $this->model->where(['status' => 0])->select();
-        foreach ($notpay as $key => $value) {
-            if ($value->getData('pay_type') === 1) {
-                // 检查微信订单是否已支付
-                $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
-
-                if ($data->trade_state === 'SUCCESS') {
-                    $mt = mktime(
-                        substr($data->time_end, 8, 2),
-                        substr($data->time_end, 10, 2),
-                        substr($data->time_end, 12, 2),
-                        substr($data->time_end, 4, 2),
-                        substr($data->time_end, 6, 2),
-                        substr($data->time_end, 0, 4)
-                    );
-                    $value->pay_time = $mt;
-                    $value->payment_no = $data->transaction_id;
-                    $value->status = 1;
-                    $value->save();
-                } elseif ($data->trade_state === 'CLOSED') {
-                    $value->status = 2;
-                    $value->save();
-                }
-            } elseif ($value->getData('pay_type') === 2) {
-                // 检查支付宝订单是否已支付
-                try {
-                    $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
-                    if ($data->trade_status === 'TRADE_SUCCESS') {
-                        $value->pay_time = strtotime($data->send_pay_date);
-                        $value->payment_no = $data->trade_no;
-                        $value->status = 1;
-                        $value->save();
-                    } elseif ($data->trade_status === 'TRADE_CLOSED') {
-                        $value->payment_no = $data->trade_no;
-                        $value->status = 2;
-                        $value->save();
-                    }
-                } catch (GatewayException $e) {
-                    $response = $e->raw['alipay_trade_query_response'];
-                    if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {
-//                    $value->delete();
-                    }
-                }
-            }
-        }*/
-
+        Event::trigger('Payment');
         return $this->view->fetch();
     }
 
