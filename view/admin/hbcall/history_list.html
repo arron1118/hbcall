@@ -14,9 +14,25 @@
                             <input type="text" name="username" class="layui-input">
                         </div>
                     </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">操作人</label>
+                        <div class="layui-input-inline">
+                            <select name="company_id" lay-filter="filterCompany">
+                                <option value="0">全部</option>
+                                {foreach $company as $val}
+                                <option value="{$val.id}">{$val.username}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="user_id" lay-filter="filterUser">
+                                <option value="0">全部</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div class="layui-inline">
-                        <label class="layui-form-label">开始时间</label>
+                        <label class="layui-form-label">呼叫时间</label>
                         <div class="layui-input-inline">
                             <input type="text" name="datetime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
                         </div>
@@ -125,6 +141,19 @@
 
         $('button[type="reset"]').on('click', function () {
             search();
+        })
+
+        form.on('select(filterCompany)', function (data) {
+            $.post('{:url("/HbCall/getUserList")}', { company_id: data.value }, function (res) {
+                if (res.code === 1) {
+                    $.each(res.data, (index, item) => {
+                        $('select[lay-filter="selectUser"]').append($('<option />', {
+                            value: item.id,
+                            text: item.username
+                        }))
+                    })
+                }
+            })
         })
 
         // 监听搜索操作

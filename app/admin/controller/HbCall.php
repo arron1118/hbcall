@@ -6,6 +6,7 @@ namespace app\admin\controller;
 
 use app\common\model\CallHistory;
 use app\common\model\User;
+use app\company\model\Company;
 use Curl\Curl;
 use think\facade\Config;
 use think\facade\Event;
@@ -23,6 +24,8 @@ class HbCall extends \app\common\controller\AdminController
 
     public function callHistoryList()
     {
+        $company = $this->getCompanyList();
+        $this->view->assign('company', $company);
         return $this->view->fetch('hbcall/history_list');
     }
 
@@ -68,6 +71,32 @@ class HbCall extends \app\common\controller\AdminController
 
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
+    }
+
+    public function getCompanyList()
+    {
+        $company = Company::select();
+        foreach ($company as &$val) {
+            $val->visible(['id', 'username']);
+        }
+
+        return $company;
+    }
+    public function getUserList($company_id = 0)
+    {
+        if ($company_id > 0) {
+            $userList = User::where('company_id', $company_id)->select();
+            foreach ($userList as &$val) {
+                $val->visible(['id', 'username']);
+            }
+            $this->returnData['code'] = 1;
+            $this->returnData['data'] = $userList;
+            $this->returnData['msg'] = 'success';
+
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
     }
 
     /**
