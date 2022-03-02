@@ -41,6 +41,11 @@ class User extends \think\Model
         return $this->hasMany(CallHistory::class);
     }
 
+    public function expense()
+    {
+        return $this->hasMany(Expense::class);
+    }
+
     public function customer()
     {
         return $this->hasMany(Customer::class);

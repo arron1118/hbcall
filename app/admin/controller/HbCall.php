@@ -34,7 +34,8 @@ class HbCall extends \app\common\controller\AdminController
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $username = $this->request->param('username', '');
+            $userId = $this->request->param('user_id', 0);
+            $companyId = $this->request->param('company_id', 0);
             $datetime = $this->request->param('datetime', '');
             $operate = $this->request->param('operate', '');
             $duration = $this->request->param('duration', '');
@@ -47,8 +48,12 @@ class HbCall extends \app\common\controller\AdminController
                 ['caller_number', '<>', '']
             ];
 
-            if ($username) {
-                $map[] = ['username', 'like', '%' . $username . '%'];
+            if ($companyId) {
+                $map[] = ['company_id', '=', $companyId];
+            }
+
+            if ($userId) {
+                $map[] = ['user_id', '=', $userId];
             }
 
             if ($datetime) {
@@ -75,20 +80,14 @@ class HbCall extends \app\common\controller\AdminController
 
     public function getCompanyList()
     {
-        $company = Company::select();
-        foreach ($company as &$val) {
-            $val->visible(['id', 'username']);
-        }
+        $company = Company::field('id, username')->order('id desc, logintime desc')->select();
 
         return $company;
     }
     public function getUserList($company_id = 0)
     {
         if ($company_id > 0) {
-            $userList = User::where('company_id', $company_id)->select();
-            foreach ($userList as &$val) {
-                $val->visible(['id', 'username']);
-            }
+            $userList = User::field('id, username')->where('company_id', $company_id)->order('id desc, logintime desc')->select();
             $this->returnData['code'] = 1;
             $this->returnData['data'] = $userList;
             $this->returnData['msg'] = 'success';

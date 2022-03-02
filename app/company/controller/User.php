@@ -36,7 +36,14 @@ class User extends \app\common\controller\CompanyController
                 $map[] = ['phone', 'like', '%' . $phone . '%'];
             }
             $total = UserModel::where($map)->count();
-            $userList = UserModel::with('userXnumber')->where($map)->limit(($page - 1) * $limit, $limit)->select();
+            $userList = UserModel::with('userXnumber')
+                ->hidden(['password', 'salt'])
+                ->withCount('callHistory')
+                ->withSum('expense', 'cost')
+                ->where($map)
+                ->order('id desc, logintime desc')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
 
             return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
         }

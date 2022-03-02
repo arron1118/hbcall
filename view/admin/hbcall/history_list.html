@@ -6,19 +6,13 @@
 <div class="container-fluid">
     <div class="row bg-white rounded-3 shadow-sm mb-3">
         <div class="col pt-3">
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">操作人</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="username" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">操作人</label>
+                        <label class="layui-form-label">筛选</label>
                         <div class="layui-input-inline">
                             <select name="company_id" lay-filter="filterCompany">
-                                <option value="0">全部</option>
+                                <option value="0">全部公司</option>
                                 {foreach $company as $val}
                                 <option value="{$val.id}">{$val.username}</option>
                                 {/foreach}
@@ -26,7 +20,6 @@
                         </div>
                         <div class="layui-input-inline">
                             <select name="user_id" lay-filter="filterUser">
-                                <option value="0">全部</option>
                             </select>
                         </div>
                     </div>
@@ -41,7 +34,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">通话时长</label>
                         <div class="layui-input-inline">
-                            <select name="operate">
+                            <select name="operate" lay-filter="filterOperate">
                                 <option value="">请选择操作符</option>
                                 <option value="eq">等于</option>
                                 <option value="gt">大于</option>
@@ -89,7 +82,8 @@
         laydate.render({
             elem: '#startTime',
             done: function (value) {
-                search({ datetime: value })
+                let data = Object.assign({}, form.val('searchForm'), { datetime: value })
+                search(data)
             }
         });
 
@@ -146,19 +140,33 @@
         form.on('select(filterCompany)', function (data) {
             $.post('{:url("/HbCall/getUserList")}', { company_id: data.value }, function (res) {
                 if (res.code === 1) {
+                    let html = `<option value='0'>全部职员</option>`
                     $.each(res.data, (index, item) => {
-                        $('select[lay-filter="selectUser"]').append($('<option />', {
-                            value: item.id,
-                            text: item.username
-                        }))
+                        html += `<option value='${item.id}'>${item.username}</option>`
                     })
+                    $('select[lay-filter="filterUser"]').html(html)
+
+                    form.render('select')
                 }
             })
+
+            search(Object.assign({}, form.val('searchForm'), { company_id: data.value }))
+        })
+
+        form.on('select(filterUser)', function (data) {
+            search(Object.assign({}, form.val('searchForm'), { user_id: data.value }))
+        })
+
+        form.on('select(filterOperate)', function (data) {
+            let val = form.val('searchForm')
+            if (val.duration !== '' && val.operate !== '') {
+                search(val)
+            }
         })
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            if (data.field.username === "" && data.field.datetime === "" && data.field.duration === "") {
+            if (data.field.datetime === "" && data.field.duration === "") {
                 layer.msg('搜索内容不能为空', { icon: 0 })
                 return false
             }

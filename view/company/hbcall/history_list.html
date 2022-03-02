@@ -30,7 +30,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">通话时长</label>
                         <div class="layui-input-inline">
-                            <select name="operate">
+                            <select name="operate" lay-filter="filterOperate">
                                 <option value="">请选择操作符</option>
                                 <option value="eq">等于</option>
                                 <option value="gt">大于</option>
@@ -78,7 +78,7 @@
         laydate.render({
             elem: '#startTime',
             done: function (value, date, endDate) {
-                let data = Object.assign({}, { date: value }, form.val('searchForm'))
+                let data = Object.assign({}, form.val('searchForm'), { date: value })
                 search(data)
             }
         });
@@ -130,7 +130,15 @@
         }
 
         form.on('select(selectUser)', function (data) {
-            search({ user_id: data.value })
+            let param = Object.assign({}, form.val('searchForm'), { user_id: data.value })
+            search(param)
+        })
+
+        form.on('select(filterOperate)', function (data) {
+            let val = form.val('searchForm')
+            if (val.duration !== '' && val.operate !== '') {
+                search(val)
+            }
         })
 
         // 监听搜索操作
