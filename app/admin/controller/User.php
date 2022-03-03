@@ -35,6 +35,7 @@ class User extends \app\common\controller\AdminController
 
             $total = UserModel::where($map)->count();
             $userList = UserModel::withCount('user')
+                ->hidden(['salt'])
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
@@ -121,6 +122,26 @@ class User extends \app\common\controller\AdminController
                 return json($this->returnData);
             }
 
+            if (isset($data['is_test'])) {
+                $userInfo->is_test = (int) $data['is_test'];
+                $this->returnData['data'] = $userInfo;
+                if ((int) $data['is_test'] === 1) {
+                    if ($data['test_endtime'] !== '') {
+                        $userInfo->test_endtime = strtotime($data['test_endtime']);
+                        if ($userInfo->test_endtime < time() - 1800) {
+                            $this->returnData['msg'] = '结束时间不能小于现在时间';
+                            return json($this->returnData);
+                        }
+                    } else {
+                        $this->returnData['msg'] = '结束时间不能为空';
+                        return json($this->returnData);
+                    }
+                }
+            } else {
+                $userInfo->is_test = 0;
+                $userInfo->test_endtime = 0;
+            }
+
             // 设置座席
             if ($data['ration'] > 0) {
                 $hasNumbers = NumberStore::where('company_id', '=', $userId)->count();
@@ -145,13 +166,14 @@ class User extends \app\common\controller\AdminController
                 }
             }
 
-            if ($data['password'] !== $userInfo->password) {
+            if ($data['password'] && $data['password'] !== $userInfo->password) {
                 $userInfo->password = getEncryptPassword(trim($data['password']), $userInfo->salt);
             }
 
             $userInfo->ration = $data['ration'];
             $userInfo->rate = $data['rate'];
             $userInfo->limit_user = $data['limit_user'];
+            $userInfo->status = isset($data['status']) && $data['status'];
             if ($userInfo->save()) {
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '更新完成';
@@ -163,6 +185,24 @@ class User extends \app\common\controller\AdminController
         return $this->view->fetch();
     }
 
+    public function updateUser()
+    {
+        if ($this->request->isPost()) {
+            $this->returnData['msg'] = '更新失败';
+            if ($this->request->has('id')) {
+                $param = $this->request->param();
+                $user = UserModel::find($param['id']);
+                if ($user->save($param)) {
+                    $this->returnData['msg'] = '更新成功';
+                    $this->returnData['code'] = 1;
+                }
+            }
+
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
 
     public function profile()
     {

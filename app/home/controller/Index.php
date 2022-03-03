@@ -48,7 +48,8 @@ class Index extends HomeController
                 return json($this->returnData);
             }
 
-            if (!$user->getData('status')) {
+            // 用户或者企业账号禁止状态都无法登录
+            if (!$user->getData('status') || !$user->company->getData('status')) {
                 $this->returnData['msg'] = lang('Account is locked');
                 return json($this->returnData);
             }

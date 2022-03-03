@@ -69,7 +69,7 @@ class Index extends CompanyController
 
     public function logout()
     {
-        Session::delete('company');
+        $this->delSession();
         return redirect((string) url('/index/login'));
     }
 

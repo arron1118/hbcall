@@ -162,30 +162,33 @@
         });
 
         // 进行登录操作
+        let option = { icon: 5 }
         form.on('submit(login)', function (data) {
             let params = data.field;
             if (params.username === '') {
-                layer.msg('用户名不能为空');
+                layer.msg('用户名不能为空', option);
                 return false;
             }
             if (params.password === '') {
-                layer.msg('密码不能为空');
+                layer.msg('密码不能为空', option);
                 return false;
             }
 
             if (params.captcha === '') {
-                layer.msg('验证码不能为空');
+                layer.msg('验证码不能为空', option);
                 return false;
             }
 
             $.post('{:url("/index/login")}', params, function (res) {
                 if (res.code) {
-                    layer.msg(res.msg, {icon: 6, time: 1500}, function () {
+                    option.icon = 6;
+                    option.time = 1500;
+                    layer.msg(res.msg, option, function () {
                         window.location = res.url;
                     });
                 } else {
                     $('input[name="__token__"]').val(res.data.token);
-                    layer.msg(res.msg);
+                    layer.msg(res.msg, option);
                 }
             });
 

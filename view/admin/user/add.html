@@ -1,48 +1,7 @@
 {extend name="public/base" /}
 {block name="css"}
+{include file="public/bootstrap" /}
 <style>
-    html, body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden
-    }
-
-    body {
-        background: rgb(228, 228, 228);
-    }
-
-    body:after {
-        content: '';
-        background-repeat: no-repeat;
-        background-size: cover;
-        -webkit-filter: blur(3px);
-        -moz-filter: blur(3px);
-        -o-filter: blur(3px);
-        -ms-filter: blur(3px);
-        filter: blur(3px);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -1;
-    }
-
-    .layui-container {
-        width: 100%;
-        height: 100%;
-        overflow: hidden
-    }
-
-    .admin-login-background {
-        position: absolute;
-        left: 50%;
-        top: 20%;
-        margin-left: -250px;
-        margin-top: -100px;
-        width: 500px;
-    }
-
     .logo-title {
         text-align: center;
         letter-spacing: 2px;
@@ -83,9 +42,9 @@
 </style>
 {/block}
 {block name="body"}
-<div class="layui-container" id="lqp">
-    <div class="admin-login-background">
-        <div class="layui-form login-form ">
+<div class="container justify-content-center">
+    <div class="row justify-content-center">
+        <div class="col col-lg-8 col-md-10 bg-white">
             <form class="layui-form layuimini-form" action="">
                 <div class="layui-form-item logo-title">
                     <h1>开通账号</h1>
@@ -107,9 +66,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="ration">座席</label>
                     <div class="layui-input-block" id="ration">
-                        <input type="number" name="ration" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="">
-                        <tip>提示：1个小号为1个座席</tip>
+                        <input type="number" name="ration" min="0" placeholder="1"
+                               autocomplete="off" class="layui-input" value="1">
+                        <tip>提示：1个小号为1个座席，默认 1</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -124,8 +83,8 @@
                     <label class="layui-form-label" for="rate">费率(元)</label>
                     <div class="layui-input-block" id="rate">
                         <input type="number" name="rate" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="">
-                        <tip>提示：用于计算话费</tip>
+                               autocomplete="off" class="layui-input" value="0.15">
+                        <tip>提示：用于计算话费，默认 0.15/分钟</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -133,6 +92,32 @@
                     <div class="layui-input-block" id="corporation">
                         <input type="text" name="corporation" lay-verify="required" placeholder="公司名称"
                                autocomplete="off" class="layui-input" value="">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="isTest">测试账号</label>
+                    <div class="layui-input-block" id="isTest">
+                        <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1"
+                               lay-text="是|否">
+                    </div>
+                </div>
+                <div class="layui-form-item d-none test-endtime">
+                    <label class="layui-form-label" for="test_endtime">结束时间</label>
+                    <div class="layui-input-block" id="test_endtime">
+                        <input type="text" name="test_endtime" placeholder="1970-01-01 00:00:00"
+                               autocomplete="off" class="layui-input" value="" id="testEndTime">
+                    </div>
+                    <div class="layui-input-block">
+                        <tip>超过测试时间将禁止拨号，空为无限制。</tip>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="status">状态</label>
+                    <div class="layui-input-block" id="status">
+                        <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="status" value="1"
+                               lay-text="启用|禁止" checked>
                     </div>
                 </div>
                 <div class="layui-form-item mt-3">
@@ -149,11 +134,26 @@
 
 {block name="js"}
 <script>
-    layui.use(['form'], function () {
+    layui.use(['jquery', 'form', 'laydate'], function () {
         let $ = layui.jquery,
-            form = layui.form;
+            form = layui.form,
+            laydate = layui.laydate;
 
         let frameIndex = parent.layer.getFrameIndex(window.name);
+
+        let d = new Date();
+        // 时间限制为现在
+        let minDate = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDay() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        laydate.render({
+            elem: '#testEndTime',
+            type: 'datetime',
+            min: minDate
+        })
+
+        form.on('switch(testFilter)', function (obj) {
+            let endtimeItem = $('.test-endtime')
+            obj.elem.checked ? endtimeItem.removeClass('d-none') : endtimeItem.addClass('d-none')
+        })
 
         // 进行登录操作
         form.on('submit(open)', function (data) {
@@ -182,6 +182,11 @@
             if (params.corporation === '') {
                 layer.msg('公司名称不能为空', {icon: 5});
                 return false;
+            }
+
+            if (params.is_test === '1' && params.test_endtime === '') {
+                layer.msg('结束时间不能为空', option)
+                return false
             }
 
             $.post('{:url("/user/add")}', params, function (res) {

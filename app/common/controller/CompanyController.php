@@ -29,8 +29,21 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
-        $this->userInfo = Company::withCount('user')->find(Session::get('company.id'));
+        $this->userInfo = Company::withCount('user')->findOrEmpty(Session::get('company.id'));
+
+        if (!$this->userInfo->isEmpty() && !$this->userInfo->getData('status') && ($this->request->action !== 'logout')) {
+            showAlert(lang('Account is locked'), [
+                'end' => 'function () {
+                    location.href = "' . url('/index/logout') . '";
+                }'
+            ]);
+        }
+
         $this->view->assign('user', $this->userInfo);
     }
 
+    public function delSession()
+    {
+        Session::delete('company');
+    }
 }

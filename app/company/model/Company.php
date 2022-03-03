@@ -20,14 +20,29 @@ class Company extends \think\Model
         return $value > 0 ? date($this->getDateFormat(), $value) : '-';
     }
 
+    public function getTestEndtimeAttr($value)
+    {
+        return $value > 0 ? date($this->getDateFormat(), $value) : '';
+    }
+
     public function getStatusAttr($value)
     {
         return $this->getStatusList()[$value];
     }
 
+    public function getIsTestAttr($value)
+    {
+        return $this->getTestList()[$value];
+    }
+
     protected function getStatusList()
     {
-        return [0 => '禁止登录', 1 => '正常'];
+        return [0 => '禁止', 1 => '正常'];
+    }
+
+    protected function getTestList()
+    {
+        return [0 => '否', 1 => '是'];
     }
 
     public function payment()

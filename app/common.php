@@ -111,26 +111,54 @@ function getCosts($company_id = 0, $user_id = 0)
 
 function showMsg($msg, $options = [])
 {
-    $defaultOptions = [
+    $o = array_merge($options, ['content' => $msg,
         'icon' => 0,
-        'time' => '2500'
-    ];
+        'time' => '2500']);
+    layerOpen($o);
+}
+
+function showAlert($msg, $options = [], callable $callback = null)
+{
+    layerOpen(array_merge($options, [
+        'content' => $msg
+    ]));
+
+//    is_callable($callback) && $callback();
+}
+
+function layerOpen($options = [])
+{
+    $defaultOptions = [];
     $options = array_merge($defaultOptions, $options);
     $optionsToJson = json_encode($options);
+    $script = getLayuiFiles();
     $html = <<<HTML
-<link href="/static/lib/layui-v2.6.8/css/layui.css" rel="stylesheet" />
-<script src="/static/lib/layui-v2.6.8/layui.js"></script>
-<script src="/static/js/lay-config.js"></script>
+{$script}
 <script>
     layui.use(['jquery', 'layer'], function () {
         let $ = layui.jquery,
             layer = layui.layer;
-        
-        layer.msg("{$msg}", $optionsToJson)
+        let op = $optionsToJson;
+        $.each(op, function (index, item) {
+            console.log(typeof index, item)
+            if (['yes', 'cancel', 'end'].includes(index)) {
+                op[index] = eval("(" +item + ")")
+            }
+        })
+        console.log(op)
+        layer.open(op)
     })
 </script>
 HTML;
 
     echo $html;
-    exit();
+}
+
+function getLayuiFiles()
+{
+    return <<<SCRIPT
+<link href="/static/lib/layui-v2.6.8/css/layui.css" rel="stylesheet" />
+<script src="/static/lib/layui-v2.6.8/layui.js"></script>
+<script src="/static/js/lay-config.js"></script>
+SCRIPT;
 }
