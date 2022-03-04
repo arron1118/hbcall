@@ -75,6 +75,7 @@
             elem: '#currentTableId',
             url: '{:url("/Report/getReport")}',
             method: 'post',
+            totalRow: true,
             where: {cid: $('.company-list li:first').data('id')},
             //异步请求，格式化数据
             parseData: function (res) {
@@ -166,12 +167,12 @@
                 }
             },
             cols: [[
-                {field: 'id', title: '用户编号', align: "center"},
+                {field: 'id', title: '用户编号', align: "center", totalRowText: '合计'},
                 {field: 'username', title: '用户名称', align: "center"},
-                {field: 'total', title: '拨号次数', sort: true, align: "center"},
-                {field: 'total1', title: '接通次数（通话时长 > 0秒）', align: "center"},
-                {field: 'total2', title: '有效呼叫（通话时长 > 30秒）', align: "center"},
-                {field: 'cost', title: '消费金额', align: "center"}
+                {field: 'total', title: '拨号次数', sort: true, align: "center", totalRow: true},
+                {field: 'total1', title: '接通次数（通话时长 > 0秒）', align: "center", totalRow: true},
+                {field: 'total2', title: '有效呼叫（通话时长 > 30秒）', align: "center", totalRow: true},
+                {field: 'cost', title: '消费金额', align: "center", totalRow: true}
             ]],
         });
 

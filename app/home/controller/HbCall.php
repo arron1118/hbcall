@@ -31,7 +31,7 @@ class HbCall extends \app\common\controller\HomeController
     public function getCallHistory()
     {
         if ($this->request->isPost()) {
-            $callHistory = CallHistory::field('called_number')
+            $callHistory = CallHistory::field('called_number, createtime')
                 ->where('user_id', '=', $this->userInfo->id)
                 ->order('id', 'desc')
                 ->limit(20)
@@ -218,7 +218,7 @@ class HbCall extends \app\common\controller\HomeController
                 'user_id' => $this->userInfo->id,
                 'phone' => $phone
             ];
-            Customer::where($where)->inc('called_count')->update();
+            Customer::where($where)->inc('called_count')->update(['last_calltime' => time()]);
         }
     }
 
