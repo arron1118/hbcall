@@ -80,7 +80,7 @@ class User extends \app\common\controller\HomeController
             $user->save();
 
             $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '操作成功';
+            $this->returnData['msg'] = lang('Password modification successful, please log in again');
 
             return json($this->returnData);
         }

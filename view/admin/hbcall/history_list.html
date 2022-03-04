@@ -25,12 +25,20 @@
                     </div>
 
                     <div class="layui-inline">
-                        <label class="layui-form-label">呼叫时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="datetime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
+                        <label class="layui-form-label">时间筛选</label>
+                        <div class="layui-inline" id="datetime">
+                            <div class="layui-input-inline">
+                                <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                            </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">通话时长</label>
                         <div class="layui-input-inline">
@@ -53,6 +61,7 @@
                         <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -80,9 +89,12 @@
             table = layui.table;
 
         laydate.render({
-            elem: '#startTime',
+            elem: '#datetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
             done: function (value) {
-                let data = Object.assign({}, form.val('searchForm'), { datetime: value })
+                let d = value.split(' - ')
+                let data = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] })
                 search(data)
             }
         });

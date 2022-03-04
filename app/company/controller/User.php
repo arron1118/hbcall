@@ -246,7 +246,7 @@ class User extends \app\common\controller\CompanyController
             }
             $user->password = getEncryptPassword($confirm_password, $user->salt);
             if ($user->save()) {
-                return json(['msg' => '操作成功', 'code' => 1]);
+                return json(['msg' => lang('Password modification successful, please log in again'), 'code' => 1]);
             }
 
             return json($this->returnData);

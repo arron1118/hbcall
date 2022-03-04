@@ -57,16 +57,15 @@ class HbCall extends \app\common\controller\HomeController
         if ($this->request->isPost()) {
             $page = (int)$this->request->param('page', 1);
             $limit = (int)$this->request->param('limit', 10);
-            $holdertime = $this->request->param('holdertime', '');
+            $startDate = $this->request->param('startDate', '');
+            $endDate = $this->request->param('endDate', '');
             $map = [
                 ['user_id', '=', $this->userInfo->id],
                 ['caller_number', '<>', '']
             ];
 
-            $start = strtotime($holdertime);
-            if ($start) {
-                $end = $start + 86400 - 1;
-                $map[] = ['createtime', 'between', [$start, $end]];
+            if ($startDate && $endDate) {
+                $map[] = ['createtime', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             $total = CallHistory::where($map)->count();
@@ -88,9 +87,9 @@ class HbCall extends \app\common\controller\HomeController
      */
     public function makeCall()
     {
-        $mobile = $this->request->param('mobile');
-        $mobile = trim($mobile);
+        $mobile = trim($this->request->param('mobile'));
 
+        // 试用账号到期后无法拨号
         if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
             $this->returnData['msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
             $this->returnData['info'] = lang('Tips');
@@ -104,7 +103,6 @@ class HbCall extends \app\common\controller\HomeController
             $this->returnData['status'] = 0;
             return json($this->returnData);
         }
-//        $userInfo = \app\common\model\User::with('userXnumber')->find($this->userInfo['id']);
 
         if ($this->userInfo->phone === '') {
             $this->returnData['msg'] = '请前往个人资料中<a href="javascript:;" layuimini-content-href="user/profile.html" data-title="基本资料">填写手机号</a>';

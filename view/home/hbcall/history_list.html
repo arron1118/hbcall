@@ -9,9 +9,15 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">开始时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="holdertime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
+                        <label class="layui-form-label">时间筛选</label>
+                        <div class="layui-inline" id="datetime">
+                            <div class="layui-input-inline">
+                                <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                            </div>
                         </div>
                     </div>
 
@@ -26,8 +32,6 @@
 </div>
 <div class="layuimini-container">
     <div class="layuimini-main">
-
-
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
         <script type="text/html" id="currentTableBar">
@@ -48,7 +52,13 @@
             table = layui.table;
 
         laydate.render({
-            elem:'#startTime'
+            elem:'#datetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
+            done: function (value) {
+                let d = value.split(' - ')
+                search({ startDate: d[0], endDate: d[1] });
+            }
         });
 
         table.render({
@@ -74,9 +84,9 @@
             cols: [[
                 {field: 'subid', title: '编号', align: "center"},
                 {field: 'called_number', title: '被叫号码', align: "center"},
-                {field: 'call_duration', title: '通话时长（分）', sort: true, align: "center"},
-                {field: 'createtime', title: '开始时间', align: "center"},
-                {field: 'cost', title: '消费金额（￥/元）', align: "center"},
+                {field: 'call_duration', title: '通话时长(分)', sort: true, align: "center"},
+                {field: 'cost', title: '消费金额(元)', align: "center", sort: true},
+                {field: 'createtime', title: '呼叫时间', align: "center", sort: true},
                 {title: '录音', minWidth: 150, align: "center", templet: function (row) {
                         return row.record_url ? "<audio style='width: 100%; height: 100%;' src='" + row.record_url + "' autoplay controls>您的浏览器不支持 audio 标签。</audio>" : '';
                     }}
@@ -88,16 +98,18 @@
             skin: 'line'
         });
 
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            let params = data.field;
-
+        let search = function (params) {
             table.reload('historyTable', {
                 page: {
                     curr: 1
                 },
                 where: params
-            }, 'data');
+            });
+        };
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            search(data.field)
 
             return false;
         });
@@ -105,7 +117,6 @@
         table.on('tool(currentTableFilter)', function (obj) {
             let data = obj.data;
             if (obj.event === 'edit') {
-
                 let index = layer.open({
                     title: '编辑用户',
                     type: 2,
