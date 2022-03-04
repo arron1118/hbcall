@@ -24,8 +24,6 @@ class HbCall extends \app\common\controller\AdminController
 
     public function callHistoryList()
     {
-        dump(strtotime('2022-03-04 00:00:00'));
-        dump(strtotime('2022-03-04 23:59:59'));
         $company = $this->getCompanyList();
         $this->view->assign('company', $company);
         return $this->view->fetch('hbcall/history_list');
