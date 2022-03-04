@@ -70,7 +70,7 @@ class HbCall extends \app\common\controller\AdminController
 
             $historyList = CallHistory::with('expense')
                 ->where($map)
-                ->order('starttime DESC, id DESC')
+                ->order('createtime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
 
@@ -80,14 +80,15 @@ class HbCall extends \app\common\controller\AdminController
 
     public function getCompanyList()
     {
-        $company = Company::field('id, username')->order('id desc, logintime desc')->select();
-
-        return $company;
+        return Company::field('id, username')->order('id desc, logintime desc')->select();
     }
     public function getUserList($company_id = 0)
     {
         if ($company_id > 0) {
-            $userList = User::field('id, username')->where('company_id', $company_id)->order('id desc, logintime desc')->select();
+            $userList = User::field('id, username')
+                ->where('company_id', $company_id)
+                ->order('id desc, logintime desc')
+                ->select();
             $this->returnData['code'] = 1;
             $this->returnData['data'] = $userList;
             $this->returnData['msg'] = 'success';

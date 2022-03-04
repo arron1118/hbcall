@@ -66,7 +66,7 @@ class HbCall extends \app\common\controller\CompanyController
 
             $historyList = CallHistory::with('expense')
                 ->where($map)
-                ->order('starttime DESC, id DESC')
+                ->order('createtime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
 

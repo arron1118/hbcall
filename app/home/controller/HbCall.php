@@ -59,18 +59,22 @@ class HbCall extends \app\common\controller\HomeController
             $limit = (int)$this->request->param('limit', 10);
             $holdertime = $this->request->param('holdertime', '');
             $map = [
-                ['user_id', '=', $this->userInfo['id']],
+                ['user_id', '=', $this->userInfo->id],
                 ['caller_number', '<>', '']
             ];
 
             $start = strtotime($holdertime);
             if ($start) {
                 $end = $start + 86400 - 1;
-                $map[] = ['starttime', 'between', [$start, $end]];
+                $map[] = ['createtime', 'between', [$start, $end]];
             }
 
             $total = CallHistory::where($map)->count();
-            $historyList = CallHistory::with('expense')->where($map)->order('starttime DESC, id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $historyList = CallHistory::with('expense')
+                ->where($map)
+                ->order('createtime DESC, id DESC')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
         return json($this->returnData);
@@ -86,37 +90,54 @@ class HbCall extends \app\common\controller\HomeController
     {
         $mobile = $this->request->param('mobile');
         $mobile = trim($mobile);
+
+        if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
+            $this->returnData['msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
+            $this->returnData['info'] = lang('Tips');
+            $this->returnData['status'] = 0;
+            return json($this->returnData);
+        }
+
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            return json(['data' => [], 'msg' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
+            $this->returnData['msg'] = lang('Please enter the correct mobile phone number');
+            $this->returnData['info'] = lang('Tips');
+            $this->returnData['status'] = 0;
+            return json($this->returnData);
         }
-        $userInfo = \app\common\model\User::with('userXnumber')->find($this->userInfo['id']);
+//        $userInfo = \app\common\model\User::with('userXnumber')->find($this->userInfo['id']);
 
-        if ($userInfo['phone'] === '') {
-            return json(['data' => [], 'msg' => '请前往个人资料中<a href="javascript:;" layuimini-content-href="user/profile.html" data-title="基本资料">填写手机号</a>', 'info' => '温馨提示', 'status' => 0]);
+        if ($this->userInfo->phone === '') {
+            $this->returnData['msg'] = '请前往个人资料中<a href="javascript:;" layuimini-content-href="user/profile.html" data-title="基本资料">填写手机号</a>';
+            $this->returnData['info'] = lang('Tips');
+            $this->returnData['status'] = 0;
+            return json($this->returnData);
         }
 
-        if (!$userInfo['xnumber']) {
-            return json(['data' => [], 'msg' => '未分配小号，请联系管理员分配小号后再重试', 'info' => '温馨提示', 'status' => 0]);
+        if (!$this->userInfo->userXnumber) {
+            $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
+            $this->returnData['info'] = lang('Tips');
+            $this->returnData['status'] = 0;
+            return json($this->returnData);
         }
 
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [
-            'telA' => $userInfo['phone'],   // 主叫
+            'telA' => $this->userInfo->phone,   // 主叫
             'telB' => $mobile,    // 被叫
-            'telX' => $userInfo['xnumber'],   // 小号
+            'telX' => $this->userInfo->userXnumber->xnumber,   // 小号
         ]);
         $response = json_decode($curl->response, true);
 
         if ($response['code'] === 1000) {
             try {
                 $CallHistory = new CallHistory();
-                $CallHistory->user_id = $userInfo['id'];
-                $CallHistory->username = $userInfo['username'];
-                $CallHistory->company_id = $userInfo['company_id'];
-                $CallHistory->company = Company::where(['id' => $userInfo['company_id']])->value('username');
+                $CallHistory->user_id = $this->userInfo->id;
+                $CallHistory->username = $this->userInfo->username;
+                $CallHistory->company_id = $this->userInfo->company_id;
+                $CallHistory->company = $this->userInfo->company->corporation;
                 $CallHistory->subid = $response['data']['subid'];
-                $CallHistory->caller_number = $userInfo['phone'];
-                $CallHistory->axb_number = $userInfo['xnumber'];
+                $CallHistory->caller_number = $this->userInfo->phone;
+                $CallHistory->axb_number = $this->userInfo->userXnumber->xnumber;
                 $CallHistory->called_number = $mobile;
                 $CallHistory->createtime = time();
                 $CallHistory->save();
@@ -160,7 +181,7 @@ class HbCall extends \app\common\controller\HomeController
         if ($this->request->isPost()) {
             $data = $this->request->param('customers');
             if (!$data) {
-                $this->returnData['msg'] = '未找到相关数据';
+                $this->returnData['msg'] = lang('No data was found');
                 return json($this->returnData);
             }
 
@@ -174,7 +195,7 @@ class HbCall extends \app\common\controller\HomeController
                 $res = (new Customer())->saveAll($data);
 
                 $this->returnData['code'] = 1;
-                $this->returnData['msg'] = '导入成功';
+                $this->returnData['msg'] = lang('The import was successful');
                 $this->returnData['data'] = $res;
 
                 return json($this->returnData);

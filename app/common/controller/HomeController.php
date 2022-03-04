@@ -32,7 +32,8 @@ class HomeController extends \app\BaseController
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
 
-        $this->userInfo = User::with('company')->findOrEmpty(Session::get('user.id'));
+        $this->userInfo = User::with(['company', 'userXnumber'])->findOrEmpty(Session::get('user.id'));
+//        dump($this->userInfo->company->corporation);
         if (!$this->userInfo->isEmpty() && (!$this->userInfo->getData('status') || !$this->userInfo->company->getData('status')) && ($this->request->action !== 'logout')) {
             showAlert(lang('Account is locked'), [
                 'end' => 'function () {
