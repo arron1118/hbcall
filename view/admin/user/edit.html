@@ -118,6 +118,9 @@
                     <div class="layui-input-block" id="status">
                         <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="status" value="1" lay-text="启用|禁止" {if $userInfo.status === '正常'}checked{/if}>
                     </div>
+                    <div class="layui-input-block">
+                        <tip>禁止后，该账号下的所有拨号账号将无法正常使用。</tip>
+                    </div>
                 </div>
 
                 <div class="layui-form-item">
@@ -129,93 +132,6 @@
         </div>
     </div>
 </div>
-<!--<div class="layui-container" id="lqp">
-    <div class="admin-login-background ">
-        <div class="layui-form login-form ">
-            <form class="layui-form layuimini-form" action="">
-                <input type="hidden" name="id" value="{$userInfo.id}" />
-                <div class="layui-form-item logo-title">
-                    <h1>编辑账号</h1>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="account">账号</label>
-                    <div class="layui-input-block" id="account">
-                        <input type="text" name="username" lay-verify="required" placeholder="账号"
-                               autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="password">密码</label>
-                    <div class="layui-input-block" id="password">
-                        <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                               autocomplete="off" class="layui-input" value="{$userInfo.password}">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="ration">座席</label>
-                    <div class="layui-input-block" id="ration">
-                        <input type="number" name="ration" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.ration}">
-                        <tip>提示：1个小号为1个座席</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="limit_user">限制用户数</label>
-                    <div class="layui-input-block" id="limit_user">
-                        <input type="number" name="limit_user" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.limit_user}">
-                        <tip>提示：0 为无限制开通拨号用户</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="rate">费率(元)</label>
-                    <div class="layui-input-block" id="rate">
-                        <input type="number" name="rate" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.rate}">
-                        <tip>提示：用于计算话费</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="corporation">公司名称</label>
-                    <div class="layui-input-block" id="corporation">
-                        <input type="text" name="corporation" lay-verify="required" placeholder="公司名称"
-                               autocomplete="off" class="layui-input" value="{$userInfo.corporation}" readonly>
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="isTest">测试账号{$userInfo.test_day}</label>
-                    <div class="layui-input-block" id="isTest">
-                        <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo.is_test === '是'}checked{/if}>
-                    </div>
-                </div>
-                <div class="layui-form-item {if !$userInfo.is_test}d-none{/if}">
-                    <label class="layui-form-label" for="test_day">测试时间（天）</label>
-                    <div class="layui-input-block" id="test_day">
-                        <input type="text" name="test_day" placeholder="3"
-                               autocomplete="off" class="layui-input" value="{$userInfo.test_day}">
-                    </div>
-                    <div class="layui-input-block">
-                        <tip>超过测试时间将禁止拨号，0 为无限制。</tip>
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="status">状态</label>
-                    <div class="layui-input-block" id="status">
-                        <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="status" value="1" lay-text="启用|禁止" {if $userInfo.status === '正常'}checked{/if}>
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
-                            lay-filter="edit">保 存
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>-->
 
 {/block}
 
