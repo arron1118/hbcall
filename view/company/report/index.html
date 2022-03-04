@@ -78,6 +78,7 @@
             //数组格式为 2.6.6 开始新增，之前版本直接配置 true 或任意分割字符即可
             elem: '#datetime',
             range: ['#startDate', '#endDate'],
+            type: 'datetime',
             done: function (value, date, endDate) {
                 let d = value.split(' - ')
                 search({ startDate: d[0], endDate: d[1] })
@@ -164,7 +165,17 @@
                             }
                         },
                         {
-                            name: '消费金额',
+                            name: '时间(分)',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'duration'
+                            },
+                            areaStyle: {
+                            }
+                        },
+                        {
+                            name: '消费金额(元)',
                             type: 'line',
                             encode: {
                                 x: 'username',
@@ -186,9 +197,10 @@
                 {field: 'id', title: '编号', align: "center", totalRowText: '合计'},
                 {field: 'username', title: '用户名称', align: "center"},
                 {field: 'total', title: '拨号次数', sort: true, align: "center", totalRow: true},
-                {field: 'total1', title: '接通次数（>0秒）', align: "center", totalRow: true},
-                {field: 'total2', title: '有效呼叫（>30秒）', align: "center", totalRow: true},
-                {field: 'cost', title: '消费金额（￥/元）', align: "center", totalRow: true}
+                {field: 'total1', title: '接通次数(>0秒)', align: "center", totalRow: true},
+                {field: 'total2', title: '有效呼叫(>30秒)', align: "center", totalRow: true},
+                {field: 'duration', title: '时间(分)', align: "center", totalRow: true},
+                {field: 'cost', title: '消费金额(元)', align: "center", totalRow: true}
             ]],
         });
 

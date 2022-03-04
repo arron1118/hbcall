@@ -32,7 +32,8 @@ class HbCall extends \app\common\controller\CompanyController
             $limit = (int) $this->request->param('limit', 10);
             $username = $this->request->param('username', '');
             $userId = (int) $this->request->param('user_id', 0);
-            $date = $this->request->param('date', '');
+            $startDate = $this->request->param('startDate', '');
+            $endDate = $this->request->param('endDate', '');
             $operate = $this->request->param('operate', '');
             $duration = $this->request->param('duration', '');
             $op = [
@@ -53,9 +54,8 @@ class HbCall extends \app\common\controller\CompanyController
                 $map[] = ['user_id', '=', $userId];
             }
 
-            if ($date) {
-                $daytime = strtotime($date);
-                $map[] = ['createtime', 'between', [$daytime, $daytime + 86400 - 1]];
+            if ($startDate && $endDate) {
+                $map[] = ['createtime', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             if ($duration !== '' && $operate !== '') {

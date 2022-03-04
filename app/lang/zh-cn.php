@@ -20,5 +20,12 @@ return [
     'At the end of the test time, please contact the administrator to recharge and try again' => '测试时间结束，请联系管理员充值后再试',
     'The import was successful' => '导入成功',
     'No data was found' => '未找到相关数据',
-    ''
+    'The operation succeeded' => '操作成功',
+    'Please enter a nickname' => '请输入昵称',
+    'Please enter your old password' => '请输入旧密码',
+    'Please enter a new password' => '请输入新密码',
+    'Please enter a confirmation password' => '请输入确认密码',
+    'The old password entered is incorrect' => '输入的旧密码有误',
+    'The confirmation password entered is incorrect' => '输入的确认密码有误',
+    'Password modification successful, please log in again' => '密码修改成功，请重新登录'
 ];

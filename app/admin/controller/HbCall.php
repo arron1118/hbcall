@@ -108,7 +108,7 @@ class HbCall extends \app\common\controller\AdminController
         $mobile = $this->request->param('mobile');
         $mobile = trim($mobile);
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            return json(['data' => '请输入正确的手机号', 'info' => '温馨提示', 'status' => 0]);
+            return json(['data' => lang('Please enter the correct mobile phone number'), 'info' => lang('Tips'), 'status' => 0]);
         }
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [

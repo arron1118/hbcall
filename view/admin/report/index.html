@@ -22,7 +22,7 @@
                 <form class="layui-form" action="" lay-filter="search">
                     <div class="layui-form-item">
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 150px;">日期范围</label>
+                            <label class="layui-form-label" style="width: 100px;">日期范围</label>
                             <div class="layui-inline" id="datetime">
                                 <div class="layui-input-inline">
                                     <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
@@ -63,12 +63,21 @@
 
         const chart = echarts.init($('#chart')[0])
 
+        let where = {
+            cid: $('.company-list li.active').data('id')
+        }
+
         //日期范围
         laydate.render({
-            elem: '#datetime'
             //设置开始日期、日期日期的 input 选择器
             //数组格式为 2.6.6 开始新增，之前版本直接配置 true 或任意分割字符即可
-            ,range: ['#startDate', '#endDate']
+            elem: '#datetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
+            done: function (value, date, endDate) {
+                let d = value.split(' - ');
+                search({ startDate: d[0], endDate: d[1]})
+            }
         });
 
         table.render({
@@ -76,7 +85,7 @@
             url: '{:url("/Report/getReport")}',
             method: 'post',
             totalRow: true,
-            where: {cid: $('.company-list li:first').data('id')},
+            where: where,
             //异步请求，格式化数据
             parseData: function (res) {
                 chart.setOption({
@@ -148,7 +157,17 @@
                             }
                         },
                         {
-                            name: '消费金额',
+                            name: '时间(分)',
+                            type: 'line',
+                            encode: {
+                                x: 'username',
+                                y: 'duration'
+                            },
+                            areaStyle: {
+                            }
+                        },
+                        {
+                            name: '消费金额(元)',
                             type: 'line',
                             encode: {
                                 x: 'username',
@@ -170,20 +189,26 @@
                 {field: 'id', title: '用户编号', align: "center", totalRowText: '合计'},
                 {field: 'username', title: '用户名称', align: "center"},
                 {field: 'total', title: '拨号次数', sort: true, align: "center", totalRow: true},
-                {field: 'total1', title: '接通次数（>0秒）', align: "center", totalRow: true},
-                {field: 'total2', title: '有效呼叫（>30秒）', align: "center", totalRow: true},
-                {field: 'cost', title: '消费金额', align: "center", totalRow: true}
+                {field: 'total1', title: '接通次数(>0秒)', align: "center", totalRow: true, sort: true},
+                {field: 'total2', title: '有效呼叫(>30秒)', align: "center", totalRow: true, sort: true},
+                {field: 'duration', title: '时间(分)', align: "center", totalRow: true, sort: true},
+                {field: 'cost', title: '消费金额(元)', align: "center", totalRow: true, sort: true}
             ]],
         });
 
-        form.on('submit(searchSubmit)', function (data) {
-            let params = data.field;
-            params.cid = $('.company-list li.active').data('id');
-
+        let search = function (params) {
+            let p = Object.assign({}, {
+                cid: $('.company-list li.active').data('id')
+            }, params)
             //执行搜索重载
             table.reload('currentTableId', {
-                where: params
+                where: p
             });
+        }
+
+        form.on('submit(searchSubmit)', function (data) {
+            console.log(data.field)
+            search(data.field)
 
             return false;
         });
@@ -191,9 +216,7 @@
         $('.company-list li').on('click', function () {
             $(this).addClass('active').siblings().removeClass('active');
             //执行搜索重载
-            table.reload('currentTableId', {
-                where: {cid: $(this).data('id')}
-            });
+            search(Object.assign({}, { cid: $(this).data('id') }, form.val('search')))
         });
     });
 </script>

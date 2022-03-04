@@ -82,7 +82,6 @@
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: 'username', title: '账号'},
-                {field: 'corporation', title: '公司名称', align: "center"},
                 {field: 'ration', title: '座席', align: "center", edit: 'text'},
                 {field: 'limit_user', title: '限制用户数量', align: "center", edit: 'text'},
                 {field: 'user_count', title: '已开通用户', align: "center"},
@@ -179,8 +178,9 @@
             let status = obj.elem.checked ? 1 : 0;
             let params = { id: obj.value, status: status };
             if (!status) {
-                layer.confirm('禁止后，该账号下的所有拨号账号将无法正常使用', { icon: 3, title: '提示' }, function (index) {
+                parent.layer.confirm('禁止后，该账号下的所有拨号账号将无法正常使用', { icon: 3, title: '提示' }, function (index) {
                     updateUserField(params)
+                    parent.layer.close(index)
                 })
             } else {
                 updateUserField(params)

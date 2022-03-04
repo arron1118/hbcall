@@ -206,23 +206,21 @@ class User extends \app\common\controller\AdminController
 
     public function profile()
     {
-        $user = admin::find(Session::get('admin.id'));
-
         if ($this->request->isPost()) {
-            $username = trim($this->request->param('username'));
             $realname = trim($this->request->param('realname'));
-            if (empty($username)) {
-                return json(['msg' => '请输入昵称', 'code' => 0]);
-            }
-            $user->username = $username;
-            $user->realname = $realname;
-            $user->save();
-            Session::set('admin.username', $username);
-            Session::set('admin.realname', $realname);
 
-            return json(['msg' => '操作成功', 'code' => 1]);
+            $this->userInfo->realname = $realname;
+            if ($this->userInfo->save()) {
+                Session::set('admin.realname', $realname);
+
+                $this->returnData['msg'] = lang('The operation succeeded');
+                $this->returnData['code'] = 1;
+            }
+
+            return json($this->returnData);
         }
-        $this->view->assign('userProfile', $user);
+
+        $this->view->assign('userProfile', $this->userInfo);
         return $this->view->fetch();
     }
 
@@ -234,24 +232,32 @@ class User extends \app\common\controller\AdminController
             $confirm_password = trim($this->request->param('confirm_password'));
             $user = Admin::find(Session::get('admin.id'));
             if (empty($old_password)) {
-                return json(['msg' => '请输入旧密码', 'code' => 0]);
+                $this->returnData['msg'] = lang('Please enter your old password');
+                return json($this->returnData);
             }
             if (empty($new_password)) {
-                return json(['msg' => '请输入新密码', 'code' => 0]);
+                $this->returnData['msg'] = lang('Please enter a new password');
+                return json($this->returnData);
             }
             if (empty($confirm_password)) {
-                return json(['msg' => '请输入确认密码', 'code' => 0]);
+                $this->returnData['msg'] = lang('Please enter a confirmation password');
+                return json($this->returnData);
             }
             if (getEncryptPassword($old_password, $user->salt) !== $user->password) {
-                return json(['msg' => '输入的旧密码有误', 'code' => 0]);
+                $this->returnData['msg'] = lang('The old password entered is incorrect');
+                return json($this->returnData);
             }
             if ($new_password !== $confirm_password) {
-                return json(['msg' => '输入的确认密码有误', 'code' => 0]);
+                $this->returnData['msg'] = lang('The confirmation password entered is incorrect');
+                return json($this->returnData);
             }
             $user->password = getEncryptPassword($confirm_password, $user->salt);
-            $user->save();
+            if ($user->save()) {
+                $this->returnData['msg'] = lang('Password modification successful, please log in again');
+                $this->returnData['code'] = 1;
+            }
 
-            return json(['msg' => '操作成功', 'code' => 1]);
+            return json($this->returnData);
         }
         return $this->view->fetch();
     }

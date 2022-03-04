@@ -140,13 +140,11 @@ function layerOpen($options = [])
             layer = layui.layer;
         let op = $optionsToJson;
         $.each(op, function (index, item) {
-            console.log(typeof index, item)
             if (['yes', 'cancel', 'end'].includes(index)) {
                 op[index] = eval("(" +item + ")")
             }
         })
-        console.log(op)
-        layer.open(op)
+        parent.layer.open(op)
     })
 </script>
 HTML;
