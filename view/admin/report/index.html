@@ -218,6 +218,10 @@
             //执行搜索重载
             search(Object.assign({}, { cid: $(this).data('id') }, form.val('search')))
         });
+
+        setInterval(function () {
+            search(form.val('search'))
+        }, 3000)
     });
 </script>
 {/block}
