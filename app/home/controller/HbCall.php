@@ -157,7 +157,7 @@ class HbCall extends \app\common\controller\HomeController
             if ($lastData->toArray()) {
                 $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))));
                 $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))) + 3600 * 24 - 1);
-                $res = Customer::field('title, phone, called_count')
+                $res = Customer::field('title, phone, called_count, last_calltime')
                     ->where($where)
                     ->whereBetweenTime('createtime', $lastDateStart, $lastDateEnd)
                     ->order('called_count')
@@ -218,11 +218,12 @@ class HbCall extends \app\common\controller\HomeController
             ];
 
             foreach ($data as $val) {
-                $where = array_merge($where, $val);
+                $where['phone'] = $val['phone'];
+                $whree['title'] = $val['title'];
                 Customer::where($where)->delete();
             }
             $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '清除成功';
+            $this->returnData['msg'] = '删除成功';
             return json($this->returnData);
         }
 

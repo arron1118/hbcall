@@ -8,73 +8,69 @@
 </style>
 {/block}
 {block name="body"}
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <div class="container-fluid">
-            <!--<div class="row  fs-4 text-danger my-5 justify-content-center">
-                呼叫中心
-            </div>-->
-            <div class="row mt-3 justify-content-center">
-                <div class="col-sm-12 col-md-4 col-lg-5">
-                    <div class="layui-tab layui-tab-card">
-                        <ul class="layui-tab-title">
-                            <li class="layui-this">历史记录</li>
-                            <li>客户管理</li>
-                        </ul>
-                        <div class="layui-tab-content p-3 pt-0 overflow-scroll" style="max-height: 750px;">
-                            <div class="layui-tab-item layui-show">
-                                <div class="call-history-list"></div>
-                            </div>
-                            <div class="layui-tab-item">
-                                <div class="import-description mb-3">
-                                    <button class="btn btn-primary btn-sm" id="importExcel">
-                                        <i class="fa fa-file-import"></i> 导入客户
-                                    </button>
-                                    <button class="btn btn-danger btn-sm clear-customer">
-                                        <i class="fa fa-trash"></i> 清空
-                                    </button>
-                                    <a href="{:url('/HbCall/downloadTemplate')}" class="btn btn-info btn-sm download-template">下载模板</a>
-                                    <a href="javascript:;" class="ms-3 check-rules"><i class="fa fa-info-circle"></i> 导入说明</a>
+<div class="container-fluid bg-white rounded-3 py-2">
+    <!--<div class="row  fs-4 text-danger my-5 justify-content-center">
+        呼叫中心
+    </div>-->
+    <div class="row mt-3 justify-content-center">
+        <div class=" col-md-12 col-lg-5">
+            <div class="layui-tab layui-tab-card">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">历史记录</li>
+                    <li>客户管理</li>
+                </ul>
+                <div class="layui-tab-content p-3 pt-0 overflow-scroll" style="max-height: 750px;">
+                    <div class="layui-tab-item layui-show">
+                        <div class="call-history-list"></div>
+                    </div>
+                    <div class="layui-tab-item">
+                        <div class="import-description mb-3">
+                            <button class="btn btn-primary btn-sm" id="importExcel">
+                                <i class="fa fa-file-import"></i> 导入客户
+                            </button>
+                            <button class="btn btn-danger btn-sm clear-customer">
+                                <i class="fa fa-trash"></i> 清空
+                            </button>
+                            <a href="{:url('/HbCall/downloadTemplate')}" class="btn btn-info btn-sm download-template">下载模板</a>
+                            <a href="javascript:;" class="ms-3 check-rules"><i class="fa fa-info-circle"></i> 导入说明</a>
+                        </div>
+                        <div class="customer-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 col-lg-7">
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-9 col-sm-12 col-lg-7 ">
+                    <div class="row pb-3" style="background-color: #f4f4f4;">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col p-0">
+                                    <input type="text" name="phone" value=""
+                                           placeholder="请输入号码"
+                                           class="w-100 callinginput fs-1 border-0 text-center py-5 bg-transparent"
+                                           id="input"
+                                           onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''">
                                 </div>
-                                <div class="customer-list list-group list-group-flush"></div>
                             </div>
+
+                            <!-- 拨号键 -->
+                            <div class="row row-cols-3 gy-5 py-4 justify-content-center fs-1"
+                                 id="phone-numbers"></div>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-8 col-lg-7">
-                    <div class="row justify-content-center mb-5">
-                        <div class="col-md-9 col-sm-12 col-lg-7 ">
-                            <div class="row pb-3" style="background-color: #f4f4f4;">
-                                <div class="col">
-                                    <div class="row">
-                                        <div class="col p-0">
-                                            <input type="text" name="phone" value=""
-                                                   placeholder="请输入号码"
-                                                   class="w-100 callinginput fs-1 border-0 text-center py-5 bg-transparent"
-                                                   id="input"
-                                                   onkeyup="this.value= this.value.match(/\d+(\d{0,2})?/) ? this.value.match(/\d+(\d{0,2})?/)[0] : ''">
-                                        </div>
-                                    </div>
-
-                                    <!-- 拨号键 -->
-                                    <div class="row row-cols-3 gy-5 py-4 justify-content-center fs-1"
-                                         id="phone-numbers"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-12 col-lg-5">
-                            <div class="callout callout-info mt-0">
-                                <h4>温馨提示</h4>
-                                <div class="row">
-                                    <div class="col py-3">
-                                        <ol class="list-group list-group-numbered">
-                                            <li class="list-group-item border-0">只允许拨打本公司业务电话，不允许拨打其他行业电话。</li>
-                                            <li class="list-group-item border-0">拨号当中不允许出现：金融、地产相关高频行业。</li>
-                                            <li class="list-group-item border-0">通话中不允许出现：代开发票、造假等违法字眼。</li>
-                                            <li class="list-group-item border-0">不允许在通话中辱骂。</li>
-                                        </ol>
-                                    </div>
-                                </div>
+                <div class="col-md-3 col-sm-12 col-lg-5">
+                    <div class="callout callout-info mt-0">
+                        <h4>温馨提示</h4>
+                        <div class="row">
+                            <div class="col py-3">
+                                <ol class="list-group list-group-numbered">
+                                    <li class="list-group-item border-0">只允许拨打本公司业务电话，不允许拨打其他行业电话。</li>
+                                    <li class="list-group-item border-0">拨号当中不允许出现：金融、地产相关高频行业。</li>
+                                    <li class="list-group-item border-0">通话中不允许出现：代开发票、造假等违法字眼。</li>
+                                    <li class="list-group-item border-0">不允许在通话中辱骂。</li>
+                                </ol>
                             </div>
                         </div>
                     </div>
@@ -103,6 +99,20 @@
             $("#input").focus();
         };
         inputFocus();
+
+        // 右键事件
+        document.oncontextmenu = function (e) {
+            // 阻止默认事件
+            e.preventDefault()
+        }
+        // 点击删除右键菜单
+        document.onclick = function (e) {
+            $('#right-contextmenu').remove()
+        }
+
+        /*$('.customer-del').on('click', function () {
+            console.log(this)
+        })*/
 
         let callinginput = $('.callinginput');
         let customerContainer = $('.customer-list');
@@ -228,11 +238,28 @@
 
                         $(customerCalled).addClass('text-black-50')
 
+                        let d = new Date();
+                        let hour = d.getHours(), minute = d.getMinutes(), second = d.getSeconds();
+                        if (hour < 10) {
+                            hour = '0' + hour
+                        }
+
+                        if (minute < 10) {
+                            minute = '0' + minute
+                        }
+
+                        if (second < 10) {
+                            second = '0' + second
+                        }
+
+                        let callTime = hour + ':' + minute + ':' + second;
                         if ($(customerCalled).find('.called-customer').length === 0) {
-                            $(customerCalled).find('.click-call').before($('<span />', {
-                                class: 'called-customer ms-3 float-end',
-                                text: '已拨'
+                            $(customerCalled).find('.click-call').before($('<div />', {
+                                class: 'called-customer text-end col-3 ',
+                                text: callTime
                             }))
+                        } else {
+                            $(customerCalled).find('.called-customer').text(callTime)
                         }
                         customerContainer.append(customerCalled)
                     }
@@ -322,9 +349,11 @@
                 },
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
+                    $(this).children('.call-datetime').addClass('d-none')
                 },
                 mouseout: function () {
                     $(this).children('.click-call').addClass('d-none')
+                    $(this).children('.call-datetime').removeClass('d-none')
                 }
             }).append($('<span />', {
                 class: 'phone float-start',
@@ -332,43 +361,91 @@
             })).append($('<span />', {
                 class: 'click-call text-primary d-none float-end',
                 text: '点击拨号'
+            })).append($('<span />', {
+                class: 'text-muted float-end call-datetime',
+                text: item.createtime
             }))
         }
         // 创建客户列表
         let createCustomerItem = function (item, isCalled = false) {
-            let aClass = 'list-group-item call-history-item';
+            let aClass = 'call-history-item row p-2 ';
             if (isCalled) {
                 aClass += ' text-black-50'
             }
-            let listItem = $('<a />', {
-                href: 'javascript:;',
+            let listItem = $('<div />', {
                 class: aClass,
+                css: {
+                },
                 click: function () {
                     makeCall(item.phone, createItem({ called_number: item.phone }), this)
                 },
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
+                    $(this).children('.called-customer').addClass('d-none')
                 },
                 mouseout: function () {
                     $(this).children('.click-call').addClass('d-none')
+                    $(this).children('.called-customer').removeClass('d-none')
+                },
+                // 右键菜单
+                contextmenu: function (e) {
+                    let parent = this,
+                        ts = $('<div />', {
+                            class: 'shadow-sm text-primary position-absolute',
+                            css: { left: e.clientX + 'px', top: e.clientY + 'px', width: '150px' },
+                            id: 'right-contextmenu'
+                        }).append($('<div />', {
+                            class: 'list-group'
+                        }).append($('<div />', {
+                            type: 'button',
+                            class: 'list-group-item list-group-item-action',
+                            text: '立即拨号',
+                            click: function () {
+                                makeCall(item.phone, createItem({ called_number: item.phone }), parent)
+                            }
+                        }).append($('<i />', {
+                            class: 'fa fa-phone float-end small lh-base',
+                            css: { lineHeight: 'inhert' }
+                        }))).append($('<button />', {
+                            type: 'button',
+                            class: 'list-group-item list-group-item-action',
+                            text: '删除',
+                            click: function () {
+                                $.post('{:url("/HbCall/deleteCustomer")}', { customerList: [item] }, res => {
+                                    let icon = 0;
+                                    if (res.code === 1) {
+                                        icon = 1;
+                                        $(parent).remove()
+                                    }
+
+                                    layer.msg(res.msg, {icon: icon, time: 3000});
+                                })
+                            }
+                        }).append($('<i />', {
+                            class: 'fa fa-trash-alt float-end text-sm'
+                        }))));
+                    $('#right-contextmenu').remove()
+
+                    $('html body').append(ts)
                 }
-            }).append($('<span />', {
-                class: 'phone float-start',
-                text: item.title
-            })).append($('<span />', {
-                class: 'phone ms-3',
+            }).append($('<div />', {
+                class: 'phone col-6 text-truncate',
+                text: item.title,
+                alt: item.title
+            })).append($('<div />', {
+                class: 'phone col-3',
                 text: item.phone
             }))
 
             if (isCalled) {
-                listItem.append($('<span />', {
-                    class: 'called-customer ms-3 float-end',
-                    text: '已拨'
+                listItem.append($('<div />', {
+                    class: 'called-customer col-3 text-end',
+                    text: item.last_calltime
                 }))
             }
 
-            listItem.append($('<span />', {
-                class: 'click-call text-primary d-none float-end',
+            listItem.append($('<div />', {
+                class: 'click-call text-primary d-none col-3 text-end',
                 text: '点击拨号'
             }))
 
@@ -540,7 +617,11 @@
             }
         }
         $('.clear-customer').on('click', function () {
-            $.post('{:url("/HbCall/deleteCustomer")}', { customerList: customerList }, res => {
+            clearCustomer(customerList)
+        })
+
+        let clearCustomer = function (customer) {
+            $.post('{:url("/HbCall/deleteCustomer")}', { customerList: customer }, res => {
                 let icon = 0;
                 if (res.code === 1) {
                     icon = 1;
@@ -549,8 +630,7 @@
 
                 layer.msg(res.msg, {icon: icon, time: 3000});
             })
-        })
-
+        }
         // 下载客户管理模板
         /*$('.download-template').on('click', function () {
             $.get('{:url("/HbCall/downloadTemplate")}', {}, res => {
