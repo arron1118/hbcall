@@ -11,7 +11,7 @@
             layer = layui.layer;
 
         // cookie
-        let cookie = function (key = null, val = null, obj = {}) {
+        window.cookie = function (key = null, val = null, obj = {}) {
             if (key === null) {
                 let val = [];
                 let cookie = document.cookie.split('; ');
@@ -29,7 +29,7 @@
                         let i = item.split('=');
                         if (i[0] === key) {
                             val = i[1];
-                            return;
+                            return false;
                         }
                     })
 
