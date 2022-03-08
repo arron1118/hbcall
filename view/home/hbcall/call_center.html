@@ -9,10 +9,7 @@
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 py-2">
-    <!--<div class="row  fs-4 text-danger my-5 justify-content-center">
-        呼叫中心
-    </div>-->
-    <div class="row mt-3 justify-content-center">
+    <div class="row justify-content-center">
         <div class="col-12 col-lg-7 mb-3">
             <div class="layui-tab layui-tab-card">
                 <ul class="layui-tab-title">
@@ -188,7 +185,7 @@
                     col.append($('<span />', {
                         class: cssClass + ' fs-2'
                     }).css(css).html(text).on('click', function (e) {
-                        makeCall(callinginput.val(), createItem({called_number: callinginput.val()}));
+                        makeCall({ phone: callinginput.val() }, createItem({called_number: callinginput.val()}));
                     }));
                 } else {
                     isPhoneIcon = false;
@@ -218,7 +215,7 @@
                     return false
                 }
             } else if (e.keyCode === 13) {
-                makeCall($(this).val(), createItem({called_number: $(this).val()}));
+                makeCall({ phone: $(this).val() }, createItem({called_number: $(this).val()}));
             }
         })
 
@@ -244,36 +241,40 @@
             return pattern.test(phone);
         }
 
-        let makeCall = function (number, addList = null, customerCalled = null) {
-            if (number.length < 11 || !isPhoneNo(number)) {
+        let getNowTime = function () {
+            let d = new Date();
+            let hour = d.getHours(), minute = d.getMinutes(), second = d.getSeconds();
+            if (hour < 10) {
+                hour = '0' + hour
+            }
+
+            if (minute < 10) {
+                minute = '0' + minute
+            }
+
+            if (second < 10) {
+                second = '0' + second
+            }
+
+            return hour + ':' + minute + ':' + second;
+        }
+
+        let makeCall = function (params = { phone: '', customerId: 0 }, addList = null, customerCalled = null) {
+            if (params.phone.length < 11 || !isPhoneNo(params.phone)) {
                 layer.msg('请输入正确的号码', { icon: 2 });
                 return false;
             }
 
-            $.post('{:url("/hbcall/makeCall")}', {mobile: number}, function (res) {
+            $.post('{:url("/hbcall/makeCall")}', { mobile: params.phone, customerId: params.customerId }, function (res) {
                 if (res.code === 1000) {
                     if (customerCalled) {
                         // 更新客户拨号记录
-                        $.post('{:url("/HbCall/updateCustomerCalledCount")}', { phone: number }, function (r) {
+                        $.post('{:url("/HbCall/updateCustomerCalledCount")}', { phone: params.phone, customerId: params.customerId }, function (r) {
                         })
 
                         $(customerCalled).addClass('text-black-50')
 
-                        let d = new Date();
-                        let hour = d.getHours(), minute = d.getMinutes(), second = d.getSeconds();
-                        if (hour < 10) {
-                            hour = '0' + hour
-                        }
-
-                        if (minute < 10) {
-                            minute = '0' + minute
-                        }
-
-                        if (second < 10) {
-                            second = '0' + second
-                        }
-
-                        let callTime = hour + ':' + minute + ':' + second;
+                        let callTime = getNowTime()
                         if ($(customerCalled).find('.called-customer').length === 0) {
                             $(customerCalled).find('.click-call').before($('<div />', {
                                 class: 'called-customer text-end col-3 ',
@@ -284,9 +285,11 @@
                         }
                         customerContainer.append(customerCalled)
                     }
-                    // 计数拨号次数
+                    // 添加历史列表
                     if (addList) {
-                        $('.call-history-list .list-group').prepend($(addList))
+                        let hl = $('.call-history-list .list-group');
+                        hl.prepend($(addList));
+                        hl.children().last().remove();
                     }
                     let con = `
                             <div style="padding: 50px; line-height: 30px; font-weight: 300;">
@@ -362,11 +365,10 @@
         })
         // 创建历史列表
         let createItem = function (item) {
-            return $('<a />', {
-                href: 'javascript:;',
-                class: 'list-group-item list-group-item-active call-history-item',
+            return $('<div />', {
+                class: 'row p-2 mx-1 border-bottom call-history-item',
                 click: function () {
-                    makeCall(item.called_number, createItem(item))
+                    makeCall({ phone: item.called_number, customerId: item.customer ? item.customer.id : 0 }, createItem(item))
                 },
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
@@ -376,14 +378,17 @@
                     $(this).children('.click-call').addClass('d-none')
                     $(this).children('.call-datetime').removeClass('d-none')
                 }
-            }).append($('<span />', {
-                class: 'phone float-start',
+            }).append($('<div />', {
+                class: 'col-6 text-truncate',
+                text: item.customer?.title,
+            })).append($('<span />', {
+                class: 'phone col-3',
                 text: item.called_number
-            })).append($('<span />', {
-                class: 'click-call text-primary d-none float-end',
+            })).append($('<div />', {
+                class: 'click-call col-3 text-primary d-none text-end',
                 text: '点击拨号'
-            })).append($('<span />', {
-                class: 'text-muted float-end call-datetime',
+            })).append($('<div />', {
+                class: 'text-muted col-3 text-end call-datetime',
                 text: item.createtime
             }))
         }
@@ -395,10 +400,8 @@
             }
             let listItem = $('<div />', {
                 class: aClass,
-                css: {
-                },
                 click: function () {
-                    makeCall(item.phone, createItem({ called_number: item.phone }), this)
+                    makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone, customer: { id: item.id, title: item.title }, createtime: getNowTime() }), this)
                 },
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
@@ -422,7 +425,7 @@
                             class: 'list-group-item list-group-item-action',
                             text: '立即拨号',
                             click: function () {
-                                makeCall(item.phone, createItem({ called_number: item.phone }), parent)
+                                makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone }), parent)
                             }
                         }).append($('<i />', {
                             class: 'fa fa-phone float-end small lh-base',

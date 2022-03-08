@@ -31,7 +31,8 @@ class HbCall extends \app\common\controller\HomeController
     public function getCallHistory()
     {
         if ($this->request->isPost()) {
-            $callHistory = CallHistory::field('called_number, createtime')
+            $callHistory = CallHistory::with('customer')
+//                ->field('called_number, createtime')
                 ->where('user_id', '=', $this->userInfo->id)
                 ->order('id', 'desc')
                 ->limit(20)
@@ -87,7 +88,8 @@ class HbCall extends \app\common\controller\HomeController
      */
     public function makeCall()
     {
-        $mobile = trim($this->request->param('mobile'));
+        $mobile = trim($this->request->param('mobile', ''));
+        $customerId = $this->request->param('customerId', 0);
 
         // 试用账号到期后无法拨号
         if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
@@ -138,6 +140,7 @@ class HbCall extends \app\common\controller\HomeController
                 $CallHistory->axb_number = $this->userInfo->userXnumber->xnumber;
                 $CallHistory->called_number = $mobile;
                 $CallHistory->createtime = time();
+                $CallHistory->customer_id = $customerId;
                 $CallHistory->save();
             } catch (DbException $dbException) {
 
@@ -157,7 +160,7 @@ class HbCall extends \app\common\controller\HomeController
             if ($lastData->toArray()) {
                 $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))));
                 $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))) + 3600 * 24 - 1);
-                $res = Customer::field('title, phone, called_count, last_calltime')
+                $res = Customer::field('id, title, phone, called_count, last_calltime')
                     ->where($where)
                     ->whereBetweenTime('createtime', $lastDateStart, $lastDateEnd)
                     ->order('called_count')

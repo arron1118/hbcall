@@ -65,4 +65,9 @@ class CallHistory extends \think\Model
     {
         return $this->hasOne(Expense::class)->bind(['cost']);
     }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }
