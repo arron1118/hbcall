@@ -83,6 +83,9 @@
             },
             cols: [[
                 {field: 'subid', title: '编号', align: "center"},
+                {field: '', title: '客户名称', align: "left", templet: function (row) {
+                    return row.customer ? row.customer.title : '';
+                    }},
                 {field: 'called_number', title: '被叫号码', align: "center"},
                 {field: 'call_duration', title: '通话时长(分)', sort: true, align: "center"},
                 {field: 'cost', title: '消费金额(元)', align: "center", sort: true},

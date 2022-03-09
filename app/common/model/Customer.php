@@ -29,4 +29,9 @@ class Customer extends \think\Model
     {
         return $this->belongsTo(Company::class);
     }
+
+    public function callHistory()
+    {
+        return $this->hasMany(CallHistory::class);
+    }
 }

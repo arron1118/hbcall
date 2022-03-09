@@ -70,7 +70,7 @@ class HbCall extends \app\common\controller\HomeController
             }
 
             $total = CallHistory::where($map)->count();
-            $historyList = CallHistory::with('expense')
+            $historyList = CallHistory::with(['expense', 'customer'])
                 ->where($map)
                 ->order('createtime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)

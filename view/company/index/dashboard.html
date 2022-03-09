@@ -68,62 +68,58 @@
         </div>
     </div>
 </div>
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <div class="card p-0">
-            <div class="card-header bg-body ">使用情况</div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-md-3 col-sm-12 mb-3">
-                        <div class="card bg-primary lqp-hover" style="height: 250px;">
-                            <div class="card-body text-light  d-flex flex-column justify-content-center "
-                                 style="background: url('__STATIC__/images/p.png') no-repeat center;background-size: 30%;">
-                                <p class="">今日消费/元</p>
-                                <h5 class="fw-bold ">
-                                    <i class="fa fa-yen-sign me-2"></i>
-                                    <span class="l-number">{$current_day_cost}</span></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 mb-3">
-                        <div class="card bg-secondary lqp-hover" style="height: 250px;">
-                            <div class="card-body text-light  d-flex flex-column justify-content-center "
-                                 style="background: url('__STATIC__/images/p.png') no-repeat center;background-size: 30%;">
-                                <p class="">昨日消费/元</p>
-                                <h5 class="fw-bold ">
-                                    <i class="fa fa-yen-sign me-2"></i>
-                                    <span class="l-number">{$yesterday_cost}</span></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 mb-3">
-                        <div class="card layui-bg-green lqp-hover" style="height: 250px;">
-                            <div class="card-body text-light  d-flex flex-column justify-content-center "
-                                 style="background: url('__STATIC__/images/s.png') no-repeat center;background-size: 30%;">
-                                <p class="">本月消费/元</p>
-                                <h5 class="fw-bold">
-                                    <i class="fa fa-yen-sign me-2"></i>
-                                    <span class="l-number">{$current_month_cost}</span></h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 mb-3">
-                        <div class="card lqp-hover"
-                             style="background-color: #d98501; height: 250px; ">
-                            <div class="card-body text-light  d-flex flex-column justify-content-center "
-                                 style="background: url('__STATIC__/images/w.png') no-repeat center;background-size: 30%;">
-                                <p class=""> 今年消费/元</p>
-                                <h5 class="fw-bold">
-                                    <i class="fa fa-yen-sign me-2"></i>
-                                    <span class="l-number">{$current_year_cost}</span></h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+
+<div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
+    <div class="row mb-3 py-3 ">
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-center justify-content-center">
+            <div>
+                <h4>网站概况</h4>
+            </div>
+        </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">总消费</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$total_cost}</span></h5>
+            </div>
+        </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div class="">
+                <p class="">今日支出</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$current_day_cost}</span></h5>
+            </div>
+        </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">昨日支出</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$yesterday_cost}</span></h5>
+            </div>
+        </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">本月支出</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$current_month_cost}</span></h5>
+            </div>
+        </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">今年支出</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$current_year_cost}</span></h5>
             </div>
         </div>
     </div>
 </div>
+
 {/block}
 {block name="js"}
 <script src="__STATIC__/js/jquery.rotate.js"></script>

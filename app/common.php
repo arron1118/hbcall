@@ -75,18 +75,21 @@ function getCosts($company_id = 0, $user_id = 0)
 
     $expenseModel = \app\common\model\Expense::class;
     // 当日消费
-    $current_day_cost = $expenseModel::whereBetween('createtime', [$today_start, $today_end]);
+    $current_day_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$today_start, $today_end]);
     // 昨日消费
-    $yesterday_cost = $expenseModel::whereBetween('createtime', [$yesterdayStart, $yesterdayEnd]);
+    $yesterday_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$yesterdayStart, $yesterdayEnd]);
     // 本月消费
-    $current_month_cost = $expenseModel::whereBetween('createtime', [$current_month_start, $current_month_end]);
+    $current_month_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$current_month_start, $current_month_end]);
     // 当年消费
-    $current_year_cost = $expenseModel::whereBetween('createtime', [$current_year_start, $current_year_end]);
+    $current_year_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$current_year_start, $current_year_end]);
+    // 总消费
+    $total_cost = $expenseModel::where('cost', '>', '0');
     if ($company_id > 0) {
         $current_day_cost->where('company_id', '=', $company_id);
         $yesterday_cost->where('company_id', '=', $company_id);
         $current_month_cost->where('company_id', '=', $company_id);
         $current_year_cost->where('company_id', '=', $company_id);
+        $total_cost->where('company_id', '=', $company_id);
     }
 
     if ($user_id > 0) {
@@ -94,18 +97,21 @@ function getCosts($company_id = 0, $user_id = 0)
         $yesterday_cost->where('user_id', '=', $user_id);
         $current_month_cost->where('user_id', '=', $user_id);
         $current_year_cost->where('user_id', '=', $user_id);
+        $total_cost->where('user_id', '=', $user_id);
     }
 
     $current_day_cost = $current_day_cost->sum('cost');
     $yesterday_cost = $yesterday_cost->sum('cost');
     $current_month_cost = $current_month_cost->sum('cost');
     $current_year_cost = $current_year_cost->sum('cost');
+    $total_cost = $total_cost->sum('cost');
 
     return [
         'current_day_cost' => $current_day_cost,
         'yesterday_cost' => $yesterday_cost,
         'current_month_cost' => $current_month_cost,
-        'current_year_cost' => $current_year_cost
+        'current_year_cost' => $current_year_cost,
+        'total_cost' => $total_cost,
     ];
 }
 

@@ -22,6 +22,16 @@ class Index extends AdminController
         return $this->view->fetch();
     }
 
+    public function getCallList()
+    {
+        if ($this->request->isPost()) {
+
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
+
     public function login()
     {
         /*$salt = getRandChar(6);

@@ -9,7 +9,7 @@
 {/block}
 {block name="body"}
 
-<div class="container-fluid bg-white rounded-3 shadow-sm mb-3 pt-3">
+<div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
     <!--<div class="row mb-2">
         <div class="col-md-5 col-sm-12 pb-4">
             <div class="card border-0 p-0 border-end">
@@ -64,50 +64,50 @@
             </div>
         </div>
     </div>-->
-    <div class="row text-center">
-        <div class="col-md-3 col-sm-12 mb-3">
-            <div class="card bg-primary lqp-hover" style="height: 250px;">
-                <div class="card-body text-light d-flex flex-column justify-content-center "
-                     style="background: url('__STATIC__/images/p.png') no-repeat center;background-size: 30%;">
-                    <p class="">今日消费/元</p>
-                    <h5 class="fw-bold ">
-                        <i class="fa fa-yen-sign me-2"></i>
-                        <span class="l-number">{$current_day_cost}</span></h5>
-                </div>
+    <div class="row mb-3 py-3 ">
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-center justify-content-center">
+            <div>
+                <h4>网站概况</h4>
             </div>
         </div>
-        <div class="col-md-3 col-sm-12 mb-3">
-            <div class="card bg-secondary lqp-hover" style="height: 250px;">
-                <div class="card-body text-light  d-flex flex-column justify-content-center "
-                     style="background: url('__STATIC__/images/p.png') no-repeat center;background-size: 30%;">
-                    <p class="">昨日消费/元</p>
-                    <h5 class="fw-bold ">
-                        <i class="fa fa-yen-sign me-2"></i>
-                        <span class="l-number">{$yesterday_cost}</span></h5>
-                </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">总收入</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$total_cost}</span></h5>
             </div>
         </div>
-        <div class="col-md-3 col-sm-12 mb-3">
-            <div class="card layui-bg-green lqp-hover" style="height: 250px;">
-                <div class="card-body text-light  d-flex flex-column justify-content-center "
-                     style="background: url('__STATIC__/images/s.png') no-repeat center;background-size: 30%;">
-                    <p class="">本月消费/元</p>
-                    <h5 class="fw-bold">
-                        <i class="fa fa-yen-sign me-2"></i>
-                        <span class="l-number">{$current_month_cost}</span></h5>
-                </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div class="">
+                <p class="">今日收入</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$current_day_cost}</span></h5>
             </div>
         </div>
-        <div class="col-md-3 col-sm-12 mb-3">
-            <div class="card lqp-hover"
-                 style="background-color: #d98501; height: 250px; ">
-                <div class="card-body text-light  d-flex flex-column justify-content-center "
-                     style="background: url('__STATIC__/images/w.png') no-repeat center;background-size: 30%;">
-                    <p class=""> 今年消费/元</p>
-                    <h5 class="fw-bold">
-                        <i class="fa fa-yen-sign me-2"></i>
-                        <span class="l-number">{$current_year_cost}</span></h5>
-                </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">昨日收入</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$yesterday_cost}</span></h5>
+            </div>
+        </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">本月收入</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$current_month_cost}</span></h5>
+            </div>
+        </div>
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
+            <div>
+                <p class="">今年收入</p>
+                <h5 class="">
+                    <i class="fa fa-yen-sign fs-6"></i>
+                    <span class="l-number fs-2">{$current_year_cost}</span></h5>
             </div>
         </div>
     </div>
@@ -136,6 +136,40 @@
         miniTab.listen();
 
         let chart = echarts.init($('#historyChart')[0])
+
+        let getDateTime = function (time) {
+            let d = new Date()
+            d.setTime(time)
+            let hour = d.getHours(),
+                minute = d.getMinutes(),
+                second = d.getSeconds(),
+                millsecond = d.getMilliseconds();
+
+            if (hour < 10) {
+                hour = '0' + hour;
+            }
+            if (minute < 10) {
+                minute = '0' + minute;
+            }
+            if (second < 10) {
+                second = '0' + second;
+            }
+            return hour + ':' + minute + ':' + second + '.' + millsecond;
+        }
+        let d = new Date();
+        let hours = 3,  // 小时数据
+            minutes = 60,   // 每小时60分
+            per = 5,    // 时间间隔 5 分
+            perSecond = per * 60 * 1000,    // 时间间隔 毫秒数
+            t = Math.ceil(hours * minutes / per);   // 总共多少条数据
+        let datetime = [];
+        let minutesAgo = d.getTime();  // 获取毫秒
+        let nowTime = 0;
+        for (let i = 0; i < t; i ++) {
+            nowTime = minutesAgo;
+            minutesAgo = minutesAgo - perSecond;
+            datetime.push({ startTime: getDateTime(minutesAgo), endTime: getDateTime(nowTime) })
+        }
 
         let getData = function () {
             $.post('{:url("/HbCall/getHistoryList")}', {}, function (res) {
@@ -193,11 +227,11 @@
             })
         };
 
-        getData()
+        // getData()
 
-        setInterval(function () {
-            getData()
-        }, 1000 * 300);
+        // setInterval(function () {
+        //     getData()
+        // }, 1000 * 300);
     });
 </script>
 
