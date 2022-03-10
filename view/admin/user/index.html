@@ -89,6 +89,7 @@
                 {field: 'balance', title: '余额(￥/元)', align: "center", templet: function (row) {
                     return row.balance < 0 ? '<div class="layui-bg-red">' + row.balance + '</div>' : row.balance;
                     }},
+                {field: 'expense_sum', title: '总消费', align: 'center'},
                 {field: 'logintime', title: '最后登录', align: "center"},
                 {field: 'status', title: '状态', align: "center", templet: function (row) {
                     // return `<span class="${row.status === '正常' ? 'text-info' : 'text-danger'}">${row.status}</span>`

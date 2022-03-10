@@ -113,10 +113,57 @@
     </div>
 </div>
 
-<div class="container-fluid bg-white rounded-3 shadow-sm mb-3 pt-3">
-    <div class="row">
-        <div class="col">
-            <div id="historyChart" style=" height: 500px; "></div>
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-xl-7 col-lg-12 mb-sm-3 bg-white rounded-3 shadow-sm">
+            <div class="row p-3">
+                <div class="col-lg-6 col-12 mb-sm-3 h-100">
+                    <div id="historyChart" class="h-100" style="height: 270px;"></div>
+                </div>
+                <div class="col-lg-6 col-12 mb-3">
+                    <div class="row h-50 rounded gap-3 mb-3">
+                        <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
+                            <div class="mb-3 text-black-50">总呼出</div>
+                            <h2 class="totalCallHistory "></h2>
+                        </div>
+                        <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
+                            <div class="mb-3 text-black-50">总时间(分)</div>
+                            <h2 class="totalCallDuration "></h2>
+                        </div>
+                    </div>
+                    <div class="row h-50 rounded gap-3">
+                        <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
+                            <div class="mb-3 text-black-50">已接听</div>
+                            <h2 class="totalCallAndPickUp"></h2>
+                        </div>
+                        <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
+                            <div class="mb-3 text-black-50">未接听</div>
+                            <h2 class="totalCallAndNoPickUp"></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-5 col-lg-6">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">排行榜</div>
+                        <div class="card-body">
+                            <table class="table toplist-table">
+                                <tr>
+                                    <th>公司名称</th>
+                                    <th>未接听</th>
+                                    <th>已接听</th>
+                                    <th>时间(分)</th>
+                                    <th>消费金额</th>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -136,6 +183,9 @@
         miniTab.listen();
 
         let chart = echarts.init($('#historyChart')[0])
+        window.onresize = function (e) {
+            chart.resize();
+        }
 
         let getDateTime = function (time) {
             let d = new Date()
@@ -171,63 +221,53 @@
             datetime.push({ startTime: getDateTime(minutesAgo), endTime: getDateTime(nowTime) })
         }
 
-        let getData = function () {
-            $.post('{:url("/HbCall/getHistoryList")}', {}, function (res) {
-                console.log(res)
+        let getChartData = function () {
+            $.post('{:url("/Index/getReport")}', {}, function (res) {
+                $('.totalCallHistory').text(res.data.totalCallHistory)
+                $('.totalCallAndPickUp').text(res.data.totalCallAndPickUp)
+                $('.totalCallAndNoPickUp').text(res.data.totalCallAndNoPickUp)
+                $('.totalCallDuration').text(res.data.totalCallDuration)
                 chart.setOption({
                     title: {
-                        text: '拨号统计',
+                        text: '呼叫统计',
                     },
                     dataset: [
                         {
-                            source: res.rows
+                            source: res.data.chartData
                         }
                     ],
-                    legend: {},
                     tooltip: {
-                        trigger: 'axis',
-                    },
-                    toolbox: {
-                        feature: {
-                            restore: { title: '还原' },
-                            saveAsImage: { title: '保存图片' },
-                        }
-                    },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        // axisLabel: {
-                        //     rotate: 45
-                        // }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        boundaryGap: [0, '100%'],
-                        // max: 'dataMax'
-                    },
-                    grid: {
-                        bottom: 10,
-                        left: 0,
-                        right: 10,
-                        containLabel: true
+                        trigger: 'item',
                     },
                     series: [
                         {
                             name: '拨号次数',
-                            type: 'line',
-                            encode: {
-                                x: 'createtime',
-                                y: 'call_duration'
-                            },
-                            areaStyle: {
-                            }
+                            type: 'pie',
+                            radius: ['25%', '75%'],
+                            datasetIndex: 0
                         }
                     ]
                 })
             })
         };
 
-        // getData()
+        getChartData();
+
+        let getTopData = function () {
+            $.post('{:url("/Index/getTopList")}', {}, function (res) {
+                $.each(res.data, function (index, item) {
+                    $('.toplist-table').append($('<tr />')
+                        .append($('<td />', { text: item.corporation }))
+                        .append($('<td />', { text: item.callHistory_count }))
+                        .append($('<td />', { text: item.callHistory_pickup_count }))
+                        .append($('<td />', { text: item.duration_sum }))
+                        .append($('<td />', { text: item.expense_sum }))
+                    )
+                })
+            })
+        }
+
+        getTopData();
 
         // setInterval(function () {
         //     getData()

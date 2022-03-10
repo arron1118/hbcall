@@ -4,6 +4,7 @@
 namespace app\company\model;
 
 
+use app\common\model\CallHistory;
 use app\common\model\Customer;
 use app\common\model\User;
 use app\common\model\Expense;
@@ -63,5 +64,10 @@ class Company extends \think\Model
     public function customer()
     {
         return $this->hasMany(Customer::class);
+    }
+
+    public function callHistory()
+    {
+        return $this->hasMany(CallHistory::class);
     }
 }
