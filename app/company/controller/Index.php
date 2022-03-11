@@ -22,6 +22,9 @@ class Index extends CompanyController
             'totalGtZero' => '接听数',
             'totalGtSixty' => '大于1分钟',
             'totalBetweenZeroAndSixty' => '1分钟内',
+            'totalBetweenOneToThree' => '1-3分钟',
+            'totalBetweenThreeToFive' => '3-5分钟内',
+            'totalGtFive' => '大于5分钟',
             'totalEqZero' => '未接听',
         ];
     }
@@ -34,6 +37,7 @@ class Index extends CompanyController
     public function dashboard()
     {
 //        dump(1000003.210 + 5.00);
+
         $costs = getCosts(Session::get('company.id'));
         $this->view->assign($costs);
         return $this->view->fetch();
@@ -49,16 +53,20 @@ class Index extends CompanyController
             $result['totalCallDuration'] = Expense::where($where)->sum('duration');
             $result['chartData'] = [
                 [
-                    'name' => $this->lang['totalEqZero'],
-                    'value' => $result['totalCallAndNoPickUp']
-                ],
-                [
                     'name' => $this->lang['totalBetweenZeroAndSixty'],
-                    'value' => CallHistory::where($where)->whereBetween('call_duration', [1, 60])->count()
+                    'value' => CallHistory::whereBetween('call_duration', [1, 60])->count()
                 ],
                 [
-                    'name' => $this->lang['totalGtSixty'],
-                    'value' => CallHistory::where($where)->where('call_duration', '>', 60)->count()
+                    'name' => $this->lang['totalBetweenOneToThree'],
+                    'value' => CallHistory::whereBetween('call_duration', [61, 180])->count()
+                ],
+                [
+                    'name' => $this->lang['totalBetweenThreeToFive'],
+                    'value' => CallHistory::whereBetween('call_duration', [181, 300])->count()
+                ],
+                [
+                    'name' => $this->lang['totalGtFive'],
+                    'value' => CallHistory::where('call_duration', '>', 300)->count()
                 ]
             ];
             $this->returnData['code'] = 1;
