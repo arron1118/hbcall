@@ -3,45 +3,51 @@
 {include file="public/bootstrap" /}
 {/block}
 {block name="body"}
-
-<div class="container-fluid">
+<div class="container-fluid bg-white rounded-3 mb-3 pt-3">
     <div class="row">
-        <div class="col-lg-3 col-md-12 mb-md-3 mb-sm-3">
-            <div class="card">
-                <div class="card-header">公司列表</div>
-                <ul class="list-group list-group-flush company-list">
-                    <li class="list-group-item active" data-id="0" data-name="全部">全部</li>
-                    {foreach $companies as $key => $item}
-                    <li class="list-group-item" data-id="{$item.id}" data-name="{$item.corporation}">{$item.corporation}</li>
-                    {/foreach}
-                </ul>
-            </div>
-        </div>
-        <div class="col-lg-9 col-md-12 p-3 bg-white rounded-3">
-            <div class="">
-                <form class="layui-form" action="" lay-filter="search">
-                    <div class="layui-form-item">
+        <div class="col">
+            <form class="layui-form" action="" lay-filter="search">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px;">条件筛选</label>
                         <div class="layui-inline">
-                            <label class="layui-form-label" style="width: 100px;">日期范围</label>
-                            <div class="layui-inline" id="datetime">
-                                <div class="layui-input-inline">
-                                    <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
-                                </div>
-                                <div class="layui-form-mid">-</div>
-                                <div class="layui-input-inline">
-                                    <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
-                                </div>
-                            </div>
-
-                            <div class="layui-inline">
-                                <button type="submit" class="layui-btn layui-btn-normal btn-search" lay-submit="" lay-filter="searchSubmit"><i class="layui-icon"></i> 搜 索
-                                </button>
+                            <div class="layui-input-inline">
+                                <select name="cid" class="" lay-filter="companyFilter">
+                                    <option value="0">所有公司</option>
+                                    {foreach $companies as $key => $item}
+                                    <option value="{$item.id}">{$item.corporation}</option>
+                                    {/foreach}
+                                </select>
                             </div>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label" style="width: 100px;">日期范围</label>
+                        <div class="layui-inline" id="datetime">
+                            <div class="layui-input-inline">
+                                <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                            </div>
+                        </div>
 
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-normal btn-search" lay-submit="" lay-filter="searchSubmit"><i class="layui-icon"></i> 搜 索
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="p-3 bg-white rounded-3">
             <div id="chart" style="height: 350px; margin-bottom: .75rem; "></div>
 
             <table class="layui-table" id="currentTableId">
@@ -66,10 +72,6 @@
             chart.resize();
         }
 
-        let where = {
-            cid: $('.company-list li.active').data('id')
-        }
-
         //日期范围
         laydate.render({
             //设置开始日期、日期日期的 input 选择器
@@ -88,7 +90,6 @@
             url: '{:url("/Report/getReport")}',
             method: 'post',
             totalRow: true,
-            where: where,
             //异步请求，格式化数据
             parseData: function (res) {
                 chart.setOption({
@@ -200,9 +201,7 @@
         });
 
         let search = function (params) {
-            let p = Object.assign({}, {
-                cid: $('.company-list li.active').data('id')
-            }, params)
+            let p = Object.assign({}, form.val('search'), params)
             //执行搜索重载
             table.reload('currentTableId', {
                 where: p
@@ -216,14 +215,14 @@
             return false;
         });
 
-        $('.company-list li').on('click', function () {
-            $(this).addClass('active').siblings().removeClass('active');
-            //执行搜索重载
-            search(Object.assign({}, { cid: $(this).data('id') }, form.val('search')))
-        });
+        form.on('select(companyFilter)', function (data) {
+            let d = [];
+            d[data.elem.name] = data.value
+            search(d)
+        })
 
         setInterval(function () {
-            search(form.val('search'))
+            search({})
         }, 300000)
     });
 </script>
