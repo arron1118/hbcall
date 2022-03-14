@@ -368,6 +368,7 @@
             return $('<div />', {
                 class: 'row p-2 mx-1 border-bottom call-history-item',
                 click: function () {
+                    item.createtime = getNowTime()
                     makeCall({ phone: item.called_number, customerId: item.customer ? item.customer.id : 0 }, createItem(item))
                 },
                 mouseover: function () {

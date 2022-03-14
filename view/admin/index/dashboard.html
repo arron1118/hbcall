@@ -72,7 +72,7 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="">总收入</p>
+                <p class="text-black-50">总收入</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
                     <span class="l-number fs-2">{$total_cost}</span></h5>
@@ -80,15 +80,31 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div class="">
-                <p class="">今日收入</p>
+                <p class="text-black-50">
+                    今日收入
+                    [<span class="text-warning fs-6">
+                    {php}
+                        if ($current_day_cost > 0) {
+                            if ($yesterday_cost > 0) {
+                                echo ($current_day_cost - $yesterday_cost) / $yesterday_cost * 100;
+                            } else {
+                                echo 100;
+                            }
+                        } else {
+                            echo 0;
+                        }
+                    {/php}%
+                    </span>]
+                </p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
-                    <span class="l-number fs-2">{$current_day_cost}</span></h5>
+                    <span class="l-number fs-2">{$current_day_cost}</span>
+                </h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="">昨日收入</p>
+                <p class="text-black-50">昨日收入</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
                     <span class="l-number fs-2">{$yesterday_cost}</span></h5>
@@ -96,7 +112,7 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="">本月收入</p>
+                <p class="text-black-50">本月收入</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
                     <span class="l-number fs-2">{$current_month_cost}</span></h5>
@@ -104,7 +120,7 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
             <div>
-                <p class="">今年收入</p>
+                <p class="text-black-50">今年收入</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
                     <span class="l-number fs-2">{$current_year_cost}</span></h5>

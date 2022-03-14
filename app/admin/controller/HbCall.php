@@ -69,6 +69,7 @@ class HbCall extends \app\common\controller\AdminController
             $total = CallHistory::where($map)->count();
 
             $historyList = CallHistory::with('expense')
+                ->with('customer')
                 ->where($map)
                 ->order('createtime DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
@@ -76,6 +77,8 @@ class HbCall extends \app\common\controller\AdminController
 
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
+
+        return json($this->returnData);
     }
 
     public function getCompanyList()

@@ -43,6 +43,7 @@ class HbCall extends \app\common\controller\CompanyController
             ];
             $map = [
                 ['company_id', '=', $this->userInfo['id']],
+//                ['company_id', '=', 15],
                 ['caller_number', '<>', '']
             ];
 
