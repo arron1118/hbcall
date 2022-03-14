@@ -15,6 +15,8 @@ use think\facade\Session;
 
 class HbCall extends \app\common\controller\HomeController
 {
+    protected $stopStartDateTime = '2022-03-14 19:00:00';
+    protected $stopEndDateTime = '2022-03-14 21:00:00';
 
     public function callCenter()
     {
@@ -23,7 +25,6 @@ class HbCall extends \app\common\controller\HomeController
 //        dump((bool)$strTime);
 //        $next = date('Y-m-d H:i:s', $strTime + 86400 - 1);
 //        dump($next);
-//        dump(public_path());
 
         return $this->view->fetch();
     }
@@ -88,6 +89,11 @@ class HbCall extends \app\common\controller\HomeController
      */
     public function makeCall()
     {
+        if (time() >= strtotime($this->stopStartDateTime) && time() <= strtotime($this->stopEndDateTime)) {
+            $this->returnData['msg'] = "由于线路临时升级，呼叫系统 将在{$this->stopStartDateTime}至{$this->stopEndDateTime} 共计两小时暂停服务,给大家带来不便，非常抱歉。感谢大家的支持！";
+            return json($this->returnData);
+        }
+
         $mobile = trim($this->request->param('mobile', ''));
         $customerId = $this->request->param('customerId', 0);
 
