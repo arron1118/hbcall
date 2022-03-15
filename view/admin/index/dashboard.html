@@ -86,7 +86,7 @@
                     {php}
                         if ($current_day_cost > 0) {
                             if ($yesterday_cost > 0) {
-                                echo ($current_day_cost - $yesterday_cost) / $yesterday_cost * 100;
+                                echo number_format(($current_day_cost - $yesterday_cost) / $yesterday_cost * 100, 2);
                             } else {
                                 echo 100;
                             }

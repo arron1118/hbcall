@@ -121,7 +121,8 @@
                     <label class="layui-form-label" for="account">账号</label>
                     <div class="layui-input-block" id="account">
                         <input type="text" name="username" lay-verify="required|account" placeholder="账号"
-                               autocomplete="off" class="layui-input" value="{$userInfo.username}">
+                               autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
+                        <tip>提示：此昵称作为登录账号使用，创建后暂不支持更改</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">

@@ -4,6 +4,7 @@
 namespace app\home\middleware;
 
 
+use app\common\model\User;
 use think\facade\Session;
 
 class Check
