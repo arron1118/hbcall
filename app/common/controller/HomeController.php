@@ -42,7 +42,7 @@ class HomeController extends \app\BaseController
             ]);
         }
 
-        if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login'])) {
+        if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
             showAlert(lang('Account is locked'), [
                 'end' => 'function () {
                     location.href = "' . url('/index/logout') . '";

@@ -92,7 +92,7 @@ class Index extends HomeController
         Session::delete('user');
         Cookie::delete('balance_tips');
         Cookie::delete('balance');
-        return redirect((string) url('/index'));
+        return redirect((string) url('/index/login'));
     }
 
     // 生成用户
