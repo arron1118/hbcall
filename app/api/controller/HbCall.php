@@ -81,7 +81,7 @@ class HbCall extends \app\common\controller\ApiController
                 'mobile' => $response['data']['mobile']
             ];
         } else {
-            $this->returnData['msg'] = $response['info'];
+            $this->returnData['msg'] = $response['msg'];
             $this->returnData['sub_msg'] = $response['data'];
         }
 
