@@ -77,8 +77,9 @@ class HbCall extends \app\common\controller\ApiController
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = '拨号成功';
             $this->returnData['data'] = [
-                'axb_number' => $response['data']['axb_number'],
-                'mobile' => $response['data']['mobile']
+                'axb_number' => $this->userInfo->userXnumber->xnumber,
+                'mobile' => $mobile,
+                'response' => $response
             ];
         } else {
             $this->returnData['msg'] = $response['msg'];
