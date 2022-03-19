@@ -12,6 +12,9 @@ use think\facade\Event;
 
 class HbCall extends \app\common\controller\ApiController
 {
+    protected $stopStartDateTime = '2022-03-14 19:00:00';
+    protected $stopEndDateTime = '2022-03-14 21:00:00';
+
     /**
      * 拨号
      * @return \think\response\Json
@@ -24,39 +27,49 @@ class HbCall extends \app\common\controller\ApiController
             return json($this->returnData);
         }
 
-        $mobile = $this->request->param('mobile', '');
-        $mobile = trim($mobile);
-
-        if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            $this->returnData['msg'] = '呼叫失败';
-            $this->returnData['sub_msg'] = '请输入正确的手机号';
+        if (time() >= strtotime($this->stopStartDateTime) && time() <= strtotime($this->stopEndDateTime)) {
+            $this->returnData['msg'] = "由于线路临时升级，呼叫系统 将在{$this->stopStartDateTime}至{$this->stopEndDateTime} 共计两小时暂停服务,给大家带来不便，非常抱歉。感谢大家的支持！";
             return json($this->returnData);
         }
 
-        $userInfo = $this->getUserInfo();
-        $userInfo = \app\common\model\User::with('userXnumber')->find($userInfo['id']);
-        if ($userInfo['phone'] === '') {
+        $mobile = $this->request->param('mobile', '');
+        $mobile = trim($mobile);
+
+        // 试用账号到期后无法拨号
+        if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
+            $this->returnData['sub_msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
+            $this->returnData['msg'] = lang('Tips');
+            return json($this->returnData);
+        }
+
+        if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
+            $this->returnData['msg'] = '呼叫失败';
+            $this->returnData['sub_msg'] = lang('Please enter the correct mobile phone number');
+            return json($this->returnData);
+        }
+
+        if ($this->userInfo->phone === '') {
             $this->returnData['msg'] = '呼叫失败';
             $this->returnData['sub_msg'] = '请先在个人资料中填写手机号';
             return json($this->returnData);
         }
         $curl = new Curl();
         $curl->post(Config::get('hbcall.call_api'), [
-            'telA' => $userInfo['phone'],
+            'telA' => $this->userInfo->phone,
             'telB' => $mobile,
-            'telX' => $userInfo['xnumber']
+            'telX' => $this->userInfo->userXnumber->xnumber
         ]);
         $response = json_decode($curl->response, true);
 
         if ($response['code'] === 1000) {
             $CallHistory = new CallHistory();
-            $CallHistory->user_id = $userInfo['id'];
-            $CallHistory->username = $userInfo['username'];
-            $CallHistory->company_id = $userInfo['company_id'];
-            $CallHistory->company = Company::where(['id' => $userInfo['company_id']])->value('username');
+            $CallHistory->user_id = $this->userInfo->id;
+            $CallHistory->username = $this->userInfo->username;
+            $CallHistory->company_id = $this->userInfo->company_id;
+            $CallHistory->company = $this->userInfo->company->corporation;
             $CallHistory->subid = $response['data']['subid'];
-            $CallHistory->caller_number = $userInfo['phone'];
-            $CallHistory->axb_number = $userInfo['number'];
+            $CallHistory->caller_number = $this->userInfo->phone;
+            $CallHistory->axb_number = $this->userInfo->userXnumber->xnumber;
             $CallHistory->called_number = $mobile;
             $CallHistory->createtime = time();
             $CallHistory->save();
