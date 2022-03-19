@@ -31,12 +31,21 @@ class CompanyController extends \app\BaseController
 //        $this->view->engine()->layout('layout');
         $this->userInfo = Company::withCount('user')->findOrEmpty(Session::get('company.id'));
 
-        if (!$this->userInfo->isEmpty() && !$this->userInfo->getData('status') && ($this->request->action !== 'logout')) {
+        if (!$this->userInfo->isEmpty() && !$this->userInfo->getData('status') && ($this->request->action() !== 'logout')) {
             showAlert(lang('Account is locked'), [
                 'end' => 'function () {
                     location.href = "' . url('/index/logout') . '";
                 }'
             ]);
+        }
+
+        if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
+            showAlert(lang('Account is locked'), [
+                'end' => 'function () {
+                    location.href = "' . url('/index/logout') . '";
+                }'
+            ]);
+            exit();
         }
 
         $this->view->assign('user', $this->userInfo);
