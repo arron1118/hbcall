@@ -10,8 +10,7 @@ use app\company\model\Company;
 use Curl\Curl;
 use think\db\exception\DbException;
 use think\facade\Config;
-use think\facade\Event;
-use think\facade\Session;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class HbCall extends \app\common\controller\HomeController
 {
@@ -218,6 +217,40 @@ class HbCall extends \app\common\controller\HomeController
         return $this->returnData;
     }
 
+    public function importExcel()
+    {
+        if ($this->request->isPost()) {
+            $file = request()->file('file');
+            $data = $this->readExcel($file);
+            try {
+                $res = (new Customer())->saveAll($data);
+
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = lang('The import was successful');
+                $this->returnData['data'] = $res;
+
+                return json($this->returnData);
+            } catch (DbException $dbException) {
+                $this->returnData['code'] = $dbException->getCode();
+                $this->returnData['msg'] = $dbException->getMessage();
+                $this->returnData['data'] = $dbException->getData();
+
+                return json($this->returnData);
+            }
+        }
+
+        return json($this->returnData);
+    }
+
+    protected function readExcel($file)
+    {
+        return readExcel($file, [
+            'createtime' => time(),
+            'company_id' => $this->userInfo->company_id,
+            'user_id' => $this->userInfo->id,
+        ]);
+    }
+
     public function deleteCustomer ()
     {
         if ($this->request->isPost()) {
@@ -226,13 +259,11 @@ class HbCall extends \app\common\controller\HomeController
                 'user_id' => $this->userInfo->id,
             ];
 
-            foreach ($data as $val) {
-                $where['phone'] = $val['phone'];
-                $whree['title'] = $val['title'];
-                Customer::where($where)->delete();
+            if (Customer::where($where)->whereIn('id', $data)->delete()) {
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '删除成功';
             }
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '删除成功';
+
             return json($this->returnData);
         }
 

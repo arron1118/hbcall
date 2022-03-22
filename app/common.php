@@ -166,3 +166,32 @@ function getLayuiFiles()
 <script src="/static/js/lay-config.js"></script>
 SCRIPT;
 }
+
+
+if (!function_exists('readExcel')) {
+    function readExcel($file, $appendColumns = [])
+    {
+        $read = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+        $spreadsheet = $read->load($file);
+        $sheet = $spreadsheet->getActiveSheet();
+        $highestColumn = $sheet->getHighestColumn();
+        $highestRow = $sheet->getHighestRow();
+        $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
+        $log = [];
+
+        for ($i = 2; $i < $highestRow; $i++) {
+            $title = $sheet->getCellByColumnAndRow(1, $i)->getValue();
+            $phone = $sheet->getCellByColumnAndRow(2, $i)->getValue();
+            $a = array_merge($appendColumns, [
+                'title' => $title,
+                'phone' => $phone,
+            ]);
+            array_push($log, $a);
+        }
+
+        return $log;
+    }
+}
+
+
+

@@ -436,7 +436,7 @@
                             class: 'list-group-item list-group-item-action',
                             text: '删除',
                             click: function () {
-                                $.post('{:url("/HbCall/deleteCustomer")}', { customerList: [item] }, res => {
+                                $.post('{:url("/HbCall/deleteCustomer")}', { customerList: [item.id] }, res => {
                                     let icon = 0;
                                     if (res.code === 1) {
                                         icon = 1;
@@ -454,6 +454,9 @@
                     $('html body').append(ts)
                 }
             }).append($('<div />', {
+                class: 'customer-id',
+                'data-id': item.id,
+            })).append($('<div />', {
                 class: 'phone col-6 text-truncate',
                 text: item.title,
                 alt: item.title
@@ -490,26 +493,40 @@
                 </div>`
             })
         })
+        let loading = null;
         upload.render({
             elem: '#importExcel',
-            url: '',
+            url: '{:url("/HbCall/importExcel")}',
             accept: 'file', //普通文件
             exts: 'xls|excel|xlsx', //导入表格
-            auto: false,  //选择文件后不自动上传
+            auto: true,  //选择文件后不自动上传
             before: function (obj) {
-                layer.load(); //上传loading
+                loading = layer.load(); //上传loading
             },
             // 选择文件回调
             choose: function (obj) {
-                let files = obj.pushFile();
-                let fileArr = Object.values(files);// 注意这里的数据需要是数组，所以需要转换一下
-                // 用完就清理掉，避免多次选中相同文件时出现问题
-                for (let index in files) {
-                    if (files.hasOwnProperty(index)) {
-                        delete files[index];
-                    }
+                // let files = obj.pushFile();
+                // let fileArr = Object.values(files);// 注意这里的数据需要是数组，所以需要转换一下
+                // // 用完就清理掉，避免多次选中相同文件时出现问题
+                // for (let index in files) {
+                //     if (files.hasOwnProperty(index)) {
+                //         delete files[index];
+                //     }
+                // }
+                // uploadExcel(fileArr); // 如果只需要最新选择的文件，可以这样写： uploadExcel([files.pop()])
+            },
+            done: function (res) {
+                layer.close(loading);
+                let icon = 0;
+                if (res.code === 1) {
+                    icon = 1;
+                    customerContainer.html('')
+                    $.each(res.data, (index, item) => {
+                        customerContainer.prepend(createCustomerItem(item))
+                    })
                 }
-                uploadExcel(fileArr); // 如果只需要最新选择的文件，可以这样写： uploadExcel([files.pop()])
+
+                return layer.msg(res.msg, {icon: icon, time: 3000})
             },
             error: function () {
                 setTimeout(function () {
@@ -642,7 +659,14 @@
             }
         }
         $('.clear-customer').on('click', function () {
-            clearCustomer(customerList)
+            // clearCustomer(customerList)
+            const customerList = customerContainer.find('.customer-id');
+            let customerIds = [];
+            $.each(customerList, (index, item) => {
+                let cid = $(item).data('id')
+                customerIds.push(cid)
+            })
+            clearCustomer(customerIds)
         })
 
         let clearCustomer = function (customer) {
