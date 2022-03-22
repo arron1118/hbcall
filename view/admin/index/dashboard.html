@@ -240,7 +240,7 @@
                                 source: res.data
                             }
                         ],
-                        // legend: {},
+                        legend: {},
                         tooltip: {
                             trigger: 'axis',
                         },
@@ -275,6 +275,26 @@
                                 encode: {
                                     x: 'datetime',
                                     y: 'sum'
+                                },
+                                areaStyle: {
+                                }
+                            },
+                            {
+                                name: '时间(分)',
+                                type: 'line',
+                                encode: {
+                                    x: 'datetime',
+                                    y: 'duration'
+                                },
+                                areaStyle: {
+                                }
+                            },
+                            {
+                                name: '消费(￥)',
+                                type: 'line',
+                                encode: {
+                                    x: 'datetime',
+                                    y: 'expense'
                                 },
                                 areaStyle: {
                                 }

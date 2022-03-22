@@ -82,20 +82,31 @@ class Index extends AdminController
         if ($this->request->isPost()) {
             $hours = $this->request->param('hours', 7);
             $sql = <<<SQL
-select date_format(t3.datetime, '%m-%d %H:%i'), max(t3.sum) as sum
+select date_format(t3.datetime, '%m-%d %H:%i') as datetime, max(t3.sum) as sum, max(t3.duration) as duration, max(t3.expense) as expense
 from (
-         SELECT date_format(@cdate := date_add(@cdate, interval -1 hour), '%Y-%m-%d %H') datetime, 0 as sum
+         SELECT date_format(@cdate := date_add(@cdate, interval -1 hour), '%Y-%m-%d %H') datetime,
+                0 as                                                                     sum,
+                0 as                                                                     duration,
+                0 as expense
          from (SELECT @cdate := DATE_ADD(date_format(current_timestamp(), '%Y-%m-%d %H'), INTERVAL 1 hour)
-               from hbcall_call_history
-               ) t1
+               from hbcall_call_history limit {$hours}
+              ) t1
          UNION ALL
-         select date_format(from_unixtime(createtime), '%Y-%m-%d %H') as datetime, count(*) as sum
-         from hbcall_call_history
-         GROUP BY datetime
+         select * from (select date_format(from_unixtime(ch.createtime), '%Y-%m-%d %H') as datetime,
+                count(*)                                              as sum,
+                ceiling(sum(call_duration) / 60)                      as duration,
+                               sum(cost)                                              as expense
+         from hbcall_call_history ch
+         left join
+         hbcall_expense e on e.call_history_id = ch.id
+         where date_format(from_unixtime(ch.createtime), '%Y-%m-%d %H') between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
+                            hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
+         GROUP BY datetime) temp
      ) t3
-where  t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours} hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
+where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -24
+                                   hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
 GROUP BY t3.datetime
-order by t3.datetime;
+order by t3.datetime desc;
 SQL;
 
             $res = Db::query($sql);
