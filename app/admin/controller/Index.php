@@ -77,6 +77,37 @@ class Index extends AdminController
         return json($this->returnData);
     }
 
+    public function getHoursData()
+    {
+        if ($this->request->isPost()) {
+            $hours = $this->request->param('hours', 7);
+            $sql = <<<SQL
+select date_format(t3.datetime, '%m-%d %H:%i'), max(t3.sum) as sum
+from (
+         SELECT date_format(@cdate := date_add(@cdate, interval -1 hour), '%Y-%m-%d %H') datetime, 0 as sum
+         from (SELECT @cdate := DATE_ADD(date_format(current_timestamp(), '%Y-%m-%d %H'), INTERVAL 1 hour)
+               from hbcall_call_history
+               ) t1
+         UNION ALL
+         select date_format(from_unixtime(createtime), '%Y-%m-%d %H') as datetime, count(*) as sum
+         from hbcall_call_history
+         GROUP BY datetime
+     ) t3
+where  t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours} hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
+GROUP BY t3.datetime
+order by t3.datetime;
+SQL;
+
+            $res = Db::query($sql);
+            $this->returnData['data'] = $res;
+            $this->returnData['msg'] = 'success';
+            $this->returnData['code'] = 1;
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
+
     public function getTopList()
     {
         if ($this->request->isPost()) {

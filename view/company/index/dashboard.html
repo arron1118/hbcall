@@ -121,7 +121,7 @@
 </div>
 
 <div class="container-fluid">
-    <div class="row mb-3">
+    <div class="row mb-sm-3 mb-xl-0">
         <div class="col-xl-7 col-lg-12 mb-sm-3 bg-white rounded-3 shadow-sm">
             <div class="row p-3">
                 <div class="col-lg-6 col-12 mb-sm-3 h-100">
@@ -174,6 +174,15 @@
         </div>
     </div>
 </div>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col bg-white rounded-3 shadow-sm py-3">
+            <div id="callChart" class="h-100" style="height: 350px;"></div>
+        </div>
+    </div>
+</div>
+
 {/block}
 {block name="js"}
 <script src="__STATIC__/js/jquery.rotate.js"></script>
@@ -190,8 +199,10 @@
         miniTab.listen();
 
         let chart = echarts.init($('#historyChart')[0])
+        let callChart = echarts.init($('#callChart')[0])
         window.onresize = function (e) {
             chart.resize();
+            callChart.resize();
         }
 
         let getChartData = function () {
@@ -225,6 +236,66 @@
         };
 
         getChartData();
+
+        // 近几小时的记录
+        let h = 12
+        let getCallChartData = function () {
+            $.post('{:url("/Index/getHoursData")}', { hours: h }, function (res) {
+                if (res.code === 1) {
+                    callChart.setOption({
+                        title: {
+                            text: `近${h}小时拨号统计`,
+                        },
+                        dataset: [
+                            {
+                                source: res.data
+                            }
+                        ],
+                        // legend: {},
+                        tooltip: {
+                            trigger: 'axis',
+                        },
+                        toolbox: {
+                            feature: {
+                                restore: { title: '还原' },
+                                saveAsImage: { title: '保存图片' },
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            axisLabel: {
+                                // rotate: 45
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            boundaryGap: [0, '100%'],
+                            // max: 'dataMax'
+                        },
+                        grid: {
+                            bottom: 10,
+                            left: 20,
+                            right: 20,
+                            containLabel: true
+                        },
+                        series: [
+                            {
+                                name: '拨号次数',
+                                type: 'line',
+                                encode: {
+                                    x: 'datetime',
+                                    y: 'sum'
+                                },
+                                areaStyle: {
+                                }
+                            }
+                        ]
+                    })
+                }
+            })
+        }
+        getCallChartData();
 
         let getTopData = function () {
             $.post('{:url("/Index/getTopList")}', {}, function (res) {

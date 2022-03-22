@@ -10,60 +10,6 @@
 {block name="body"}
 
 <div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
-    <!--<div class="row mb-2">
-        <div class="col-md-5 col-sm-12 pb-4">
-            <div class="card border-0 p-0 border-end">
-                <div class="card-body py-0">
-                    <p class="card-title mb-4 fw-bold"> Hi，您好<span class="text-primary">{$user.username}</span>！</p>
-                    <div class="row">
-                        <div class="col-3">
-                            <img src="__STATIC__/images/dashuser.png" style="max-height: 80px;">
-                        </div>
-                        <div class="col-4">
-                            <div class="mb-4">账号：<span class="fw-bold">{$user.username}</span></div>
-                            <div> 手机：<span class="fw-bold">***********</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-12 text-center my-auto">
-            <div class="card border-0 p-0 border-end">
-                <div class="card-body py-0">
-                    <p class="card-title">当前余额/元</p>
-                    <h5 class="card-text my-3 text-success"><i class="fa fa-yen-sign me-2"></i>{$user.balance??''}</h5>
-                    <a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理"
-                       class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill">
-                        <i class="fa fa-wallet me-2"></i>
-                        充值
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-sm-12">
-            <div class="card border-0">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <div class="d-flex flex-row align-items-end">
-                                <img src="__STATIC__/images/22.png" style="max-height: 78px;">
-                                <div class="ms-3">
-                                    <p class="mb-0">客服咨询</p>
-                                    <p class="fw-bold mb-0">13622850769</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="text-center d-flex flex-row align-items-center">
-                                <img src="__STATIC__/images/xiaoqiang.png" style="max-height: 78px;">
-                                <p class="mb-0 ms-3">微信咨询</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>-->
     <div class="row mb-3 py-3 ">
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-center justify-content-center">
             <div>
@@ -130,7 +76,7 @@
 </div>
 
 <div class="container-fluid">
-    <div class="row mb-3">
+    <div class="row mb-sm-3 mb-xl-0">
         <div class="col-xl-7 col-lg-12 mb-sm-3 bg-white rounded-3 shadow-sm">
             <div class="row p-3">
                 <div class="col-lg-6 col-12 mb-sm-3 h-100">
@@ -183,6 +129,15 @@
         </div>
     </div>
 </div>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col bg-white rounded-3 shadow-sm py-3">
+            <div id="callChart" class="h-100" style="height: 350px;"></div>
+        </div>
+    </div>
+</div>
+
 {/block}
 {block name="js"}
 <!--<script src="__STATIC__/js/jquery.rotate.js"></script>-->
@@ -199,8 +154,10 @@
         miniTab.listen();
 
         let chart = echarts.init($('#historyChart')[0])
+        let callChart = echarts.init($('#callChart')[0])
         window.onresize = function (e) {
             chart.resize();
+            callChart.resize();
         }
 
         let getDateTime = function (time) {
@@ -268,6 +225,66 @@
         };
 
         getChartData();
+
+        // 近几小时的记录
+        let h = 12
+        let getCallChartData = function () {
+            $.post('{:url("/Index/getHoursData")}', { hours: h }, function (res) {
+                if (res.code === 1) {
+                    callChart.setOption({
+                        title: {
+                            text: `近${h}小时拨号统计`,
+                        },
+                        dataset: [
+                            {
+                                source: res.data
+                            }
+                        ],
+                        // legend: {},
+                        tooltip: {
+                            trigger: 'axis',
+                        },
+                        toolbox: {
+                            feature: {
+                                restore: { title: '还原' },
+                                saveAsImage: { title: '保存图片' },
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            axisLabel: {
+                                // rotate: 45
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            boundaryGap: [0, '100%'],
+                            // max: 'dataMax'
+                        },
+                        grid: {
+                            bottom: 10,
+                            left: 20,
+                            right: 20,
+                            containLabel: true
+                        },
+                        series: [
+                            {
+                                name: '拨号次数',
+                                type: 'line',
+                                encode: {
+                                    x: 'datetime',
+                                    y: 'sum'
+                                },
+                                areaStyle: {
+                                }
+                            }
+                        ]
+                    })
+                }
+            })
+        }
+        getCallChartData();
 
         let getTopData = function () {
             $.post('{:url("/Index/getTopList")}', {}, function (res) {
