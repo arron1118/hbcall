@@ -106,7 +106,7 @@ from (
 where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -24
                                    hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
 GROUP BY t3.datetime
-order by t3.datetime desc;
+order by t3.datetime ;
 SQL;
 
             $res = Db::query($sql);
