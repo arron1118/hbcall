@@ -127,6 +127,7 @@ class CallHistory
 
                                 // 扣费
                                 $company->balance = $company->balance - $ExpenseModel->cost;
+                                $company->expense = $company->expense + $ExpenseModel->cost;
                                 $company->save();
                             }
                         } else {

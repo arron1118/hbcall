@@ -135,6 +135,7 @@ SQL;
                 ->where('company_id', $this->userInfo->id)
                 ->withSum('expense', 'cost')
                 ->withSum(['expense' => 'duration_sum'], 'duration')
+                ->field('username')
                 ->order('callHistory_count', 'desc')
                 ->limit(5)
                 ->select();

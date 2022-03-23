@@ -83,13 +83,13 @@
                 {type: "checkbox", width: 50},
                 {field: 'username', title: '账号'},
                 {field: 'ration', title: '座席', align: "center", edit: 'text'},
-                {field: 'limit_user', title: '限制用户数量', align: "center", edit: 'text'},
-                {field: 'user_count', title: '已开通用户', align: "center"},
-                {field: 'rate', title: '费率(￥/元)', align: "center", edit: 'text'},
-                {field: 'balance', title: '余额(￥/元)', align: "center", templet: function (row) {
+                {field: 'limit_user', title: '限制用户数量', align: "center", edit: 'text', sort: true },
+                {field: 'user_count', title: '已开通用户', align: "center", sort: true },
+                {field: 'rate', title: '费率(￥/元)', align: "center", edit: 'text', sort: true },
+                {field: 'balance', title: '余额(￥/元)', align: "center", sort: true, templet: function (row) {
                     return row.balance < 0 ? '<div class="layui-bg-red">' + row.balance + '</div>' : row.balance;
                     }},
-                {field: 'expense_sum', title: '总消费', align: 'center'},
+                {field: 'expense_sum', title: '总消费', align: 'center', sort: true },
                 {field: 'logintime', title: '最后登录', align: "center"},
                 {field: 'status', title: '状态', align: "center", templet: function (row) {
                     // return `<span class="${row.status === '正常' ? 'text-info' : 'text-danger'}">${row.status}</span>`

@@ -96,6 +96,14 @@ class HbCall extends \app\common\controller\HomeController
         $mobile = trim($this->request->param('mobile', ''));
         $customerId = $this->request->param('customerId', 0);
 
+        // 不是试用账号且欠费无法拨号
+        if (!$this->userInfo->company->getData('is_test') && $this->userInfo->company->getData('balance') <= 0) {
+            $this->returnData['msg'] = lang('您的余额已经不足，为了不影响呼叫，请联系管理员及时充值！');
+            $this->returnData['info'] = lang('Tips');
+            $this->returnData['status'] = 0;
+            return json($this->returnData);
+        }
+
         // 试用账号到期后无法拨号
         if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
             $this->returnData['msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
