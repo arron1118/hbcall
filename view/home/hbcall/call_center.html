@@ -13,14 +13,14 @@
         <div class="col-12 col-lg-7 mb-3">
             <div class="layui-tab layui-tab-card">
                 <ul class="layui-tab-title">
-                    <li class="layui-this">历史记录</li>
-                    <li>客户管理</li>
+<!--                    <li class="layui-this">历史记录</li>-->
+                    <li class="layui-this">客户管理</li>
                 </ul>
                 <div class="layui-tab-content p-3 pt-0 overflow-scroll" style="max-height: 750px;">
+<!--                    <div class="layui-tab-item layui-show">-->
+<!--                        <div class="call-history-list"></div>-->
+<!--                    </div>-->
                     <div class="layui-tab-item layui-show">
-                        <div class="call-history-list"></div>
-                    </div>
-                    <div class="layui-tab-item">
                         <div class="import-description mb-3">
                             <button class="btn btn-primary btn-sm" id="importExcel">
                                 <i class="fa fa-file-import"></i> 导入客户
@@ -351,18 +351,18 @@
         }
 
         // 呼叫历史
-        $.post('{:url("/hbcall/getCallHistory")}', {}, function (res) {
-            if (res.code === 1) {
-                let div = $('<div />', {
-                    class: 'list-group list-group-flush'
-                });
-                res.rows.forEach((item, index) => {
-                    div.append(createItem(item))
-                })
-
-                $('.call-history-list').append(div)
-            }
-        })
+        // $.post('{:url("/hbcall/getCallHistory")}', {}, function (res) {
+        //     if (res.code === 1) {
+        //         let div = $('<div />', {
+        //             class: 'list-group list-group-flush'
+        //         });
+        //         res.rows.forEach((item, index) => {
+        //             div.append(createItem(item))
+        //         })
+        //
+        //         $('.call-history-list').append(div)
+        //     }
+        // })
         // 创建历史列表
         let createItem = function (item) {
             return $('<div />', {

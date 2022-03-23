@@ -92,18 +92,18 @@ from (
                from hbcall_call_history limit {$hours}
               ) t1
          UNION ALL
-         select * from (select date_format(from_unixtime(ch.createtime), '%Y-%m-%d %H') as datetime,
+         select * from (select from_unixtime(ch.createtime, '%Y-%m-%d %H') as datetime,
                 count(*)                                              as sum,
                 ceiling(sum(call_duration) / 60)                      as duration,
                                sum(cost)                                              as expense
          from hbcall_call_history ch
          left join
          hbcall_expense e on e.call_history_id = ch.id
-         where date_format(from_unixtime(ch.createtime), '%Y-%m-%d %H') between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
+         where from_unixtime(ch.createtime, '%Y-%m-%d %H') between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
                             hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
          GROUP BY datetime) temp
      ) t3
-where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -24
+where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
                                    hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
 GROUP BY t3.datetime
 order by t3.datetime ;
@@ -132,6 +132,7 @@ SQL;
                 }])
                 ->withSum('expense', 'cost')
                 ->withSum(['expense' => 'duration_sum'], 'duration')
+                ->field('corporation')
                 ->order('callHistory_count', 'desc')
                 ->limit(5)
                 ->select();
