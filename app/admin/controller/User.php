@@ -35,6 +35,7 @@ class User extends \app\common\controller\AdminController
 
             $total = UserModel::where($map)->count();
             $userList = UserModel::withCount('user')
+                ->with(['companyXnumber' => ['numberStore']])
                 ->hidden(['salt'])
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
