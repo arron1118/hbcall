@@ -18,7 +18,7 @@
         {
           "title": "立即拨号",
           "href": "hbcall/callCenter.html",
-          "icon": "fa fa-phone",
+          "icon": "fa fa-mobile-retro",
           "target": "_self"
         },
         {
@@ -30,7 +30,7 @@
         {
           "title": "基本资料",
           "href": "user/profile.html",
-          "icon": "fa fa-file-alt",
+          "icon": "fa fa-id-card",
           "target": "_self"
         },
         {

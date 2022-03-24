@@ -81,6 +81,16 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label class="layui-form-label" for="xnumber">小号</label>
+                    <div class="layui-input-block" id="xnumber">
+                        <select name="number_store_id" lay-filter="required">
+                            {foreach $numberList as $val}
+                                <option value="{$val.id}" {if $userInfo->companyXnumber->number_store_id === $val.id}selected{/if}>{$val.number}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
                     <label class="layui-form-label" for="rate">费率(元)</label>
                     <div class="layui-input-block" id="rate">
                         <input type="number" name="rate" min="0" placeholder="0"

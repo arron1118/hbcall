@@ -18,13 +18,13 @@
         {
           "title": "控制台",
           "href": "index/dashboard.html",
-          "icon": "fa fa-tachometer-alt",
+          "icon": "fa fa-gauge",
           "target": "_self"
         },
         {
           "title": "用户管理",
           "href": "user/index.html",
-          "icon": "fa fa-users",
+          "icon": "fa-solid fa-users",
           "target": "_self"
         },
         {
@@ -36,19 +36,25 @@
         {
           "title": "充值管理",
           "href": "payment/index.html",
-          "icon": "fa fa-yen-sign",
+          "icon": "fa fa-money-check-dollar",
           "target": "_self"
         },
         {
-          "title": "通话记录报表",
+          "title": "通话报表",
           "href": "report/index.html",
-          "icon": "fa fa-clock",
+          "icon": "fa fa-chart-area",
           "target": "_self"
         },
         {
           "title": "资讯",
           "href": "news/index.html",
-          "icon": "fa fa-clock",
+          "icon": "fa fa-newspaper",
+          "target": "_self"
+        },
+        {
+          "title": "号码管理",
+          "href": "xnumberStore/index.html",
+          "icon": "fa fa-address-book",
           "target": "_self"
         }
       ]

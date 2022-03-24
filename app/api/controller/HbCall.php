@@ -57,7 +57,7 @@ class HbCall extends \app\common\controller\ApiController
         $curl->post(Config::get('hbcall.call_api'), [
             'telA' => $this->userInfo->phone,
             'telB' => $mobile,
-            'telX' => $this->userInfo->userXnumber->xnumber
+            'telX' => $this->userInfo->userXnumber->numberStore->number
         ]);
         $response = json_decode($curl->response, true);
 
@@ -69,7 +69,7 @@ class HbCall extends \app\common\controller\ApiController
             $CallHistory->company = $this->userInfo->company->corporation;
             $CallHistory->subid = $response['data']['subid'];
             $CallHistory->caller_number = $this->userInfo->phone;
-            $CallHistory->axb_number = $this->userInfo->userXnumber->xnumber;
+            $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
             $CallHistory->called_number = $mobile;
             $CallHistory->createtime = time();
             $CallHistory->save();
@@ -77,7 +77,7 @@ class HbCall extends \app\common\controller\ApiController
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = '拨号成功';
             $this->returnData['data'] = [
-                'axb_number' => $this->userInfo->userXnumber->xnumber,
+                'axb_number' => $this->userInfo->userXnumber->numberStore->number,
                 'mobile' => $mobile,
                 'response' => $response
             ];

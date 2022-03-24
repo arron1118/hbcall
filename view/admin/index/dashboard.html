@@ -230,10 +230,14 @@
         let h = 12
         let getCallChartData = function () {
             $.post('{:url("/Index/getHoursData")}', { hours: h }, function (res) {
+                let day = h + '小时'
+                if (h % 24 === 0) {
+                    h = h / 24 + '天'
+                }
                 if (res.code === 1) {
                     callChart.setOption({
                         title: {
-                            text: `近${h}小时拨号统计`,
+                            text: `近${h}拨号统计`,
                         },
                         dataset: [
                             {
@@ -314,7 +318,7 @@
                         .append($('<td />', { text: item.callHistory_count }))
                         .append($('<td />', { text: item.callHistory_pickup_count }))
                         .append($('<td />', { text: item.duration_sum }))
-                        .append($('<td />', { text: item.expense_sum }))
+                        .append($('<td />', { text: item.expense }))
                     )
                 })
             })

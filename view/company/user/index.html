@@ -26,7 +26,7 @@
                         <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
                     </div>
                     <div class="layui-inline">
-                        <button type="reset" class="layui-btn layui-btn-primary">重 置</button>
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置</button>
                     </div>
                 </div>
             </form>
@@ -38,7 +38,7 @@
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
 
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">开通账号</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加</button>
 <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
             </div>
         </script>
@@ -46,8 +46,8 @@
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
 
         <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i> </a>
         </script>
 
     </div>
@@ -84,7 +84,7 @@
                 {type: "checkbox", width: 50},
                 {field: 'username', title: '账号'},
                 {field: 'phone', title: '手机号', align: "center"},
-                {field: 'xnumber', title: '小号', align: "center"},
+                {field: 'number', title: '小号', align: "center",},
                 {field: 'call_history_count', title: '呼叫总数', align: "center", sort: true },
                 {field: 'expense_sum', title: '总消费', align: "center", sort: true },
                 {field: 'logintime', title: '登录时间', align: "center"},

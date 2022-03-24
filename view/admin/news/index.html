@@ -29,7 +29,7 @@
                         </button>
                     </div>
                     <div class="layui-inline">
-                        <div class="layui-btn" id="importExcel">批量导入</div>
+                        <div class="layui-btn" id="importExcel"><i class="fa fa-file-import"></i> 批量导入</div>
                     </div>
                 </div>
             </form>
@@ -40,8 +40,8 @@
     <div class="layuimini-main">
         <script type="text/html" id="toolbarNews">
             <div class="layui-btn-container">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">发布新闻</button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 发布</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="fa fa-trash-can"></i> 删除</button>
             </div>
         </script>
 
@@ -49,8 +49,8 @@
                lay-data="{id: 'newsTableFilter'}"></table>
 
         <script type="text/html" id="newsTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del">删除</a>
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i> </a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" title="删除"><i class="fa fa-trash-can"></i> </a>
         </script>
 
     </div>

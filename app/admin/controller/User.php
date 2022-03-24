@@ -35,7 +35,6 @@ class User extends \app\common\controller\AdminController
 
             $total = UserModel::where($map)->count();
             $userList = UserModel::withCount('user')
-                ->withSum('expense', 'cost')
                 ->hidden(['salt'])
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
@@ -78,21 +77,25 @@ class User extends \app\common\controller\AdminController
             $userModel = new UserModel();
 
             if ($userModel->save($params)) {
+                $userModel->companyXnumber()->save(['number_store_id' => $params['number_store_id']]);
+
                 $this->returnData['msg'] = '开通成功';
                 $this->returnData['code'] = 1;
 
                 // 设置座席
-                if ($params['ration'] > 0) {
-                    NumberStore::where('status', '=', '0')
-                        ->limit($params['ration'])
-                        ->update(['company_id' => $userModel->id, 'status' => 1]);
-                }
+//                if ($params['ration'] > 0) {
+//                    NumberStore::where('status', '=', '0')
+//                        ->limit($params['ration'])
+//                        ->update(['company_id' => $userModel->id, 'status' => 1]);
+//                }
             } else {
                 $this->returnData['msg'] = '开通失败';
             }
 
             return json($this->returnData);
         }
+        $numberList = NumberStore::select();
+        $this->view->assign('numberList', $numberList);
 
         return $this->view->fetch();
     }
@@ -144,28 +147,28 @@ class User extends \app\common\controller\AdminController
             }
 
             // 设置座席
-            if ($data['ration'] > 0) {
-                $hasNumbers = NumberStore::where('company_id', '=', $userId)->count();
-                $leftNumbers = NumberStore::where('status', '=', '0')->count();
-
-                if ($hasNumbers < $data['ration']) {
-                    if ($leftNumbers < ($data['ration'] - $hasNumbers)) {
-                        $this->returnData['msg'] = '剩余座席不足';
-                        return json($this->returnData);
-                    }
-
-                    NumberStore::where('company_id', '=', '0')
-                        ->limit($data['ration'] - $hasNumbers)
-                        ->update(['company_id' => $userId, 'status' => 1]);
-                }
-
-                if ($hasNumbers > $data['ration']) {
-                    NumberStore::where('company_id', '=', $userId)
-                        ->limit($hasNumbers - $data['ration'])
-                        ->order('id desc')
-                        ->update(['company_id' => 0, 'status' => 0]);
-                }
-            }
+//            if ($data['ration'] > 0) {
+//                $hasNumbers = NumberStore::where('company_id', '=', $userId)->count();
+//                $leftNumbers = NumberStore::where('status', '=', '0')->count();
+//
+//                if ($hasNumbers < $data['ration']) {
+//                    if ($leftNumbers < ($data['ration'] - $hasNumbers)) {
+//                        $this->returnData['msg'] = '剩余座席不足';
+//                        return json($this->returnData);
+//                    }
+//
+//                    NumberStore::where('company_id', '=', '0')
+//                        ->limit($data['ration'] - $hasNumbers)
+//                        ->update(['company_id' => $userId, 'status' => 1]);
+//                }
+//
+//                if ($hasNumbers > $data['ration']) {
+//                    NumberStore::where('company_id', '=', $userId)
+//                        ->limit($hasNumbers - $data['ration'])
+//                        ->order('id desc')
+//                        ->update(['company_id' => 0, 'status' => 0]);
+//                }
+//            }
 
             if ($data['password'] && $data['password'] !== $userInfo->password) {
                 $userInfo->password = getEncryptPassword(trim($data['password']), $userInfo->salt);
@@ -176,12 +179,38 @@ class User extends \app\common\controller\AdminController
             $userInfo->limit_user = $data['limit_user'];
             $userInfo->status = isset($data['status']) && $data['status'];
             if ($userInfo->save()) {
+                // 更新企业小号关联表
+                if ($userInfo->companyXnumber) {
+                    $userInfo->companyXnumber->number_store_id = $data['number_store_id'];
+                    $userInfo->companyXnumber->save();
+                } else {
+                    $userInfo->companyXnumber()->save(['number_store_id' => $data['number_store_id']]);
+                }
+
+                // 更新用户小号关联表
+                if ($userInfo->user) {
+                    foreach ($userInfo->user as $item) {
+                        if ($item->userXnumber) {
+                            $item->userXnumber->number_store_id = $data['number_store_id'];
+                            $item->userXnumber->save();
+                        } else {
+                            $item->userXnumber()->save(['number_store_id' => $data['number_store_id']]);
+                        }
+                    }
+                }
+
+                $this->returnData['data'] = $userInfo->user;
+
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '更新完成';
             }
 
             return json($this->returnData);
         }
+
+        $numberList = NumberStore::select();
+        $this->view->assign('numberList', $numberList);
+
         $this->view->assign('userInfo', $userInfo);
         return $this->view->fetch();
     }

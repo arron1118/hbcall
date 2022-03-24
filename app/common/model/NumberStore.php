@@ -4,6 +4,8 @@
 namespace app\common\model;
 
 
+use app\company\model\Company;
+
 class NumberStore extends \think\Model
 {
 
@@ -25,5 +27,15 @@ class NumberStore extends \think\Model
     public function user()
     {
         return $this->belongsTo(\app\common\model\User::class)->bind(['number']);
+    }
+
+    public function companyXnumber()
+    {
+        return $this->hasMany(CompanyXnumber::class);
+    }
+
+    public function userXnumber()
+    {
+        return $this->hasMany(UserXnumber::class);
     }
 }

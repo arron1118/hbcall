@@ -95,6 +95,7 @@ class HbCall extends \app\common\controller\HomeController
 
         $mobile = trim($this->request->param('mobile', ''));
         $customerId = $this->request->param('customerId', 0);
+        $customer = Customer::find($customerId);
 
         // 不是试用账号且欠费无法拨号
         if (!$this->userInfo->company->getData('is_test') && $this->userInfo->company->getData('balance') <= 0) {
@@ -137,7 +138,7 @@ class HbCall extends \app\common\controller\HomeController
         $curl->post(Config::get('hbcall.call_api'), [
             'telA' => $this->userInfo->phone,   // 主叫
             'telB' => $mobile,    // 被叫
-            'telX' => $this->userInfo->userXnumber->xnumber,   // 小号
+            'telX' => $this->userInfo->userXnumber->numberStore->number,   // 小号
         ]);
         $response = json_decode($curl->response, true);
 
@@ -150,10 +151,15 @@ class HbCall extends \app\common\controller\HomeController
                 $CallHistory->company = $this->userInfo->company->corporation;
                 $CallHistory->subid = $response['data']['subid'];
                 $CallHistory->caller_number = $this->userInfo->phone;
-                $CallHistory->axb_number = $this->userInfo->userXnumber->xnumber;
+                $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
                 $CallHistory->called_number = $mobile;
                 $CallHistory->createtime = time();
                 $CallHistory->customer_id = $customerId;
+
+                if ($customer) {
+                    $CallHistory->customer = $customer->title;
+                }
+
                 $CallHistory->save();
             } catch (DbException $dbException) {
 

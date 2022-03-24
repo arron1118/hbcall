@@ -94,16 +94,17 @@ from (
                from hbcall_call_history limit {$hours}
               ) t1
          UNION ALL
-         select * from (select from_unixtime(ch.createtime, '%Y-%m-%d %H') as datetime,
-                count(*)                                              as sum,
-                ceiling(sum(call_duration) / 60)                      as duration,
-                               sum(cost)                                              as expense
-         from hbcall_call_history ch
-         left join
-         hbcall_expense e on e.call_history_id = ch.id
-         where ch.company_id = {$this->userInfo->id} and from_unixtime(ch.createtime, '%Y-%m-%d %H') between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
-                            hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
-         GROUP BY datetime) temp
+         select * from (select from_unixtime(temp.createtime, '%Y-%m-%d %H') as datetime,
+                      count(*)                                    as sum,
+                      sum(duration)            as duration,
+                      sum(cost)                                   as expense
+               from (select ch.id, ch.createtime, e.duration, e.cost from hbcall_call_history ch
+                                                                              inner join
+                                                                          hbcall_expense e on e.call_history_id = ch.id
+                     where from_unixtime(ch.createtime, '%Y-%m-%d %H') between date_add(
+                             date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
+                             hour) and date_format(current_timestamp(), '%Y-%m-%d %H')) as temp
+               GROUP BY datetime) temp
      ) t3
 where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
                                    hour) and date_format(current_timestamp(), '%Y-%m-%d %H')

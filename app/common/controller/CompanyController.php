@@ -29,7 +29,7 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
-        $this->userInfo = Company::withCount('user')->findOrEmpty(Session::get('company.id'));
+        $this->userInfo = Company::withCount('user')->with(['companyXnumber' => ['numberStore']])->findOrEmpty(Session::get('company.id'));
 
         if (!$this->userInfo->isEmpty() && !$this->userInfo->getData('status') && ($this->request->action() !== 'logout')) {
             showAlert(lang('Account is locked'), [

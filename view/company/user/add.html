@@ -95,10 +95,7 @@
                     <label class="layui-form-label">小号</label>
                     <div class="layui-input-block">
                         <select name="number_store_id" lay-verify="required">
-                            <option value=""></option>
-                            {foreach $axbNumbers as $val}
-                            <option value="{$val.id}">{$val.number}</option>
-                            {/foreach}
+                            <option value="{$user.companyXnumber.numberStore.id}">{$user.companyXnumber.numberStore.number}</option>
                         </select>
                     </div>
                 </div>

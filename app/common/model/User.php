@@ -28,12 +28,12 @@ class User extends \think\Model
 
     public function company()
     {
-        return $this->belongsTo(\app\company\model\Company::class, 'company_id');
+        return $this->belongsTo(\app\company\model\Company::class);
     }
 
     public function userXnumber()
     {
-        return $this->hasOne(UserXnumber::class, 'user_id')->bind(['xnumber']);
+        return $this->hasOne(UserXnumber::class)->bind(['number']);
     }
 
     public function callHistory()

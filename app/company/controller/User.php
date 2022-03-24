@@ -36,7 +36,7 @@ class User extends \app\common\controller\CompanyController
                 $map[] = ['phone', 'like', '%' . $phone . '%'];
             }
             $total = UserModel::where($map)->count();
-            $userList = UserModel::with('userXnumber')
+            $userList = UserModel::with(['userXnumber' => ['numberStore']])
                 ->hidden(['password', 'salt'])
                 ->withCount('callHistory')
                 ->withSum('expense', 'cost')
@@ -93,10 +93,8 @@ class User extends \app\common\controller\CompanyController
                 $this->returnData['msg'] = '开通成功';
                 $this->returnData['code'] = 1;
 
-                // 设置座席
-                if (!empty($params['number_store_id'])) {
-                    (new UserXnumber())->save(['user_id' => $userModel->id, 'xnumber' => $this->getAxbNumber($params['number_store_id'])]);
-                }
+                // 保存小号关联数据
+                $userModel->userXnumber()->save(['number_store_id' => $params['number_store_id']]);
             } else {
                 $this->returnData['msg'] = '开通失败';
             }
@@ -104,15 +102,13 @@ class User extends \app\common\controller\CompanyController
             return json($this->returnData);
         }
 
-        $this->view->assign('axbNumbers', $this->getAxbNumbers());
-
         return $this->view->fetch();
     }
 
     public function edit()
     {
         $userId = $this->request->param('id');
-        $userInfo = UserModel::with('userXnumber')->find($userId);
+        $userInfo = UserModel::find($userId);
 
         if ($this->request->isPost()) {
             $params = $this->request->param();
@@ -137,19 +133,17 @@ class User extends \app\common\controller\CompanyController
             $userInfo->phone = $params['phone'];
 
             if ($userInfo->save()) {
+                // 保存小号关联数据
+                if ($userInfo->userXnumber) {
+                    $userInfo->userXnumber->number_store_id = $params['number_store_id'];
+                    $userInfo->userXnumber->save();
+                } else {
+                    $userInfo->userXnumber()->save(['number_store_id' => $params['number_store_id']]);
+                }
+
                 $this->returnData['msg'] = '保存成功';
                 $this->returnData['code'] = 1;
-
-                // 设置座席
-                if (!empty($params['number_store_id'])) {
-                    $UserXnumber = UserXnumber::where('user_id', $userInfo->id)->find();
-                    if ($UserXnumber) {
-                        $UserXnumber->xnumber = $this->getAxbNumber($params['number_store_id']);
-                        $UserXnumber->save();
-                    } else {
-                        (new UserXnumber())->save(['xnumber' => $this->getAxbNumber($params['number_store_id']), 'user_id' => $userInfo->id]);
-                    }
-                }
+                $this->returnData['data'] = $userInfo->userXnumber;
             } else {
                 $this->returnData['msg'] = '保存失败';
             }
@@ -158,7 +152,6 @@ class User extends \app\common\controller\CompanyController
         }
 
         $this->view->assign('userInfo', $userInfo);
-        $this->view->assign('axbNumbers', $this->getAxbNumbers());
         return $this->view->fetch();
     }
 

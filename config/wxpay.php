@@ -6,7 +6,7 @@ return [
     'miniapp_id' => '', // 小程序 APPID
     'mch_id' => '1503645201',   // 商务号
     'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',    // 商务号KEY
-    'notify_url' => 'http://caller.hbosw.com/api/payment/notify',
+    'notify_url' => 'http://caller.hbosw.com/api/payment/notify',   // 回调地址
     'cert_client' => './cert/apiclient_cert.pem', // optional，退款等情况时用到
     'cert_key' => './cert/apiclient_key.pem', // optional，退款等情况时用到
     'log' => [ // optional
