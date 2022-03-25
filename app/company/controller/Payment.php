@@ -82,7 +82,7 @@ class Payment extends \app\common\controller\CompanyController
         $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($wxOrder);
         $qr = (new QRCode())->render($pay->code_url);
 //        echo '<img src="' . $qr->render($pay->code_url) . '" />';
-        $this->view->assign('payno', $orderNo);
+        $this->view->assign('payno', $data['orderNo']);
         $this->view->assign('qr', $qr);
         return $this->view->fetch();
     }
