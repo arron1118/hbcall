@@ -6,6 +6,7 @@ namespace app\company\controller;
 
 use app\common\model\CallHistory;
 use app\common\model\User;
+use app\common\traits\CallHistoryTrait;
 use Curl\Curl;
 use think\facade\Config;
 use think\facade\Event;
@@ -14,6 +15,7 @@ use think\facade\Db;
 
 class HbCall extends \app\common\controller\CompanyController
 {
+    use CallHistoryTrait;
 
     public function callCenter()
     {
@@ -23,56 +25,6 @@ class HbCall extends \app\common\controller\CompanyController
     public function callHistoryList()
     {
         return $this->view->fetch('hbcall/history_list');
-    }
-
-    public function getHistoryList()
-    {
-        if ($this->request->isPost()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
-            $username = $this->request->param('username', '');
-            $userId = (int) $this->request->param('user_id', 0);
-            $startDate = $this->request->param('startDate', '');
-            $endDate = $this->request->param('endDate', '');
-            $operate = $this->request->param('operate', '');
-            $duration = $this->request->param('duration', '');
-            $op = [
-                'eq' => '=',
-                'gt' => '>',
-                'lt' => '<'
-            ];
-            $map = [
-                ['company_id', '=', $this->userInfo['id']],
-//                ['company_id', '=', 15],
-                ['caller_number', '<>', '']
-            ];
-
-            if ($username) {
-                $map[] = ['username', 'like', '%' . $username . '%'];
-            }
-
-            if ($userId > 0) {
-                $map[] = ['user_id', '=', $userId];
-            }
-
-            if ($startDate && $endDate) {
-                $map[] = ['createtime', 'between', [strtotime($startDate), strtotime($endDate)]];
-            }
-
-            if ($duration !== '' && $operate !== '') {
-                $map[] = ['call_duration', $op[$operate], $duration];
-            }
-
-            $total = CallHistory::where($map)->count();
-
-            $historyList = CallHistory::with(['expense', 'customer'])
-                ->where($map)
-                ->order('createtime DESC, id DESC')
-                ->limit(($page - 1) * $limit, $limit)
-                ->select();
-
-            return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
-        }
     }
 
     /**

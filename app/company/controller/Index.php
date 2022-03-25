@@ -9,6 +9,7 @@ use app\company\model\Company;
 use arron\Random;
 use think\facade\Db;
 use think\facade\Session;
+use think\response\View;
 
 class Index extends CompanyController
 {
@@ -37,9 +38,7 @@ class Index extends CompanyController
 
     public function dashboard()
     {
-//        dump(1000003.210 + 5.00);
-
-        $costs = getCosts(Session::get('company.id'));
+        $costs = getCosts($this->userInfo->id);
         $this->view->assign($costs);
         return $this->view->fetch();
     }

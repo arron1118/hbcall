@@ -3,6 +3,7 @@
 
 namespace app\company\controller;
 
+use app\common\traits\PaymentTrait;
 use chillerlan\QRCode\QRCode;
 use think\facade\Config;
 use think\facade\Event;
@@ -11,11 +12,12 @@ use think\facade\Session;
 use Yansongda\Pay\Pay;
 use Yansongda\Pay\Exceptions\GatewayException;
 
-
 class Payment extends \app\common\controller\CompanyController
 {
+    use PaymentTrait;
 
-    public function initialize() {
+    public function initialize()
+    {
         parent::initialize();
 
         $this->model = new \app\company\model\Payment();
@@ -35,8 +37,8 @@ class Payment extends \app\common\controller\CompanyController
     {
         if ($this->request->isPost()) {
             $cid = Session::get('company.id');
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
+            $page = (int)$this->request->param('page', 1);
+            $limit = (int)$this->request->param('limit', 10);
             $total = $this->model->count();
 
             $historyList = $this->model->where('company_id', '=', $cid)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
@@ -64,31 +66,17 @@ class Payment extends \app\common\controller\CompanyController
      */
     public function wxpay()
     {
-        $amount = (float) $this->request->param('amount', 0);
+        $amount = (float)$this->request->param('amount', 0);
         if ($amount <= 0) {
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
-        $orderNo = $this->request->param('payno', '');
-        $title = '余额充值';
-
-        if (!$orderNo) {
-            $orderNo = getOrderNo();
-            $order = [
-                'payno' => $orderNo,
-                'company_id' => Session::get('company.id'),
-                'title' => $title,
-                'amount' => $amount,
-                'pay_type' => 1,
-                'create_time' => time(),
-            ];
-            $this->model->save($order);
-        }
+        $data = $this->createOrder($amount);
 
         $wxOrder = [
-            'out_trade_no' => $orderNo,
-            'total_fee' => $amount * 100, // **单位：分**
-            'body' => '喵头鹰呼叫系统 - 余额充值',
+            'out_trade_no' => $data['orderNo'],
+            'total_fee' => $data['amount'] * 100, // **单位：分**
+            'body' => $data['title'],
         ];
 
         $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($wxOrder);
@@ -101,35 +89,22 @@ class Payment extends \app\common\controller\CompanyController
 
     public function alipay()
     {
-        $amount = (float) $this->request->param('amount', 0);
+        $amount = (float)$this->request->param('amount', 0);
         if ($amount <= 0) {
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
-        $orderNo = $this->request->param('payno', '');
-        $title = '余额充值';
-        if (!$orderNo) {
-            $orderNo = getOrderNo();
-            $order = [
-                'payno' => $orderNo,
-                'company_id' => Session::get('company.id'),
-                'title' => $title,
-                'amount' => $amount,
-                'pay_type' => 2,
-                'create_time' => time(),
-            ];
-            $this->model->save($order);
-        }
-
+        $data = $this->createOrder($amount);
         $alipayOrder = [
-            'out_trade_no' => $orderNo,
-            'total_amount' => $amount, // **单位：分**
-            'subject' => '喵头鹰呼叫系统 - ' . $title,
+            'out_trade_no' => $data['orderNo'],
+            'total_amount' => $data['amount'], // **单位：分**
+            'subject' => $data['title'],
         ];
 
         return Pay::alipay(Config::get('payment.alipay'))->web($alipayOrder)->send();
-//        dump($alipay);
     }
+
+
 
     public function alipayResult()
     {

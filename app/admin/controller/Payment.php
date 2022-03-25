@@ -25,8 +25,7 @@ class Payment extends \app\common\controller\AdminController
 
     public function index()
     {
-//        $data = Pay::alipay(Config::get('payment.alipay'))->find(['out_trade_no' => '202202281646030709550569']);
-//        dump($data);
+
         Event::trigger('Payment');
         return $this->view->fetch();
     }

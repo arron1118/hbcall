@@ -6,9 +6,12 @@ namespace app\common\controller;
 use app\company\model\Company;
 use think\facade\Session;
 use think\facade\View;
+use app\common\traits\CompanyTrait;
 
 class CompanyController extends \app\BaseController
 {
+    use CompanyTrait;
+
     protected $middleware = [\app\company\middleware\Check::class];
 
     protected $view = null;
