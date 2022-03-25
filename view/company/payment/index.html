@@ -94,8 +94,7 @@
 
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'gopay') {
-                let payType = obj.data.pay_type === '微信' ? 'wxpay' : (obj.data.pay_type === '支付宝' ? 'alipay' : 'wxpay');
-                pay(payType, obj.data.amount, obj.data.payno);
+                pay(obj.data.pay_type, obj.data.amount, obj.data.payno);
             }
         })
 
