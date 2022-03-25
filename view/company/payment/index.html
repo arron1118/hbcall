@@ -94,7 +94,8 @@
 
         table.on('tool(currentTableFilter)', function (obj) {
             if (obj.event === 'gopay') {
-                pay(obj.data.pay_type, obj.data.amount, obj.data.payno);
+                let payType = obj.data.pay_type === '微信' ? 1 : 2;
+                pay(payType, obj.data.amount, obj.data.payno);
             }
         })
 
