@@ -6,6 +6,7 @@ namespace app\admin\controller;
 use chillerlan\QRCode\QRCode;
 use think\Collection;
 use think\facade\Config;
+use think\facade\Db;
 use think\facade\Event;
 use think\facade\Session;
 use think\response\Json;
@@ -24,6 +25,8 @@ class Payment extends \app\common\controller\AdminController
 
     public function index()
     {
+//        $data = Pay::alipay(Config::get('payment.alipay'))->find(['out_trade_no' => '202202281646030709550569']);
+//        dump($data);
         Event::trigger('Payment');
         return $this->view->fetch();
     }
@@ -37,9 +40,24 @@ class Payment extends \app\common\controller\AdminController
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $total = $this->model->count();
+            $corporation = trim($this->request->param('corporation', ''));
+            $datetime = $this->request->param('datetime', '');
 
-            $historyList = $this->model::with('company')->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $where = [];
+            if ($corporation) {
+                $where[] = ['corporation', 'like', '%' . $corporation . '%'];
+            }
+
+            if ($datetime) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%Y-%m-%d")'), '=', $datetime];
+            }
+
+            $total = $this->model::where($where)->count();
+
+            $historyList = $this->model::where($where)
+                ->order('id DESC')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
     }
@@ -54,7 +72,7 @@ class Payment extends \app\common\controller\AdminController
     public function checkOrder()
     {
         $payno = $this->request->param('payno');
-        $res = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $payno]);
+        $res = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno]);
         return json($res);
     }
 
@@ -91,7 +109,7 @@ class Payment extends \app\common\controller\AdminController
             'body' => '喵头鹰呼叫系统 - 余额充值',
         ];
 
-        $pay = Pay::wechat(Config::get('wxpay'))->scan($wxOrder);
+        $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($wxOrder);
         $qr = (new QRCode())->render($pay->code_url);
 //        echo '<img src="' . $qr->render($pay->code_url) . '" />';
         $this->view->assign('payno', $orderNo);
@@ -127,8 +145,7 @@ class Payment extends \app\common\controller\AdminController
             'subject' => '喵头鹰呼叫系统 - ' . $title,
         ];
 
-        return Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
-//        dump($alipay);
+        return Pay::alipay(Config::get('payment.alipay'))->web($alipayOrder)->send();
     }
 
     public function alipayResult()

@@ -41,10 +41,10 @@ class Payment extends \app\common\controller\ApiController
             'subject' => '喵头鹰呼叫系统 - PC场景下单并支付测试',
         ];
 
-        /*$wxpay = Config::get('wxpay');
+        /*$wxpay = Config::get('payment.wxpay');
         dump($wxpay);
 
-        $pay = Pay::wechat(Config::get('wxpay'))->scan($order);
+        $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($order);
         dump($pay);
         $qr = new QRCode();
         echo '<img src="' . $qr->render($pay->code_url) . '" />';*/
@@ -55,7 +55,7 @@ class Payment extends \app\common\controller\ApiController
         // $pay->signType
         // 支付
 
-        return Pay::alipay(Config::get('alipay'))->web($order)->send();
+        return Pay::alipay(Config::get('payment.alipay'))->web($order)->send();
     }
 
     /**
@@ -65,7 +65,7 @@ class Payment extends \app\common\controller\ApiController
      */
     public function notify()
     {
-        $pay = Pay::wechat(Config::get('wxpay'));
+        $pay = Pay::wechat(Config::get('payment.wxpay'));
 
         try{
             $data = $pay->verify(); // 是的，验签就这么简单！
@@ -99,7 +99,7 @@ class Payment extends \app\common\controller\ApiController
 
     public function alipayNotify()
     {
-        $alipay = Pay::alipay(Config::get('alipay'));
+        $alipay = Pay::alipay(Config::get('payment.alipay'));
 
         try {
             $data = $alipay->verify();

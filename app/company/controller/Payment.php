@@ -54,7 +54,7 @@ class Payment extends \app\common\controller\CompanyController
     public function checkOrder()
     {
         $payno = $this->request->param('payno');
-        $res = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $payno]);
+        $res = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno]);
         return json($res);
     }
 
@@ -91,7 +91,7 @@ class Payment extends \app\common\controller\CompanyController
             'body' => '喵头鹰呼叫系统 - 余额充值',
         ];
 
-        $pay = Pay::wechat(Config::get('wxpay'))->scan($wxOrder);
+        $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($wxOrder);
         $qr = (new QRCode())->render($pay->code_url);
 //        echo '<img src="' . $qr->render($pay->code_url) . '" />';
         $this->view->assign('payno', $orderNo);
@@ -127,7 +127,7 @@ class Payment extends \app\common\controller\CompanyController
             'subject' => '喵头鹰呼叫系统 - ' . $title,
         ];
 
-        return Pay::alipay(Config::get('alipay'))->web($alipayOrder)->send();
+        return Pay::alipay(Config::get('payment.alipay'))->web($alipayOrder)->send();
 //        dump($alipay);
     }
 

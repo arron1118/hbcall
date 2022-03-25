@@ -9,14 +9,14 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">操作人</label>
+                        <label class="layui-form-label">企业名称</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="username" class="layui-input">
+                            <input type="text" name="corporation" class="layui-input">
                         </div>
                     </div>
 
                     <div class="layui-inline">
-                        <label class="layui-form-label">开始时间</label>
+                        <label class="layui-form-label">充值时间</label>
                         <div class="layui-input-inline">
                             <input type="text" name="datetime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
                         </div>
@@ -24,7 +24,7 @@
 
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-normal" lay-submit
-                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                                lay-filter="data-search-btn"><i class="fa fa-magnifying-glass"></i> 搜 索
                         </button>
                         <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置</button>
                     </div>
@@ -43,10 +43,18 @@
 
 {block name="js"}
 <script>
-    layui.use(['form', 'table', 'jquery'], function () {
+    layui.use(['form', 'table', 'jquery', 'laydate'], function () {
         let $ = layui.jquery,
             form = layui.form,
-            table = layui.table;
+            table = layui.table,
+            laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#startTime',
+            done: function (startTime) {
+                reloadTable({ datetime: startTime })
+            }
+        })
 
         table.render({
             elem: '#currentTableId',
@@ -93,50 +101,24 @@
             even: true,
         });
 
-        table.on('tool(currentTableFilter)', function (obj) {
-            if (obj.event === 'gopay') {
-                let payType = obj.data.pay_type === '微信' ? 'wxpay' : (obj.data.pay_type === '支付宝' ? 'alipay' : 'wxpay');
-                pay(payType, obj.data.amount, obj.data.payno);
-            }
-        })
-
         // 监听操作
         form.on('submit(data-search-btn)', function (data) {
-            let result = data.field;
-            if (!result.money) {
-                layer.msg('请输入要充值的金额！');
-                return false;
+            if (data.field.corporation === '' && data.field.datetime === '') {
+                layer.msg('请输入搜索内容', { icon: 0 })
+                return false
             }
-
-            if (result.money < 0) {
-                layer.msg('请输入正确的金额！');
-                return false;
-            }
-
-            let payType = result.pay_type === '1' ? 'wxpay' : (result.pay_type === '2' ? 'alipay' : 'wxpay');
-            pay(payType, result.money);
-
+            reloadTable(data.field)
             return false;
         });
 
-        // 支付页面
-        let pay = function (payType, amount, payNo = '') {
-            let pay_type = ['wxpay', 'alipay'];
-            if (!pay_type.includes(payType)) {
-                payType = 'wxpay';
-            }
+        $('button[type=reset]').on('click', function (e) {
+            reloadTable({})
+        })
 
-            layer.open({
-                title: '支付',
-                type: 2,
-                area: ['100%', '100%'],
-                content: '/company/payment/' + payType + '?amount=' + amount + '&payno=' + payNo,
-                btn: false,
-                cancel: function (index, layero) {
-                    layer.close(index);
-                    table.reload('paymentTable');
-                }
-            });
+        let reloadTable = function (params) {
+            table.reload('paymentTable', {
+                where: params
+            })
         }
     });
 </script>

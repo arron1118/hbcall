@@ -22,8 +22,8 @@ class Payment
         foreach ($notpay as $key => $value) {
             if ($value->getData('pay_type') === 1) {
                 // 检查微信订单是否已支付
-                $data = Pay::wechat(Config::get('wxpay'))->find(['out_trade_no' => $value->payno]);
-                Log::info(json_encode($data));
+                $data = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $value->payno]);
+                Log::info('微信订单：' . json_encode($data));
                 if ($data->trade_state === 'SUCCESS') {
                     $mt = mktime(
                         substr($data->time_end, 8, 2),
@@ -44,8 +44,8 @@ class Payment
             } elseif ($value->getData('pay_type') === 2) {
                 // 检查支付宝订单是否已支付
                 try {
-                    $data = Pay::alipay(Config::get('alipay'))->find(['out_trade_no' => $value->payno]);
-                    Log::info(json_encode($data));
+                    $data = Pay::alipay(Config::get('payment.alipay'))->find(['out_trade_no' => $value->payno]);
+                    Log::info('支付宝订单：' . json_encode($data));
                     if ($data->trade_status === 'TRADE_SUCCESS') {
                         $value->pay_time = strtotime($data->send_pay_date);
                         $value->payment_no = $data->trade_no;
@@ -57,9 +57,13 @@ class Payment
                         $value->save();
                     }
                 } catch (GatewayException $e) {
+                    Log::error($e->raw['alipay_trade_query_response']);
                     $response = $e->raw['alipay_trade_query_response'];
                     if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {
 //                    $value->delete();
+                        $value->status = 2;
+                        $value->comment = $response['sub_msg'];
+                        $value->save();
                     }
                 }
             }
