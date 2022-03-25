@@ -71,7 +71,7 @@ class Payment extends \app\common\controller\CompanyController
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
-        $data = $this->createOrder($amount);
+        $data = $this->createOrder($amount, 1);
 
         $wxOrder = [
             'out_trade_no' => $data['orderNo'],
@@ -94,7 +94,7 @@ class Payment extends \app\common\controller\CompanyController
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
-        $data = $this->createOrder($amount);
+        $data = $this->createOrder($amount, 2);
         $alipayOrder = [
             'out_trade_no' => $data['orderNo'],
             'total_amount' => $data['amount'], // **单位：分**

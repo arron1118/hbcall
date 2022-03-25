@@ -4,7 +4,7 @@ namespace app\common\traits;
 
 trait PaymentTrait
 {
-    protected function createOrder($amount): array
+    protected function createOrder($amount, $payType = 1): array
     {
         $orderNo = $this->request->param('payno', '');
         $title = '余额充值';
@@ -16,7 +16,7 @@ trait PaymentTrait
                 'corporation' => $this->userInfo->corporation,
                 'title' => $title,
                 'amount' => $amount,
-                'pay_type' => 2,
+                'pay_type' => $payType,
                 'create_time' => time(),
             ];
             $this->model->save($order);
