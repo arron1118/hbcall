@@ -60,51 +60,28 @@ class Payment extends \app\common\controller\CompanyController
         return json($res);
     }
 
-    /**
-     * 支付
-     * @return \think\response\Json
-     */
-    public function wxpay()
+    public function pay()
     {
-        $amount = (float)$this->request->param('amount', 0);
+        $amount = (float) $this->request->param('amount', 0);
+        $payType = (int) $this->request->param('payType', 1);
         if ($amount <= 0) {
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
-        $data = $this->createOrder($amount, 1);
+        if ($payType === 1) {
+            $data = $this->createOrder($amount, 1);
 
-        $wxOrder = [
-            'out_trade_no' => $data['orderNo'],
-            'total_fee' => $data['amount'] * 100, // **单位：分**
-            'body' => $data['title'],
-        ];
-
-        $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($wxOrder);
-        $qr = (new QRCode())->render($pay->code_url);
+            $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($data);
+            $qr = (new QRCode())->render($pay->code_url);
 //        echo '<img src="' . $qr->render($pay->code_url) . '" />';
-        $this->view->assign('payno', $data['orderNo']);
-        $this->view->assign('qr', $qr);
-        return $this->view->fetch();
-    }
-
-    public function alipay()
-    {
-        $amount = (float)$this->request->param('amount', 0);
-        if ($amount <= 0) {
-            return json(['code' => 0, 'msg' => '请输入正确的金额']);
+            $this->view->assign('payno', $data['out_trade_no']);
+            $this->view->assign('qr', $qr);
+            return $this->view->fetch('payment/wxpay');
+        } else if ($payType === 2) {
+            $data = $this->createOrder($amount, 2);
+            return Pay::alipay(Config::get('payment.alipay'))->web($data)->send();
         }
-
-        $data = $this->createOrder($amount, 2);
-        $alipayOrder = [
-            'out_trade_no' => $data['orderNo'],
-            'total_amount' => $data['amount'], // **单位：分**
-            'subject' => $data['title'],
-        ];
-
-        return Pay::alipay(Config::get('payment.alipay'))->web($alipayOrder)->send();
     }
-
-
 
     public function alipayResult()
     {

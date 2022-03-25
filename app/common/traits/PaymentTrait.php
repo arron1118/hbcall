@@ -7,7 +7,7 @@ trait PaymentTrait
     protected function createOrder($amount, $payType = 1): array
     {
         $orderNo = $this->request->param('payno', '');
-        $title = '余额充值';
+        $title = '喵头鹰呼叫系统 - 余额充值';
         if (!$orderNo) {
             $orderNo = getOrderNo();
             $order = [
@@ -22,6 +22,19 @@ trait PaymentTrait
             $this->model->save($order);
         }
 
-        return ['orderNo' => $orderNo, 'amount' => $amount, 'title' => '喵头鹰呼叫系统 - ' . $title];
+
+        if ($payType === 1) {
+            return [
+                'out_trade_no' => $orderNo,
+                'total_fee' => $amount * 100, // **单位：分**
+                'body' => $title,
+            ];
+        } else if ($payType === 2) {
+            return [
+                'out_trade_no' => $orderNo,
+                'total_amount' => $amount, // **单位：分**
+                'subject' => $title,
+            ];
+        }
     }
 }

@@ -112,23 +112,17 @@
                 return false;
             }
 
-            let payType = result.pay_type === '1' ? 'wxpay' : (result.pay_type === '2' ? 'alipay' : 'wxpay');
-            pay(payType, result.money);
+            pay(result.pay_type, result.money);
             return false;
         });
 
         // 支付页面
         let pay = function (payType, amount, payNo = '') {
-            let pay_type = ['wxpay', 'alipay'];
-            if (!pay_type.includes(payType)) {
-                payType = 'wxpay';
-            }
-
             layer.open({
                 title: '支付',
                 type: 2,
                 area: ['100%', '100%'],
-                content: '/company/payment/' + payType + '?amount=' + amount + '&payno=' + payNo,
+                content: '{:url("/payment/pay")}?payType=' + payType + '&amount=' + amount + '&payno=' + payNo,
                 btn: false,
                 cancel: function (index, layero) {
                     layer.close(index);
