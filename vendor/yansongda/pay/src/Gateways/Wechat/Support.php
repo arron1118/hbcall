@@ -306,7 +306,7 @@ class Support
             throw new InvalidArgumentException('Convert To Array Error! Invalid Xml!');
         }
 
-        if (\PHP_VERSION_ID < 80000) {
+        if (PHP_VERSION_ID < 80000) {
             libxml_disable_entity_loader(true);
         }
 

@@ -29,9 +29,9 @@
         "curl/curl": "2.3.3",
         "ext-json": "*",
         "topthink/think-captcha": "v3.0.4",
-        "yansongda/pay": "v2.10.2",
         "chillerlan/php-qrcode": "3.4.1",
-        "phpoffice/phpspreadsheet": "^1.22"
+        "phpoffice/phpspreadsheet": "^1.22",
+        "yansongda/pay": "2.10"
     },
     "require-dev": {
         "symfony/var-dumper": "v4.4.37",

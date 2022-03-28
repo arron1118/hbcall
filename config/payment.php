@@ -43,3 +43,4 @@ return [
         'mode' => 'normal', // optional, dev/hk;当为 `hk` 时，为香港 gateway。
     ]
 ];
+

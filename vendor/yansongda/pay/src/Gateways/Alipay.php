@@ -334,7 +334,7 @@ class Alipay implements GatewayApplicationInterface
      * @throws InvalidSignException
      * @throws InvalidArgumentException
      */
-    public function extend(string $method, callable $function, bool $now = true, bool $response = false): ?Collection
+    public function extend(string $method, callable $function, bool $now = true): ?Collection
     {
         if (!$now && !method_exists($this, $method)) {
             $this->extends[$method] = $function;
@@ -354,7 +354,7 @@ class Alipay implements GatewayApplicationInterface
             $this->payload = $customize;
             $this->payload['sign'] = Support::generateSign($this->payload);
 
-            return Support::requestApi($this->payload, $response);
+            return Support::requestApi($this->payload);
         }
 
         return $customize;

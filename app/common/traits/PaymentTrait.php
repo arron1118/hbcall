@@ -9,17 +9,8 @@ trait PaymentTrait
         $orderNo = $this->request->param('payno', '');
         $title = '喵头鹰呼叫系统 - 余额充值';
         if (!$orderNo) {
-            $orderNo = getOrderNo();
-            $order = [
-                'payno' => $orderNo,
-                'company_id' => $this->userInfo->id,
-                'corporation' => $this->userInfo->corporation,
-                'title' => $title,
-                'amount' => $amount,
-                'pay_type' => $payType,
-                'create_time' => time(),
-            ];
-            $this->model->save($order);
+            $data = $this->addOrder($amount, $payType);
+            $orderNo = $data['orderNo'];
         }
 
 
@@ -36,5 +27,24 @@ trait PaymentTrait
                 'subject' => $title,
             ];
         }
+    }
+
+    protected function addOrder($amount, $payType, $title = '余额充值')
+    {
+        $orderNo = getOrderNo();
+        $order = [
+            'payno' => $orderNo,
+//            'company_id' => $this->userInfo->id,
+//            'corporation' => $this->userInfo->corporation,
+            'company_id' => 1,
+            'corporation' => 'test corporation',
+            'title' => $title,
+            'amount' => $amount,
+            'pay_type' => $payType,
+            'create_time' => time(),
+        ];
+        $this->model->save($order);
+
+        return ['orderNo' => $orderNo, 'title' => $title];
     }
 }
