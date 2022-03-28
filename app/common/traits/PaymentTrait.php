@@ -34,10 +34,8 @@ trait PaymentTrait
         $orderNo = getOrderNo();
         $order = [
             'payno' => $orderNo,
-//            'company_id' => $this->userInfo->id,
-//            'corporation' => $this->userInfo->corporation,
-            'company_id' => 1,
-            'corporation' => 'test corporation',
+            'company_id' => $this->userInfo->id,
+            'corporation' => $this->userInfo->corporation,
             'title' => $title,
             'amount' => $amount,
             'pay_type' => $payType,
