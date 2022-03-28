@@ -153,9 +153,11 @@ class Payment extends \app\common\controller\ApiController
         $data = $this->createOrder($amount, $payType);
 
         if ($payType === 1) {
-            return Pay::wechat(Config::get('payment.wxpay'))->app($data);
+            $res = Pay::wechat(Config::get('payment.wxpay'))->app($data);
+            return json(['code' => 1, 'msg' => 'Success', 'data' => json_decode($res->getContent())]);
         } else if ($payType === 2) {
-            return Pay::alipay(Config::get('payment.alipay.app'))->app($data)->send();
+            $res = Pay::alipay(Config::get('payment.alipay.app'))->app($data);
+            return json(['code' => 1, 'msg' => 'Success', 'data' => $res->getContent()]);
         }
     }
 }
