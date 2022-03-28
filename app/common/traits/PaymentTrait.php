@@ -40,6 +40,8 @@ trait PaymentTrait
             'amount' => $amount,
             'pay_type' => $payType,
             'create_time' => time(),
+            'platform' => $this->request->isMobile() ? 'app' : 'pc',
+            'user_agent' => $this->request->header('user-agent')
         ];
         $this->model->save($order);
 

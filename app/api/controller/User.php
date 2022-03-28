@@ -34,7 +34,7 @@ class User extends ApiController
             'msg' => '请求成功',
             'POST' => $this->request->post(),
             'server' => $server,
-            'request' => $this->request->all()
+            'platform' => $this->request
         ]);
     }
 
