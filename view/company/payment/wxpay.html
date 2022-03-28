@@ -34,7 +34,7 @@
                 return;
             }
 
-            $.post('{:url("payment/checkOrder")}', {payno: payno}, function (res) {
+            $.post('{:url("/payment/checkOrder")}', {payno: payno}, function (res) {
                 if (res.trade_state === 'SUCCESS') {
                     clearInterval(intval);
                     parent.layui.table.reload('paymentTable');
