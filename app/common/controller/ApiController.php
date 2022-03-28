@@ -35,7 +35,7 @@ class ApiController extends \app\BaseController
 
         $this->CompanyModel = CompanyModel::class;
 
-        $this->userType = $this->request->param('userType', '');
+        $this->userType = $this->request->param('userType', 'user');
 
         if (!$this->userType) {
             $this->returnData['msg'] = '未提供正确的参数：userType';
