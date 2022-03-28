@@ -44,7 +44,7 @@ class Payment
             } elseif ($value->getData('pay_type') === 2) {
                 // 检查支付宝订单是否已支付
                 try {
-                    $data = Pay::alipay(Config::get('payment.alipay'))->find(['out_trade_no' => $value->payno]);
+                    $data = Pay::alipay(Config::get('payment.alipay.web'))->find(['out_trade_no' => $value->payno]);
                     Log::info('支付宝订单：' . json_encode($data));
                     if ($data->trade_status === 'TRADE_SUCCESS') {
                         $value->pay_time = strtotime($data->send_pay_date);

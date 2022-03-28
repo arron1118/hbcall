@@ -144,7 +144,7 @@ class Payment extends \app\common\controller\AdminController
             'subject' => '喵头鹰呼叫系统 - ' . $title,
         ];
 
-        return Pay::alipay(Config::get('payment.alipay'))->web($alipayOrder)->send();
+        return Pay::alipay(Config::get('payment.alipay.web'))->web($alipayOrder)->send();
     }
 
     public function alipayResult()

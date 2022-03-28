@@ -79,7 +79,7 @@ class Payment extends \app\common\controller\CompanyController
             return $this->view->fetch('payment/wxpay');
         } else if ($payType === 2) {
             $data = $this->createOrder($amount, 2);
-            return Pay::alipay(Config::get('payment.alipay'))->web($data)->send();
+            return Pay::alipay(Config::get('payment.alipay.web'))->web($data)->send();
         }
     }
 

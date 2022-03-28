@@ -23,6 +23,7 @@ class Payment extends \app\common\controller\ApiController
     public function index()
     {
         $title = '喵头鹰呼叫系统 - PC场景下单并支付测试';
+        dump(Config::get('payment.alipay.app'));
         // 支付宝支付
         $order = [
             'out_trade_no' => getOrderNo(),
@@ -51,7 +52,7 @@ class Payment extends \app\common\controller\ApiController
         // $pay->signType
         // 支付
 
-//        return Pay::alipay(Config::get('payment.alipay'))->web($order)->send();
+//        return Pay::alipay(Config::get('payment.alipay.web'))->web($order)->send();
 //        return Pay::wechat(Config::get('payment.wxpay'))->web($order)->send();
     }
 
@@ -96,7 +97,7 @@ class Payment extends \app\common\controller\ApiController
 
     public function alipayNotify()
     {
-        $alipay = Pay::alipay(Config::get('payment.alipay'));
+        $alipay = Pay::alipay(Config::get('payment.alipay.web'));
 
         try {
             $data = $alipay->verify();
@@ -155,7 +156,7 @@ class Payment extends \app\common\controller\ApiController
         if ($payType === 1) {
             return Pay::wechat(Config::get('payment.wxpay'))->app($data);
         } else if ($payType === 2) {
-            return Pay::alipay(Config::get('payment.alipay'))->app($data)->send();
+            return Pay::alipay(Config::get('payment.alipay.app'))->app($data)->send();
         }
     }
 }
