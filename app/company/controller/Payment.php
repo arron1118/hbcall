@@ -68,9 +68,8 @@ class Payment extends \app\common\controller\CompanyController
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
+        $data = $this->createOrder($amount, $payType);
         if ($payType === 1) {
-            $data = $this->createOrder($amount, 1);
-
             $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($data);
             $qr = (new QRCode())->render($pay->code_url);
 //        echo '<img src="' . $qr->render($pay->code_url) . '" />';
@@ -78,7 +77,6 @@ class Payment extends \app\common\controller\CompanyController
             $this->view->assign('qr', $qr);
             return $this->view->fetch('payment/wxpay');
         } else if ($payType === 2) {
-            $data = $this->createOrder($amount, 2);
             return Pay::alipay(Config::get('payment.alipay.web'))->web($data)->send();
         }
     }

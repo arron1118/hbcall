@@ -27,7 +27,15 @@ class User extends ApiController
         $server = $this->request->server();
 //        dump($this->request->header());
 //        dump($this->request->post());
-        return json(['code' => 1, 'data' => ['session_id' => $sessionId], 'header' => $this->request->header(), 'msg' => '请求成功', 'POST' => $this->request->post()]);
+        return json([
+            'code' => 1,
+            'data' => ['session_id' => $sessionId],
+            'header' => $this->request->header(),
+            'msg' => '请求成功',
+            'POST' => $this->request->post(),
+            'server' => $server,
+            'request' => $this->request->all()
+        ]);
     }
 
     /**
@@ -112,7 +120,7 @@ class User extends ApiController
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('logined');
-            $this->returnData['data'] = $user->hidden(['password', 'salt'])->toArray();
+            $this->returnData['data'] = $user->hidden(['password', 'salt'])->append(['userXnumber' => ['numberStore']])->toArray();
 
             return json($this->returnData);
         }

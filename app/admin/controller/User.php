@@ -70,10 +70,10 @@ class User extends \app\common\controller\AdminController
                 return json($this->returnData);
             }
 
-            if ($params['ration'] > 0 && NumberStore::where('status', '=', '0')->count() < $params['ration']) {
-                $this->returnData['msg'] = '剩余座席不足';
-                return json($this->returnData);
-            }
+//            if ($params['ration'] > 0 && NumberStore::where('status', '=', '0')->count() < $params['ration']) {
+//                $this->returnData['msg'] = '剩余座席不足';
+//                return json($this->returnData);
+//            }
 
             $userModel = new UserModel();
 
