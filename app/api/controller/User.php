@@ -34,6 +34,8 @@ class User extends ApiController
             'code' => 1,
             'data' => ['session_id' => $sessionId],
             'msg' => '请求成功',
+            'header' => $this->request->header(),
+            'session' => $sessionId,
             'device' => $agent->device(),
             'platform' => $agent->platform(),
             'browser' => $agent->browser(),
