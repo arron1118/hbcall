@@ -2,16 +2,17 @@
 
 namespace app\common\traits;
 
+use app\company\model\Company;
 use Jenssegers\Agent\Agent;
 
 trait PaymentTrait
 {
-    protected function createOrder($amount, $payType = 1): array
+    protected function createOrder(Company $company, $amount, $payType = 1): array
     {
         $orderNo = $this->request->param('payno', '');
         $title = '喵头鹰呼叫系统 - 余额充值';
         if (!$orderNo) {
-            $data = $this->addOrder($amount, $payType);
+            $data = $this->addOrder($company, $amount, $payType);
             $orderNo = $data['orderNo'];
         }
 
@@ -31,19 +32,22 @@ trait PaymentTrait
         }
     }
 
-    protected function addOrder($amount, $payType, $title = '余额充值')
+    protected function addOrder(Company $company, $amount, $payType, $title = '余额充值')
     {
+        $agent = new Agent();
         $orderNo = getOrderNo();
         $order = [
             'payno' => $orderNo,
-            'company_id' => $this->userInfo->id,
-            'corporation' => $this->userInfo->corporation,
+            'company_id' => $company->id,
+            'corporation' => $company->corporation,
             'title' => $title,
             'amount' => $amount,
             'pay_type' => $payType,
             'create_time' => time(),
-            'platform' => $this->request->isMobile() ? 'app' : 'pc',
-            'user_agent' => $this->request->header('user-agent')
+            'platform' => $agent->platform() ?: '',
+            'platformVersion' => $agent->version($agent->platform()) ?: '',
+            'browser' => $agent->browser() ?: '',
+            'browserVersion' => $agent->version($agent->browser()) ?: '',
         ];
         $this->model->save($order);
 

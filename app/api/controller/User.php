@@ -36,11 +36,11 @@ class User extends ApiController
             'msg' => '请求成功',
             'header' => $this->request->header(),
             'session' => $sessionId,
-            'device' => $agent->device(),
-            'platform' => $agent->platform(),
-            'browser' => $agent->browser(),
-            'platformVersion' => $agent->version($agent->platform()),
-            'browserVersion' => $agent->version($agent->browser())
+            'device' => $agent->device() ?: '',
+            'platform' => $agent->platform() ?: '',
+            'browser' => $agent->browser() ?: '',
+            'platformVersion' => $agent->version($agent->platform()) ?: '',
+            'browserVersion' => $agent->version($agent->browser()) ?: ''
         ]);
     }
 

@@ -42,10 +42,11 @@ class ApiController extends \app\BaseController
             exit(json_encode($this->returnData));
         }
 
+        $userId = Session::get('api_' . $this->userType . '.id');
         if ($this->userType === 'user') {
-            $this->userInfo = UserModel::with(['company', 'userXnumber' => ['numberStore']])->find(Session::get('api_' . $this->userType . '.id'));
+            $this->userInfo = UserModel::with(['company', 'userXnumber' => ['numberStore']])->find($userId);
         } else if ($this->userType === 'company') {
-            $this->userInfo = CompanyModel::with(['user'])->find(Session::get('api_' . $this->userType . '.id'));
+            $this->userInfo = CompanyModel::with(['user'])->find($userId);
         }
     }
 
