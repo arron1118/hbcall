@@ -43,6 +43,25 @@ class HbCall extends \app\common\controller\ApiController
         }
 
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
+            $this->returnData['sub_msg'] = lang('Please enter the correct mobile phone number');
+            $this->returnData['msg'] = lang('Tips');
+            return json($this->returnData);
+        }
+
+        // 不是试用账号且欠费无法拨号
+        if (!$this->userInfo->company->getData('is_test') && $this->userInfo->company->getData('balance') <= 0) {
+            $this->returnData['sub_msg'] = lang('您的余额已经不足，为了不影响呼叫，请联系管理员及时充值！');
+            $this->returnData['msg'] = lang('Tips');
+            return json($this->returnData);
+        }
+
+        if (!$this->userInfo->userXnumber) {
+            $this->returnData['sub_msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
+            $this->returnData['msg'] = lang('Tips');
+            return json($this->returnData);
+        }
+
+        if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
             $this->returnData['msg'] = '呼叫失败';
             $this->returnData['sub_msg'] = lang('Please enter the correct mobile phone number');
             return json($this->returnData);

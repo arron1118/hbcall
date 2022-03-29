@@ -33,20 +33,22 @@ class User extends ApiController
         $uuid = sha1(md5(uniqid(md5(microtime(true)), true)));
         return json([
             'code' => 1,
-            'data' => ['session_id' => $sessionId],
-            'msg' => '请求成功',
-            'header' => $this->request->header(),
-            'session' => $sessionId,
-            'device' => $agent->device() ?: '',
-            'platform' => $agent->platform() ?: '',
-            'browser' => $agent->browser() ?: '',
-            'platformVersion' => $agent->version($agent->platform()) ?: '',
-            'browserVersion' => $agent->version($agent->browser()) ?: '',
-            'uuid' => $uuid,
-            'uuid2' => strlen($uuid),
-            'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
-            'post' => request()->post(),
-            'token' => request()->buildToken(),
+            'data' => [
+                'session_id' => $sessionId,
+                'header' => $this->request->header(),
+                'session' => $sessionId,
+                'device' => $agent->device() ?: '',
+                'platform' => $agent->platform() ?: '',
+                'browser' => $agent->browser() ?: '',
+                'platformVersion' => $agent->version($agent->platform()) ?: '',
+                'browserVersion' => $agent->version($agent->browser()) ?: '',
+                'uuid' => $uuid,
+                'uuid2' => strlen($uuid),
+                'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
+                'post' => request()->post(),
+                'token' => request()->buildToken(),
+            ],
+            'msg' => '请求成功'
         ]);
     }
 

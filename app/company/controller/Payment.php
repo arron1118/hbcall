@@ -68,7 +68,7 @@ class Payment extends \app\common\controller\CompanyController
             return json(['code' => 0, 'msg' => '请输入正确的金额']);
         }
 
-        $data = $this->createOrder($amount, $payType);
+        $data = $this->createOrder($this->userInfo, $amount, $payType);
         if ($payType === 1) {
             $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($data);
             $qr = (new QRCode())->render($pay->code_url);
