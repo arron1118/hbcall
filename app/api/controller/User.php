@@ -44,8 +44,9 @@ class User extends ApiController
             'browserVersion' => $agent->version($agent->browser()) ?: '',
             'uuid' => $uuid,
             'uuid2' => strlen($uuid),
-            'uuid3' => password_hash($uuid, PASSWORD_BCRYPT),
-            'post' => request()->post()
+            'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
+            'post' => request()->post(),
+            'token' => request()->buildToken(),
         ]);
     }
 
