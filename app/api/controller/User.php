@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 use app\common\controller\ApiController;
 use think\facade\Session;
+use Jenssegers\Agent\Agent;
 
 class User extends ApiController
 {
@@ -27,14 +28,17 @@ class User extends ApiController
         $server = $this->request->server();
 //        dump($this->request->header());
 //        dump($this->request->post());
+        $agent = new Agent();
+
         return json([
             'code' => 1,
             'data' => ['session_id' => $sessionId],
-            'header' => $this->request->header(),
             'msg' => '请求成功',
-            'POST' => $this->request->post(),
-            'server' => $server,
-            'platform' => $this->request
+            'device' => $agent->device(),
+            'platform' => $agent->platform(),
+            'browser' => $agent->browser(),
+            'platformVersion' => $agent->version($agent->platform()),
+            'browserVersion' => $agent->version($agent->browser())
         ]);
     }
 

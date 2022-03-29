@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
+    'Detection' => array($vendorDir . '/mobiledetect/mobiledetectlib/namespaced'),
     'Curl' => array($vendorDir . '/curl/curl/src'),
     '' => array($baseDir . '/extend'),
 );

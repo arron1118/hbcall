@@ -2,6 +2,8 @@
 
 namespace app\common\traits;
 
+use Jenssegers\Agent\Agent;
+
 trait PaymentTrait
 {
     protected function createOrder($amount, $payType = 1): array

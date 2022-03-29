@@ -31,7 +31,8 @@
         "topthink/think-captcha": "v3.0.4",
         "chillerlan/php-qrcode": "3.4.1",
         "phpoffice/phpspreadsheet": "^1.22",
-        "yansongda/pay": "2.10"
+        "yansongda/pay": "2.10",
+        "jenssegers/agent": "^2.6"
     },
     "require-dev": {
         "symfony/var-dumper": "v4.4.37",
