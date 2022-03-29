@@ -13,7 +13,7 @@ class Payment extends \app\common\controller\ApiController
 {
     use PaymentTrait;
 
-    protected $noNeedLogin = ['', 'alipayNotify', 'alipayReturn'];
+    protected $noNeedLogin = ['notify', 'alipayNotify', 'alipayReturn'];
 
     public function initialize()
     {
