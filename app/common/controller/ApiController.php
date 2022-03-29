@@ -6,10 +6,6 @@ namespace app\common\controller;
 use think\facade\Session;
 use app\common\model\User as UserModel;
 use app\company\model\Company as CompanyModel;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Hmac\Sha256;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Validation;
 
 class ApiController extends \app\BaseController
 {
@@ -31,14 +27,6 @@ class ApiController extends \app\BaseController
         'data' => [],
 //        'sub_code' => 'unknow error',
 //        'sub_msg' => '系统繁忙',
-    ];
-
-    protected static $jwt_config = [
-        'audience' => 'http://caller.hbosw.com', // 接收人
-        'id' => 'ww8ee3085852a83f1d',
-        'sign' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',
-        'issuer' => 'http://caller.hbosw.com',
-        'expire' => 3600 * 24 * 7
     ];
 
     protected function initialize()
@@ -73,10 +61,4 @@ class ApiController extends \app\BaseController
     {
         return Session::has('api_' . $this->userType);
     }
-
-    public static function getToken($user_id)
-    {
-
-    }
-
 }

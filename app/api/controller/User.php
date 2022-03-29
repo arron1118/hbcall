@@ -31,6 +31,8 @@ class User extends ApiController
         $agent = new Agent();
 
         $uuid = sha1(md5(uniqid(md5(microtime(true)), true)));
+        $password = sha1(sha1('hbcall_') . md5('123456') . md5('_encrypt') . sha1('123456'));
+        $crypt = md5(crypt('QQX@lyq20151111', 'L9uSPt'));
         return json([
             'code' => 1,
             'data' => [
@@ -45,8 +47,12 @@ class User extends ApiController
                 'uuid' => $uuid,
                 'uuid2' => strlen($uuid),
                 'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
-                'post' => request()->post(),
-                'token' => request()->buildToken(),
+                'token' => $password,
+                'password' => getEncryptPassword('123456'),
+                'password_hash' => password_hash('123456', PASSWORD_DEFAULT),
+                'password_verify' => password_verify('123456', '$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqF'),
+                'thinkphp_token' => request()->buildToken(),
+                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi')
             ],
             'msg' => '请求成功'
         ]);
