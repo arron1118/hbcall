@@ -195,5 +195,8 @@ if (!function_exists('readExcel')) {
     }
 }
 
-
+function createToken($password)
+{
+    return password_hash($password, PASSWORD_BCRYPT);
+}
 

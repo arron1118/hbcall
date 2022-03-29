@@ -7,6 +7,7 @@ use app\common\model\CallHistory;
 use app\common\model\Expense;
 use app\company\model\Company;
 use arron\Random;
+use Jenssegers\Agent\Agent;
 use think\facade\Db;
 use think\facade\Session;
 use think\response\View;
@@ -14,6 +15,8 @@ use think\response\View;
 class Index extends CompanyController
 {
     protected $lang = [];
+
+    protected $token_expire_time = 3600 * 24 * 7;
 
     public function initialize()
     {
@@ -161,6 +164,8 @@ SQL;
                 return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
             }*/
 
+            $agent = new Agent();
+
             $param = $this->request->param();
             $user = Company::getByUsername($param['username']);
             if (!$user) {
@@ -180,9 +185,17 @@ SQL;
                 return json(['data' => [], 'msg' => lang('Captcha is incorrect'), 'code' => 0]);
             }
 
+            $now = time();
             $user->prevtime = $user->getData('logintime');
-            $user->logintime = time();
+            $user->logintime = $now;
             $user->loginip = $this->request->ip();
+            $user->token = createToken($password);
+            $user->token_expire_time = $now + $this->token_expire_time;
+            $user->platform = $agent->platform() ?: '';
+            $user->platform_version = $agent->version($agent->platform()) ?: '';
+            $user->browser = $agent->browser() ?: '';
+            $user->browser_version = $agent->version($agent->browser()) ?: '';
+            $user->device = $agent->device() ?: '';
 
             $user->save();
 

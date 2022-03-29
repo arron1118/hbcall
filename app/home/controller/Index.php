@@ -6,11 +6,14 @@ use app\common\controller\HomeController;
 use app\common\model\User;
 use app\company\model\Company;
 use arron\Random;
+use Jenssegers\Agent\Agent;
 use think\facade\Cookie;
 use think\facade\Session;
 
 class Index extends HomeController
 {
+    protected $token_expire_time = 3600 * 24 * 7;
+
     public function index()
     {
         return $this->view->fetch();
@@ -40,6 +43,7 @@ class Index extends HomeController
                 $token = $this->request->buildToken();
                 return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
             }*/
+            $agent = new Agent();
 
             $param = $this->request->param();
             $user = User::getByUsername($param['username']);
@@ -65,9 +69,17 @@ class Index extends HomeController
                 return json($this->returnData);
             }
 
+            $now = time();
             $user->prevtime = $user->getData('logintime');
-            $user->logintime = time();
+            $user->logintime = $now;
             $user->loginip = $this->request->ip();
+            $user->token = createToken($password);
+            $user->token_expire_time = $now + $this->token_expire_time;
+            $user->platform = $agent->platform() ?: '';
+            $user->platform_version = $agent->version($agent->platform()) ?: '';
+            $user->browser = $agent->browser() ?: '';
+            $user->browser_version = $agent->version($agent->browser()) ?: '';
+            $user->device = $agent->device() ?: '';
 
             $user->save();
 

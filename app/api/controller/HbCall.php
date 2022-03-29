@@ -12,6 +12,8 @@ use think\facade\Event;
 
 class HbCall extends \app\common\controller\ApiController
 {
+    protected $noNeedLogin = ['updateCallHistory'];
+
     protected $stopStartDateTime = '2022-03-14 19:00:00';
     protected $stopEndDateTime = '2022-03-14 21:00:00';
 

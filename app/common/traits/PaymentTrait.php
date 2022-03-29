@@ -44,10 +44,11 @@ trait PaymentTrait
             'amount' => $amount,
             'pay_type' => $payType,
             'create_time' => time(),
+            'device' => $agent->device(),
             'platform' => $agent->platform() ?: '',
-            'platformVersion' => $agent->version($agent->platform()) ?: '',
+            'platform_version' => $agent->version($agent->platform()) ?: '',
             'browser' => $agent->browser() ?: '',
-            'browserVersion' => $agent->version($agent->browser()) ?: '',
+            'browser_version' => $agent->version($agent->browser()) ?: '',
         ];
         $this->model->save($order);
 
