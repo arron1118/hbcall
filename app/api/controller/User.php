@@ -30,6 +30,7 @@ class User extends ApiController
 //        dump($this->request->post());
         $agent = new Agent();
 
+        $uuid = sha1(md5(uniqid(md5(microtime(true)), true)));
         return json([
             'code' => 1,
             'data' => ['session_id' => $sessionId],
@@ -40,7 +41,11 @@ class User extends ApiController
             'platform' => $agent->platform() ?: '',
             'browser' => $agent->browser() ?: '',
             'platformVersion' => $agent->version($agent->platform()) ?: '',
-            'browserVersion' => $agent->version($agent->browser()) ?: ''
+            'browserVersion' => $agent->version($agent->browser()) ?: '',
+            'uuid' => $uuid,
+            'uuid2' => strlen($uuid),
+            'uuid3' => password_hash($uuid, PASSWORD_BCRYPT),
+            'post' => request()->post()
         ]);
     }
 

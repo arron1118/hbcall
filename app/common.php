@@ -171,7 +171,7 @@ SCRIPT;
 if (!function_exists('readExcel')) {
     function readExcel($file, $appendColumns = [])
     {
-        $read = \PhpOffice\PhpSpreadsheet\IOFactory::createReader('Xlsx');
+        $read = \PhpOffice\PhpSpreadsheet\IOFactory::createReader(ucfirst($file->extension()));
         $spreadsheet = $read->load($file);
         $sheet = $spreadsheet->getActiveSheet();
         $highestColumn = $sheet->getHighestColumn();

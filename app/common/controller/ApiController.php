@@ -9,6 +9,8 @@ use app\company\model\Company as CompanyModel;
 
 class ApiController extends \app\BaseController
 {
+    protected $noNeedLogin = ['login'];
+
     protected $userInfo = null;
 
     protected $userType = 'user';
