@@ -4,7 +4,7 @@
 namespace app\company\controller;
 
 use app\common\model\NumberStore;
-use app\common\model\UserXnumber;
+use app\common\traits\UserTrait;
 use app\company\model\Company;
 use app\common\model\User as UserModel;
 use think\facade\Session;
@@ -12,6 +12,8 @@ use function Composer\Autoload\includeFile;
 
 class User extends \app\common\controller\CompanyController
 {
+    use UserTrait;
+
     public function index()
     {
         return $this->view->fetch();
@@ -212,7 +214,7 @@ class User extends \app\common\controller\CompanyController
         return $this->view->fetch();
     }
 
-    public function resetPassword()
+    /*public function resetPassword()
     {
         if ($this->request->isPost()) {
             $old_password = trim($this->request->param('old_password'));
@@ -241,5 +243,5 @@ class User extends \app\common\controller\CompanyController
             return json($this->returnData);
         }
         return $this->view->fetch();
-    }
+    }*/
 }

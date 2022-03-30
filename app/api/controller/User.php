@@ -5,9 +5,12 @@ namespace app\api\controller;
 use app\common\controller\ApiController;
 use think\facade\Session;
 use Jenssegers\Agent\Agent;
+use app\common\traits\UserTrait;
 
 class User extends ApiController
 {
+    use UserTrait;
+
     protected $token_expire_time = 3600 * 24 * 7;
 
     public function initialize()
@@ -146,7 +149,7 @@ class User extends ApiController
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('logined');
-            $this->returnData['data'] = $user->hidden(['password', 'salt'])->toArray();
+            $this->returnData['data'] = $user->append(['company' => ['balance']])->toArray();
 
             return json($this->returnData);
         }
