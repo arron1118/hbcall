@@ -12,7 +12,9 @@ class CompanyController extends \app\BaseController
 {
     use CompanyTrait;
 
-    protected $middleware = [\app\company\middleware\Check::class];
+//    protected $middleware = [\app\company\middleware\Check::class];
+
+    protected $userType = 'company';
 
     protected $view = null;
 
@@ -22,7 +24,7 @@ class CompanyController extends \app\BaseController
 
     protected $token = null;
 
-    protected $noNeedLogin = [];
+    protected $noNeedLogin = ['login'];
 
     protected $returnData = [
         'code' => 0,
@@ -36,30 +38,33 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
         $this->token = $this->request->cookie('hbcall_company_token');
+        $action = $this->request->action();
 
-        $this->userInfo = Company::withCount('user')
-            ->with(['companyXnumber' => ['numberStore']])
-            ->where('token', $this->token)
-            ->findOrEmpty();
+        if (!in_array($action, $this->noNeedLogin)) {
+            $this->userInfo = Company::withCount('user')
+                ->with(['companyXnumber' => ['numberStore']])
+                ->where('token', $this->token)
+                ->findOrEmpty();
 
-        if (!$this->userInfo->isEmpty() && !$this->userInfo->getData('status') && ($this->request->action() !== 'logout')) {
-            showAlert(lang('Account is locked'), [
-                'end' => 'function () {
+            if (!$this->userInfo->isEmpty() && !$this->userInfo->getData('status') && ($this->request->action() !== 'logout')) {
+                showAlert(lang('Account is locked'), [
+                    'end' => 'function () {
                     location.href = "' . url('/index/logout') . '";
                 }'
-            ]);
-        }
+                ]);
+            }
 
-        if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
-            showAlert(lang('Account is locked'), [
-                'end' => 'function () {
+            if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
+                showAlert(lang('Account is locked'), [
+                    'end' => 'function () {
                     location.href = "' . url('/index/logout') . '";
                 }'
-            ]);
-            exit();
-        }
+                ]);
+                exit();
+            }
 
-        $this->view->assign('user', $this->userInfo);
+            $this->view->assign('user', $this->userInfo);
+        }
     }
 
     public function delSession()

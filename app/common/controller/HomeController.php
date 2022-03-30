@@ -4,54 +4,66 @@
 namespace app\common\controller;
 
 use app\common\model\User;
-use think\facade\Event;
 use think\facade\Session;
-use think\facade\View;
 
 class HomeController extends \app\BaseController
 {
-    protected $middleware = [\app\home\middleware\Check::class];
+//    protected $middleware = [\app\home\middleware\Check::class];
 
-    protected $view = null;
-
+    /**
+     * 用户信息
+     * @var null
+     */
     protected $userInfo = null;
 
+    /**
+     * 用户类型
+     * @var string
+     */
+    protected $userType = 'user';
+
+    protected $token = null;
+
+    protected $noNeedLogin = ['login'];
+
+    /**
+     * 响应数据
+     * @var array
+     */
     protected $returnData = [
         'code' => 0,
         'msg' => 'Unknown error',
         'data' => []
     ];
 
-    // 小号
-    protected $axb_number = '18426190532';
-
     protected function initialize()
     {
         $this->returnData['msg'] = lang('Unknown error');
+        $action = $this->request->action();
+        $this->token = $this->request->cookie('hbcall_user_token');
 
-        $this->view = View::instance();
-//        $this->view->engine()->layout('layout');
+        if (!in_array($action, $this->noNeedLogin)) {
+            $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->findOrEmpty();
 
-        $this->userInfo = User::with(['company', 'userXnumber'])->findOrEmpty(Session::get('user.id'));
-//        dump($this->userInfo->company->corporation);
-        if (!$this->userInfo->isEmpty() && (!$this->userInfo->getData('status') || !$this->userInfo->company->getData('status')) && ($this->request->action() !== 'logout')) {
-            showAlert(lang('Account is locked'), [
-                'end' => 'function () {
+            if (!$this->userInfo->isEmpty() && (!$this->userInfo->getData('status') || !$this->userInfo->company->getData('status')) && ($this->request->action() !== 'logout')) {
+                showAlert(lang('Account is locked'), [
+                    'end' => 'function () {
                     location.href = "' . url('/index/logout') . '";
                 }'
-            ]);
-        }
+                ]);
+            }
 
-        if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
-            showAlert(lang('Account is locked'), [
-                'end' => 'function () {
+            if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
+                showAlert(lang('Account is locked'), [
+                    'end' => 'function () {
                     location.href = "' . url('/index/logout') . '";
                 }'
-            ]);
-            exit();
-        }
+                ]);
+                exit();
+            }
 
-        $this->view->assign('user', $this->userInfo);
+            $this->view->assign('user', $this->userInfo);
+        }
     }
 
     protected function getUserInfo()

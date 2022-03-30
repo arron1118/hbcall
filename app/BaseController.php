@@ -3,9 +3,10 @@ declare (strict_types = 1);
 
 namespace app;
 
+use Jenssegers\Agent\Agent;
 use think\App;
 use think\exception\ValidateException;
-use think\facade\Event;
+use think\facade\View;
 use think\Validate;
 
 /**
@@ -18,6 +19,18 @@ abstract class BaseController
      * @var \think\Request
      */
     protected $request;
+
+    /**
+     * View 实例
+     * @var null
+     */
+    protected $view = null;
+
+    /**
+     * Agent 实例
+     * @var Agent
+     */
+    protected $agent;
 
     /**
      * 应用实例
@@ -46,6 +59,8 @@ abstract class BaseController
     {
         $this->app     = $app;
         $this->request = $this->app->request;
+        $this->view = View::instance();
+        $this->agent = new Agent();
 
         // 控制器初始化
         $this->initialize();

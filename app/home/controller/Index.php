@@ -43,7 +43,6 @@ class Index extends HomeController
                 $token = $this->request->buildToken();
                 return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
             }*/
-            $agent = new Agent();
 
             $param = $this->request->param();
             $user = User::getByUsername($param['username']);
@@ -76,11 +75,11 @@ class Index extends HomeController
             $user->loginip = $this->request->ip();
             $user->token = $token;
             $user->token_expire_time = $now + $this->token_expire_time;
-            $user->platform = $agent->platform() ?: '';
-            $user->platform_version = $agent->version($agent->platform()) ?: '';
-            $user->browser = $agent->browser() ?: '';
-            $user->browser_version = $agent->version($agent->browser()) ?: '';
-            $user->device = $agent->device() ?: '';
+            $user->platform = $this->agent->platform() ?: '';
+            $user->platform_version = $this->agent->version($this->agent->platform()) ?: '';
+            $user->browser = $this->agent->browser() ?: '';
+            $user->browser_version = $this->agent->version($this->agent->browser()) ?: '';
+            $user->device = $this->agent->device() ?: '';
 
             $user->save();
 
@@ -89,7 +88,7 @@ class Index extends HomeController
             Cookie::set('hbcall_user_token', $token, $this->token_expire_time);
             Session::set('user', $user->toArray());
 
-            $balance = Company::where('id', '=', session::get('user.company_id'))->value('balance');
+            $balance = Company::where('id', '=', $user->company_id)->value('balance');
             Cookie::set('balance', $balance);
             Cookie::set('balance_tips', '');
 
@@ -104,6 +103,7 @@ class Index extends HomeController
     public function logout()
     {
         Session::delete('user');
+        Cookie::delete('hbcall_user_token');
         Cookie::delete('balance_tips');
         Cookie::delete('balance');
         return redirect((string) url('/index/login'));
@@ -135,7 +135,6 @@ class Index extends HomeController
             '13427445636'
         ];
 
-        $user = new User();
         $data = [];
         foreach ($axb_number as $key => $val) {
             $salt = Random::alnum();
