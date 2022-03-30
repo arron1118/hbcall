@@ -43,6 +43,14 @@ class HomeController extends \app\BaseController
         $this->token = $this->request->cookie('hbcall_user_token');
 
         if (!in_array($action, $this->noNeedLogin)) {
+            if (!$this->token) {
+                showAlert(lang('Account is locked'), [
+                    'end' => 'function () {
+                    location.href = "' . url('/index/logout') . '";
+                }'
+                ]);
+            }
+
             $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->findOrEmpty();
 
             if (!$this->userInfo->isEmpty() && (!$this->userInfo->getData('status') || !$this->userInfo->company->getData('status')) && ($this->request->action() !== 'logout')) {
@@ -64,6 +72,10 @@ class HomeController extends \app\BaseController
 
             $this->view->assign('user', $this->userInfo);
         }
+    }
+
+    protected function checkToken()
+    {
     }
 
     protected function getUserInfo()
