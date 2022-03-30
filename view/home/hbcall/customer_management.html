@@ -56,8 +56,8 @@
                 return {
                     'code': 0,
                     'msg': '',
-                    'data': res.rows,
-                    'count': res.total
+                    'data': null,
+                    'count': 0
                 }
             },
             cols: [[
@@ -65,9 +65,8 @@
                 {field: '', title: '客户名称', align: "center", templet: function (row) {
                         return row.customer ? row.customer.title : '';
                     }},
-                {field: 'called_number', title: '被叫号码', align: "center"},
-                {field: 'call_duration', title: '通话时长(分)', sort: true, align: "center"},
-                {fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+                {field: 'called_number', title: '联系电话', align: "center"},
+                {fixed: 'right', title:'回访记录', toolbar: '#barDemo', width:150}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
