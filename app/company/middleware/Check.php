@@ -10,7 +10,7 @@ class Check
 {
     public function handle($request, \Closure $next)
     {
-        if ((!$request->cookie('hbcall_company_token') || !Company::getByToken($request->cookie('hbcall_company_token')) && $request->action() !== 'login')) {
+        if ((!$request->cookie('hbcall_company_token') || !Company::getByToken($request->cookie('hbcall_company_token'))) && $request->action() !== 'login') {
             return redirect((string) url('/index/login'));
         }
 

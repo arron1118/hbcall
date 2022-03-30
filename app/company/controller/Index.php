@@ -5,6 +5,7 @@ namespace app\company\controller;
 use app\common\controller\CompanyController;
 use app\common\model\CallHistory;
 use app\common\model\Expense;
+use app\common\model\User;
 use app\company\model\Company;
 use arron\Random;
 use Jenssegers\Agent\Agent;
@@ -154,18 +155,12 @@ SQL;
 
     public function login()
     {
-        if (Session::has('company')) {
-            return redirect(url('/index'));
-        }
-
         if ($this->request->isPost()) {
             /*$check = $this->request->checkToken('__token__');
             if(false === $check) {
                 $token = $this->request->buildToken();
                 return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
             }*/
-
-            $agent = new Agent();
 
             $param = $this->request->param();
             $user = Company::getByUsername($param['username']);
@@ -193,11 +188,11 @@ SQL;
             $user->loginip = $this->request->ip();
             $user->token = $token;
             $user->token_expire_time = $now + $this->token_expire_time;
-            $user->platform = $agent->platform() ?: '';
-            $user->platform_version = $agent->version($agent->platform()) ?: '';
-            $user->browser = $agent->browser() ?: '';
-            $user->browser_version = $agent->version($agent->browser()) ?: '';
-            $user->device = $agent->device() ?: '';
+            $user->platform = $this->agent->platform() ?: '';
+            $user->platform_version = $this->agent->version($this->agent->platform()) ?: '';
+            $user->browser = $this->agent->browser() ?: '';
+            $user->browser_version = $this->agent->version($this->agent->browser()) ?: '';
+            $user->device = $this->agent->device() ?: '';
 
             $user->save();
 
@@ -212,6 +207,7 @@ SQL;
     public function logout()
     {
         $this->delSession();
+        Cookie::delete('hbcall_company_token');
         return redirect((string) url('/index/login'));
     }
 

@@ -8,7 +8,7 @@ use think\facade\Session;
 
 class HomeController extends \app\BaseController
 {
-//    protected $middleware = [\app\home\middleware\Check::class];
+    protected $middleware = [\app\home\middleware\Check::class];
 
     /**
      * 用户信息
@@ -43,14 +43,6 @@ class HomeController extends \app\BaseController
         $this->token = $this->request->cookie('hbcall_user_token');
 
         if (!in_array($action, $this->noNeedLogin)) {
-            if (!$this->token) {
-                showAlert(lang('Account is locked'), [
-                    'end' => 'function () {
-                    location.href = "' . url('/index/logout') . '";
-                }'
-                ]);
-            }
-
             $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->findOrEmpty();
 
             if (!$this->userInfo->isEmpty() && (!$this->userInfo->getData('status') || !$this->userInfo->company->getData('status')) && ($this->request->action() !== 'logout')) {
@@ -74,17 +66,13 @@ class HomeController extends \app\BaseController
         }
     }
 
-    protected function checkToken()
-    {
-    }
-
     protected function getUserInfo()
     {
-        return User::find(Session::get('user.id'));
+        return $this->userInfo;
     }
 
     public function isLogin()
     {
-        return Session::has('user');
+        return $this->userInfo;
     }
 }

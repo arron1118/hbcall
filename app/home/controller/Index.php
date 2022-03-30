@@ -27,16 +27,6 @@ class Index extends HomeController
 
     public function login()
     {
-        /*$salt = getRandChar(6);
-        $pwd = getEncryptPassword('123456', 'Oh1sJU');
-        dump($salt);
-        dump($pwd);*/
-//        Cookie::delete('thinkphp_show_page_trace');
-//        dump(Cookie::get());
-        if ($this->isLogin()) {
-            return redirect((string) url('/index'));
-        }
-
         if ($this->request->isPost()) {
             /*$check = $this->request->checkToken('__token__');
             if(false === $check) {
