@@ -43,7 +43,7 @@ class ApiController extends \app\BaseController
 
         if (!in_array($action, $this->noNeedLogin)) {
             if (!$this->token) {
-                response(['code' => 5003, 'msg' => '权限不足：未登录'], 5003, [], 'json')->send();
+                response(['code' => 5003, 'msg' => '权限不足：未登录'], 200, [], 'json')->send();
                 exit;
             }
 
@@ -60,12 +60,12 @@ class ApiController extends \app\BaseController
             }
 
             if (!$this->userInfo) {
-                response(['code' => 5003, 'msg' => '用户不存在或未登录'], 5003, ['abc' => 'token'], 'json')->send();
+                response(['code' => 5003, 'msg' => '用户不存在或未登录'], 200, ['abc' => 'token'], 'json')->send();
                 exit;
             }
 
             if ($this->userInfo->token_expire_time < time()) {
-                response(['code' => 5003, 'msg' => '登录过期，请重新登录'], 5003, [], 'json')->send();
+                response(['code' => 5003, 'msg' => '登录过期，请重新登录'], 200, [], 'json')->send();
                 exit;
             }
         }
