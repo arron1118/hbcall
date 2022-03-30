@@ -15,6 +15,11 @@ trait HbCallTrait
      */
     public function makeCall()
     {
+        if ($this->userType === 'company') {
+            $this->returnData['msg'] = '暂不开通管理员账号呼叫';
+            return json($this->returnData);
+        }
+
         if (time() >= strtotime($this->stopStartDateTime) && time() <= strtotime($this->stopEndDateTime)) {
             $this->returnData['msg'] = "由于线路临时升级，呼叫系统 将在{$this->stopStartDateTime}至{$this->stopEndDateTime} 共计两小时暂停服务,给大家带来不便，非常抱歉。感谢大家的支持！";
             return json($this->returnData);

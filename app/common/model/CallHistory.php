@@ -63,7 +63,7 @@ class CallHistory extends \think\Model
 
     public function expense()
     {
-        return $this->hasOne(Expense::class)->bind(['cost']);
+        return $this->hasOne(Expense::class)->bind(['cost', 'duration']);
     }
 
     public function customer()

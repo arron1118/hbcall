@@ -4,6 +4,7 @@ namespace app\common\traits;
 
 use app\company\model\Company;
 use Jenssegers\Agent\Agent;
+use think\facade\Db;
 
 trait PaymentTrait
 {
@@ -53,5 +54,43 @@ trait PaymentTrait
         $this->model->save($order);
 
         return ['orderNo' => $orderNo, 'title' => $title];
+    }
+
+    /**
+     * 获取订单列表
+     * @return \think\response\Json
+     */
+    public function getPaymentList()
+    {
+        if ($this->userType === 'user') {
+            $this->returnData['msg'] = '权限不足，暂时不提供查询数据';
+            return json($this->returnData);
+        }
+
+        if ($this->request->isPost()) {
+            $page = (int) $this->request->param('page', 1);
+            $limit = (int) $this->request->param('limit', 10);
+            $corporation = trim($this->request->param('corporation', ''));
+            $datetime = $this->request->param('datetime', '');
+
+            $where = [];
+            if ($corporation) {
+                $where[] = ['corporation', 'like', '%' . $corporation . '%'];
+            }
+
+            if ($datetime) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%Y-%m-%d")'), '=', $datetime];
+            }
+
+            $total = $this->model::where($where)->count();
+
+            $historyList = $this->model::where($where)
+                ->order('id DESC')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
+            return json(['data' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
+        }
+
+        return json($this->returnData);
     }
 }

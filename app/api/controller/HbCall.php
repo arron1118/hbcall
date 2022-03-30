@@ -20,7 +20,6 @@ class HbCall extends \app\common\controller\ApiController
     protected $stopStartDateTime = '2022-03-14 19:00:00';
     protected $stopEndDateTime = '2022-03-14 21:00:00';
 
-
     /**
      * 获取通话记录 (拨通号码的记录)
      * @return \think\response\Json
@@ -58,10 +57,13 @@ class HbCall extends \app\common\controller\ApiController
         }
 
         $total = CallHistory::where($map)->count();
-        $historyList = CallHistory::where($map)->order('starttime DESC')->limit(($page - 1) * $limit, $limit)->select();
+        $historyList = CallHistory::with(['expense'])->where($map)
+            ->order('starttime DESC')
+            ->limit(($page - 1) * $limit, $limit)
+            ->select();
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '操作成功';
-        $this->returnData['data'] = $historyList->visible(['id', 'called_number', 'starttime'])->toArray();
+        $this->returnData['data'] = $historyList->visible(['id', 'called_number', 'createtime'])->toArray();
         $this->returnData['total'] = $total;
         return json($this->returnData);
     }
