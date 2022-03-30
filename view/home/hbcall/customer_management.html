@@ -1,0 +1,102 @@
+{extend name="public/base" /}
+{block name="css"}
+{include file="public/bootstrap" /}
+<style type="text/css">
+    #phone-numbers span:active {
+        background-color: blue;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="layuimini-container">
+                <div class="layuimini-main">
+                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+                    <script type="text/html" id="barDemo">
+                        <div class="layui-btn layui-btn-xs" lay-event="edit">查看备忘录</div>
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script src="__STATIC__/lib/layui_exts/excel.js"></script>
+<script>
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table'], function () {
+        let $ = layui.jquery,
+            layer = layui.layer,
+            miniTab = layui.miniTab,
+            element = layui.element,
+            excel = layui.excel,
+            table = layui.table,
+            upload = layui.upload;
+
+        miniTab.listen();
+        // 客户列表
+        table.render({
+            elem: '#currentTableId',
+            id: 'historyTable',
+            url: '{:url("/HbCall/getHistoryList")}',
+            method:'post',
+            toolbar: true,
+            // height: 680,
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            cols: [[
+                {field: 'subid', title: '编号', align: "center"},
+                {field: '', title: '客户名称', align: "center", templet: function (row) {
+                        return row.customer ? row.customer.title : '';
+                    }},
+                {field: 'called_number', title: '被叫号码', align: "center"},
+                {field: 'call_duration', title: '通话时长(分)', sort: true, align: "center"},
+                {fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+            ]],
+            page: {
+                limits: [15, 30, 45, 60],
+                limit: 15,
+            },
+            skin: 'line'
+        });
+        table.on('tool(currentTableFilter)', function (obj) {
+            console.log('888', obj)
+            let editId = obj.data.id;
+            console.log(editId)
+            // 传这个Id去后台查出备忘列表，渲染
+            if (obj.event === 'edit') {
+                let index = layer.open({
+                    title: '备忘列表',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '{:url("/hbcall/tableList")}?customerId=' + editId,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+        });
+    });
+</script>
+
+{/block}
