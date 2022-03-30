@@ -9,7 +9,7 @@ use app\company\model\Company as CompanyModel;
 
 class ApiController extends \app\BaseController
 {
-    protected $noNeedLogin = ['login', ''];
+    protected $noNeedLogin = ['login'];
 
     protected $userInfo = null;
 
@@ -73,7 +73,7 @@ class ApiController extends \app\BaseController
 
     protected function getUserInfo()
     {
-        return Session::get('api_' . $this->userType, null);
+        return $this->userInfo;
     }
 
     protected function isLogin()

@@ -8,6 +8,7 @@ use app\common\model\Expense;
 use app\company\model\Company;
 use arron\Random;
 use Jenssegers\Agent\Agent;
+use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Session;
 use think\response\View;
@@ -186,10 +187,11 @@ SQL;
             }
 
             $now = time();
+            $token = createToken($password);
             $user->prevtime = $user->getData('logintime');
             $user->logintime = $now;
             $user->loginip = $this->request->ip();
-            $user->token = createToken($password);
+            $user->token = $token;
             $user->token_expire_time = $now + $this->token_expire_time;
             $user->platform = $agent->platform() ?: '';
             $user->platform_version = $agent->version($agent->platform()) ?: '';
@@ -199,6 +201,7 @@ SQL;
 
             $user->save();
 
+            Cookie::set('hbcall_company_token', $token, $this->token_expire_time);
             Session::set('company', $user->toArray());
 
             return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/index')]);

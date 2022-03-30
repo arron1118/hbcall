@@ -23,12 +23,6 @@ class HbCall extends \app\common\controller\ApiController
      */
     public function makeCall()
     {
-        if (!$this->isLogin()) {
-            $this->returnData['code'] = 2;
-            $this->returnData['msg'] = '权限不足：未登录';
-            return json($this->returnData);
-        }
-
         if (time() >= strtotime($this->stopStartDateTime) && time() <= strtotime($this->stopEndDateTime)) {
             $this->returnData['msg'] = "由于线路临时升级，呼叫系统 将在{$this->stopStartDateTime}至{$this->stopEndDateTime} 共计两小时暂停服务,给大家带来不便，非常抱歉。感谢大家的支持！";
             return json($this->returnData);
@@ -119,19 +113,18 @@ class HbCall extends \app\common\controller\ApiController
      */
     public function getHistoryList()
     {
-        if (!$this->isLogin()) {
-            $this->returnData['msg'] = '权限不足：未登录';
-            return json($this->returnData);
-        }
-
-        $userInfo = $this->getUserInfo();
         $page = (int) $this->request->param('page', 1);
         $limit = (int) $this->request->param('limit', 10);
         $date = $this->request->param('date', '');
-        $map = [
-            ['user_id', '=', $userInfo['id']],
-            ['caller_number', '<>', '']
-        ];
+        $map = [];
+
+        if ($this->userType === 'user') {
+            $map[] = ['user_id', '=', $this->userInfo->id];
+        }
+
+        if ($this->userInfo === 'company') {
+            $map[] = ['company_id', '=', $this->userInfo->id];
+        }
 
         $start = strtotime($date);
         if ($start) {

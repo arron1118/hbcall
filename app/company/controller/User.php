@@ -203,9 +203,6 @@ class User extends \app\common\controller\CompanyController
     {
         if ($this->request->isPost()) {
             $realname = trim($this->request->param('realname'));
-            if (empty($username)) {
-                return json(['msg' => '请输入昵称', 'code' => 0]);
-            }
             $this->userInfo->realname = $realname;
             $this->userInfo->save();
             Session::set('company.realname', $realname);
@@ -221,7 +218,6 @@ class User extends \app\common\controller\CompanyController
             $old_password = trim($this->request->param('old_password'));
             $new_password = trim($this->request->param('new_password'));
             $confirm_password = trim($this->request->param('confirm_password'));
-            $user = Company::find(Session::get('company.id'));
             if (empty($old_password)) {
                 return json(['msg' => '请输入旧密码', 'code' => 0]);
             }
@@ -231,14 +227,14 @@ class User extends \app\common\controller\CompanyController
             if (empty($confirm_password)) {
                 return json(['msg' => '请输入确认密码', 'code' => 0]);
             }
-            if (getEncryptPassword($old_password, $user->salt) !== $user->password) {
+            if (getEncryptPassword($old_password, $this->userInfo->salt) !== $this->userInfo->password) {
                 return json(['msg' => '输入的旧密码有误', 'code' => 0]);
             }
             if ($new_password !== $confirm_password) {
                 return json(['msg' => '输入的确认密码有误', 'code' => 0]);
             }
-            $user->password = getEncryptPassword($confirm_password, $user->salt);
-            if ($user->save()) {
+            $this->userInfo->password = getEncryptPassword($confirm_password, $this->userInfo->salt);
+            if ($this->userInfo->save()) {
                 return json(['msg' => lang('Password modification successful, please log in again'), 'code' => 1]);
             }
 

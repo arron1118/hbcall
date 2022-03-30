@@ -70,10 +70,11 @@ class Index extends HomeController
             }
 
             $now = time();
+            $token = createToken($password);
             $user->prevtime = $user->getData('logintime');
             $user->logintime = $now;
             $user->loginip = $this->request->ip();
-            $user->token = createToken($password);
+            $user->token = $token;
             $user->token_expire_time = $now + $this->token_expire_time;
             $user->platform = $agent->platform() ?: '';
             $user->platform_version = $agent->version($agent->platform()) ?: '';
@@ -85,6 +86,7 @@ class Index extends HomeController
 
             $user->session_id = Session::getId();
 
+            Cookie::set('hbcall_user_token', $token, $this->token_expire_time);
             Session::set('user', $user->toArray());
 
             $balance = Company::where('id', '=', session::get('user.company_id'))->value('balance');
