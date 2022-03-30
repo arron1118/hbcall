@@ -60,7 +60,7 @@ class ApiController extends \app\BaseController
             }
 
             if (!$this->userInfo) {
-                response(['code' => 5003, 'msg' => '用户不存在或未登录'], 200, ['abc' => 'token'], 'json')->send();
+                response(['code' => 5003, 'msg' => '用户不存在或未登录'], 200, [], 'json')->send();
                 exit;
             }
 
