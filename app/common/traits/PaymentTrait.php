@@ -71,15 +71,25 @@ trait PaymentTrait
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
             $corporation = trim($this->request->param('corporation', ''));
-            $datetime = $this->request->param('datetime', '');
+            $year = $this->request->param('year', '');
+            $month = $this->request->param('month', '');
+            $day = $this->request->param('day', '');
 
             $where = [];
             if ($corporation) {
                 $where[] = ['corporation', 'like', '%' . $corporation . '%'];
             }
 
-            if ($datetime) {
-                $where[] = [Db::raw('from_unixtime(create_time, "%Y-%m-%d")'), '=', $datetime];
+            if ($year) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%Y")'), '=', $year];
+            }
+
+            if ($month) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%m")'), '=', $month];
+            }
+
+            if ($day) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%d")'), '=', $day];
             }
 
             $total = $this->model::where($where)->count();

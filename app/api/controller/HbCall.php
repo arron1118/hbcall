@@ -63,7 +63,7 @@ class HbCall extends \app\common\controller\ApiController
             ->select();
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '操作成功';
-        $this->returnData['data'] = $historyList->visible(['id', 'called_number', 'createtime'])->toArray();
+        $this->returnData['data'] = $historyList->visible(['id', 'called_number', 'createtime', 'username'])->toArray();
         $this->returnData['total'] = $total;
         return json($this->returnData);
     }
