@@ -149,7 +149,7 @@ class User extends ApiController
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('logined');
-            $this->returnData['data'] = $user->append(['company' => ['balance']])->toArray();
+            $this->returnData['data'] = $user->hidden(['password', 'salt'])->toArray();
 
             return json($this->returnData);
         }
