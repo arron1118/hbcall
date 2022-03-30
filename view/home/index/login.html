@@ -9,7 +9,7 @@
 
     body {
         padding: 0 !important;
-        background: 	#404040 !important;
+        background: #1E9FFF !important;
     }
 
     body:after {
@@ -52,12 +52,13 @@
     }
 
     .logo-title h1 {
-        color: white;
+        color: #1E9FFF;
         font-size: 25px;
         font-weight: bold;
     }
 
     .login-form {
+        background-color: #fff;
         padding: 14px 20px;
         box-shadow: 0 0 8px #eeeeee;
     }
@@ -105,36 +106,42 @@
     <div class="admin-login-background">
         <div class="layui-form login-form">
             <form class="layui-form" action="">
-                <div class="layui-form-item logo-title">
-                    <h1>喵头鹰呼叫系统</h1>
+                <div class="layui-form-item logo-title"
+                     style="display: flex; flex-direction: column;
+                        justify-content: center; align-items: center; margin-right: 10px; padding: 0 15px;">
+                    <h1> 喵头鹰呼叫系统</h1>
+                    <div style="margin-top: 5px;">(用户入口)</div>
                 </div>
+
+
                 <div class="layui-form-item">
-                    <label class="layui-icon layui-icon-username" for="username"></label>
-                    <input type="text" name="username" lay-verify="required|account" placeholder="用户名或者邮箱"
-                           autocomplete="off" class="layui-input" value="" style="border-radius: 20px;">
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-icon layui-icon-password" for="password"></label>
-                    <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                           autocomplete="off" class="layui-input" value="" style="border-radius: 20px;">
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-icon layui-icon-vercode" for="captcha"></label>
-                    <input type="text" name="captcha" lay-verify="required|captcha" placeholder="图形验证码" autocomplete="off"
-                           class="layui-input verification captcha" value="" style="border-radius: 20px;">
-                    <div class="captcha-img">
-                        {:captcha_img()}
-                    </div>
-                </div>
-                <div class="layui-form-item" style="display: flex; flex-direction: row;">
-                    <input type="checkbox" name="rememberMe" value="true" lay-skin="primary" title="" checked>
-                    <div style="color: white; margin-top: 10px">记住密码</div>
-                </div>
-                <div class="layui-form-item">
-                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" style="border-radius: 20px;"
-                            lay-filter="login">登 入
-                    </button>
-                </div>
+                           <label class="layui-icon layui-icon-username" for="username"></label>
+                           <input type="text" name="username" lay-verify="required|account" placeholder="用户名或者邮箱"
+                                  autocomplete="off" class="layui-input" value="">
+                       </div>
+                       <div class="layui-form-item">
+                           <label class="layui-icon layui-icon-password" for="password"></label>
+                           <input type="password" name="password" lay-verify="required|password" placeholder="密码"
+                                  autocomplete="off" class="layui-input" value="">
+                       </div>
+                       <div class="layui-form-item">
+                           <label class="layui-icon layui-icon-vercode" for="captcha"></label>
+                           <input type="text" name="captcha" lay-verify="required|captcha" placeholder="图形验证码" autocomplete="off"
+                                  class="layui-input verification captcha" value="">
+                           <div class="captcha-img">
+                               {:captcha_img()}
+                           </div>
+                       </div>
+                       <div class="layui-form-item" style="display: flex; flex-direction: row;">
+                           <input type="checkbox" name="rememberMe" value="true" lay-skin="primary" title="" checked>
+                           <div style="margin-top: 10px">记住密码</div>
+                       </div>
+                       <div class="layui-form-item">
+                           <button class="layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
+                                   lay-filter="login">登 入
+                           </button>
+                       </div>
+
             </form>
         </div>
     </div>
