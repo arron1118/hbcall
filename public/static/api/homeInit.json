@@ -28,6 +28,12 @@
           "target": "_self"
         },
         {
+          "title": "客户管理",
+          "href": "hbcall/customerManagement.html",
+          "icon": "fa fa-people-group",
+          "target": "_self"
+        },
+        {
           "title": "基本资料",
           "href": "user/profile.html",
           "icon": "fa fa-id-card",
