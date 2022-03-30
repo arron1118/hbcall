@@ -12,7 +12,7 @@ class CompanyController extends \app\BaseController
 {
     use CompanyTrait;
 
-//    protected $middleware = [\app\company\middleware\Check::class];
+    protected $middleware = [\app\company\middleware\Check::class];
 
     protected $userType = 'company';
 
@@ -41,14 +41,6 @@ class CompanyController extends \app\BaseController
         $action = $this->request->action();
 
         if (!in_array($action, $this->noNeedLogin)) {
-            if (!$this->token) {
-                showAlert(lang('Account is locked'), [
-                    'end' => 'function () {
-                    location.href = "' . url('/index/logout') . '";
-                }'
-                ]);
-            }
-
             $this->userInfo = Company::withCount('user')
                 ->with(['companyXnumber' => ['numberStore']])
                 ->where('token', $this->token)

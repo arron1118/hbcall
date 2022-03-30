@@ -4,13 +4,13 @@
 namespace app\company\middleware;
 
 
-use think\facade\Session;
+use app\company\model\Company;
 
 class Check
 {
     public function handle($request, \Closure $next)
     {
-        if (!Session::has('company') && $request->action() !== 'login') {
+        if ((!$request->cookie('hbcall_company_token') || !Company::getByToken($request->cookie('hbcall_company_token')) && $request->action() !== 'login')) {
             return redirect((string) url('/index/login'));
         }
 
