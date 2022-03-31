@@ -3,6 +3,37 @@
 {include file="public/bootstrap" /}
 {/block}
 {block name="body"}
+<div class="container-fluid">
+    <div class="row mb-3 shadow-sm bg-white rounded">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">客户名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="phone" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="container-fluid bg-white rounded-3 py-2">
     <div class="row justify-content-center">
         <div class="col-12">
@@ -19,22 +50,23 @@
 {block name="js"}
 <script src="__STATIC__/lib/layui_exts/excel.js"></script>
 <script>
-    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table'], function () {
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form'], function () {
         let $ = layui.jquery,
             layer = layui.layer,
             miniTab = layui.miniTab,
             element = layui.element,
             excel = layui.excel,
             table = layui.table,
-            upload = layui.upload;
+            upload = layui.upload,
+            form = layui.form;
 
         miniTab.listen();
         // 客户列表
         table.render({
             elem: '#currentTableId',
-            id: 'historyTable',
+            id: 'customerTable',
             url: '{:url("/customer/getCustomerList")}',
-            method:'post',
+            method: 'post',
             toolbar: true,
             // height: 680,
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -65,6 +97,7 @@
             },
             skin: 'line'
         });
+
         table.on('tool(currentTableFilter)', function (obj) {
             let editId = obj.data.id;
             // 传这个Id去后台查出备忘列表，渲染
@@ -84,6 +117,28 @@
                 return false;
             }
         });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            table.reload('customerTable', {
+                page: {
+                    curr: 1
+                },
+                where: data.field
+            });
+
+            return false
+        });
+
+        $('button[type="reset"]').on('click', function () {
+            table.reload('customerTable', {
+                page: {
+                    curr: 1
+                },
+                where: {}
+            }, false)
+        })
     });
 </script>
 
