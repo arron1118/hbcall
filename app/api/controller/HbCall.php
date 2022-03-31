@@ -57,13 +57,15 @@ class HbCall extends \app\common\controller\ApiController
         }
 
         $total = CallHistory::where($map)->count();
-        $historyList = CallHistory::with(['expense'])->where($map)
+        $historyList = CallHistory::with(['expense'])
+            ->field('id, called_number, createtime, username, call_duration')
+            ->where($map)
             ->order('starttime DESC')
             ->limit(($page - 1) * $limit, $limit)
             ->select();
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '操作成功';
-        $this->returnData['data'] = $historyList->visible(['id', 'called_number', 'createtime', 'username'])->toArray();
+        $this->returnData['data'] = $historyList->toArray();
         $this->returnData['total'] = $total;
         return json($this->returnData);
     }
