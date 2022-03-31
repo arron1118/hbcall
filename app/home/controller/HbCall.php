@@ -169,6 +169,11 @@ class HbCall extends \app\common\controller\HomeController
                 $CallHistory->called_number = $mobile;
                 $CallHistory->createtime = time();
                 $CallHistory->customer_id = $customerId;
+                $CallHistory->device = $this->agent->device();
+                $CallHistory->platform = $this->agent->platform();
+                $CallHistory->platform_version = $this->agent->version($this->agent->platform());
+                $CallHistory->browser = $this->agent->browser();
+                $CallHistory->browser_version = $this->agent->version($this->agent->browser());
 
                 if ($customer) {
                     $CallHistory->customer = $customer->title;

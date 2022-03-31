@@ -30,39 +30,33 @@ trait HbCallTrait
 
         // 试用账号到期后无法拨号
         if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
-            $this->returnData['sub_msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
-            $this->returnData['msg'] = lang('Tips');
+            $this->returnData['msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
             return json($this->returnData);
         }
 
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            $this->returnData['sub_msg'] = lang('Please enter the correct mobile phone number');
-            $this->returnData['msg'] = lang('Tips');
+            $this->returnData['msg'] = lang('Please enter the correct mobile phone number');
             return json($this->returnData);
         }
 
         // 不是试用账号且欠费无法拨号
         if (!$this->userInfo->company->getData('is_test') && $this->userInfo->company->getData('balance') <= 0) {
-            $this->returnData['sub_msg'] = lang('您的余额已经不足，为了不影响呼叫，请联系管理员及时充值！');
-            $this->returnData['msg'] = lang('Tips');
+            $this->returnData['msg'] = lang('您的余额已经不足，为了不影响呼叫，请联系管理员及时充值！');
             return json($this->returnData);
         }
 
         if (!$this->userInfo->userXnumber) {
-            $this->returnData['sub_msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
-            $this->returnData['msg'] = lang('Tips');
+            $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
             return json($this->returnData);
         }
 
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            $this->returnData['msg'] = '呼叫失败';
-            $this->returnData['sub_msg'] = lang('Please enter the correct mobile phone number');
+            $this->returnData['msg'] = lang('Please enter the correct mobile phone number');
             return json($this->returnData);
         }
 
         if ($this->userInfo->phone === '') {
-            $this->returnData['msg'] = '呼叫失败';
-            $this->returnData['sub_msg'] = '请先在个人资料中填写手机号';
+            $this->returnData['msg'] = '请先在个人资料中填写手机号';
             return json($this->returnData);
         }
         $curl = new Curl();
@@ -84,6 +78,11 @@ trait HbCallTrait
             $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
             $CallHistory->called_number = $mobile;
             $CallHistory->createtime = time();
+            $CallHistory->device = $this->agent->device();
+            $CallHistory->platform = $this->agent->platform();
+            $CallHistory->platform_version = $this->agent->version($this->agent->platform());
+            $CallHistory->browser = $this->agent->browser();
+            $CallHistory->browser_version = $this->agent->version($this->agent->browser());
             $CallHistory->save();
 
             $this->returnData['code'] = 1;
@@ -93,8 +92,7 @@ trait HbCallTrait
                 'mobile' => $mobile,
             ];
         } else {
-            $this->returnData['msg'] = $response['msg'];
-            $this->returnData['sub_msg'] = $response['data'];
+            $this->returnData['msg'] = $response['msg'] . $response['data'];
         }
 
         return json($this->returnData);

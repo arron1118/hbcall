@@ -3,7 +3,6 @@
 namespace app\common\traits;
 
 use app\company\model\Company;
-use Jenssegers\Agent\Agent;
 use think\facade\Db;
 
 trait PaymentTrait
@@ -35,7 +34,6 @@ trait PaymentTrait
 
     protected function addOrder(Company $company, $amount, $payType, $title = '余额充值')
     {
-        $agent = new Agent();
         $orderNo = getOrderNo();
         $order = [
             'payno' => $orderNo,
@@ -45,11 +43,11 @@ trait PaymentTrait
             'amount' => $amount,
             'pay_type' => $payType,
             'create_time' => time(),
-            'device' => $agent->device(),
-            'platform' => $agent->platform() ?: '',
-            'platform_version' => $agent->version($agent->platform()) ?: '',
-            'browser' => $agent->browser() ?: '',
-            'browser_version' => $agent->version($agent->browser()) ?: '',
+            'device' => $this->agent->device(),
+            'platform' => $this->agent->platform(),
+            'platform_version' => $this->agent->version($this->agent->platform()),
+            'browser' => $this->agent->browser(),
+            'browser_version' => $this->agent->version($this->agent->browser()),
         ];
         $this->model->save($order);
 

@@ -4,7 +4,6 @@ namespace app\api\controller;
 
 use app\common\controller\ApiController;
 use think\facade\Session;
-use Jenssegers\Agent\Agent;
 use app\common\traits\UserTrait;
 
 class User extends ApiController
@@ -33,7 +32,6 @@ class User extends ApiController
         $server = $this->request->server();
 //        dump($this->request->header());
 //        dump($this->request->post());
-        $agent = new Agent();
 
         $uuid = sha1(md5(uniqid(md5(microtime(true)), true)));
         $password = sha1(sha1('hbcall_') . md5('123456') . md5('_encrypt') . sha1('123456'));
@@ -44,11 +42,11 @@ class User extends ApiController
                 'session_id' => $sessionId,
                 'header' => $this->request->header(),
                 'session' => $sessionId,
-                'device' => $agent->device() ?: '',
-                'platform' => $agent->platform() ?: '',
-                'browser' => $agent->browser() ?: '',
-                'platformVersion' => $agent->version($agent->platform()) ?: '',
-                'browserVersion' => $agent->version($agent->browser()) ?: '',
+                'device' => $this->agent->device() ?: '',
+                'platform' => $this->agent->platform() ?: '',
+                'browser' => $this->agent->browser() ?: '',
+                'platformVersion' => $this->agent->version($this->agent->platform()) ?: '',
+                'browserVersion' => $this->agent->version($this->agent->browser()) ?: '',
                 'uuid' => $uuid,
                 'uuid2' => strlen($uuid),
                 'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
@@ -84,24 +82,8 @@ class User extends ApiController
 
     public function login()
     {
-        /*if ($this->isLogin()) {
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = lang('You are already logged in');
-            $this->returnData['data'] = Session::get('api_user');
-            return json($this->returnData);
-        }*/
-
         if ($this->request->isPost()) {
-            /*$check = $this->request->checkToken('__token__');
-            if(false === $check) {
-                $token = $this->request->buildToken();
-                return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
-            }*/
-            $agent = new Agent();
-
             $param = $this->request->param();
-
-            $login_ip = $this->request->server();
 
             if (!isset($param['username']) || trim($param['username']) === '') {
                 $this->returnData['msg'] = '参数错误：缺少 username';
@@ -138,11 +120,11 @@ class User extends ApiController
             $user->loginip = $this->request->ip();
             $user->token = createToken($password);
             $user->token_expire_time = $now + $this->token_expire_time;
-            $user->platform = $agent->platform() ?: '';
-            $user->platform_version = $agent->version($agent->platform()) ?: '';
-            $user->browser = $agent->browser() ?: '';
-            $user->browser_version = $agent->version($agent->browser()) ?: '';
-            $user->device = $agent->device() ?: '';
+            $user->platform = $this->agent->platform();
+            $user->platform_version = $this->agent->version($this->agent->platform());
+            $user->browser = $this->agent->browser();
+            $user->browser_version = $this->agent->version($this->agent->browser());
+            $user->device = $this->agent->device();
             $user->save();
 
             Session::set('api_' . $this->userType, $user->toArray());
