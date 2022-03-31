@@ -46,27 +46,9 @@ class HbCall extends \app\common\controller\HomeController
 
     public function callHistoryList()
     {
-        /**
-         * 获取通话记录  暂时放在这里，后期用定时任务实现
-         */
-//        Event::trigger('CallHistory');
-
         return $this->view->fetch('hbcall/history_list');
     }
-    public function customerManagement()
-    {
-        /**
-         * 获取通话记录  暂时放在这里，后期用定时任务实现
-         */
-//        Event::trigger('CallHistory');
 
-        return $this->view->fetch();
-    }
-    public function tableList()
-    {
-        $this->view->assign('customerId', $this->request->param('customerId'));
-        return $this->view->fetch();
-    }
     public function getHistoryList()
     {
         if ($this->request->isPost()) {
@@ -215,6 +197,7 @@ class HbCall extends \app\common\controller\HomeController
 
         return json($this->returnData);
     }
+
     public function importCustomer()
     {
         if ($this->request->isPost()) {

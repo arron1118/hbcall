@@ -1,24 +1,15 @@
 {extend name="public/base" /}
 {block name="css"}
 {include file="public/bootstrap" /}
-<style type="text/css">
-    #phone-numbers span:active {
-        background-color: blue;
-    }
-</style>
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 py-2">
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="layuimini-container">
-                <div class="layuimini-main">
-                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
-                    <script type="text/html" id="barDemo">
-                        <div class="layui-btn layui-btn-xs" lay-event="edit">查看备忘录</div>
-                    </script>
-                </div>
-            </div>
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+            <script type="text/html" id="barDemo">
+                <div class="layui-btn layui-btn-xs" lay-event="del">删除备忘录</div>
+            </script>
         </div>
 
     </div>
@@ -42,8 +33,11 @@
         table.render({
             elem: '#currentTableId',
             id: 'historyTable',
-            url: '{:url("/HbCall/getHistoryList")}',
-            method:'post',
+            url: '{:url("/CustomerRecord/getCustomerRecordList")}',
+            method: 'post',
+            where: {
+                customer_id: '{$customerId}'
+            },
             toolbar: true,
             // height: 680,
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -56,17 +50,14 @@
                 return {
                     'code': 0,
                     'msg': '',
-                    'data': null,
-                    'count': 0
+                    'data': res.data,
+                    'count': res.total
                 }
             },
             cols: [[
-                {field: 'subid', title: '编号', align: "center"},
-                {field: '', title: '客户名称', align: "center", templet: function (row) {
-                        return row.customer ? row.customer.title : '';
-                    }},
-                {field: 'called_number', title: '联系电话', align: "center"},
-                {fixed: 'right', title:'回访记录', toolbar: '#barDemo', width:150}
+                {field: 'id', title: '编号', align: "center"},
+                {field: 'content', title: '记录内容'},
+                {field: 'create_at', title: '记录时间', align: "center"}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
@@ -75,11 +66,18 @@
             skin: 'line'
         });
         table.on('tool(currentTableFilter)', function (obj) {
-            console.log('888', obj)
-            let editId = obj.data.id;
-            console.log(editId)
-            // 传这个Id去后台查出备忘列表，渲染
-            if (obj.event === 'edit') {
+            let delId = obj.data.id;
+            if (obj.event === 'del') {
+                // layer.prompt({
+                //     formType: 2
+                //
+                // }, function(value, index){
+                //     console.log(value)
+                //     // obj.update({
+                //     //     email: value
+                //     // });
+                //     layer.close(index);
+                // });
                 let index = layer.open({
                     title: '备忘列表',
                     type: 2,
@@ -87,7 +85,7 @@
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: '{:url("/hbcall/tableList")}?customerId=' + editId,
+                    content: './sub/tableList.html',
                 });
                 $(window).on("resize", function () {
                     layer.full(index);

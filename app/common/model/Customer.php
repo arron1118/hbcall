@@ -34,4 +34,9 @@ class Customer extends \think\Model
     {
         return $this->hasMany(CallHistory::class);
     }
+
+    public function records()
+    {
+        return $this->hasMany(CustomerRecord::class);
+    }
 }

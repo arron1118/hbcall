@@ -1,24 +1,15 @@
 {extend name="public/base" /}
 {block name="css"}
 {include file="public/bootstrap" /}
-<style type="text/css">
-    #phone-numbers span:active {
-        background-color: blue;
-    }
-</style>
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 py-2">
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="layuimini-container">
-                <div class="layuimini-main">
-                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
-                    <script type="text/html" id="barDemo">
-                        <div class="layui-btn layui-btn-xs" lay-event="del">删除备忘录</div>
-                    </script>
-                </div>
-            </div>
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+            <script type="text/html" id="barDemo">
+                <div class="layui-btn layui-btn-xs" lay-event="edit">查看回访记录</div>
+            </script>
         </div>
 
     </div>
@@ -42,7 +33,7 @@
         table.render({
             elem: '#currentTableId',
             id: 'historyTable',
-            url: '{:url("/HbCall/getHistoryList", ["customerId" => $customerId])}',
+            url: '{:url("/customer/getCustomerList")}',
             method:'post',
             toolbar: true,
             // height: 680,
@@ -56,18 +47,17 @@
                 return {
                     'code': 0,
                     'msg': '',
-                    'data': res.rows,
+                    'data': res.data,
                     'count': res.total
                 }
             },
             cols: [[
-                {field: 'subid', title: '编号', align: "center"},
-                {field: '', title: '客户名称', align: "center", templet: function (row) {
-                        return row.customer ? row.customer.title : '';
-                    }},
-                {field: 'called_number', title: '被叫号码', align: "center"},
-                {field: 'call_duration', title: '通话时长(分)', sort: true, align: "center"},
-                {fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+                {field: 'id', title: '编号', align: "center"},
+                {field: 'title', title: '客户名称', align: "center"},
+                {field: 'phone', title: '联系电话', align: "center"},
+                {field: 'called_count', title: '呼叫次数', align: "center"},
+                {field: 'last_calltime', title: '最近呼叫', align: "center"},
+                {fixed: 'right', title:'回访记录', toolbar: '#barDemo', width:150}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
@@ -76,28 +66,17 @@
             skin: 'line'
         });
         table.on('tool(currentTableFilter)', function (obj) {
-            console.log('888', obj)
-            let delId = obj.data.id;
-            console.log(delId)
-            if (obj.event === 'del') {
-                // layer.prompt({
-                //     formType: 2
-                //
-                // }, function(value, index){
-                //     console.log(value)
-                //     // obj.update({
-                //     //     email: value
-                //     // });
-                //     layer.close(index);
-                // });
+            let editId = obj.data.id;
+            // 传这个Id去后台查出备忘列表，渲染
+            if (obj.event === 'edit') {
                 let index = layer.open({
-                    title: '备忘列表',
+                    title: '回访记录列表',
                     type: 2,
                     shade: 0.2,
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: './sub/tableList.html',
+                    content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
