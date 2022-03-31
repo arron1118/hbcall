@@ -36,7 +36,11 @@ class User extends ApiController
         $uuid = sha1(md5(uniqid(md5(microtime(true)), true)));
         $password = sha1(sha1('hbcall_') . md5('123456') . md5('_encrypt') . sha1('123456'));
         $crypt = md5(crypt('QQX@lyq20151111', 'L9uSPt'));
-        return json([
+        $openssl_decrypt = openssl_decrypt('AQShHlFSuUgljo1qDsBjjk4JA8rfARy9jnKULFTO2crpruQ7UgHUoT1qBob49OMmUycWcCbk4/j6guxfA1nyjlMvST67CHEuVdaNtfIvL4Tz/+3nqLtJJR4Hj/HXbVKlj3hyZ2AEhuKjPpHjhbogTeUsTkCeEzgx6X3uKAtQZcKOaOYD/BAzHEGqd2lrNBPD2GmAt1p1qFTOl27abiIKBA4usL2GRVmKHy3bhpsO9CFYGYW//Q2GXbS8iY/rJCluX64m+G2O+wLMQoWKNfB0NhoGynx8jMFR53T3NliJ74CkqSrknNxcdYelUCvwxBIDk3SLmABZ6FFJr/gVqB2phEQWOOvogjD2FEa5DBe2aEafcpsmoVt5bXx1yIyqJGEoNiY+Dq1MU5benP01NmxOhKNs6dLN137Phs9SIHlDJMVBBM77rqm+fHwwWtOgYsUpKw3rW6a1VwMvrCBy9cpvqVmfPRjJmqbeJIjldbE/0ibDxlGOj7cqxIe9D4QwfNpja8VxMAVDcPiXRL7IcOjwGZVzDe99UUZum0DDI2rCvzM=', 'AES-128-ECB', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe');
+//        echo json_encode($this->getUserInfo(), true);
+//        return json($openssl_decrypt);
+        dump(json_decode($openssl_decrypt));
+        /*return json([
             'code' => 1,
             'data' => [
                 'session_id' => $sessionId,
@@ -55,10 +59,13 @@ class User extends ApiController
                 'password_hash' => password_hash('123456' . '_hbcall', PASSWORD_DEFAULT),
                 'password_verify' => password_verify('123456' . '_hbcall', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
                 'thinkphp_token' => request()->buildToken(),
-                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi')
+                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi'),
+                'openssl_encrypt' => openssl_encrypt(json_encode($this->getUserInfo()), 'AES-128-ECB', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
+                'openssl_decrypt' => $openssl_decrypt,
+                'openssl_decrypt_json' => json_encode($openssl_decrypt),
             ],
             'msg' => '请求成功'
-        ]);
+        ]);*/
     }
 
     /**
@@ -96,7 +103,15 @@ class User extends ApiController
             }
 
             $model = ucfirst($this->userType) . 'Model';
-            $user = $this->$model::getByUsername($param['username']);
+            $user = $this->$model::withSum(['expense' => function ($query, &$alias) {
+                $query->whereRaw("date_format(date_sub(now(), interval 1 day), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')");
+                $alias = 'yesterday_duration';
+            }], 'duration')->withSum(['expense' => function ($query, &$alias) {
+                $query->whereRaw("date_format(now(), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')");
+                $alias = 'today_duration';
+            }], 'duration')
+                ->where('username', $param['username'])
+                ->find();
 
             if (!$user) {
                 $this->returnData['msg'] = lang('Account is incorrect');

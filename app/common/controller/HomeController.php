@@ -24,8 +24,6 @@ class HomeController extends \app\BaseController
 
     protected $token = null;
 
-    protected $noNeedLogin = ['login'];
-
     /**
      * 响应数据
      * @var array
@@ -39,31 +37,10 @@ class HomeController extends \app\BaseController
     protected function initialize()
     {
         $this->returnData['msg'] = lang('Unknown error');
-        $action = $this->request->action();
         $this->token = $this->request->cookie('hbcall_user_token');
+        $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->findOrEmpty();
 
-        if (!in_array($action, $this->noNeedLogin)) {
-            $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->findOrEmpty();
-
-            if (!$this->userInfo->isEmpty() && (!$this->userInfo->getData('status') || !$this->userInfo->company->getData('status')) && ($this->request->action() !== 'logout')) {
-                showAlert(lang('Account is locked'), [
-                    'end' => 'function () {
-                    location.href = "' . url('/index/logout') . '";
-                }'
-                ]);
-            }
-
-            if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
-                showAlert(lang('Account is locked'), [
-                    'end' => 'function () {
-                    location.href = "' . url('/index/logout') . '";
-                }'
-                ]);
-                exit();
-            }
-
-            $this->view->assign('user', $this->userInfo);
-        }
+        $this->view->assign('user', $this->userInfo);
     }
 
     protected function getUserInfo()
