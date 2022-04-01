@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\common\controller\ApiController;
+use app\common\model\Expense;
 use think\facade\Session;
 use app\common\traits\UserTrait;
 
@@ -103,14 +104,7 @@ class User extends ApiController
             }
 
             $model = ucfirst($this->userType) . 'Model';
-            $user = $this->$model::withSum(['expense' => function ($query, &$alias) {
-                $query->whereRaw("date_format(date_sub(now(), interval 1 day), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')");
-                $alias = 'yesterday_duration';
-            }], 'duration')->withSum(['expense' => function ($query, &$alias) {
-                $query->whereRaw("date_format(now(), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')");
-                $alias = 'today_duration';
-            }], 'duration')
-                ->where('username', $param['username'])
+            $user = $this->$model::where('username', $param['username'])
                 ->find();
 
             if (!$user) {
@@ -141,6 +135,14 @@ class User extends ApiController
             $user->browser_version = $this->agent->version($this->agent->browser());
             $user->device = $this->agent->device();
             $user->save();
+
+            $where = [$this->userType . '_id' => $user->id];
+            $user->yesterday_duration = Expense::where($where)
+                ->whereRaw("date_format(date_sub(now(), interval 1 day), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')")
+                ->sum('duration');
+            $user->today_duration = Expense::where($where)
+                ->whereRaw("date_format(now(), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')")
+                ->sum('duration');
 
             Session::set('api_' . $this->userType, $user->toArray());
 

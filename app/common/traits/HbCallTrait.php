@@ -92,7 +92,7 @@ trait HbCallTrait
                 'mobile' => $mobile,
             ];
         } else {
-            $this->returnData['msg'] = $response['msg'] . $response['data'];
+            $this->returnData['msg'] = $response['msg'];
         }
 
         return json($this->returnData);
