@@ -155,6 +155,10 @@ SQL;
 
     public function login()
     {
+        if (!$this->userInfo->isEmpty()) {
+            return redirect(url('/index'));
+        }
+
         if ($this->request->isPost()) {
             /*$check = $this->request->checkToken('__token__');
             if(false === $check) {

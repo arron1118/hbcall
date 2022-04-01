@@ -7,6 +7,7 @@ use app\admin\model\admin;
 use app\common\model\CallHistory;
 use app\company\model\Company;
 use arron\Random;
+use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Session;
 use app\common\model\Expense;
@@ -14,6 +15,8 @@ use app\common\model\Expense;
 class Index extends AdminController
 {
     protected $lang = [];
+
+    protected $token_expire_time = 3600 * 24;
 
     public function initialize()
     {
@@ -160,7 +163,7 @@ SQL;
         $pwd = getEncryptPassword('123456', $salt);
         dump($salt);
         dump($pwd);*/
-        if (Session::has('admin')) {
+        if (!$this->userInfo->isEmpty()) {
             return redirect(url('/index'));
         }
 
@@ -190,12 +193,20 @@ SQL;
                 return json(['data' => [], 'msg' => lang('Captcha is incorrect'), 'code' => 0]);
             }
 
+            $now = time();
             $user->prevtime = $user->getData('logintime');
-            $user->logintime = time();
+            $user->logintime = $now;
             $user->loginip = $this->request->ip();
-
+            $user->token = createToken($password);
+            $user->token_expire_time = $now + $this->token_expire_time;
+            $user->device = $this->agent->device();
+            $user->platform = $this->agent->platform();
+            $user->platform_version = $this->agent->version($this->agent->platform());
+            $user->browser = $this->agent->browser();
+            $user->browser_version = $this->agent->version($this->agent->browser());
             $user->save();
 
+            Cookie::set('hbcall_admin_token', $user->token);
             Session::set('admin', $user->toArray());
 
             return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/index')]);
@@ -205,6 +216,7 @@ SQL;
 
     public function logout()
     {
+        Cookie::delete('hbcall_admin_token');
         Session::delete('admin');
         return redirect((string)url('/index/login'));
     }
