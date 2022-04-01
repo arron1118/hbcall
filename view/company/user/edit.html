@@ -1,5 +1,6 @@
 {extend name="public/base" /}
 {block name="css"}
+{include file="public/bootstrap" /}
 <style>
     html, body {
         width: 100%;
@@ -126,6 +127,22 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label class="layui-form-label" for="isTest">测试账号</label>
+                    <div class="layui-input-block" id="isTest">
+                        <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo.is_test === '是'}checked{/if}>
+                    </div>
+                </div>
+                <div class="layui-form-item {if !$userInfo->getData('is_test')}d-none{/if} test-endtime">
+                    <label class="layui-form-label" for="test_endtime">结束时间</label>
+                    <div class="layui-input-block" id="test_endtime">
+                        <input type="text" name="test_endtime" placeholder="1970-01-01 00:00:00"
+                               autocomplete="off" class="layui-input" value="{$userInfo.test_endtime}" id="testEndTime">
+                    </div>
+                    <div class="layui-input-block">
+                        <tip>超过测试时间将禁止拨号，空为无限制。</tip>
+                    </div>
+                </div>
+                <div class="layui-form-item">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
                             lay-filter="edit">保存
                     </button>
@@ -139,12 +156,24 @@
 
 {block name="js"}
 <script>
-    layui.use(['form'], function () {
+    layui.use(['form','laydate'], function () {
         let $ = layui.jquery,
+            laydate = layui.laydate,
             form = layui.form;
 
         let frameIndex = parent.layer.getFrameIndex(window.name);
-
+        let d = new Date();
+        // 时间限制为现在
+        let minDate = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDay() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        laydate.render({
+            elem: '#testEndTime',
+            type: 'datetime',
+            min: minDate
+        })
+        form.on('switch(testFilter)', function (obj) {
+            let endtimeItem = $('.test-endtime')
+            obj.elem.checked ? endtimeItem.removeClass('d-none') : endtimeItem.addClass('d-none')
+        })
         // 进行登录操作
         form.on('submit(edit)', function (data) {
             let params = data.field;
@@ -164,7 +193,10 @@
                 layer.msg('密码不能为空');
                 return false;
             }
-
+            if (params.is_test === '1' && params.test_endtime === '') {
+                layer.msg('结束时间不能为空', option)
+                return false
+            }
             $.post("{:url('/user/edit')}", params, function (res) {
                 if (res.code === 1) {
                     layer.msg(res.msg, {icon: 6, time: 2500}, function () {
