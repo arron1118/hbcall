@@ -27,7 +27,7 @@ class Index extends HomeController
 
     public function login()
     {
-        if (!$this->userInfo) {
+        if ($this->userInfo) {
             return redirect(url('/index'));
         }
 
