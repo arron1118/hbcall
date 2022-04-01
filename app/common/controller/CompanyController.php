@@ -38,33 +38,13 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
         $this->token = $this->request->cookie('hbcall_company_token');
-        $action = $this->request->action();
-
-        if (!in_array($action, $this->noNeedLogin)) {
+        if ($this->token) {
             $this->userInfo = Company::withCount('user')
                 ->with(['companyXnumber' => ['numberStore']])
                 ->where('token', $this->token)
-                ->findOrEmpty();
-
-            if (!$this->userInfo->isEmpty() && !$this->userInfo->getData('status') && ($this->request->action() !== 'logout')) {
-                showAlert(lang('Account is locked'), [
-                    'end' => 'function () {
-                    location.href = "' . url('/index/logout') . '";
-                }'
-                ]);
-            }
-
-            if ($this->userInfo->isEmpty() && !in_array($this->request->action(), ['logout', 'login', 'index'])) {
-                showAlert(lang('Account is locked'), [
-                    'end' => 'function () {
-                    location.href = "' . url('/index/logout') . '";
-                }'
-                ]);
-                exit();
-            }
-
-            $this->view->assign('user', $this->userInfo);
+                ->find();
         }
+        $this->view->assign('user', $this->userInfo);
     }
 
     public function delSession()

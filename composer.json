@@ -1,59 +1,60 @@
 {
-    "name": "topthink/think",
-    "description": "the new thinkphp framework",
-    "type": "project",
-    "keywords": [
-        "framework",
-        "thinkphp",
-        "ORM"
-    ],
-    "homepage": "http://thinkphp.cn/",
-    "license": "Apache-2.0",
-    "authors": [
-        {
-            "name": "liu21st",
-            "email": "liu21st@gmail.com"
-        },
-        {
-            "name": "yunwuxin",
-            "email": "448901948@qq.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.1.0",
-        "topthink/framework": "v6.0.12",
-        "topthink/think-orm": "v2.0.52",
-        "topthink/think-view": "v1.0.14",
-        "topthink/think-multi-app": "v1.0.14",
-        "ext-curl": "*",
-        "curl/curl": "2.3.3",
-        "ext-json": "*",
-        "topthink/think-captcha": "v3.0.4",
-        "chillerlan/php-qrcode": "3.4.1",
-        "phpoffice/phpspreadsheet": "^1.22",
-        "yansongda/pay": "2.10",
-        "jenssegers/agent": "^2.6",
-        "lcobucci/jwt": "^4.0"
+  "name": "topthink/think",
+  "description": "the new thinkphp framework",
+  "type": "project",
+  "keywords": [
+    "framework",
+    "thinkphp",
+    "ORM"
+  ],
+  "homepage": "http://thinkphp.cn/",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "liu21st",
+      "email": "liu21st@gmail.com"
     },
-    "require-dev": {
-        "symfony/var-dumper": "v4.4.37",
-        "topthink/think-trace":"v1.4"
-    },
-    "autoload": {
-        "psr-4": {
-            "app\\": "app"
-        },
-        "psr-0": {
-            "": "extend/"
-        }
-    },
-    "config": {
-        "preferred-install": "dist"
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "@php think service:discover",
-            "@php think vendor:publish"
-        ]
+    {
+      "name": "yunwuxin",
+      "email": "448901948@qq.com"
     }
+  ],
+  "require": {
+    "php": ">=7.1.0",
+    "topthink/framework": "v6.0.12",
+    "topthink/think-orm": "v2.0.52",
+    "topthink/think-view": "v1.0.14",
+    "topthink/think-multi-app": "v1.0.14",
+    "ext-curl": "*",
+    "curl/curl": "2.3.3",
+    "ext-json": "*",
+    "topthink/think-captcha": "v3.0.4",
+    "chillerlan/php-qrcode": "3.4.1",
+    "phpoffice/phpspreadsheet": "^1.22",
+    "yansongda/pay": "2.10",
+    "jenssegers/agent": "^2.6",
+    "lcobucci/jwt": "^4.0",
+    "ext-openssl": "*"
+  },
+  "require-dev": {
+    "symfony/var-dumper": "v4.4.37",
+    "topthink/think-trace": "v1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "app\\": "app"
+    },
+    "psr-0": {
+      "": "extend/"
+    }
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php think service:discover",
+      "@php think vendor:publish"
+    ]
+  }
 }

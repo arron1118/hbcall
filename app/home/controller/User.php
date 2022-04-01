@@ -5,7 +5,6 @@ namespace app\home\controller;
 
 use app\common\model\User as UserModel;
 use app\common\traits\UserTrait;
-use think\facade\Session;
 
 class User extends \app\common\controller\HomeController
 {
@@ -36,9 +35,6 @@ class User extends \app\common\controller\HomeController
             $this->userInfo->realname = $realname;
             $this->userInfo->phone = $phone;
             $this->userInfo->save();
-            Session::set('user.username', $username);
-            Session::set('user.realname', $realname);
-            Session::set('user.phone', $phone);
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = '操作成功';

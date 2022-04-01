@@ -71,9 +71,9 @@ class ApiController extends \app\BaseController
         }
     }
 
-    protected function getUserInfo()
+    public function getUserInfo()
     {
-        return $this->userInfo;
+        return $this->userInfo->hidden(['salt', 'password'])->toArray();
     }
 
     protected function isLogin()

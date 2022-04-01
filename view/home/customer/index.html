@@ -1,0 +1,145 @@
+{extend name="public/base" /}
+{block name="css"}
+{include file="public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="container-fluid">
+    <div class="row mb-3 shadow-sm bg-white rounded">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">客户名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="phone" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+            <script type="text/html" id="barDemo">
+                <div class="layui-btn layui-btn-xs" lay-event="edit">查看回访记录</div>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script src="__STATIC__/lib/layui_exts/excel.js"></script>
+<script>
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form'], function () {
+        let $ = layui.jquery,
+            layer = layui.layer,
+            miniTab = layui.miniTab,
+            element = layui.element,
+            excel = layui.excel,
+            table = layui.table,
+            upload = layui.upload,
+            form = layui.form;
+
+        miniTab.listen();
+        // 客户列表
+        table.render({
+            elem: '#currentTableId',
+            id: 'customerTable',
+            url: '{:url("/customer/getCustomerList")}',
+            method: 'post',
+            toolbar: true,
+            // height: 680,
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.data,
+                    'count': res.total
+                }
+            },
+            cols: [[
+                {field: 'id', title: '编号', align: "center"},
+                {field: 'title', title: '客户名称', align: "center"},
+                {field: 'phone', title: '联系电话', align: "center"},
+                {field: 'called_count', title: '呼叫次数', align: "center"},
+                {field: 'last_calltime', title: '最近呼叫', align: "center"},
+                {fixed: 'right', title:'回访记录', toolbar: '#barDemo', width:150}
+            ]],
+            page: {
+                limits: [15, 30, 45, 60],
+                limit: 15,
+            },
+            skin: 'line'
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            let editId = obj.data.id;
+            // 传这个Id去后台查出备忘列表，渲染
+            if (obj.event === 'edit') {
+                let index = layer.open({
+                    title: '回访记录列表',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            table.reload('customerTable', {
+                page: {
+                    curr: 1
+                },
+                where: data.field
+            });
+
+            return false
+        });
+
+        $('button[type="reset"]').on('click', function () {
+            table.reload('customerTable', {
+                page: {
+                    curr: 1
+                },
+                where: {}
+            }, false)
+        })
+    });
+</script>
+
+{/block}

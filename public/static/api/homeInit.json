@@ -29,7 +29,7 @@
         },
         {
           "title": "客户管理",
-          "href": "hbcall/customerManagement.html",
+          "href": "customer/index.html",
           "icon": "fa fa-people-group",
           "target": "_self"
         },

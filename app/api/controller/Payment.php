@@ -150,8 +150,15 @@ class Payment extends \app\common\controller\ApiController
         $amount = (float) $this->request->param('amount', 0);
         $payType = (int) $this->request->param('payType', 1);
         if ($amount <= 0) {
-            return json(['code' => 0, 'msg' => '请输入正确的金额']);
+            $this->returnData['msg'] = '请输入正确的金额';
+            return json($this->returnData);
         }
+
+        if ($this->userType === 'user') {
+            $this->returnData['msg'] = '权限不足，暂时不对普通用户开放';
+            return json($this->returnData);
+        }
+
         $data = $this->createOrder($this->userInfo, $amount, $payType);
 
         if ($payType === 1) {

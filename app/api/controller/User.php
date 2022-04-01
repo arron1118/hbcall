@@ -3,8 +3,8 @@
 namespace app\api\controller;
 
 use app\common\controller\ApiController;
+use app\common\model\Expense;
 use think\facade\Session;
-use Jenssegers\Agent\Agent;
 use app\common\traits\UserTrait;
 
 class User extends ApiController
@@ -33,22 +33,25 @@ class User extends ApiController
         $server = $this->request->server();
 //        dump($this->request->header());
 //        dump($this->request->post());
-        $agent = new Agent();
 
         $uuid = sha1(md5(uniqid(md5(microtime(true)), true)));
         $password = sha1(sha1('hbcall_') . md5('123456') . md5('_encrypt') . sha1('123456'));
         $crypt = md5(crypt('QQX@lyq20151111', 'L9uSPt'));
-        return json([
+        $openssl_decrypt = openssl_decrypt('AQShHlFSuUgljo1qDsBjjk4JA8rfARy9jnKULFTO2crpruQ7UgHUoT1qBob49OMmUycWcCbk4/j6guxfA1nyjlMvST67CHEuVdaNtfIvL4Tz/+3nqLtJJR4Hj/HXbVKlj3hyZ2AEhuKjPpHjhbogTeUsTkCeEzgx6X3uKAtQZcKOaOYD/BAzHEGqd2lrNBPD2GmAt1p1qFTOl27abiIKBA4usL2GRVmKHy3bhpsO9CFYGYW//Q2GXbS8iY/rJCluX64m+G2O+wLMQoWKNfB0NhoGynx8jMFR53T3NliJ74CkqSrknNxcdYelUCvwxBIDk3SLmABZ6FFJr/gVqB2phEQWOOvogjD2FEa5DBe2aEafcpsmoVt5bXx1yIyqJGEoNiY+Dq1MU5benP01NmxOhKNs6dLN137Phs9SIHlDJMVBBM77rqm+fHwwWtOgYsUpKw3rW6a1VwMvrCBy9cpvqVmfPRjJmqbeJIjldbE/0ibDxlGOj7cqxIe9D4QwfNpja8VxMAVDcPiXRL7IcOjwGZVzDe99UUZum0DDI2rCvzM=', 'AES-128-ECB', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe');
+//        echo json_encode($this->getUserInfo(), true);
+//        return json($openssl_decrypt);
+        dump(json_decode($openssl_decrypt));
+        /*return json([
             'code' => 1,
             'data' => [
                 'session_id' => $sessionId,
                 'header' => $this->request->header(),
                 'session' => $sessionId,
-                'device' => $agent->device() ?: '',
-                'platform' => $agent->platform() ?: '',
-                'browser' => $agent->browser() ?: '',
-                'platformVersion' => $agent->version($agent->platform()) ?: '',
-                'browserVersion' => $agent->version($agent->browser()) ?: '',
+                'device' => $this->agent->device() ?: '',
+                'platform' => $this->agent->platform() ?: '',
+                'browser' => $this->agent->browser() ?: '',
+                'platformVersion' => $this->agent->version($this->agent->platform()) ?: '',
+                'browserVersion' => $this->agent->version($this->agent->browser()) ?: '',
                 'uuid' => $uuid,
                 'uuid2' => strlen($uuid),
                 'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
@@ -57,10 +60,13 @@ class User extends ApiController
                 'password_hash' => password_hash('123456' . '_hbcall', PASSWORD_DEFAULT),
                 'password_verify' => password_verify('123456' . '_hbcall', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
                 'thinkphp_token' => request()->buildToken(),
-                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi')
+                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi'),
+                'openssl_encrypt' => openssl_encrypt(json_encode($this->getUserInfo()), 'AES-128-ECB', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
+                'openssl_decrypt' => $openssl_decrypt,
+                'openssl_decrypt_json' => json_encode($openssl_decrypt),
             ],
             'msg' => '请求成功'
-        ]);
+        ]);*/
     }
 
     /**
@@ -84,24 +90,8 @@ class User extends ApiController
 
     public function login()
     {
-        /*if ($this->isLogin()) {
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = lang('You are already logged in');
-            $this->returnData['data'] = Session::get('api_user');
-            return json($this->returnData);
-        }*/
-
         if ($this->request->isPost()) {
-            /*$check = $this->request->checkToken('__token__');
-            if(false === $check) {
-                $token = $this->request->buildToken();
-                return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
-            }*/
-            $agent = new Agent();
-
             $param = $this->request->param();
-
-            $login_ip = $this->request->server();
 
             if (!isset($param['username']) || trim($param['username']) === '') {
                 $this->returnData['msg'] = '参数错误：缺少 username';
@@ -114,7 +104,8 @@ class User extends ApiController
             }
 
             $model = ucfirst($this->userType) . 'Model';
-            $user = $this->$model::getByUsername($param['username']);
+            $user = $this->$model::where('username', $param['username'])
+                ->find();
 
             if (!$user) {
                 $this->returnData['msg'] = lang('Account is incorrect');
@@ -138,12 +129,20 @@ class User extends ApiController
             $user->loginip = $this->request->ip();
             $user->token = createToken($password);
             $user->token_expire_time = $now + $this->token_expire_time;
-            $user->platform = $agent->platform() ?: '';
-            $user->platform_version = $agent->version($agent->platform()) ?: '';
-            $user->browser = $agent->browser() ?: '';
-            $user->browser_version = $agent->version($agent->browser()) ?: '';
-            $user->device = $agent->device() ?: '';
+            $user->platform = $this->agent->platform();
+            $user->platform_version = $this->agent->version($this->agent->platform());
+            $user->browser = $this->agent->browser();
+            $user->browser_version = $this->agent->version($this->agent->browser());
+            $user->device = $this->agent->device();
             $user->save();
+
+            $where = [$this->userType . '_id' => $user->id];
+            $user->yesterday_duration = Expense::where($where)
+                ->whereRaw("date_format(date_sub(now(), interval 1 day), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')")
+                ->sum('duration');
+            $user->today_duration = Expense::where($where)
+                ->whereRaw("date_format(now(), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')")
+                ->sum('duration');
 
             Session::set('api_' . $this->userType, $user->toArray());
 

@@ -17,6 +17,8 @@ class AdminController extends \app\BaseController
 
     protected $userInfo = null;
 
+    protected $userType = 'admin';
+
     protected $returnData = [];
 
     protected function initialize()
@@ -31,7 +33,10 @@ class AdminController extends \app\BaseController
 
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
-        $this->userInfo = Admin::findOrEmpty(Session::get('admin.id'));
+        $token = $this->request->cookie('hbcall_admin_token');
+        if ($token) {
+            $this->userInfo = Admin::where('token', $token)->find();
+        }
         $this->view->assign('user', $this->userInfo);
     }
 

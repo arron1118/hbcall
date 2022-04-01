@@ -7,10 +7,7 @@ use app\common\traits\PaymentTrait;
 use chillerlan\QRCode\QRCode;
 use think\facade\Config;
 use think\facade\Event;
-use think\facade\Log;
-use think\facade\Session;
 use Yansongda\Pay\Pay;
-use Yansongda\Pay\Exceptions\GatewayException;
 
 class Payment extends \app\common\controller\CompanyController
 {

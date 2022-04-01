@@ -22,20 +22,12 @@
                                 <i class="fa fa-file-import"></i> 导入客户
                             </button>
                             <button class="btn btn-danger btn-sm clear-customer">
-                                <i class="fa fa-trash-can"></i> 清空
+                                <i class="fa fa-trash-can"></i> 清空列表
                             </button>
                             <a href="{:url('/HbCall/downloadTemplate')}" class="btn btn-info btn-sm download-template"><i class="fa fa-download"></i> 下载模板</a>
                             <a href="javascript:;" class="ms-3 check-rules text-decoration-none"><i class="fa fa-info-circle"></i> 导入说明</a>
                         </div>
                         <div class="customer-list">
-<!--                            <div class="layuimini-container">-->
-<!--                                <div class="layuimini-main">-->
-<!--                                    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>-->
-<!--                                    <script type="text/html" id="barDemo">-->
-<!--                                        <a class="layui-btn layui-btn-xs" lay-event="edit">备忘录</a>-->
-<!--                                    </script>-->
-<!--                                </div>-->
-<!--                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -82,73 +74,7 @@
             upload = layui.upload;
 
         miniTab.listen();
-        // 客户列表
-        table.render({
-            elem: '#currentTableId',
-            id: 'historyTable',
-            url: '{:url("/HbCall/getHistoryList")}',
-            method:'post',
-            toolbar: true,
-            height: 680,
-            defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            //异步请求，格式化数据
-            parseData: function (res) {
-                return {
-                    'code': 0,
-                    'msg': '',
-                    'data': res.rows,
-                    'count': res.total
-                }
-            },
-            cols: [[
-                {field: 'subid', title: '编号', align: "center"},
-                {field: '', title: '客户名称', align: "center", templet: function (row) {
-                        return row.customer ? row.customer.title : '';
-                    }},
-                {field: 'called_number', title: '被叫号码', align: "center"},
-                {field: 'call_duration', title: '通话时长(分)', sort: true, align: "center"},
-                {fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
-            ]],
-            page: {
-                limits: [15, 30, 45, 60],
-                limit: 15,
-            },
-            skin: 'line'
-        });
-        table.on('tool(currentTableFilter)', function (obj) {
-            console.log('888', obj)
-            let editId = obj.data.id;
-            console.log(editId)
-            if (obj.event === 'edit') {
-                layer.prompt({
-                    formType: 2
 
-                }, function(value, index){
-                    console.log(value)
-                    // obj.update({
-                    //     email: value
-                    // });
-                    layer.close(index);
-                });
-                // let index = layer.open({
-                //     title: '编辑用户',
-                //     type: 2,
-                //     shade: 0.2,
-                //     maxmin:true,
-                //     shadeClose: true,
-                //     area: ['100%', '100%'],
-                //     content: '../page/table/edit.html',
-                // });
-                // $(window).on("resize", function () {
-                //     layer.full(index);
-                // });
-                // return false;
-            }
-        });
         // 输入框获取焦点
         let inputFocus = function () {
             $("#input").focus();
@@ -509,32 +435,39 @@
                             text: '添加回访记录',
                             click: function () {
                                 // makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone }), parent)
-                                layer.prompt({title: '随便写点啥，并确认', formType: 2}, function(text, index){
-                                    layer.close(index);
-                                    layer.msg('演示完毕！您的口令：' +'<br>您最后写下了：'+text);
+                                layer.prompt({title: '回访记录', formType: 2}, function(text, index){
+                                    $.post('{:url("/CustomerRecord/add")}', { content: text, customer_id: item.id }, function (res) {
+                                        let option = { icon: 0 }
+                                        if (res.code) {
+                                            option.icon = 1;
+                                            layer.close(index);
+                                        }
 
+                                        layer.msg(res.msg, option)
+                                    });
                                 });
                             }
                         }).append($('<i />', {
-                            class: 'fa fa-plus float-end small lh-base',
+                            class: 'fa fa-book-bookmark float-end small lh-base',
                             css: { lineHeight: 'inhert' }
                         }))).append($('<button />', {
                             type: 'button',
                             class: 'list-group-item list-group-item-action',
-                            text: '删除',
+                            text: '从列表中删除',
                             click: function () {
-                                $.post('{:url("/HbCall/deleteCustomer")}', { customerList: [item.id] }, res => {
-                                    let icon = 0;
-                                    if (res.code === 1) {
-                                        icon = 1;
-                                        $(parent).remove()
-                                    }
-
-                                    layer.msg(res.msg, {icon: icon, time: 3000});
-                                })
+                                $(parent).remove();
+                                // $.post('{:url("/HbCall/deleteCustomer")}', { customerList: [item.id] }, res => {
+                                //     let icon = 0;
+                                //     if (res.code === 1) {
+                                //         icon = 1;
+                                //         $(parent).remove()
+                                //     }
+                                //
+                                //     layer.msg(res.msg, {icon: icon, time: 3000});
+                                // })
                             }
                         }).append($('<i />', {
-                            class: 'fa fa-trash-alt float-end text-sm'
+                            class: 'fa fa-trash-alt float-end text-sm lh-base'
                         }))));
                     $('#right-contextmenu').remove()
 
@@ -747,14 +680,16 @@
             }
         }
         $('.clear-customer').on('click', function () {
+            customerList = []
+            customerContainer.html('')
             // clearCustomer(customerList)
-            const customerList = customerContainer.find('.customer-id');
-            let customerIds = [];
-            $.each(customerList, (index, item) => {
-                let cid = $(item).data('id')
-                customerIds.push(cid)
-            })
-            clearCustomer(customerIds)
+            // const customerList = customerContainer.find('.customer-id');
+            // let customerIds = [];
+            // $.each(customerList, (index, item) => {
+            //     let cid = $(item).data('id')
+            //     customerIds.push(cid)
+            // })
+            // clearCustomer(customerIds)
         })
 
         let clearCustomer = function (customer) {
