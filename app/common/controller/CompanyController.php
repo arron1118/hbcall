@@ -38,7 +38,7 @@ class CompanyController extends \app\BaseController
 
         $this->view = View::instance();
         $this->token = $this->request->cookie('hbcall_company_token');
-        if (!$this->token) {
+        if ($this->token) {
             $this->userInfo = Company::withCount('user')
                 ->with(['companyXnumber' => ['numberStore']])
                 ->where('token', $this->token)
