@@ -12,6 +12,10 @@ use app\common\model\Expense;
 
 class Company extends \think\Model
 {
+    protected $autoWriteTimestamp = true;
+
+    protected $createTime = 'create_at';
+
     public function getPrevtimeAttr($value)
     {
         return $value > 0 ? date($this->getDateFormat(), $value) : '-';

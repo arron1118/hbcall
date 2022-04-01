@@ -101,12 +101,22 @@ class HbCall extends \app\common\controller\HomeController
             return json($this->returnData);
         }
 
-        // 试用账号到期后无法拨号
+        // 企业试用账号到期后无法拨号
         if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
             $this->returnData['msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
             $this->returnData['info'] = lang('Tips');
             $this->returnData['status'] = 0;
             return json($this->returnData);
+        }
+
+        // 用户试用账号到期后无法拨号
+        if ($this->userInfo->getData('is_test')) {
+            if (time() > $this->userInfo->getData('test_endtime') || CallHistory::where('user_id', $this->userInfo->id)->count() >= $this->userInfo->limit_call_number) {
+                $this->returnData['msg'] = lang('测试时间结束，请联系管理员开通正式账号后再拨打');
+                $this->returnData['info'] = lang('Tips');
+                $this->returnData['status'] = 0;
+                return json($this->returnData);
+            }
         }
 
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
@@ -117,7 +127,7 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         if ($this->userInfo->phone === '') {
-            $this->returnData['msg'] = '请前往个人资料中<a href="javascript:;" layuimini-content-href="user/profile.html" data-title="基本资料">填写手机号</a>';
+            $this->returnData['msg'] = '请前往个人资料中填写手机号</a>';
             $this->returnData['info'] = lang('Tips');
             $this->returnData['status'] = 0;
             return json($this->returnData);
@@ -149,7 +159,6 @@ class HbCall extends \app\common\controller\HomeController
                 $CallHistory->caller_number = $this->userInfo->phone;
                 $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
                 $CallHistory->called_number = $mobile;
-                $CallHistory->createtime = time();
                 $CallHistory->customer_id = $customerId;
                 $CallHistory->device = $this->agent->device();
                 $CallHistory->platform = $this->agent->platform();

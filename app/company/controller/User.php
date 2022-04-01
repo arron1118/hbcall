@@ -87,6 +87,22 @@ class User extends \app\common\controller\CompanyController
                 return json($this->returnData);
             }
 
+            if (isset($params['is_test'])) {
+                $params['is_test'] = (int) $params['is_test'];
+                if ($params['is_test'] === 1) {
+                    if ($params['test_endtime'] !== '') {
+                        $params['test_endtime'] = strtotime($params['test_endtime']);
+                        if ($params['test_endtime'] < time() - 1800) {
+                            $this->returnData['msg'] = '结束时间不能小于现在时间';
+                            return json($this->returnData);
+                        }
+                    } else {
+                        $this->returnData['msg'] = '结束时间不能为空';
+                        return json($this->returnData);
+                    }
+                }
+            }
+
             $params['company_id'] = $this->userInfo['id'];
 
             $userModel = new UserModel();
@@ -131,8 +147,29 @@ class User extends \app\common\controller\CompanyController
                 $userInfo->password = getEncryptPassword(trim($params['password']), $userInfo->salt);
             }
 
+            if (isset($params['is_test'])) {
+                $userInfo->is_test = (int) $params['is_test'];
+                $this->returnData['data'] = $userInfo;
+                if ((int) $params['is_test'] === 1) {
+                    if ($params['test_endtime'] !== '') {
+                        $userInfo->test_endtime = strtotime($params['test_endtime']);
+                        if ($userInfo->test_endtime < time() - 1800) {
+                            $this->returnData['msg'] = '结束时间不能小于现在时间';
+                            return json($this->returnData);
+                        }
+                    } else {
+                        $this->returnData['msg'] = '结束时间不能为空';
+                        return json($this->returnData);
+                    }
+                }
+            } else {
+                $userInfo->is_test = 0;
+                $userInfo->test_endtime = 0;
+            }
+
             $userInfo->username = $params['username'];
             $userInfo->phone = $params['phone'];
+            $userInfo->limit_call_number = $params['limit_call_number'];
 
             if ($userInfo->save()) {
                 // 保存小号关联数据

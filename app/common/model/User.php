@@ -6,6 +6,10 @@ namespace app\common\model;
 
 class User extends \think\Model
 {
+    protected $autoWriteTimestamp = true;
+
+    protected $createTime = 'create_at';
+
     public function getPrevtimeAttr($value)
     {
         return $value ? date($this->getDateFormat(), $value) : '-';
@@ -21,9 +25,24 @@ class User extends \think\Model
         return $this->getStatusList()[$value];
     }
 
+    public function getTestEndtimeAttr($value)
+    {
+        return $value > 0 ? date($this->getDateFormat(), $value) : '';
+    }
+
     protected function getStatusList()
     {
         return [0 => '禁止登录', 1 => '正常'];
+    }
+
+    public function getIsTestAttr($value)
+    {
+        return $this->getTestList()[$value];
+    }
+
+    protected function getTestList()
+    {
+        return [0 => '否', 1 => '是'];
     }
 
     public function company()

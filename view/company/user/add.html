@@ -2,48 +2,6 @@
 {block name="css"}
 {include file="public/bootstrap" /}
 <style>
-    html, body {
-        width: 100%;
-        height: 100%;
-        overflow: hidden
-    }
-
-    body {
-        background: rgb(228, 228, 228);
-    }
-
-    body:after {
-        content: '';
-        background-repeat: no-repeat;
-        background-size: cover;
-        -webkit-filter: blur(3px);
-        -moz-filter: blur(3px);
-        -o-filter: blur(3px);
-        -ms-filter: blur(3px);
-        filter: blur(3px);
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -1;
-    }
-
-    .layui-container {
-        width: 100%;
-        height: 100%;
-        overflow: hidden
-    }
-
-    .admin-login-background {
-        position: absolute;
-        left: 50%;
-        top: 20%;
-        margin-left: -250px;
-        margin-top: -100px;
-        width: 500px;
-    }
-
     .logo-title {
         text-align: center;
         letter-spacing: 2px;
@@ -84,9 +42,9 @@
 </style>
 {/block}
 {block name="body"}
-<div class="layui-container" id="lqp">
-    <div class="admin-login-background ">
-        <div class="layui-form login-form ">
+<div class="container justify-content-center">
+    <div class="row justify-content-center">
+        <div class="col col-lg-8 col-md-10 bg-white">
             <form class="layui-form layuimini-form" action="">
                 <div class="layui-form-item logo-title">
                     <h1>开通账号</h1>
@@ -125,7 +83,7 @@
                                autocomplete="off" class="layui-input" value="">
                     </div>
                 </div>
-                <div class="layui-form-item">
+                <div class="layui-form-item {if $user.id !== 1} d-none {/if}">
                     <label class="layui-form-label" for="isTest">测试账号</label>
                     <div class="layui-input-block" id="isTest">
                         <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1"
@@ -140,6 +98,14 @@
                     </div>
                     <div class="layui-input-block">
                         <tip>超过测试时间将禁止拨号，空为无限制。</tip>
+                    </div>
+                </div>
+                <div class="layui-form-item d-none test-endtime">
+                    <label class="layui-form-label" for="limit_user">限制拨打数量</label>
+                    <div class="layui-input-block" id="limit_user">
+                        <input type="number" name="limit_call_number" min="0" placeholder="0"
+                               autocomplete="off" class="layui-input" value="50">
+                        <tip>提示：0 为无限制</tip>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -167,7 +133,7 @@
         laydate.render({
             elem: '#testEndTime',
             type: 'datetime',
-            min: minDate
+            // min: minDate
         })
         form.on('switch(testFilter)', function (obj) {
             let endtimeItem = $('.test-endtime')

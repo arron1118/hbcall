@@ -171,7 +171,6 @@
         // 进行登录操作
         form.on('submit(edit)', function (data) {
             let params = data.field, option = { icon: 5 };
-            console.log(params);
             if (params.account === '') {
                 layer.msg('账号不能为空', option);
                 return false;
@@ -202,6 +201,8 @@
                 return false
             }
 
+            console.log(params);
+            return false;
             $.post('{:url("/user/edit")}', params, function (res) {
                 if (res.code === 1) {
                     option.icon = 6;

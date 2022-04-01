@@ -77,7 +77,6 @@ trait HbCallTrait
             $CallHistory->caller_number = $this->userInfo->phone;
             $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
             $CallHistory->called_number = $mobile;
-            $CallHistory->createtime = time();
             $CallHistory->device = $this->agent->device();
             $CallHistory->platform = $this->agent->platform();
             $CallHistory->platform_version = $this->agent->version($this->agent->platform());
