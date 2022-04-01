@@ -34,7 +34,9 @@ class AdminController extends \app\BaseController
         $this->view = View::instance();
 //        $this->view->engine()->layout('layout');
         $token = $this->request->cookie('hbcall_admin_token');
-        $this->userInfo = Admin::where('token', $token)->findOrEmpty();
+        if (!$token) {
+            $this->userInfo = Admin::where('token', $token)->find();
+        }
         $this->view->assign('user', $this->userInfo);
     }
 

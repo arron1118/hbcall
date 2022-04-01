@@ -155,7 +155,7 @@ SQL;
 
     public function login()
     {
-        if (!$this->userInfo->isEmpty()) {
+        if (!$this->userInfo) {
             return redirect(url('/index'));
         }
 

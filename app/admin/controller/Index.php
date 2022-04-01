@@ -163,7 +163,7 @@ SQL;
         $pwd = getEncryptPassword('123456', $salt);
         dump($salt);
         dump($pwd);*/
-        if (!$this->userInfo->isEmpty()) {
+        if (!$this->userInfo) {
             return redirect(url('/index'));
         }
 

@@ -38,7 +38,9 @@ class HomeController extends \app\BaseController
     {
         $this->returnData['msg'] = lang('Unknown error');
         $this->token = $this->request->cookie('hbcall_user_token');
-        $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->findOrEmpty();
+        if (!$this->token) {
+            $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->findOrEmpty();
+        }
 
         $this->view->assign('user', $this->userInfo);
     }
