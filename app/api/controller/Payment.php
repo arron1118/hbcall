@@ -6,6 +6,8 @@ namespace app\api\controller;
 use app\common\traits\PaymentTrait;
 use app\company\model\Company;
 use think\facade\Config;
+use think\facade\Log;
+use Yansongda\Pay\Exceptions\GatewayException;
 use Yansongda\Pay\Pay;
 use app\company\model\Payment as PaymentModel;
 
@@ -168,5 +170,53 @@ class Payment extends \app\common\controller\ApiController
             $res = Pay::alipay(Config::get('payment.alipay.app'))->app($data);
             return json(['code' => 1, 'msg' => 'Success', 'data' => ['alipay' => $res->getContent()]]);
         }
+    }
+
+    /**
+     * 检查订单
+     * @return \think\response\Json
+     * @throws \Yansongda\Pay\Exceptions\GatewayException
+     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
+     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
+     */
+    public function checkOrder()
+    {
+        if ($this->userType === 'user') {
+            $this->returnData['msg'] = '权限不足，暂时不提供查询数据';
+            return json($this->returnData);
+        }
+
+        $payno = $this->request->param('payno');
+
+        if (!$payno) {
+            $this->returnData['msg'] = '请提供正确的订单号';
+            return json($this->returnData);
+        }
+
+        $payment = \app\company\model\Payment::where('payno', $payno)->find();
+
+        if ($payment) {
+            $payType = $payment->getData('pay_type');
+            $data = [];
+            if ($payType === 1) {
+                // 检查微信订单是否已支付
+                $data = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payment->payno]);
+            } elseif ($payType === 2) {
+                // 检查支付宝订单是否已支付
+                try {
+                    $data = Pay::alipay(Config::get('payment.alipay.web'))->find(['out_trade_no' => $payment->payno]);
+                } catch (GatewayException $e) {
+                    $data = $e->raw['alipay_trade_query_response'];
+                }
+            }
+
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = 'success';
+            $this->returnData['data'] = $data;
+        } else {
+            $this->returnData['msg'] = '订单不存在';
+        }
+
+        return json($this->returnData);
     }
 }
