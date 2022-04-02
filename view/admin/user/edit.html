@@ -201,8 +201,6 @@
                 return false
             }
 
-            console.log(params);
-            return false;
             $.post('{:url("/user/edit")}', params, function (res) {
                 if (res.code === 1) {
                     option.icon = 6;

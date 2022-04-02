@@ -159,7 +159,7 @@
                 return false;
             }
             if (params.is_test === '1' && params.test_endtime === '') {
-                layer.msg('结束时间不能为空', option)
+                layer.msg('结束时间不能为空', { icon: 5 })
                 return false
             }
             $.post("{:url('/user/add')}", params, function (res) {

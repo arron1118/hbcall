@@ -70,6 +70,21 @@ class User extends \app\common\controller\AdminController
                 return json($this->returnData);
             }
 
+            if (isset($params['is_test'])) {
+                $params['is_test'] = (int) $params['is_test'];
+                if ($params['is_test'] === 1) {
+                    if ($params['test_endtime'] !== '') {
+                        $params['test_endtime'] = strtotime($params['test_endtime']);
+                        if ($params['test_endtime'] < time() - 1800) {
+                            $this->returnData['msg'] = '结束时间不能小于现在时间';
+                            return json($this->returnData);
+                        }
+                    } else {
+                        $this->returnData['msg'] = '结束时间不能为空';
+                        return json($this->returnData);
+                    }
+                }
+            }
 //            if ($params['ration'] > 0 && NumberStore::where('status', '=', '0')->count() < $params['ration']) {
 //                $this->returnData['msg'] = '剩余座席不足';
 //                return json($this->returnData);
