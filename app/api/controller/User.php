@@ -73,7 +73,7 @@ class User extends ApiController
 //                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi'),
                 'openssl_config' => $config,
                 'openssl_encrypt' => $aes->aesEn($encode),
-                'openssl_decrypt' => $openssl_decrypt,
+//                'openssl_decrypt' => $openssl_decrypt,
                 'openssl_decrypt_json' => $deData,
             ],
             'msg' => '请求成功'
