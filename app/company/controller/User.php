@@ -55,7 +55,7 @@ class User extends \app\common\controller\CompanyController
 
     public function checkLimitUser()
     {
-        if ($this->userInfo->user_count === $this->userInfo->limit_user) {
+        if ($this->userInfo->limit_user > 0 && $this->userInfo->user_count === $this->userInfo->limit_user) {
             $this->returnData['msg'] = '已经达到限制开通用户数量';
             return json($this->returnData);
         }
@@ -72,7 +72,7 @@ class User extends \app\common\controller\CompanyController
             $params['salt'] = getRandChar(6);
             $params['password'] = getEncryptPassword(trim($params['password']), $params['salt']);
 
-            if ($this->userInfo->user_count === $this->userInfo->limit_user) {
+            if ($this->userInfo->limit_user > 0 && $this->userInfo->user_count === $this->userInfo->limit_user) {
                 $this->returnData['msg'] = '已经达到限制开通用户数量';
                 return json($this->returnData);
             }
