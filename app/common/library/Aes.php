@@ -7,12 +7,12 @@ class Aes
     protected $config = [
         'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',
         'iv' => '',
-        'method' => 'AES-256-CBC'
+        'method' => 'AES-128-CBC'
     ];
 
     public function __construct($config = []){
-        $config['iv'] = md5(time() . uniqid(), true);
-
+//        $config['iv'] = md5(time() . uniqid(), true);
+        $config['iv'] = substr(md5($this->config['key']), 0, 16);
         $this->config = array_merge($this->config, $config);
     }
 

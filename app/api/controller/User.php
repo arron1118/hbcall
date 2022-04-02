@@ -42,12 +42,11 @@ class User extends ApiController
 //        echo json_encode($this->getUserInfo(), true);
 //        return json($openssl_decrypt);
         $aes = new Aes();
-        $encode = json_encode($this->getUserInfo());
+        $encode = json_encode($this->getUserInfo(), JSON_UNESCAPED_UNICODE);
         $data = $aes->aesEn($encode);
-        dump($data);
-        $deData = $aes->aesDe('PDwl3noJh8tUJ+Zn0daJy2JXht8a6RRsA20QXAMUoaVnVmbFpZYPz6kdtpkOpuUmTMAALJkSSHHvVhUzH2qik9I95DxdOp96spxiU11TLyu6BUv1F/oKIxIB03z7kJCkbx/7FRhDjP4qVlkjeX+aJWz1jnGxxd6IUlwrkpHb7fd8zNkywz/kWxM2n1cSMKmnRUioLk6qr8CS5bxGstEn/Sdow8g6Esh2NQekXKOAR61vF6sPX8PTPVZy4wkdz6rkfPxFqhZWPVqz1NoOGEHrFdymQa7U7gmIgnP6rcUl6cHk8t6y+/Wszm/PBSgJe3tnNiihQJzwPwbguK7iIeDbAraC4Qu+jrdycfdyVNj9qryk/5kMAY5hdQGSP4Y79UWxcxhH4niVqROrc9QxB+wfXUjTsRZXcQ2Q1/oy0PY5jQdJ1O+KyjAA5klEJoBaG8u8oSQVdGzHzNhfzRYGlojW51fcuP7q3UuFBoqbK+pky1eWgTcu9XicwdMpUIOdOaK/8l3QHG5p1V2w0ALXTTU9O2m+b+BJqzGlcRtsGQa7ROEmLfXnlNuwJY8Zu0cfsrLHWlm54dLV43ZwNmdcgOPQ7QJv6HPRgyVqUrh/LXH5B1ErhwZsgWKna5yXGMGIFfe288Pb7NNJ9UKfOrJgMPWKC/i3zgYFmwJdcqDiSDcHVP6/7WCszrg1bg3r/OBjYdGpG+sDJnqwsd638PUFZPmIfg==');
-        dump($deData);
-        /*return json([
+        $deData = $aes->aesDe('lFzJrxqaQle6gIcD/1Jh4LWMwblh7/Jzwv1ylTyw+LCUd3GSETsnHAqgJFzhjWTTth4W/HgcMtNGYhkGwXzVRnrTRdNNDuX4Etf94mS0Ex8aicPJSFUfhBRuCjdA1SIqbyy3V1CZsM1Sk/vARi1CD7hoHTYlnLus6tP1Wg83zLBZ2pzOgv0iF19OWY0f1BmK5nrkhMfPVBNR2t8GemYiPgTTMlb3rQ87GM7b3xgg4R4t+S2iVrG5yex1dc7qqWjMJZnonIVZKkIXFdo46NrpAe/Z94t+VZpKkxewLyxzCCAkZnyKgwfZcIE+4D2kC6mX+1zU5MANZRLzNktPFsr8OBBB7mvJ8x1PvABwLtapNHDaqoVrwJLdLC3pgtNXfozM/RZVLUA5hw46zYM+IKs8IiRH4wQOazU4A62CcThiBxvuk8ONE67SDUl9aIFmOI6coJjIemgjlumPYINQ/z6Fe33ShScGOnvld25yAT4SdaEjQ0oI9kdtl9146r7xYwmwT2GMFCQ1gHuoEec1CSrJa7g90a3Bj1Dc40ggzMpQNjhg1MRA68CM/l7cwJAdwPyQ9oKyhrs8gN2eqqYioTzzO4nxszBLhxjUvqwrhIhTX7+XPa2f682umZCf+aRs37p0zJhB9hpmNR07o8RbemVp7dFrGr4Mb85ztTRbQOBU9lf9miNZrgoLs1qHQEZyBa32x2xVPa4+U0LaZlHt9gP0f0X1jiXfbuQwTjxwYWL3p7U=');
+        $deData = json_decode($deData, JSON_UNESCAPED_UNICODE);
+        return json([
             'code' => 1,
             'data' => [
                 'session_id' => $sessionId,
@@ -67,12 +66,12 @@ class User extends ApiController
                 'password_verify' => password_verify('123456' . '_hbcall', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
                 'thinkphp_token' => request()->buildToken(),
                 'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi'),
-                'openssl_encrypt' => openssl_encrypt(json_encode($this->getUserInfo()), 'AES-128-ECB', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
+                'openssl_encrypt' => $aes->aesEn($encode),
                 'openssl_decrypt' => $openssl_decrypt,
-                'openssl_decrypt_json' => json_encode($openssl_decrypt),
+                'openssl_decrypt_json' => $deData,
             ],
             'msg' => '请求成功'
-        ]);*/
+        ]);
     }
 
     /**
