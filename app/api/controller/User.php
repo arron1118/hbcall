@@ -29,7 +29,7 @@ class User extends ApiController
         $aesEncodeData = 'lFzJrxqaQle6gIcD/1Jh4LWMwblh7/Jzwv1ylTyw+LCUd3GSETsnHAqgJFzhjWTTth4W/HgcMtNGYhkGwXzVRnrTRdNNDuX4Etf94mS0Ex8aicPJSFUfhBRuCjdA1SIqbyy3V1CZsM1Sk/vARi1CD7hoHTYlnLus6tP1Wg83zLBZ2pzOgv0iF19OWY0f1BmK5nrkhMfPVBNR2t8GemYiPgTTMlb3rQ87GM7b3xgg4R4t+S2iVrG5yex1dc7qqWjMJZnonIVZKkIXFdo46NrpAe/Z94t+VZpKkxewLyxzCCAkZnyKgwfZcIE+4D2kC6mX+1zU5MANZRLzNktPFsr8OBBB7mvJ8x1PvABwLtapNHDaqoVrwJLdLC3pgtNXfozM/RZVLUA5hw46zYM+IKs8IiRH4wQOazU4A62CcThiBxvuk8ONE67SDUl9aIFmOI6coJjIemgjlumPYINQ/z6Fe33ShScGOnvld25yAT4SdaEjQ0oI9kdtl9146r7xYwmwT2GMFCQ1gHuoEec1CSrJa7g90a3Bj1Dc40ggzMpQNjhg1MRA68CM/l7cwJAdwPyQ9oKyhrs8gN2eqqYioTzzO4nxszBLhxjUvqwrhIhTX7+XPa2f682umZCf+aRs37p0zJhB9hpmNR07o8RbemVp7dFrGr4Mb85ztTRbQOBU9lf9miNZrgoLs1qHQEZyBa32x2xVPa4+U0LaZlHt9gP0f0X1jiXfbuQwTjxwYWL3p7U=';
         $this->returnData['data'] = [
             'openssl_config' => $this->aes->getConfig(),
-            'openssl_encrypt' => $this->aes->aesEncode(json_encode($this->getUserInfo(), JSON_UNESCAPED_UNICODE)),
+            'openssl_encrypt' => $this->aes->aesEncode(json_encode(1, JSON_UNESCAPED_UNICODE)),
             'openssl_decrypt_json' => json_decode($this->aes->aesDecode($aesEncodeData), JSON_UNESCAPED_UNICODE),
         ];
 

@@ -8,16 +8,17 @@ class Aes
      * @var array|string[]
      */
     private array $config = [
-        'key' => 'UbHJAz3LqCQ71Efq',
-        'iv' => '729fd4513397e11e',
-        'method' => 'AES-128-CBC',
+        'cipher_algo' => 'AES-128-CBC',
+        'passphrase' => 'UbHJAz3LqCQ71Efq',
         'options' => OPENSSL_RAW_DATA,
+        'iv' => '729fd4513397e11e',
+        ''
     ];
 
     public function __construct($config = []){
 //        $config['iv'] = md5(time() . uniqid(), true);
 //        if (!isset($config['iv']) || !$config['iv']) {
-//            $config['iv'] = substr(md5($this->config['key']), 0, 16);
+//            $config['iv'] = substr(md5($this->config['passphrase']), 0, 16);
 //        }
 
         $this->config = array_merge($this->config, $config);
@@ -29,7 +30,7 @@ class Aes
      * @return string
      */
     public function aesEncode($data){
-        return  base64_encode(openssl_encrypt($data, $this->config['method'], $this->config['key'], OPENSSL_RAW_DATA , $this->config['iv']));
+        return  base64_encode(openssl_encrypt($data, $this->config['cipher_algo'], $this->config['passphrase'], $this->config['options'] , $this->config['iv']));
     }
 
     /**
@@ -38,7 +39,7 @@ class Aes
      * @return false|string
      */
     public function aesDecode($data){
-        return openssl_decrypt(base64_decode($data),  $this->config['method'], $this->config['key'], OPENSSL_RAW_DATA , $this->config['iv']);
+        return openssl_decrypt(base64_decode($data),  $this->config['cipher_algo'], $this->config['passphrase'], $this->config['options'] , $this->config['iv']);
     }
 
     public function getConfig()

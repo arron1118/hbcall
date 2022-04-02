@@ -42,8 +42,9 @@ class ApiController extends \app\BaseController
         $this->aes = new Aes();
         $this->UserModel = UserModel::class;
         $this->CompanyModel = CompanyModel::class;
-        $this->userType = $this->request->param('userType', '');
-        $this->token = $this->request->param('token');
+        $param = $this->getRequestParams();
+        $this->userType = $param['userType'];
+        $this->token = $param['token'];
         $action = $this->request->action();
 
         if (!in_array($action, $this->noNeedLogin)) {
