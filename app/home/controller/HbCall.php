@@ -24,7 +24,6 @@ class HbCall extends \app\common\controller\HomeController
 //        $strTime = strtotime($str);
 //        dump((bool)$strTime);
 //        $next = date('Y-m-d H:i:s', $strTime + 86400 - 1);
-        dump(CallHistory::where('user_id', $this->userInfo->id)->count());
 
         return $this->view->fetch();
     }
