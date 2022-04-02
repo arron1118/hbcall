@@ -62,16 +62,16 @@ class User extends ApiController
     public function login()
     {
         if ($this->request->isPost()) {
-            $param = $this->request->param();
+            $param = $this->getRequestParams();
 
             if (!isset($param['username']) || trim($param['username']) === '') {
                 $this->returnData['msg'] = '参数错误：缺少 username';
-                return json($this->returnData);
+                $this->returnApiData();
             }
 
             if (!isset($param['password']) || trim($param['password']) === '') {
                 $this->returnData['msg'] = '参数错误：缺少 password';
-                return json($this->returnData);
+                $this->returnApiData();
             }
 
             $model = ucfirst($this->userType) . 'Model';
@@ -80,18 +80,18 @@ class User extends ApiController
 
             if (!$user) {
                 $this->returnData['msg'] = lang('Account is incorrect');
-                return json($this->returnData);
+                $this->returnApiData();
             }
 
             if (!$user->getData('status')) {
                 $this->returnData['msg'] = lang('Account is locked');
-                return json($this->returnData);
+                $this->returnApiData();
             }
 
             $password = getEncryptPassword($param['password'], $user->salt);
             if ($password !== $user->password) {
                 $this->returnData['msg'] = lang('Password is incorrect');
-                return json($this->returnData);
+                $this->returnApiData();
             }
 
             $now = time();
@@ -121,10 +121,10 @@ class User extends ApiController
             $this->returnData['msg'] = lang('logined');
             $this->returnData['data'] = $user->hidden(['password', 'salt'])->toArray();
 
-            return json($this->returnData);
+            $this->returnApiData();
         }
 
-        return json($this->returnData);
+        $this->returnApiData();
     }
 
     public function getUserProfile()

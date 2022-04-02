@@ -62,6 +62,8 @@ abstract class BaseController
         $this->view = View::instance();
         $this->agent = new Agent();
 
+        $this->module = app('http')->getName();
+
         // 控制器初始化
         $this->initialize();
     }

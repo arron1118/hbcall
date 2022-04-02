@@ -11,7 +11,7 @@ use think\Response;
 
 class ApiController extends \app\BaseController
 {
-    protected $noNeedLogin = ['login'];
+    protected $noNeedLogin = ['login', 'getAesEncodeData', 'getAesDecodeData'];
 
     protected $userInfo = null;
 
@@ -22,6 +22,8 @@ class ApiController extends \app\BaseController
     protected $CompanyModel = null;
 
     protected $model = null;
+
+    protected $module = '';
 
     protected $token = null;
 
@@ -43,8 +45,8 @@ class ApiController extends \app\BaseController
         $this->UserModel = UserModel::class;
         $this->CompanyModel = CompanyModel::class;
         $param = $this->getRequestParams();
-        $this->userType = $param['userType'];
-        $this->token = $param['token'];
+        $this->userType = isset($param['userType']) ? $param['userType'] : null;
+        $this->token = isset($param['token']) ? $param['token'] : null;
         $action = $this->request->action();
 
         if (!in_array($action, $this->noNeedLogin)) {
@@ -113,7 +115,7 @@ class ApiController extends \app\BaseController
      */
     public function getAesEncodeData()
     {
-        $this->returnData['data'] = $this->getUserInfo();
+        $this->returnData['data'] = $this->request->param();
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = 'success';
         $this->returnApiData();
