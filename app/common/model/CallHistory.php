@@ -13,7 +13,6 @@ class CallHistory extends \think\Model
 
     protected $createTime = 'createtime';
 
-
     public function getCallDurationAttr($value)
     {
         $minute = floor($value / 60);

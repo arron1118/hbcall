@@ -3,6 +3,7 @@
 namespace app\api\controller;
 
 use app\common\controller\ApiController;
+use app\common\library\Aes;
 use app\common\model\Expense;
 use think\facade\Session;
 use app\common\traits\UserTrait;
@@ -40,7 +41,12 @@ class User extends ApiController
         $openssl_decrypt = openssl_decrypt('AQShHlFSuUgljo1qDsBjjk4JA8rfARy9jnKULFTO2crpruQ7UgHUoT1qBob49OMmUycWcCbk4/j6guxfA1nyjlMvST67CHEuVdaNtfIvL4Tz/+3nqLtJJR4Hj/HXbVKlj3hyZ2AEhuKjPpHjhbogTeUsTkCeEzgx6X3uKAtQZcKOaOYD/BAzHEGqd2lrNBPD2GmAt1p1qFTOl27abiIKBA4usL2GRVmKHy3bhpsO9CFYGYW//Q2GXbS8iY/rJCluX64m+G2O+wLMQoWKNfB0NhoGynx8jMFR53T3NliJ74CkqSrknNxcdYelUCvwxBIDk3SLmABZ6FFJr/gVqB2phEQWOOvogjD2FEa5DBe2aEafcpsmoVt5bXx1yIyqJGEoNiY+Dq1MU5benP01NmxOhKNs6dLN137Phs9SIHlDJMVBBM77rqm+fHwwWtOgYsUpKw3rW6a1VwMvrCBy9cpvqVmfPRjJmqbeJIjldbE/0ibDxlGOj7cqxIe9D4QwfNpja8VxMAVDcPiXRL7IcOjwGZVzDe99UUZum0DDI2rCvzM=', 'AES-128-ECB', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe');
 //        echo json_encode($this->getUserInfo(), true);
 //        return json($openssl_decrypt);
-        dump(json_decode($openssl_decrypt));
+        $aes = new Aes();
+        $encode = json_encode($this->getUserInfo());
+        $data = $aes->aesEn($encode);
+        dump($data);
+        $deData = $aes->aesDe('PDwl3noJh8tUJ+Zn0daJy2JXht8a6RRsA20QXAMUoaVnVmbFpZYPz6kdtpkOpuUmTMAALJkSSHHvVhUzH2qik9I95DxdOp96spxiU11TLyu6BUv1F/oKIxIB03z7kJCkbx/7FRhDjP4qVlkjeX+aJWz1jnGxxd6IUlwrkpHb7fd8zNkywz/kWxM2n1cSMKmnRUioLk6qr8CS5bxGstEn/Sdow8g6Esh2NQekXKOAR61vF6sPX8PTPVZy4wkdz6rkfPxFqhZWPVqz1NoOGEHrFdymQa7U7gmIgnP6rcUl6cHk8t6y+/Wszm/PBSgJe3tnNiihQJzwPwbguK7iIeDbAraC4Qu+jrdycfdyVNj9qryk/5kMAY5hdQGSP4Y79UWxcxhH4niVqROrc9QxB+wfXUjTsRZXcQ2Q1/oy0PY5jQdJ1O+KyjAA5klEJoBaG8u8oSQVdGzHzNhfzRYGlojW51fcuP7q3UuFBoqbK+pky1eWgTcu9XicwdMpUIOdOaK/8l3QHG5p1V2w0ALXTTU9O2m+b+BJqzGlcRtsGQa7ROEmLfXnlNuwJY8Zu0cfsrLHWlm54dLV43ZwNmdcgOPQ7QJv6HPRgyVqUrh/LXH5B1ErhwZsgWKna5yXGMGIFfe288Pb7NNJ9UKfOrJgMPWKC/i3zgYFmwJdcqDiSDcHVP6/7WCszrg1bg3r/OBjYdGpG+sDJnqwsd638PUFZPmIfg==');
+        dump($deData);
         /*return json([
             'code' => 1,
             'data' => [

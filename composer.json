@@ -34,7 +34,8 @@
     "yansongda/pay": "2.10",
     "jenssegers/agent": "^2.6",
     "lcobucci/jwt": "^4.0",
-    "ext-openssl": "*"
+    "ext-openssl": "*",
+    "ext-mcrypt": "*"
   },
   "require-dev": {
     "symfony/var-dumper": "v4.4.37",

@@ -45,6 +45,14 @@ trait HbCallTrait
             return json($this->returnData);
         }
 
+        // 用户试用账号到期后无法拨号
+        if ($this->userInfo->getData('is_test')) {
+            if (time() > $this->userInfo->getData('test_endtime') || CallHistory::where('user_id', $this->userInfo->id)->count() >= $this->userInfo->limit_call_number) {
+                $this->returnData['msg'] = lang('测试时间结束，请联系管理员开通正式账号后再拨打');
+                return json($this->returnData);
+            }
+        }
+
         if (!$this->userInfo->userXnumber) {
             $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
             return json($this->returnData);
