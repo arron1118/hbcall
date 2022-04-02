@@ -41,7 +41,12 @@ class User extends ApiController
         $openssl_decrypt = openssl_decrypt('AQShHlFSuUgljo1qDsBjjk4JA8rfARy9jnKULFTO2crpruQ7UgHUoT1qBob49OMmUycWcCbk4/j6guxfA1nyjlMvST67CHEuVdaNtfIvL4Tz/+3nqLtJJR4Hj/HXbVKlj3hyZ2AEhuKjPpHjhbogTeUsTkCeEzgx6X3uKAtQZcKOaOYD/BAzHEGqd2lrNBPD2GmAt1p1qFTOl27abiIKBA4usL2GRVmKHy3bhpsO9CFYGYW//Q2GXbS8iY/rJCluX64m+G2O+wLMQoWKNfB0NhoGynx8jMFR53T3NliJ74CkqSrknNxcdYelUCvwxBIDk3SLmABZ6FFJr/gVqB2phEQWOOvogjD2FEa5DBe2aEafcpsmoVt5bXx1yIyqJGEoNiY+Dq1MU5benP01NmxOhKNs6dLN137Phs9SIHlDJMVBBM77rqm+fHwwWtOgYsUpKw3rW6a1VwMvrCBy9cpvqVmfPRjJmqbeJIjldbE/0ibDxlGOj7cqxIe9D4QwfNpja8VxMAVDcPiXRL7IcOjwGZVzDe99UUZum0DDI2rCvzM=', 'AES-128-ECB', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe');
 //        echo json_encode($this->getUserInfo(), true);
 //        return json($openssl_decrypt);
-        $aes = new Aes();
+        $config = [
+            'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',
+            'iv' => substr(md5('UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb'), 0, 16),
+            'method' => 'AES-128-CBC'
+        ];
+        $aes = new Aes($config);
         $encode = json_encode($this->getUserInfo(), JSON_UNESCAPED_UNICODE);
         $data = $aes->aesEn($encode);
         $deData = $aes->aesDe('lFzJrxqaQle6gIcD/1Jh4LWMwblh7/Jzwv1ylTyw+LCUd3GSETsnHAqgJFzhjWTTth4W/HgcMtNGYhkGwXzVRnrTRdNNDuX4Etf94mS0Ex8aicPJSFUfhBRuCjdA1SIqbyy3V1CZsM1Sk/vARi1CD7hoHTYlnLus6tP1Wg83zLBZ2pzOgv0iF19OWY0f1BmK5nrkhMfPVBNR2t8GemYiPgTTMlb3rQ87GM7b3xgg4R4t+S2iVrG5yex1dc7qqWjMJZnonIVZKkIXFdo46NrpAe/Z94t+VZpKkxewLyxzCCAkZnyKgwfZcIE+4D2kC6mX+1zU5MANZRLzNktPFsr8OBBB7mvJ8x1PvABwLtapNHDaqoVrwJLdLC3pgtNXfozM/RZVLUA5hw46zYM+IKs8IiRH4wQOazU4A62CcThiBxvuk8ONE67SDUl9aIFmOI6coJjIemgjlumPYINQ/z6Fe33ShScGOnvld25yAT4SdaEjQ0oI9kdtl9146r7xYwmwT2GMFCQ1gHuoEec1CSrJa7g90a3Bj1Dc40ggzMpQNjhg1MRA68CM/l7cwJAdwPyQ9oKyhrs8gN2eqqYioTzzO4nxszBLhxjUvqwrhIhTX7+XPa2f682umZCf+aRs37p0zJhB9hpmNR07o8RbemVp7dFrGr4Mb85ztTRbQOBU9lf9miNZrgoLs1qHQEZyBa32x2xVPa4+U0LaZlHt9gP0f0X1jiXfbuQwTjxwYWL3p7U=');
@@ -49,23 +54,24 @@ class User extends ApiController
         return json([
             'code' => 1,
             'data' => [
-                'session_id' => $sessionId,
-                'header' => $this->request->header(),
-                'session' => $sessionId,
-                'device' => $this->agent->device() ?: '',
-                'platform' => $this->agent->platform() ?: '',
-                'browser' => $this->agent->browser() ?: '',
-                'platformVersion' => $this->agent->version($this->agent->platform()) ?: '',
-                'browserVersion' => $this->agent->version($this->agent->browser()) ?: '',
-                'uuid' => $uuid,
-                'uuid2' => strlen($uuid),
-                'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
-                'token' => $password,
-                'password' => getEncryptPassword('123456'),
-                'password_hash' => password_hash('123456' . '_hbcall', PASSWORD_DEFAULT),
-                'password_verify' => password_verify('123456' . '_hbcall', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
-                'thinkphp_token' => request()->buildToken(),
-                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi'),
+//                'session_id' => $sessionId,
+//                'header' => $this->request->header(),
+//                'session' => $sessionId,
+//                'device' => $this->agent->device() ?: '',
+//                'platform' => $this->agent->platform() ?: '',
+//                'browser' => $this->agent->browser() ?: '',
+//                'platformVersion' => $this->agent->version($this->agent->platform()) ?: '',
+//                'browserVersion' => $this->agent->version($this->agent->browser()) ?: '',
+//                'uuid' => $uuid,
+//                'uuid2' => strlen($uuid),
+//                'uuid3' => password_hash('123456', PASSWORD_BCRYPT),
+//                'token' => $password,
+//                'password' => getEncryptPassword('123456'),
+//                'password_hash' => password_hash('123456' . '_hbcall', PASSWORD_DEFAULT),
+//                'password_verify' => password_verify('123456' . '_hbcall', '$2y$10$z9Y0yMaiEmoSQ71m70JGyehZle1zHgboB9yEDOQUobhNzErotnRWe'),
+//                'thinkphp_token' => request()->buildToken(),
+//                'crypt' => password_get_info('$2y$10$wV9EfCKJFnf61G4B6iWhde6OQazaV5vfldRNpAmFUaqdWswxUlqFi'),
+                'openssl_config' => $config,
                 'openssl_encrypt' => $aes->aesEn($encode),
                 'openssl_decrypt' => $openssl_decrypt,
                 'openssl_decrypt_json' => $deData,

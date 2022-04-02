@@ -12,7 +12,7 @@ class Aes
 
     public function __construct($config = []){
 //        $config['iv'] = md5(time() . uniqid(), true);
-        $config['iv'] = substr(md5($this->config['key']), 0, 16);
+//        $config['iv'] = substr(md5($this->config['key']), 0, 16);
         $this->config = array_merge($this->config, $config);
     }
 
