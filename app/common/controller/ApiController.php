@@ -94,7 +94,7 @@ class ApiController extends \app\BaseController
      */
     protected function returnApiData()
     {
-        $this->returnData['data'] = $this->aes->aesEncode(json_encode($this->returnData, JSON_UNESCAPED_UNICODE));
+        $this->returnData['data'] = $this->aes->aesEncode(json_encode($this->returnData['data'], JSON_UNESCAPED_UNICODE));
         response($this->returnData, 200, [], 'json')->send();
         exit;
     }
