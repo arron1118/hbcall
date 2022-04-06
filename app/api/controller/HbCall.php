@@ -22,16 +22,15 @@ class HbCall extends \app\common\controller\ApiController
 
     /**
      * 获取通话记录 (拨通号码的记录)
-     * @return \think\response\Json
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
     public function getHistoryList()
     {
-        $page = (int) $this->request->param('page', 1);
-        $limit = (int) $this->request->param('limit', 10);
-        $date = $this->request->param('date', '');
+        $page = $this->params['page'] ?? 1;
+        $limit = $this->params['limit'] ?? 10;
+        $date = $this->params['date'] ?? '';
         $map = [];
 
         if ($this->userType === 'user') {
@@ -66,7 +65,7 @@ class HbCall extends \app\common\controller\ApiController
         $this->returnData['msg'] = '操作成功';
         $this->returnData['data'] = $historyList->toArray();
         $this->returnData['total'] = $total;
-        return json($this->returnData);
+        $this->returnApiData();
     }
 
     /**

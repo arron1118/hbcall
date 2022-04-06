@@ -23,6 +23,8 @@ class ApiController extends \app\BaseController
 
     protected $model = null;
 
+    protected $params = [];
+
     protected $token = null;
 
     protected $aes = null;
@@ -42,9 +44,9 @@ class ApiController extends \app\BaseController
         $this->aes = new Aes();
         $this->UserModel = UserModel::class;
         $this->CompanyModel = CompanyModel::class;
-        $param = $this->getRequestParams();
-        $this->userType = isset($param['userType']) ? $param['userType'] : null;
-        $this->token = isset($param['token']) ? $param['token'] : null;
+        $this->params = $this->getRequestParams();
+        $this->userType = $this->params['userType'] ?? null;
+        $this->token = $this->params['token'] ?? null;
         $action = $this->request->action();
 
         if (!in_array($action, $this->noNeedLogin)) {

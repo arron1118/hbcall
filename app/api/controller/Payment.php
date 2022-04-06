@@ -6,6 +6,7 @@ namespace app\api\controller;
 use app\common\traits\PaymentTrait;
 use app\company\model\Company;
 use think\facade\Config;
+use think\facade\Db;
 use think\facade\Log;
 use Yansongda\Pay\Exceptions\GatewayException;
 use Yansongda\Pay\Pay;
@@ -149,32 +150,35 @@ class Payment extends \app\common\controller\ApiController
      */
     public function createAppOrder()
     {
-        $amount = (float) $this->request->param('amount', 0);
-        $payType = (int) $this->request->param('payType', 1);
+        $amount = (float)($this->params['amount'] ?? 0);
+        $payType = (int)($this->params['payType'] ?? 1);
         if ($amount <= 0) {
             $this->returnData['msg'] = '请输入正确的金额';
-            return json($this->returnData);
+            $this->returnApiData();
         }
 
         if ($this->userType === 'user') {
             $this->returnData['msg'] = '权限不足，暂时不对普通用户开放';
-            return json($this->returnData);
+            $this->returnApiData();
         }
 
         $data = $this->createOrder($this->userInfo, $amount, $payType);
 
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = 'success';
         if ($payType === 1) {
             $res = Pay::wechat(Config::get('payment.wxpay'))->app($data);
-            return json(['code' => 1, 'msg' => 'Success', 'data' => json_decode($res->getContent())]);
+            $this->returnData['data'] = json_decode($res->getContent());
         } else if ($payType === 2) {
             $res = Pay::alipay(Config::get('payment.alipay.app'))->app($data);
-            return json(['code' => 1, 'msg' => 'Success', 'data' => ['alipay' => $res->getContent()]]);
+            $this->returnData['data']['alipay'] = $res->getContent();
         }
+
+        $this->returnApiData();
     }
 
     /**
      * 检查订单
-     * @return \think\response\Json
      * @throws \Yansongda\Pay\Exceptions\GatewayException
      * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
      * @throws \Yansongda\Pay\Exceptions\InvalidSignException
@@ -183,14 +187,14 @@ class Payment extends \app\common\controller\ApiController
     {
         if ($this->userType === 'user') {
             $this->returnData['msg'] = '权限不足，暂时不提供查询数据';
-            return json($this->returnData);
+            $this->returnApiData();
         }
 
-        $payno = $this->request->param('payno');
+        $payno = $this->params['payno'] ?? '';
 
         if (!$payno) {
             $this->returnData['msg'] = '请提供正确的订单号';
-            return json($this->returnData);
+            $this->returnApiData();
         }
 
         $payment = \app\company\model\Payment::where('payno', $payno)->find();
@@ -217,6 +221,54 @@ class Payment extends \app\common\controller\ApiController
             $this->returnData['msg'] = '订单不存在';
         }
 
-        return json($this->returnData);
+        $this->returnApiData();
+    }
+
+    /**
+     * 获取订单列表
+     */
+    public function getPaymentList()
+    {
+        if ($this->userType === 'user') {
+            $this->returnData['msg'] = '权限不足，暂时不提供查询数据';
+            $this->returnApiData();
+        }
+
+        if ($this->request->isPost()) {
+            $page = (int) $this->request->param('page', 1);
+            $limit = (int) $this->request->param('limit', 10);
+            $corporation = trim($this->request->param('corporation', ''));
+            $year = $this->request->param('year', '');
+            $month = $this->request->param('month', '');
+            $day = $this->request->param('day', '');
+
+            $where = [];
+            if ($corporation) {
+                $where[] = ['corporation', 'like', '%' . $corporation . '%'];
+            }
+
+            if ($year) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%Y")'), '=', $year];
+            }
+
+            if ($month) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%m")'), '=', $month];
+            }
+
+            if ($day) {
+                $where[] = [Db::raw('from_unixtime(create_time, "%d")'), '=', $day];
+            }
+
+            $this->returnData['total'] = $this->model::where($where)->count();
+
+            $this->returnData['data'] = $this->model::where($where)
+                ->order('id DESC')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
+            $this->returnData['msg'] = 'success';
+            $this->returnData['code'] = 1;
+        }
+
+        $this->returnApiData();
     }
 }

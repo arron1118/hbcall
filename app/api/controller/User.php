@@ -3,14 +3,11 @@
 namespace app\api\controller;
 
 use app\common\controller\ApiController;
-use app\common\library\Aes;
 use app\common\model\Expense;
 use think\facade\Session;
-use app\common\traits\UserTrait;
 
 class User extends ApiController
 {
-    use UserTrait;
 
     protected $token_expire_time = 3600 * 24 * 7;
 
@@ -33,7 +30,7 @@ class User extends ApiController
             'openssl_decrypt_json' => json_decode($this->aes->aesDecode($aesEncodeData), JSON_UNESCAPED_UNICODE),
         ];
 
-        return json($this->returnData);
+        $this->returnApiData();
     }
 
     /**
@@ -62,20 +59,18 @@ class User extends ApiController
     public function login()
     {
         if ($this->request->isPost()) {
-            $param = $this->getRequestParams();
-
-            if (!isset($param['username']) || trim($param['username']) === '') {
+            if (!isset($this->params['username']) || trim($this->params['username']) === '') {
                 $this->returnData['msg'] = '参数错误：缺少 username';
                 $this->returnApiData();
             }
 
-            if (!isset($param['password']) || trim($param['password']) === '') {
+            if (!isset($this->params['password']) || trim($this->params['password']) === '') {
                 $this->returnData['msg'] = '参数错误：缺少 password';
                 $this->returnApiData();
             }
 
             $model = ucfirst($this->userType) . 'Model';
-            $user = $this->$model::where('username', $param['username'])
+            $user = $this->$model::where('username', $this->params['username'])
                 ->find();
 
             if (!$user) {
@@ -88,7 +83,7 @@ class User extends ApiController
                 $this->returnApiData();
             }
 
-            $password = getEncryptPassword($param['password'], $user->salt);
+            $password = getEncryptPassword($this->params['password'], $user->salt);
             if ($password !== $user->password) {
                 $this->returnData['msg'] = lang('Password is incorrect');
                 $this->returnApiData();
@@ -140,7 +135,7 @@ class User extends ApiController
             'login' => $this->isLogin(),
         ];
 
-        return json($this->returnData);
+        $this->returnApiData();
     }
 
     public function logout()
@@ -151,6 +146,50 @@ class User extends ApiController
         $this->userInfo->save();
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '退出成功';
-        return json($this->returnData);
+        $this->returnApiData();
+    }
+
+    public function resetPassword()
+    {
+        if ($this->request->isPost()) {
+            if (empty($this->params['old_password'])) {
+                $this->returnData['msg'] = '请输入旧密码';
+                $this->returnApiData();
+            }
+
+            if (empty($this->params['new_password'])) {
+                $this->returnData['msg'] = '请输入新密码';
+                $this->returnApiData();
+            }
+
+            if (empty($this->params['confirm_password'])) {
+                $this->returnData['msg'] = '请输入确认密码';
+                $this->returnApiData();
+            }
+
+            if (getEncryptPassword($this->params['old_password'], $this->userInfo->salt) !== $this->userInfo->password) {
+                $this->returnData['msg'] = '输入的旧密码有误';
+                $this->returnApiData();
+            }
+
+            if ($this->params['new_password'] !== $this->params['confirm_password']) {
+                $this->returnData['msg'] = '输入的确认密码有误';
+                $this->returnApiData();
+            }
+            $this->userInfo->password = getEncryptPassword($this->params['confirm_password'], $this->userInfo->salt);
+            $this->userInfo->token = '';
+            $this->userInfo->token_expire_time = 0;
+
+            if ($this->userInfo->save()) {
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = lang('Password modification successful, please log in again');
+                $this->returnApiData();
+            }
+
+            $this->returnData['msg'] = lang('Password modification successful, please log in again');
+            $this->returnApiData();
+        }
+
+        $this->returnApiData();
     }
 }

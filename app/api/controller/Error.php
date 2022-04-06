@@ -8,6 +8,7 @@ class Error extends ApiController
 {
     public function __call($name, $arguments)
     {
-        return 'error request!';
+        $this->returnData['msg'] = '请求错误';
+        $this->returnApiData();
     }
 }
