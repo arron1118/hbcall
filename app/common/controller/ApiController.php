@@ -23,8 +23,6 @@ class ApiController extends \app\BaseController
 
     protected $model = null;
 
-    protected $module = '';
-
     protected $token = null;
 
     protected $aes = null;
@@ -48,7 +46,6 @@ class ApiController extends \app\BaseController
         $this->userType = isset($param['userType']) ? $param['userType'] : null;
         $this->token = isset($param['token']) ? $param['token'] : null;
         $action = $this->request->action();
-        $this->module = app('http')->getName();
 
         if (!in_array($action, $this->noNeedLogin)) {
             if (!$this->token) {
