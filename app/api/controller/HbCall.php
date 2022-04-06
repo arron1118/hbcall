@@ -5,6 +5,7 @@ namespace app\api\controller;
 
 
 use app\common\model\CallHistory;
+use app\common\model\Expense;
 use app\company\model\Company;
 use Curl\Curl;
 use think\facade\Config;
@@ -61,6 +62,12 @@ class HbCall extends \app\common\controller\ApiController
             ->order('starttime DESC')
             ->limit(($page - 1) * $limit, $limit)
             ->select();
+        foreach ($historyList as $key => &$item) {
+            $item->expense = Expense::field('duration, rate, cost')
+                ->where('call_history_id', $item->id)
+                ->findOrEmpty()
+                ->toArray();
+        }
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '操作成功';
         $this->returnData['data'] = $historyList->toArray();

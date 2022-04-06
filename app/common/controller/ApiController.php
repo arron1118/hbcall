@@ -94,7 +94,7 @@ class ApiController extends \app\BaseController
      */
     protected function returnApiData()
     {
-        $this->returnData['data'] = $this->aes->aesEncode(json_encode($this->returnData['data'], JSON_UNESCAPED_UNICODE));
+        $this->returnData['data'] = $this->aes->aesEncode(json_encode($this->returnData, JSON_UNESCAPED_UNICODE));
         response($this->returnData, 200, [], 'json')->send();
         exit;
     }
@@ -132,5 +132,11 @@ class ApiController extends \app\BaseController
         $this->returnData['msg'] = 'success';
         $this->returnData['code'] = 1;
         return json($this->returnData);
+    }
+
+    public function __call($method, $args)
+    {
+        $this->returnData['msg'] = '错误的请求[方法不存在]：' . $method;
+        $this->returnApiData();
     }
 }
