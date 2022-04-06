@@ -41,6 +41,7 @@ class Payment extends \app\common\controller\AdminController
             $limit = (int) $this->request->param('limit', 10);
             $corporation = trim($this->request->param('corporation', ''));
             $datetime = $this->request->param('datetime', '');
+            $payType = (int) $this->request->param('pay_type', 0);
 
             $where = [];
             if ($corporation) {
@@ -49,6 +50,10 @@ class Payment extends \app\common\controller\AdminController
 
             if ($datetime) {
                 $where[] = [Db::raw('from_unixtime(create_time, "%Y-%m-%d")'), '=', $datetime];
+            }
+
+            if ($payType > 0) {
+                $where[] = ['pay_type', '=', $payType];
             }
 
             $total = $this->model::where($where)->count();

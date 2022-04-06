@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row rounded mb-3 shadow-sm bg-white">
         <div class="col pt-3">
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">充值方</label>
@@ -24,10 +24,10 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">充值方式</label>
                         <div class="layui-input-inline">
-                            <select name="way" lay-verify="required" lay-search="">
-                                <option value="">选择充值方式</option>
-                                <option value="WeChat">微信</option>
-                                <option value="Alipay">支付宝</option>
+                            <select name="pay_type" lay-filter="payTypeFilter">
+                                <option value="0">请选择充值方式</option>
+                                <option value="1">微信</option>
+                                <option value="2">支付宝</option>
                             </select>
                         </div>
                     </div>
@@ -61,7 +61,8 @@
         laydate.render({
             elem: '#startTime',
             done: function (startTime) {
-                reloadTable({ datetime: startTime })
+                let params = Object.assign({}, form.val('searchForm'), { datetime: startTime });
+                reloadTable(params)
             }
         })
 
@@ -119,6 +120,13 @@
             reloadTable(data.field)
             return false;
         });
+
+        form.on('select(payTypeFilter)', function (data) {
+            let params = [];
+            params[data.elem.name] = data.value
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
+        })
 
         $('button[type=reset]').on('click', function (e) {
             reloadTable({})
