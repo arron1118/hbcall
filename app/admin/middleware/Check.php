@@ -27,7 +27,7 @@ class Check
     {
         if ($token) {
             $userInfo = Admin::getByToken($token);
-            if (!$userInfo || $userInfo->token_expire_time < time()) {
+            if (!$userInfo || $userInfo->token_expire_time > time()) {
                 return false;
             }
 
