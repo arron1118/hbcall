@@ -9,7 +9,7 @@
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">企业名称</label>
+                        <label class="layui-form-label">充值方</label>
                         <div class="layui-input-inline">
                             <input type="text" name="corporation" class="layui-input">
                         </div>
@@ -21,7 +21,16 @@
                             <input type="text" name="datetime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
                         </div>
                     </div>
-
+                    <div class="layui-inline">
+                        <label class="layui-form-label">充值方式</label>
+                        <div class="layui-input-inline">
+                            <select name="way" lay-verify="required" lay-search="">
+                                <option value="">选择充值方式</option>
+                                <option value="WeChat">微信</option>
+                                <option value="Alipay">支付宝</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-normal" lay-submit
                                 lay-filter="data-search-btn"><i class="fa fa-magnifying-glass"></i> 搜 索
