@@ -92,8 +92,11 @@
                     }},
                 {field: 'expense', title: '总消费', align: 'center', sort: true },
                 {field: 'logintime', title: '最后登录', align: "center"},
+                {field: 'status', title: '试用', align: "center", templet: function (row) {
+                        return `<input type="checkbox" name="try" value="${row.id}" lay-skin="switch" lay-text="是|否" lay-filter="tryFilter" ${row.status === '是' ? 'checked' : ''}>`
+                    }},
                 {field: 'status', title: '状态', align: "center", templet: function (row) {
-                    // return `<span class="${row.status === '正常' ? 'text-info' : 'text-danger'}">${row.status}</span>`
+                        // return `<span class="${row.status === '正常' ? 'text-info' : 'text-danger'}">${row.status}</span>`
                         return `<input type="checkbox" name="status" value="${row.id}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" ${row.status === '正常' ? 'checked' : ''}>`
                     }},
                 {title: '操作', toolbar: '#currentTableBar', align: "center", fixed: 'right'}
@@ -175,7 +178,19 @@
                 layer.msg(res.msg, option)
             })
         }
+        form.on('switch(tryFilter)', function (obj) {
+            let status = obj.elem.checked ? 1 : 0;
+            let params = { id: obj.value, status: status };
+            if (!status) {
+                parent.layer.confirm('禁止后，该账号下的所有拨号账号将无法正常使用', { icon: 3, title: '提示' }, function (index) {
+                    updateUserField(params)
+                    parent.layer.close(index)
+                })
+            } else {
+                updateUserField(params)
+            }
 
+        })
         form.on('switch(statusFilter)', function (obj) {
             let status = obj.elem.checked ? 1 : 0;
             let params = { id: obj.value, status: status };
