@@ -235,12 +235,12 @@ class Payment extends \app\common\controller\ApiController
         }
 
         if ($this->request->isPost()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
-            $corporation = trim($this->request->param('corporation', ''));
-            $year = $this->request->param('year', '');
-            $month = $this->request->param('month', '');
-            $day = $this->request->param('day', '');
+            $page = (int) ($this->params['page'] ?? 1);
+            $limit = (int) ($this->params['limit'] ?? 10);
+            $corporation = trim($this->params['corporation'] ?? '');
+            $year = $this->params['year'] ?? '';
+            $month = $this->params['month'] ?? '';
+            $day = $this->params['day'] ?? '';
 
             $where = [];
             if ($corporation) {
