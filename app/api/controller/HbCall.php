@@ -9,6 +9,7 @@ use app\common\model\Expense;
 use app\company\model\Company;
 use Curl\Curl;
 use think\facade\Config;
+use think\facade\Db;
 use think\facade\Event;
 use app\common\traits\HbCallTrait;
 
@@ -38,14 +39,14 @@ class HbCall extends \app\common\controller\ApiController
             $map[] = ['user_id', '=', $this->userInfo->id];
         }
 
-        if ($this->userInfo === 'company') {
+        if ($this->userType === 'company') {
             $map[] = ['company_id', '=', $this->userInfo->id];
         }
 
         $start = strtotime($date);
         if ($start) {
             $end = $start + 86400 - 1;
-            $map[] = ['starttime', 'between', [$start, $end]];
+            $map[] = ['createtime', 'between', [$start, $end]];
         }
 
         if ($page <= 0) {
@@ -63,14 +64,21 @@ class HbCall extends \app\common\controller\ApiController
             ->limit(($page - 1) * $limit, $limit)
             ->select();
         foreach ($historyList as $key => &$item) {
-            $item->expense = Expense::field('duration, rate, cost')
+            $temp = Expense::field('duration, rate, cost')
                 ->where('call_history_id', $item->id)
-                ->findOrEmpty()
-                ->toArray();
+                ->findOrEmpty();
+            $item->duration = 0;
+            $item->rate = '';
+            $item->cost = '';
+            if (!$temp->isEmpty()) {
+                $item->duration = $temp->duration;
+                $item->rate = $temp->rate;
+                $item->cost = $temp->cost;
+            }
         }
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '操作成功';
-        $this->returnData['data'] = $historyList->toArray();
+        $this->returnData['data'] = $historyList;
         $this->returnData['total'] = $total;
         $this->returnApiData();
     }

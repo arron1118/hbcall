@@ -35,9 +35,10 @@ class Payment extends \app\common\controller\CompanyController
         if ($this->request->isPost()) {
             $page = (int)$this->request->param('page', 1);
             $limit = (int)$this->request->param('limit', 10);
-            $total = $this->model->where('company_id', $this->userInfo->id)->count();
-
-            $historyList = $this->model->where('company_id', $this->userInfo->id)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+//            $total = $this->model->where('company_id', $this->userInfo->id)->count();
+//            $historyList = $this->model->where('company_id', $this->userInfo->id)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
+            $total = $this->userInfo->payment()->count();
+            $historyList = $this->userInfo->payment()->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
         }
     }

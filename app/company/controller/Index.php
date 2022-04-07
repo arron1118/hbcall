@@ -51,27 +51,26 @@ class Index extends CompanyController
     public function getReport()
     {
         if ($this->request->isPost()) {
-            $where = ['company_id' => $this->userInfo->id];
-            $result['totalCallHistory'] = CallHistory::where($where)->count();
-            $result['totalCallAndPickUp'] = CallHistory::where($where)->where('call_duration', '>', 0)->count();
-            $result['totalCallAndNoPickUp'] = CallHistory::where('call_duration', '=', 0)->count();
-            $result['totalCallDuration'] = Expense::where($where)->sum('duration');
+            $result['totalCallHistory'] = $this->userInfo->callHistory()->count();
+            $result['totalCallAndPickUp'] = $this->userInfo->callHistory()->where('call_duration', '>', 0)->count();
+            $result['totalCallAndNoPickUp'] = $this->userInfo->callHistory()->where('call_duration', '=', 0)->count();
+            $result['totalCallDuration'] = $this->userInfo->expense()->sum('duration');
             $result['chartData'] = [
                 [
                     'name' => $this->lang['totalBetweenZeroAndSixty'],
-                    'value' => CallHistory::whereBetween('call_duration', [1, 60])->count()
+                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [1, 60])->count()
                 ],
                 [
                     'name' => $this->lang['totalBetweenOneToThree'],
-                    'value' => CallHistory::whereBetween('call_duration', [61, 180])->count()
+                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [61, 180])->count()
                 ],
                 [
                     'name' => $this->lang['totalBetweenThreeToFive'],
-                    'value' => CallHistory::whereBetween('call_duration', [181, 300])->count()
+                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [181, 300])->count()
                 ],
                 [
                     'name' => $this->lang['totalGtFive'],
-                    'value' => CallHistory::where('call_duration', '>', 300)->count()
+                    'value' => $this->userInfo->callHistory()->where('call_duration', '>', 300)->count()
                 ]
             ];
             $this->returnData['code'] = 1;
