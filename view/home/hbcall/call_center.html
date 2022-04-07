@@ -562,18 +562,18 @@
 
         let customerList = [];
         let importCount = 0;
-        $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
-            if (res.code === 1 && res.data.length > 0) {
-                customerList = res.data
-                let isCalled = false
-                $.each(res.data, (index, item) => {
-                    if (item.called_count > 0) {
-                        isCalled = true
-                    }
-                    customerContainer.append(createCustomerItem(item, isCalled))
-                })
-            }
-        })
+        // $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
+        //     if (res.code === 1 && res.data.length > 0) {
+        //         customerList = res.data
+        //         let isCalled = false
+        //         $.each(res.data, (index, item) => {
+        //             if (item.called_count > 0) {
+        //                 isCalled = true
+        //             }
+        //             customerContainer.append(createCustomerItem(item, isCalled))
+        //         })
+        //     }
+        // })
         let uploadExcel = function (files) {
             try {
                 excel.importExcel(files, {
