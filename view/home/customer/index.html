@@ -39,7 +39,8 @@
         <div class="col-12">
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
             <script type="text/html" id="barDemo">
-                <div class="layui-btn layui-btn-xs" lay-event="edit">查看回访记录</div>
+                <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="makeCall">点击拨号</button>
+                <button type="button" class="layui-btn layui-btn-xs" lay-event="edit">回访记录</button>
             </script>
         </div>
 
@@ -84,12 +85,14 @@
                 }
             },
             cols: [[
-                {field: 'id', title: '编号', align: "center"},
+                {field: 'id', title: '编号', align: "center", width: 150},
                 {field: 'title', title: '客户名称', align: "center"},
                 {field: 'phone', title: '联系电话', align: "center"},
+                {field: 'province', title: '所在地', align: "center"},
+                {field: 'email', title: '邮箱', align: "center"},
                 {field: 'called_count', title: '呼叫次数', align: "center"},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
-                {fixed: 'right', title:'回访记录', toolbar: '#barDemo', width:150}
+                {fixed: 'right', title:'回访记录', toolbar: '#barDemo'}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
@@ -97,6 +100,24 @@
             },
             skin: 'line'
         });
+
+        let getNowTime = function () {
+            let d = new Date();
+            let hour = d.getHours(), minute = d.getMinutes(), second = d.getSeconds();
+            if (hour < 10) {
+                hour = '0' + hour
+            }
+
+            if (minute < 10) {
+                minute = '0' + minute
+            }
+
+            if (second < 10) {
+                second = '0' + second
+            }
+
+            return hour + ':' + minute + ':' + second;
+        }
 
         table.on('tool(currentTableFilter)', function (obj) {
             let editId = obj.data.id;
@@ -115,6 +136,10 @@
                     layer.full(index);
                 });
                 return false;
+            } else if (obj.event === 'makeCall') {
+                console.log(obj)
+                makeCall({ phone: obj.data.phone, customerId: obj.data.id }, obj)
+
             }
         });
 
@@ -139,6 +164,78 @@
                 where: {}
             }, false)
         })
+
+        let makeCall = function (params = { phone: '', customerId: 0 }, obj = null) {
+            $.post('{:url("/hbcall/makeCall")}', { mobile: params.phone, customerId: params.customerId }, function (res) {
+                if (res.code === 1000) {
+                    // 更新客户拨号记录
+                    $.post('{:url("/HbCall/updateCustomerCalledCount")}', { phone: params.phone, customerId: params.customerId }, function (r) {
+                    })
+
+                    obj.update({
+                        last_calltime: getNowTime(),
+                        called_count: obj.data.called_count + 1
+                    })
+
+                    let con = `
+                            <div style="padding: 50px; line-height: 30px; font-weight: 300;">
+                                <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${res.data.xNumber}</h3> 进行通话。</p>
+                            </div>
+                        `;
+                    layer.config({
+                        extend: 'skin/blue.css',
+                    }).open({
+                        type: 1,
+                        title: '拨号成功！',
+                        closeBtn: 2,
+                        area: '400px;',
+                        shade: 0.8,
+                        id: 'LAY_layuipro',
+                        btnAlign: 'c',
+                        moveType: 1,
+                        skin: 'layer-ext-blue',
+                        content: con,
+                        success: function (layero, index) {
+                            // 10秒倒计时
+                            let t = 10;
+                            let time = document.getElementsByClassName("clock")[0];
+                            let getTime = function () {
+                                t--;
+                                time.innerHTML = t;
+                                if (t < 0) {
+                                    clearInterval(inter);
+                                    // 关闭当前窗
+                                    layer.close(index);
+                                }
+                            };
+
+                            let inter = setInterval(getTime, 1000);
+                        }
+                    });
+                } else {
+                    let con = `
+                        <div style="padding: 50px; line-height: 30px; font-weight: 300;">
+                            <p>${res.msg}</p>
+                        </div>
+                    `;
+                    layer.config({
+                        extend: 'skin/red.css',
+                    }).open({
+                        title: res.info ?? '温馨提示',
+                        type: 1,
+                        area: '400px',
+                        shade: 0.8,
+                        id: 'LAY_layuipro',
+                        btnAlign: 'c',
+                        closeBtn: 2,
+                        moveType: 1,
+                        skin: 'layer-ext-red',
+                        content: con
+                    })
+                }
+            });
+        }
+
     });
 </script>
 

@@ -44,6 +44,12 @@
           "href": "report/index.html",
           "icon": "fa fa-chart-area",
           "target": "_self"
+        },
+        {
+          "title": "客户管理",
+          "href": "customer/index.html",
+          "icon": "fa fa-users-gear",
+          "target": "_self"
         }
       ]
     }

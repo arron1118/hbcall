@@ -1,0 +1,265 @@
+{extend name="public/base" /}
+{block name="css"}
+{include file="public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="container-fluid">
+    <div class="row mb-3 shadow-sm bg-white rounded">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">客户名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="title" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="phone" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                        </button>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+            <script type="text/html" id="currentTableBar">
+                <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal" id="importExcel" lay-event="import">导入客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info">导入说明</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution">分配客户</button>
+            </script>
+
+            <script type="text/html" id="barDemo">
+                <div class="layui-btn layui-btn-xs" lay-event="edit">回访记录</div>
+            </script>
+        </div>
+
+    </div>
+</div>
+
+{/block}
+{block name="js"}
+<script src="__STATIC__/lib/layui_exts/excel.js"></script>
+<script>
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form'], function () {
+        let $ = layui.jquery,
+            layer = layui.layer,
+            miniTab = layui.miniTab,
+            element = layui.element,
+            excel = layui.excel,
+            table = layui.table,
+            upload = layui.upload,
+            form = layui.form;
+
+        miniTab.listen();
+        let option = { icon: 1 }
+        // 客户列表
+        table.render({
+            elem: '#currentTableId',
+            id: 'customerTable',
+            url: '{:url("/customer/getCustomerList")}',
+            method: 'post',
+            toolbar: '#currentTableBar',
+            // height: 680,
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.data,
+                    'count': res.total
+                }
+            },
+            cols: [[
+                {type: 'checkbox', fixed: 'left' },
+                {field: 'id', title: '编号', align: "center", width: 150},
+                {field: 'title', title: '客户名称', align: "center"},
+                {field: 'phone', title: '联系电话', align: "center"},
+                {field: 'province', title: '所在地', align: "center"},
+                {field: 'email', title: '邮箱', align: "center"},
+                {field: 'called_count', title: '呼叫次数', align: "center"},
+                {field: 'last_calltime', title: '最近呼叫', align: "center"},
+                {fixed: 'right', title: '回访记录', toolbar: '#barDemo', width: 150}
+            ]],
+            page: {
+                limits: [15, 30, 45, 60, 90, 150, 300, 600, 900],
+                limit: 15,
+            },
+            skin: 'line'
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            let editId = obj.data.id;
+            // 传这个Id去后台查出备忘列表，渲染
+            if (obj.event === 'edit') {
+                let index = layer.open({
+                    title: '回访记录列表',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            }
+        });
+
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'distribution') {  // 监听添加操作
+                let checkStatus = table.checkStatus('customerTable').data;
+                console.log(checkStatus)
+                if (checkStatus.length <= 0) {
+                    layer.msg('请选择客户', option);
+                    return false;
+                }
+
+                let ids = '', userId = 0;
+                $.each(checkStatus, (index, item) => {
+                    ids += ',' + item.id
+                })
+                console.log(ids)
+                layer.open({
+                    type: 1,
+                    title: '选择用户',
+                    skin: 'layui-layer-rim',
+                    area: ['420px', '500px'],
+                    content: `
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <ul class="list-group">
+                                {foreach $user.user as $key => $val}
+                                <li class="list-group-item select-user" data-id="{$val.id}">{$val.username}</li>
+                                {/foreach}
+                            </ul>
+                        </div>
+                    </div>
+                    `,
+                    success: function(layero, index){
+                        layero.find('.select-user').on('click', function () {
+                            userId = $(this).data('id')
+
+                            $.post('{:url("/customer/distribution")}', { ids: ids, user_id: userId }, function (res) {
+                                layer.close(index)
+                                if (res.code === 1) {
+                                    option.icon = 1
+                                    layer.close(index)
+                                }
+
+                                layer.msg(res.msg, option)
+                            })
+                        })
+                    }
+                })
+
+            } else if (obj.event === 'info') {  // 监听删除操作
+                layer.open({
+                    type: 1,
+                    title: false,
+                    skin: 'layui-layer-rim',
+                    area: ['420px', '300px'],
+                    content: `<div class="p-3">
+                           注：只能上传Excel表格，格式为:<br /> ['客户名称', '电话号码', '所在地', '邮箱']
+                           <img src="__STATIC__/images/customer-example-import.png" class="pt-3" />
+                        </div>`
+                })
+            }
+        });
+
+        // 导入客户
+        let loading = null;
+        upload.render({
+            elem: '#importExcel',
+            url: '{:url("/customer/importExcel")}',
+            accept: 'file', //普通文件
+            exts: 'xls|excel|xlsx', //导入表格
+            auto: true,  //选择文件后不自动上传
+            before: function (obj) {
+                loading = layer.load(); //上传loading
+            },
+            // 选择文件回调
+            choose: function (obj) {
+                // let files = obj.pushFile();
+                // let fileArr = Object.values(files);// 注意这里的数据需要是数组，所以需要转换一下
+                // // 用完就清理掉，避免多次选中相同文件时出现问题
+                // for (let index in files) {
+                //     if (files.hasOwnProperty(index)) {
+                //         delete files[index];
+                //     }
+                // }
+                // uploadExcel(fileArr); // 如果只需要最新选择的文件，可以这样写： uploadExcel([files.pop()])
+            },
+            done: function (res) {
+                console.log('导入数据', res)
+                layer.close(loading);
+                let icon = 0;
+                if (res.code === 1) {
+                    icon = 1;
+                }
+
+                return layer.msg(res.msg, {icon: icon, time: 3000})
+            },
+            error: function () {
+                setTimeout(function () {
+                    layer.msg("上传失败！", {
+                        icon: 1
+                    });
+                    //关闭所有弹出层
+                    layer.closeAll(); //疯狂模式，关闭所有层
+                }, 1000);
+            }
+        });
+
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            table.reload('customerTable', {
+                page: {
+                    curr: 1
+                },
+                where: data.field
+            });
+
+            return false
+        });
+
+        $('button[type="reset"]').on('click', function () {
+            table.reload('customerTable', {
+                page: {
+                    curr: 1
+                },
+                where: {}
+            }, false)
+        })
+    });
+</script>
+
+{/block}

@@ -33,9 +33,8 @@ class Customer extends \app\common\controller\HomeController
 
             $total = CustomerModel::where($where)->count();
 
-            $res = CustomerModel::field('id, title, phone, called_count, last_calltime')
+            $res = CustomerModel::field('id, title, phone, province, email, called_count, last_calltime')
                 ->where($where)
-                ->order('called_count')
                 ->order('id', 'desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();

@@ -182,10 +182,14 @@ if (!function_exists('readExcel')) {
         for ($i = 2; $i < $highestRow; $i++) {
             $title = $sheet->getCellByColumnAndRow(1, $i)->getValue();
             $phone = $sheet->getCellByColumnAndRow(2, $i)->getValue();
+            $province = $sheet->getCellByColumnAndRow(3, $i)->getValue();
+            $email = $sheet->getCellByColumnAndRow(4, $i)->getValue();
             if ($title && $phone) {
                 $a = array_merge($appendColumns, [
                     'title' => $title,
                     'phone' => $phone,
+                    'province' => $province ?? '',
+                    'email' => $email ?? '',
                 ]);
                 array_push($log, $a);
             }
