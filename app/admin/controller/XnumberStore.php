@@ -63,6 +63,12 @@ class XnumberStore extends \app\common\controller\AdminController
     public function add()
     {
         if ($this->request->isPost()) {
+            $number = trim($this->request->param('number'));
+            if ($this->checkNumber($number)) {
+                $this->returnData['msg'] = '号码已经存在';
+                return json($this->returnData);
+            }
+
             if ((new NumberStore())->save($this->request->param())) {
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '添加成功';
@@ -81,6 +87,12 @@ class XnumberStore extends \app\common\controller\AdminController
         if ($this->request->isPost()) {
             $id = (int) $this->request->param('id');
             $number = trim($this->request->param('number'));
+
+            if ($this->checkNumber($number)) {
+                $this->returnData['msg'] = '号码已经存在';
+                return json($this->returnData);
+            }
+
             $num = NumberStore::find($id);
             $num->number = $number;
             if ($num->save()) {
@@ -94,5 +106,10 @@ class XnumberStore extends \app\common\controller\AdminController
         }
 
         return json($this->returnData);
+    }
+
+    protected function checkNumber($number)
+    {
+        return NumberStore::getByNumber($number);
     }
 }

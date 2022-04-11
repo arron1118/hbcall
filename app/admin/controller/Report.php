@@ -14,7 +14,7 @@ class Report extends \app\common\controller\AdminController
 //        dump(strtotime('2022-03-04 14:00:00'));
 //        dump(date('Y-m-d H:i:s', 1646366430));
 //        dump(date('Y-m-d H:i:s', 1646366654));
-        $company = Company::select();
+        $company = Company::field('id, corporation')->order('id desc, logintime desc')->select();
         $company->hidden(['password']);
         $this->view->assign('companies', $company);
         return $this->view->fetch();

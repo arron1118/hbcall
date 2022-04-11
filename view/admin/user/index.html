@@ -1,6 +1,6 @@
 {extend name="public/base" /}
 {block name="css"}
-    {include file="public/bootstrap" /}
+{include file="public/bootstrap" /}
 {/block}
 {block name="body"}
 <div class="container-fluid">
@@ -23,10 +23,13 @@
                     </div>
 
                     <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-normal"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                        </button>
                     </div>
                     <div class="layui-inline">
-                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置</button>
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置
+                        </button>
                     </div>
                 </div>
             </form>
@@ -37,16 +40,20 @@
     <div class="layuimini-main">
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 开通账号</button>
-<!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i
+                        class="fa fa-plus"></i> 开通账号
+                </button>
+                <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
             </div>
         </script>
 
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
 
         <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i> </a>
-<!--            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i
+                    class="fa fa-user-edit"></i> </a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i
+                    class="fa fa-trash-can"></i></a>
         </script>
 
     </div>
@@ -80,26 +87,33 @@
                 }
             },
             cols: [[
-                {type: "checkbox", width: 50},
-                {field: 'username', title: '账号'},
-                {field: 'number', title: '已使用小号', align: "center", },
+                // {type: "checkbox", width: 50, fixed: 'left'},
+                {field: 'id', title: '编号', width: 100, fixed: 'left'},
+                {field: 'username', title: '账号', fixed: 'left'},
+                {field: 'number', title: '已使用小号', align: "center", width: 140},
                 {field: 'ration', title: '座席', align: "center", edit: 'text'},
-                {field: 'limit_user', title: '限制用户数量', align: "center", edit: 'text', sort: true },
-                {field: 'user_count', title: '已开通用户', align: "center", sort: true },
-                {field: 'rate', title: '费率(￥/元)', align: "center", edit: 'text', sort: true },
-                {field: 'balance', title: '余额(￥/元)', align: "center", sort: true, templet: function (row) {
-                    return row.balance < 0 ? '<div class="layui-bg-red">' + row.balance + '</div>' : row.balance;
-                    }},
-                {field: 'expense', title: '总消费', align: 'center', sort: true },
-                {field: 'logintime', title: '最后登录', align: "center"},
-                {field: 'status', title: '试用', align: "center", templet: function (row) {
-                        return `<input type="checkbox" name="try" value="${row.id}" lay-skin="switch" lay-text="是|否" lay-filter="tryFilter" ${row.is_test === '是' ? 'checked' : ''}>`
-                    }},
-                {field: 'status', title: '状态', align: "center", templet: function (row) {
+                {field: 'limit_user', title: '限制用户数量', align: "center", edit: 'text', sort: true},
+                {field: 'user_count', title: '已开通用户', align: "center", sort: true},
+                {field: 'rate', title: '费率(￥/元)', align: "center", edit: 'text', sort: true},
+                {
+                    field: 'balance', title: '余额(￥/元)', align: "center", sort: true, templet: function (row) {
+                        return row.balance < 0 ? '<div class="layui-bg-red">' + row.balance + '</div>' : row.balance;
+                    }
+                },
+                {field: 'expense', title: '总消费', align: 'center', sort: true},
+                {field: 'logintime', title: '最后登录', align: "center", width: 180},
+                {
+                    field: 'status', title: '试用', align: "center", templet: function (row) {
+                        return `<input type="checkbox" name="try" value="${row.id}" lay-skin="switch" lay-text="是|否" lay-filter="tryFilter" ${row.is_test === '是' ? 'checked' : ''} disabled>`
+                    }
+                },
+                {
+                    field: 'status', title: '状态', align: "center", templet: function (row) {
                         // return `<span class="${row.status === '正常' ? 'text-info' : 'text-danger'}">${row.status}</span>`
                         return `<input type="checkbox" name="status" value="${row.id}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" ${row.status === '正常' ? 'checked' : ''}>`
-                    }},
-                {title: '操作', toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                    }
+                },
+                {title: '操作', width: 100, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
@@ -151,26 +165,26 @@
             } else if (obj.event === 'delete') {  // 监听删除操作
                 let checkStatus = table.checkStatus('currentTableId'),
                     data = checkStatus.data;
-                    console.log(data);
-                    if(data === '' || data === 'undefind'){
-                        layer.msg('请勾选需要删除的数据');
-                        return false;
-                    }else{
-                        let ids=[],url='';
-                        $(data).each(function (i) {
-                            ids.push(data[i].id);
-                        });
-                        console.log(ids);
-                        $.post(url,ids,function () {
-                            //todo
-                        });
-                    }
+                console.log(data);
+                if (data === '' || data === 'undefind') {
+                    layer.msg('请勾选需要删除的数据');
+                    return false;
+                } else {
+                    let ids = [], url = '';
+                    $(data).each(function (i) {
+                        ids.push(data[i].id);
+                    });
+                    console.log(ids);
+                    $.post(url, ids, function () {
+                        //todo
+                    });
+                }
             }
         });
 
         let updateUserField = function (param) {
             $.post('{:url("/User/updateUser")}', param, function (res) {
-                let option = { icon: 0 };
+                let option = {icon: 0};
                 if (res.code === 1) {
                     option.icon = 1
                 }
@@ -193,9 +207,9 @@
         // })
         form.on('switch(statusFilter)', function (obj) {
             let status = obj.elem.checked ? 1 : 0;
-            let params = { id: obj.value, status: status };
+            let params = {id: obj.value, status: status};
             if (!status) {
-                parent.layer.confirm('禁止后，该账号下的所有拨号账号将无法正常使用', { icon: 3, title: '提示' }, function (index) {
+                parent.layer.confirm('禁止后，该账号下的所有拨号账号将无法正常使用', {icon: 3, title: '提示'}, function (index) {
                     updateUserField(params)
                     parent.layer.close(index)
                 })
@@ -208,7 +222,7 @@
         // 单元格编辑
         table.on('edit(currentTableFilter)', function (obj) {
             $.post('{:url("/User/edit")}', obj.data, function (res) {
-                let option = { icon: 0 };
+                let option = {icon: 0};
                 if (res.code === 1) {
                     option.icon = 1
                 }
@@ -236,18 +250,18 @@
                 $(window).on("resize", function () {
                     layer.full(index);
                 });
-                return false;
             } else if (obj.event === 'delete') {
-                console.log(obj);
-                console.log(obj.data.id);
-                let id = obj.data.id, url='';
-                layer.confirm('真的删除行么', function (index) {
-                    $.post(url,id,function () {
-                        //todo
-                        obj.del();
+                layer.confirm('删除账号后，其账号下所有关联账号将全部删除', function (index) {
+                    $.post("{:url('/User/del')}", { id: obj.data.id }, function (res) {
                         layer.close(index);
-                    })
+                        let option = {icon: 0};
+                        if (res.code === 1) {
+                            option.icon = 1
+                            obj.del();
+                        }
 
+                        layer.msg(res.msg, option)
+                    })
                 });
             }
         });

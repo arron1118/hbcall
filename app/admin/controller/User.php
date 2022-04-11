@@ -4,7 +4,8 @@
 namespace app\admin\controller;
 
 
-use app\company\model\Company as UserModel;
+use app\company\model\Company as CompanyModel;
+use app\common\model\User as UserModel;
 use app\admin\model\Admin;
 use app\common\model\NumberStore;
 use think\facade\Session;
@@ -33,8 +34,8 @@ class User extends \app\common\controller\AdminController
                 $map[] = ['corporation', 'like', '%' . $corporation . '%'];
             }
 
-            $total = UserModel::where($map)->count();
-            $userList = UserModel::withCount('user')
+            $total = CompanyModel::where($map)->count();
+            $userList = CompanyModel::withCount('user')
                 ->with(['companyXnumber' => ['numberStore']])
                 ->hidden(['salt'])
                 ->where($map)->order('id', 'desc')
@@ -55,12 +56,12 @@ class User extends \app\common\controller\AdminController
             $params['salt'] = getRandChar(6);
             $params['password'] = getEncryptPassword(trim($params['password']), $params['salt']);
 
-            if (UserModel::getByUsername($params['username'])) {
+            if (CompanyModel::getByUsername($params['username'])) {
                 $this->returnData['msg'] = '用户已经存在';
                 return json($this->returnData);
             }
 
-            if (UserModel::getByCorporation($params['corporation'])) {
+            if (CompanyModel::getByCorporation($params['corporation'])) {
                 $this->returnData['msg'] = '公司名称已经存在';
                 return json($this->returnData);
             }
@@ -90,10 +91,10 @@ class User extends \app\common\controller\AdminController
 //                return json($this->returnData);
 //            }
 
-            $userModel = new UserModel();
+            $CompanyModel = new CompanyModel();
 
-            if ($userModel->save($params)) {
-                $userModel->companyXnumber()->save(['number_store_id' => $params['number_store_id']]);
+            if ($CompanyModel->save($params)) {
+                $CompanyModel->companyXnumber()->save(['number_store_id' => $params['number_store_id']]);
 
                 $this->returnData['msg'] = '开通成功';
                 $this->returnData['code'] = 1;
@@ -102,7 +103,7 @@ class User extends \app\common\controller\AdminController
 //                if ($params['ration'] > 0) {
 //                    NumberStore::where('status', '=', '0')
 //                        ->limit($params['ration'])
-//                        ->update(['company_id' => $userModel->id, 'status' => 1]);
+//                        ->update(['company_id' => $CompanyModel->id, 'status' => 1]);
 //                }
             } else {
                 $this->returnData['msg'] = '开通失败';
@@ -123,7 +124,7 @@ class User extends \app\common\controller\AdminController
             $this->returnData['msg'] = '错误参数: ' . $userId;
             return json($this->returnData);
         }
-        $userInfo = UserModel::withCount('user')->find($userId);
+        $userInfo = CompanyModel::withCount('user')->find($userId);
         if (!$userInfo) {
             $this->returnData['msg'] = '未找到数据';
             return json($this->returnData);
@@ -237,7 +238,7 @@ class User extends \app\common\controller\AdminController
             $this->returnData['msg'] = '更新失败';
             if ($this->request->has('id')) {
                 $param = $this->request->param();
-                $user = UserModel::find($param['id']);
+                $user = CompanyModel::find($param['id']);
                 if ($user->save($param)) {
                     $this->returnData['msg'] = '更新成功';
                     $this->returnData['code'] = 1;
@@ -308,5 +309,31 @@ class User extends \app\common\controller\AdminController
         return $this->view->fetch();
     }
 
+    public function del()
+    {
+        if ($this->request->isPost()) {
+            $id = (int) $this->request->param('id', 0);
+            if (!$id) {
+                $this->returnData['msg'] = '请提供正确的参数';
+                return json($this->returnData);
+            }
 
+            $company = CompanyModel::with(['companyXnumber'])->find($id);
+            $users = UserModel::with(['userXnumber'])->where('company_id', $id)->select();
+            foreach ($users as $key => $value) {
+                if ($value->userXnumber()->delete()) {
+                    $value->delete();
+                }
+            }
+            if ($company->companyXnumber()->delete()) {
+                $company->delete();
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '删除成功';
+            } else {
+                $this->returnData['msg'] = '删除失败';
+            }
+
+            return json($this->returnData);
+        }
+    }
 }
