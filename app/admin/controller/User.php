@@ -313,7 +313,7 @@ class User extends \app\common\controller\AdminController
     {
         if ($this->request->isPost()) {
             $id = (int) $this->request->param('id', 0);
-            if (!$id) {
+            if (!$id || $id === 1) {
                 $this->returnData['msg'] = '请提供正确的参数';
                 return json($this->returnData);
             }
