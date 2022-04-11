@@ -53,6 +53,7 @@ class Customer extends \app\common\controller\CompanyController
             $limit = (int)$this->request->param('limit', 10);
             $title = trim($this->request->param('title', ''));
             $phone = trim($this->request->param('phone', ''));
+            $status = (int) $this->request->param('status', 0);
 
             $where = [
                 ['company_id', '=', $this->userInfo->id]
@@ -64,6 +65,14 @@ class Customer extends \app\common\controller\CompanyController
 
             if ($phone) {
                 $where[] = ['phone', 'like', '%' . $phone . '%'];
+            }
+
+            if ($status > 0) {
+                if ($status === 1) {
+                    $where[] = ['user_id', '=', 0];
+                } elseif ($status === 2) {
+                    $where[] = ['user_id', '>', 0];
+                }
             }
 
             $total = CustomerModel::where($where)->count();

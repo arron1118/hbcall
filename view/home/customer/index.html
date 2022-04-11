@@ -87,7 +87,9 @@
             cols: [[
                 {field: 'id', title: '编号', align: "center", width: 150},
                 {field: 'title', title: '客户名称', align: "center"},
-                {field: 'phone', title: '联系电话', align: "center"},
+                {field: 'phone', title: '联系电话', align: "center", templet: function(row){
+                    return row.phone.replace(row.phone.substring(3, 7), '****')
+                    }},
                 {field: 'province', title: '所在地', align: "center"},
                 {field: 'email', title: '邮箱', align: "center"},
                 {field: 'called_count', title: '呼叫次数', align: "center"},

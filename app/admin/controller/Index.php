@@ -163,7 +163,7 @@ SQL;
         $pwd = getEncryptPassword('123456', $salt);
         dump($salt);
         dump($pwd);*/
-        if ($this->userInfo) {
+        if ($this->userInfo && $this->userInfo->token_expire_time > time()) {
             return redirect(url('/index'));
         }
 

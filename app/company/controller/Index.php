@@ -154,7 +154,7 @@ SQL;
 
     public function login()
     {
-        if ($this->userInfo) {
+        if ($this->userInfo && $this->userInfo->token_expire_time > time()) {
             return redirect(url('/index'));
         }
 

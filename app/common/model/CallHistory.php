@@ -28,6 +28,11 @@ class CallHistory extends \think\Model
         return $minute . ':' . $second;
     }
 
+    public function getCalledNumberAttr($value)
+    {
+        return substr_replace($value, '****', 3, 4);
+    }
+
     public function getStarttimeAttr($value)
     {
         return $value ? (date('d', $value) === date('d', time()) ?

@@ -20,6 +20,11 @@ class Customer extends \think\Model
         ) : '-';
     }
 
+//    public function getPhoneAttr($value)
+//    {
+//        return substr_replace($value, '****', 3, 4);
+//    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-3 shadow-sm bg-white rounded">
         <div class="col pt-3">
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">客户名称</label>
@@ -33,6 +33,16 @@
                     </div>
                 </div>
             </form>
+            <div class="layui-form-item">
+                <label class="layui-form-label">筛选：</label>
+                <div class="layui-inline">
+                    <div class="layui-btn-group">
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-checked distribution-status" data-status="0">所有</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="1">未分配</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="2">已分配</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -98,7 +108,9 @@
                 {type: 'checkbox', fixed: 'left' },
                 {field: 'id', title: '编号', align: "center", width: 150},
                 {field: 'title', title: '客户名称', align: "center"},
-                {field: 'phone', title: '联系电话', align: "center"},
+                {field: 'phone', title: '联系电话', align: "center", templet: function (row) {
+                    return row.phone.replace(row.phone.substring(3, 7), '****')
+                    }},
                 {field: 'province', title: '所在地', align: "center"},
                 {field: 'email', title: '邮箱', align: "center"},
                 {field: 'called_count', title: '呼叫次数', align: "center"},
@@ -135,7 +147,6 @@
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'distribution') {  // 监听添加操作
                 let checkStatus = table.checkStatus('customerTable').data;
-                console.log(checkStatus)
                 if (checkStatus.length <= 0) {
                     layer.msg('请选择客户', option);
                     return false;
@@ -171,6 +182,7 @@
                                 if (res.code === 1) {
                                     option.icon = 1
                                     layer.close(index)
+                                    table.reload('customerTable')
                                 }
 
                                 layer.msg(res.msg, option)
@@ -217,11 +229,11 @@
                 // uploadExcel(fileArr); // 如果只需要最新选择的文件，可以这样写： uploadExcel([files.pop()])
             },
             done: function (res) {
-                console.log('导入数据', res)
                 layer.close(loading);
                 let icon = 0;
                 if (res.code === 1) {
                     icon = 1;
+                    table.reload('customerTable')
                 }
 
                 return layer.msg(res.msg, {icon: icon, time: 3000})
@@ -237,27 +249,36 @@
             }
         });
 
+        let reloadTable = function (params = {}) {
+            params = Object.assign({}, {
+                status: $('.distribution-status').filter('.layui-btn-checked').data('status')
+            }, params)
+            table.reload('customerTable', {
+                where: params,
+                page: {
+                    curr: 1
+                }
+            })
+        }
+        $('.distribution-status').on('click', function () {
+            let params = Object.assign({}, form.val('searchForm'), {
+                status: $(this).data('status')
+            })
+            reloadTable(params);
+
+            $(this).removeClass('layui-btn-primary').addClass('layui-btn-checked').siblings().removeClass('layui-btn-checked').addClass('layui-btn-primary')
+        })
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             //执行搜索重载
-            table.reload('customerTable', {
-                page: {
-                    curr: 1
-                },
-                where: data.field
-            });
+            reloadTable(data.field)
 
             return false
         });
 
         $('button[type="reset"]').on('click', function () {
-            table.reload('customerTable', {
-                page: {
-                    curr: 1
-                },
-                where: {}
-            }, false)
+            reloadTable()
         })
     });
 </script>
