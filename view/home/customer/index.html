@@ -42,6 +42,11 @@
                 <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="makeCall">点击拨号</button>
                 <button type="button" class="layui-btn layui-btn-xs" lay-event="edit">回访记录</button>
             </script>
+
+            <script type="text/html" id="currentTableBar">
+                <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal" id="importExcel" lay-event="import">导入客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info">导入说明</button>
+            </script>
         </div>
 
     </div>
@@ -68,7 +73,7 @@
             id: 'customerTable',
             url: '{:url("/customer/getCustomerList")}',
             method: 'post',
-            toolbar: true,
+            toolbar: '#currentTableBar',
             // height: 680,
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -88,8 +93,9 @@
                 {field: 'id', title: '编号', align: "center", width: 150},
                 {field: 'title', title: '客户名称', align: "center"},
                 {field: 'phone', title: '联系电话', align: "center", templet: function(row){
-                    return row.phone.replace(row.phone.substring(3, 7), '****')
-                    }},
+                    let hidePhone = row.phone.replace(row.phone.substring(3, 7), '****')
+                    return '<span class="hide-phone d-inline">' + hidePhone + '</span><span class="show-phone d-none">' + row.phone + '</span> <i class="fa-regular fa-eye phone-icon"></i>';
+                    }, event: 'showPhone'},
                 {field: 'province', title: '所在地', align: "center"},
                 {field: 'email', title: '邮箱', align: "center"},
                 {field: 'called_count', title: '呼叫次数', align: "center"},
@@ -139,11 +145,35 @@
                 });
                 return false;
             } else if (obj.event === 'makeCall') {
-                console.log(obj)
                 makeCall({ phone: obj.data.phone, customerId: obj.data.id }, obj)
-
+            } else if (obj.event === 'showPhone') {
+                let hide = $(this).find('.hide-phone'), show = $(this).find('.show-phone'), icon = $(this).find('.phone-icon');
+                if (hide.hasClass('d-inline')) {
+                    hide.removeClass('d-inline').addClass('d-none')
+                    show.removeClass('d-none').addClass('d-inline')
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash')
+                } else {
+                    hide.removeClass('d-none').addClass('d-inline')
+                    show.removeClass('d-inline').addClass('d-none')
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye')
+                }
             }
         });
+
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'info') {  // 监听删除操作
+                layer.open({
+                    type: 1,
+                    title: false,
+                    skin: 'layui-layer-rim',
+                    area: ['420px', '300px'],
+                    content: `<div class="p-3">
+                           注：只能上传Excel表格，格式为:<br /> ['客户名称', '电话号码', '所在地', '邮箱']
+                           <img src="__STATIC__/images/customer-example-import.png" class="pt-3" />
+                        </div>`
+                })
+            }
+        })
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
@@ -238,6 +268,49 @@
             });
         }
 
+        // 导入客户
+        let loading = null;
+        upload.render({
+            elem: '#importExcel',
+            url: '{:url("/hbcall/importExcel")}',
+            accept: 'file', //普通文件
+            exts: 'xls|excel|xlsx', //导入表格
+            auto: true,  //选择文件后不自动上传
+            before: function (obj) {
+                loading = layer.load(); //上传loading
+            },
+            // 选择文件回调
+            choose: function (obj) {
+                // let files = obj.pushFile();
+                // let fileArr = Object.values(files);// 注意这里的数据需要是数组，所以需要转换一下
+                // // 用完就清理掉，避免多次选中相同文件时出现问题
+                // for (let index in files) {
+                //     if (files.hasOwnProperty(index)) {
+                //         delete files[index];
+                //     }
+                // }
+                // uploadExcel(fileArr); // 如果只需要最新选择的文件，可以这样写： uploadExcel([files.pop()])
+            },
+            done: function (res) {
+                layer.close(loading);
+                let icon = 0;
+                if (res.code === 1) {
+                    icon = 1;
+                    table.reload('customerTable')
+                }
+
+                return layer.msg(res.msg, {icon: icon, time: 3000})
+            },
+            error: function () {
+                setTimeout(function () {
+                    layer.msg("上传失败！", {
+                        icon: 1
+                    });
+                    //关闭所有弹出层
+                    layer.closeAll(); //疯狂模式，关闭所有层
+                }, 1000);
+            }
+        });
     });
 </script>
 

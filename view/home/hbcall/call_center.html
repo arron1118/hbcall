@@ -372,10 +372,12 @@
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
                     $(this).children('.call-datetime').addClass('d-none')
+                    $(this).children('.phone').text(item.called_number)
                 },
                 mouseout: function () {
                     $(this).children('.click-call').addClass('d-none')
                     $(this).children('.call-datetime').removeClass('d-none')
+                    $(this).children('.phone').text(item.called_number.toString().replace(item.called_number.toString().substring(3, 7), '****'))
                 }
             }).append($('<div />', {
                 class: 'col-6 text-truncate',
@@ -405,10 +407,12 @@
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
                     $(this).children('.called-customer').addClass('d-none')
+                    $(this).children('.phone').text(item.phone)
                 },
                 mouseout: function () {
                     $(this).children('.click-call').addClass('d-none')
                     $(this).children('.called-customer').removeClass('d-none')
+                    $(this).children('.phone').text(item.phone.toString().replace(item.phone.toString().substring(3, 7), '****'))
                 },
                 // 右键菜单
                 contextmenu: function (e) {
@@ -477,7 +481,7 @@
                 class: 'customer-id',
                 'data-id': item.id,
             })).append($('<div />', {
-                class: 'phone col-6 text-truncate',
+                class: 'col-6 text-truncate',
                 text: item.title,
                 alt: item.title
             })).append($('<div />', {

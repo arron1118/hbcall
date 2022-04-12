@@ -109,8 +109,9 @@
                 {field: 'id', title: '编号', align: "center", width: 150},
                 {field: 'title', title: '客户名称', align: "center"},
                 {field: 'phone', title: '联系电话', align: "center", templet: function (row) {
-                    return row.phone.replace(row.phone.substring(3, 7), '****')
-                    }},
+                        let hidePhone = row.phone.replace(row.phone.substring(3, 7), '****')
+                        return '<span class="hide-phone d-inline">' + hidePhone + '</span><span class="show-phone d-none">' + row.phone + '</span> <i class="fa-regular fa-eye phone-icon"></i>';
+                    }, event: 'showPhone'},
                 {field: 'province', title: '所在地', align: "center"},
                 {field: 'email', title: '邮箱', align: "center"},
                 {field: 'called_count', title: '呼叫次数', align: "center"},
@@ -141,6 +142,17 @@
                     layer.full(index);
                 });
                 return false;
+            } else if (obj.event === 'showPhone') {
+                let hide = $(this).find('.hide-phone'), show = $(this).find('.show-phone'), icon = $(this).find('.phone-icon');
+                if (hide.hasClass('d-inline')) {
+                    hide.removeClass('d-inline').addClass('d-none')
+                    show.removeClass('d-none').addClass('d-inline')
+                    icon.removeClass('fa-eye').addClass('fa-eye-slash')
+                } else {
+                    hide.removeClass('d-none').addClass('d-inline')
+                    show.removeClass('d-inline').addClass('d-none')
+                    icon.removeClass('fa-eye-slash').addClass('fa-eye')
+                }
             }
         });
 
