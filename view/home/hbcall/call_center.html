@@ -18,6 +18,9 @@
                 <div class="layui-tab-content p-3 pt-0 overflow-scroll" style="max-height: 750px;">
                     <div class="layui-tab-item layui-show">
                         <div class="import-description mb-3">
+                            <button class="btn btn-outline-primary btn-sm" id="lastImport">
+                                <i class="fa fa-clock"></i> 上次导入
+                            </button>
                             <button class="btn btn-primary btn-sm" id="importExcel">
                                 <i class="fa fa-file-import"></i> 导入客户
                             </button>
@@ -565,18 +568,20 @@
 
         let customerList = [];
         let importCount = 0;
-        // $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
-        //     if (res.code === 1 && res.data.length > 0) {
-        //         customerList = res.data
-        //         let isCalled = false
-        //         $.each(res.data, (index, item) => {
-        //             if (item.called_count > 0) {
-        //                 isCalled = true
-        //             }
-        //             customerContainer.append(createCustomerItem(item, isCalled))
-        //         })
-        //     }
-        // })
+        $('#lastImport').on('click', function () {
+            $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
+                if (res.code === 1 && res.data.length > 0) {
+                    customerList = res.data
+                    let isCalled = false
+                    $.each(res.data, (index, item) => {
+                        if (item.called_count > 0) {
+                            isCalled = true
+                        }
+                        customerContainer.append(createCustomerItem(item, isCalled))
+                    })
+                }
+            })
+        })
         let uploadExcel = function (files) {
             try {
                 excel.importExcel(files, {
