@@ -482,7 +482,7 @@
                 alt: item.title
             })).append($('<div />', {
                 class: 'phone col-3',
-                text: item.phone.replace(item.phone.substring(3, 7), '****')
+                text: item.phone.toString().replace(item.phone.toString().substring(3, 7), '****')
             }))
 
             if (isCalled) {
