@@ -382,7 +382,7 @@
                 text: item.customer?.title,
             })).append($('<span />', {
                 class: 'phone col-3',
-                text: item.called_number.replace(item.called_number.substring(3, 7), '****')
+                text: item.called_number.toString().replace(item.called_number.toString().substring(3, 7), '****')
             })).append($('<div />', {
                 class: 'click-call col-3 text-primary text-end',
                 text: '点击拨号'
