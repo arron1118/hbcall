@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-3 shadow-sm bg-white rounded">
         <div class="col pt-3">
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
 <!--                <div class="layui-form-item">-->
 <!--                    <div class="layui-input-block m-0">-->
 <!--                        <input type="radio" name="like" value="all" title="全部" checked="">-->
@@ -31,9 +31,19 @@
                         </div>
                     </div>
                     <div class="layui-inline">
+                        <label class="layui-form-label">用户状态</label>
+                        <div class="layui-input-inline">
+                            <select name="status" lay-filter="userStatusFilter">
+                                {foreach $statusList as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label class="layui-form-label">是否试用</label>
                         <div class="layui-input-inline">
-                            <select name="try_user" lay-filter="tryUserFilter">
+                            <select name="is_test" lay-filter="tryUserFilter">
                                 {foreach $isTestList as $key => $val}
                                 <option value="{$key}">{$val}</option>
                                 {/foreach}
@@ -141,16 +151,20 @@
             even: true,
         });
 
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            console.log(data.field)
+        let reloadTable = function (params = {}) {
             //执行搜索重载
             table.reload('userTable', {
                 page: {
                     curr: 1
                 },
-                where: data.field
-            });
+                where: params
+            }, false);
+        }
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            reloadTable(data.field)
 
             return false
         });
@@ -158,22 +172,16 @@
             let params = [];
             params[data.elem.name] = data.value
             params = Object.assign({}, form.val('searchForm'), params)
-           // reloadTable(params);
-            //执行搜索重载
-            table.reload('userTable', {
-                page: {
-                    curr: 1
-                },
-                where: params
-            });
+            reloadTable(params)
+        })
+        form.on('select(userStatusFilter)', function (data) {
+            let params = [];
+            params[data.elem.name] = data.value
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
         })
         $('button[type="reset"]').on('click', function () {
-            table.reload('userTable', {
-                page: {
-                    curr: 1
-                },
-                where: {}
-            }, false)
+            reloadTable({})
         })
 
         /**

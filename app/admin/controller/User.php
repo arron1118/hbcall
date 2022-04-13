@@ -24,8 +24,17 @@ class User extends \app\common\controller\AdminController
             $limit = (int) $this->request->param('limit', 10);
             $username = $this->request->param('username', '');
             $corporation = $this->request->param('corporation', '');
-            $is_test = $this->request->param('is_test', -1);
+            $is_test = (int) $this->request->param('is_test', -1);
+            $status = (int) $this->request->param('status', -1);
             $map = [];
+
+            if ($is_test !== -1) {
+                $map[] = ['is_test', '=', $is_test];
+            }
+
+            if ($status !== -1) {
+                $map[] = ['status', '=', $status];
+            }
 
             if ($username) {
                 $map[] = ['username', 'like', '%' . $username . '%'];
