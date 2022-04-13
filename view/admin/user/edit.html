@@ -50,88 +50,145 @@
                 <div class="layui-form-item logo-title">
                     <h1>编辑账号</h1>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="account">账号</label>
-                    <div class="layui-input-block" id="account">
-                        <input type="text" name="username" lay-verify="required" placeholder="账号"
-                               autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="password">密码</label>
-                    <div class="layui-input-block" id="password">
-                        <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                               autocomplete="off" class="layui-input" value="{$userInfo.password}">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="ration">座席</label>
-                    <div class="layui-input-block" id="ration">
-                        <input type="number" name="ration" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.ration}">
-                        <tip>提示：1个小号为1个座席</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="limit_user">限制用户数</label>
-                    <div class="layui-input-block" id="limit_user">
-                        <input type="number" name="limit_user" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.limit_user}">
-                        <tip>提示：0 为无限制开通拨号用户</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="xnumber">小号</label>
-                    <div class="layui-input-block" id="xnumber">
-                        <select name="number_store_id" lay-filter="required">
-                            {foreach $numberList as $val}
-                                <option value="{$val.id}" {if $userInfo->companyXnumber->number_store_id === $val.id}selected{/if}>{$val.number}</option>
-                            {/foreach}
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="rate">费率(元)</label>
-                    <div class="layui-input-block" id="rate">
-                        <input type="number" name="rate" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.rate}">
-                        <tip>提示：用于计算话费，默认 0.15/分钟</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="corporation">公司名称</label>
-                    <div class="layui-input-block" id="corporation">
-                        <input type="text" name="corporation" lay-verify="required" placeholder="公司名称"
-                               autocomplete="off" class="layui-input" value="{$userInfo.corporation}" readonly>
+                <div class="layui-tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">账户信息</li>
+                        <li>客户信息</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="account">账号</label>
+                                <div class="layui-input-block" id="account">
+                                    <input type="text" name="username" lay-verify="required" placeholder="账号"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="password">密码</label>
+                                <div class="layui-input-block" id="password">
+                                    <input type="password" name="password" lay-verify="required|password" placeholder="密码"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.password}">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="ration">座席</label>
+                                <div class="layui-input-block" id="ration">
+                                    <input type="number" name="ration" min="0" placeholder="0"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.ration}">
+                                    <tip>提示：1个小号为1个座席</tip>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="limit_user">限制用户数</label>
+                                <div class="layui-input-block" id="limit_user">
+                                    <input type="number" name="limit_user" min="0" placeholder="0"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.limit_user}">
+                                    <tip>提示：0 为无限制开通拨号用户</tip>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="xnumber">小号</label>
+                                <div class="layui-input-block" id="xnumber">
+                                    <select name="number_store_id" lay-filter="required">
+                                        {foreach $numberList as $val}
+                                        <option value="{$val.id}" {if $userInfo->companyXnumber->number_store_id === $val.id}selected{/if}>{$val.number}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="rate">费率(元)</label>
+                                <div class="layui-input-block" id="rate">
+                                    <input type="number" name="rate" min="0" placeholder="0"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.rate}">
+                                    <tip>提示：用于计算话费，默认 0.15/分钟</tip>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="corporation">公司名称</label>
+                                <div class="layui-input-block" id="corporation">
+                                    <input type="text" name="corporation" lay-verify="required" placeholder="公司名称"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.corporation}" readonly>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="isTest">测试账号</label>
+                                <div class="layui-input-block" id="isTest">
+                                    <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo.is_test === '是'}checked{/if}>
+                                </div>
+                            </div>
+                            <div class="layui-form-item {if !$userInfo->getData('is_test')}d-none{/if} test-endtime">
+                                <label class="layui-form-label" for="test_endtime">结束时间</label>
+                                <div class="layui-input-block" id="test_endtime">
+                                    <input type="text" name="test_endtime" placeholder="1970-01-01 00:00:00"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.test_endtime}" id="testEndTime">
+                                </div>
+                                <div class="layui-input-block">
+                                    <tip>超过测试时间将禁止拨号，空为无限制。</tip>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="status">状态</label>
+                                <div class="layui-input-block" id="status">
+                                    <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="status" value="1" lay-text="启用|禁止" {if $userInfo.status === '正常'}checked{/if}>
+                                </div>
+                                <div class="layui-input-block">
+                                    <tip>禁止后，该账号下的所有拨号账号将无法正常使用。</tip>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="layui-tab-item">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="signingcompany">公司名称</label>
+                                <div class="layui-input-block" id="signingcompany">
+                                    <input type="text" name="signingcompany" lay-verify="" placeholder="公司名称"
+                                           autocomplete="off" class="layui-input" value="">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="signingtel">联系电话</label>
+                                <div class="layui-input-block" id="signingtel">
+                                    <input type="text" name="signingtel" lay-verify="" placeholder="联系电话"
+                                           autocomplete="off" class="layui-input" value="">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="signingaddress">联系地址</label>
+                                <div class="layui-input-block" id="signingaddress">
+                                    <input type="text" name="signingaddress" lay-verify="" placeholder="联系地址"
+                                           autocomplete="off" class="layui-input" value="">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="signingdatetime">合同时间</label>
+                                <div class="layui-input-block" id="signingdatetime">
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                                    </div>
+                                    <div class="layui-form-mid">-</div>
+                                    <div class="layui-input-inline">
+                                        <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label" for="newsImg">合同</label>
+                                <div class="layui-input-block layui-upload">
+                                    <button type="button" class="layui-btn" id="newsImg">上传</button>
+                                    <div class="layui-upload-list" style="padding-left: 112px;">
+                                        <img class="layui-upload-img" id="newsImgBox" style="max-height: 300px; width: auto;">
+                                    </div>
+                                    <input name="cover_img" type="hidden" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="isTest">测试账号</label>
-                    <div class="layui-input-block" id="isTest">
-                        <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo.is_test === '是'}checked{/if}>
-                    </div>
-                </div>
-                <div class="layui-form-item {if !$userInfo->getData('is_test')}d-none{/if} test-endtime">
-                    <label class="layui-form-label" for="test_endtime">结束时间</label>
-                    <div class="layui-input-block" id="test_endtime">
-                        <input type="text" name="test_endtime" placeholder="1970-01-01 00:00:00"
-                               autocomplete="off" class="layui-input" value="{$userInfo.test_endtime}" id="testEndTime">
-                    </div>
-                    <div class="layui-input-block">
-                        <tip>超过测试时间将禁止拨号，空为无限制。</tip>
-                    </div>
-                </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="status">状态</label>
-                    <div class="layui-input-block" id="status">
-                        <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="status" value="1" lay-text="启用|禁止" {if $userInfo.status === '正常'}checked{/if}>
-                    </div>
-                    <div class="layui-input-block">
-                        <tip>禁止后，该账号下的所有拨号账号将无法正常使用。</tip>
-                    </div>
-                </div>
+
 
                 <div class="layui-form-item">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
@@ -147,11 +204,40 @@
 
 {block name="js"}
 <script>
-    layui.use(['jquery', 'form', 'laydate'], function () {
+    layui.use(['jquery', 'form', 'laydate','upload'], function () {
         let $ = layui.jquery,
             form = layui.form,
+            upload = layui.upload,
             laydate = layui.laydate;
+        //上传图片
+        let uploadInst = upload.render({
+            elem: '#newsImg',
+            url: '{:url("/news/upload")}' ,
+            before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    $('#newsImgBox').attr('src', result); //图片链接（base64）
+                });
+            },
+            done: function (res) {
+                let icon = 0;
+                if (res.code === 1) {
+                    icon = 1;
+                    $('input[name="cover_img"]').val(res['data']['savePath']);
+                }
 
+                return layer.msg(res.msg, {icon: icon, time: 3000})
+            },
+            error: function () {
+                //演示失败状态，并实现重传
+                let demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            },
+        });
+        //
         let frameIndex = parent.layer.getFrameIndex(window.name);
 
         let d = new Date();
@@ -162,7 +248,17 @@
             type: 'datetime',
             min: minDate
         })
-
+        laydate.render({
+            elem: '#signingdatetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
+            min: minDate
+            // done: function (value) {
+            //     let d = value.split(' - ')
+            //     let params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] ? d[1] : '' })
+            //     reloadTable(params)
+            // }
+        })
         form.on('switch(testFilter)', function (obj) {
             let endtimeItem = $('.test-endtime')
             obj.elem.checked ? endtimeItem.removeClass('d-none') : endtimeItem.addClass('d-none')
