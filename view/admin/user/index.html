@@ -7,6 +7,15 @@
     <div class="row mb-3 shadow-sm bg-white rounded">
         <div class="col pt-3">
             <form class="layui-form layui-form-pane" action="">
+<!--                <div class="layui-form-item">-->
+<!--                    <div class="layui-input-block m-0">-->
+<!--                        <input type="radio" name="like" value="all" title="全部" checked="">-->
+<!--                        <input type="radio" name="like" value="probation" title="试用期">-->
+<!--                        <input type="radio" name="like" value="using" title="使用中">-->
+<!--                        <input type="radio" name="like" value="spot" title="即将到期">-->
+<!--                        <input type="radio" name="like" value="expire" title="已无效">-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">账号</label>
@@ -55,16 +64,9 @@
                 <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
             </div>
         </script>
-<div class="layui-row layui-col-space2">
-    <div class="layui-col-md1 shadow-lg">
-        <div id="test2" class="demo-tree"></div>
-    </div>
-   <div class="layui-col-md11">
+   <div>
        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
    </div>
-
-</div>
-
         <script type="text/html" id="currentTableBar">
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i
                     class="fa fa-user-edit"></i> </a>
@@ -78,40 +80,10 @@
 
 {block name="js"}
 <script>
-    layui.use(['jquery', 'form', 'table','tree'], function () {
+    layui.use(['jquery', 'form', 'table'], function () {
         let $ = layui.jquery,
             form = layui.form,
-            tree = layui.tree,
             table = layui.table;
-        let data1 = [{
-            title: '全部客户'
-            , id: 1
-            , children: [
-                {
-                title: '试用客户'
-                , id: 1000
-            }, {
-                title: '正在使用'
-                , id: 1001
-            }, {
-                title: '即将过期（一个月内要到期的）'
-                , id: 1002
-            }, {
-                    title: '无效'
-                    , id: 1003
-                }
-                ]
-        }
-        ]
-        //仅节点左侧图标控制收缩
-        tree.render({
-            elem: '#test2'
-            ,data: data1
-            ,onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
-            ,click: function(obj){
-                layer.msg(JSON.stringify(obj.data));
-            }
-        })
         table.render({
             elem: '#currentTableId',
             url: '{:url("/user/getUserList")}',
