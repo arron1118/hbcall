@@ -64,9 +64,10 @@
 
             <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入客户</button>
             <script type="text/html" id="currentTableBar">
-                <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal" lay-event="importExcel">导入客户</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info">导入说明</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution">分配客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 分配客户</button>
             </script>
 
             <script type="text/html" id="barDemo">
@@ -117,7 +118,7 @@
             },
             cols: [[
                 {type: 'checkbox', fixed: 'left' },
-                {field: 'id', title: '编号', align: "center", width: 150},
+                {field: 'id', title: '编号', align: "center", width: 150, fixed: 'left'},
                 {field: 'title', title: '客户名称', align: "center"},
                 {field: 'phone', title: '联系电话', align: "center", templet: function (row) {
                         let hidePhone = row.phone.replace(row.phone.substring(3, 7), '****')
@@ -127,6 +128,7 @@
                 {field: 'email', title: '邮箱', align: "center"},
                 {field: 'called_count', title: '呼叫次数', align: "center"},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
+                {field: 'createtime', title: '创建时间', align: "center"},
                 {fixed: 'right', title: '回访记录', toolbar: '#barDemo', width: 150}
             ]],
             page: {

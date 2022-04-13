@@ -85,7 +85,7 @@ class Customer extends \app\common\controller\CompanyController
 
             $total = CustomerModel::where($where)->count();
 
-            $res = CustomerModel::field('id, title, phone, province, email, called_count, last_calltime')
+            $res = CustomerModel::field('id, title, phone, province, email, called_count, last_calltime, createtime')
                 ->where($where)
                 ->order('id', 'desc')
                 ->limit(($page - 1) * $limit, $limit)
