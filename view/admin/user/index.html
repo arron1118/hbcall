@@ -21,7 +21,16 @@
                             <input type="text" name="corporation" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-
+                    <div class="layui-inline">
+                        <label class="layui-form-label">是否试用</label>
+                        <div class="layui-input-inline">
+                            <select name="try_user" lay-filter="tryUserFilter">
+                                <option value="0">请选择</option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-normal" lay-submit
                                 lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
@@ -46,8 +55,15 @@
                 <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
             </div>
         </script>
+<div class="layui-row layui-col-space2">
+    <div class="layui-col-md1 shadow-lg">
+        <div id="test2" class="demo-tree"></div>
+    </div>
+   <div class="layui-col-md11">
+       <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
+   </div>
 
-        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
+</div>
 
         <script type="text/html" id="currentTableBar">
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i
@@ -62,11 +78,40 @@
 
 {block name="js"}
 <script>
-    layui.use(['jquery', 'form', 'table'], function () {
+    layui.use(['jquery', 'form', 'table','tree'], function () {
         let $ = layui.jquery,
             form = layui.form,
+            tree = layui.tree,
             table = layui.table;
-
+        let data1 = [{
+            title: '全部客户'
+            , id: 1
+            , children: [
+                {
+                title: '试用客户'
+                , id: 1000
+            }, {
+                title: '正在使用'
+                , id: 1001
+            }, {
+                title: '即将过期（一个月内要到期的）'
+                , id: 1002
+            }, {
+                    title: '无效'
+                    , id: 1003
+                }
+                ]
+        }
+        ]
+        //仅节点左侧图标控制收缩
+        tree.render({
+            elem: '#test2'
+            ,data: data1
+            ,onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
+            ,click: function(obj){
+                layer.msg(JSON.stringify(obj.data));
+            }
+        })
         table.render({
             elem: '#currentTableId',
             url: '{:url("/user/getUserList")}',
@@ -102,6 +147,7 @@
                 },
                 {field: 'expense', title: '总消费', align: 'center', sort: true},
                 {field: 'logintime', title: '最后登录', align: "center", width: 180},
+                {field: 'logintime', title: '到期日期', align: "center", width: 180},
                 {
                     field: 'status', title: '试用', align: "center", templet: function (row) {
                         return `<input type="checkbox" name="try" value="${row.id}" lay-skin="switch" lay-text="是|否" lay-filter="tryFilter" ${row.is_test === '是' ? 'checked' : ''} disabled>`
@@ -125,6 +171,7 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
+            console.log(data.field)
             //执行搜索重载
             table.reload('userTable', {
                 page: {
@@ -135,7 +182,19 @@
 
             return false
         });
-
+        form.on('select(tryUserFilter)', function (data) {
+            let params = [];
+            params[data.elem.name] = data.value
+            params = Object.assign({}, form.val('searchForm'), params)
+           // reloadTable(params);
+            //执行搜索重载
+            table.reload('userTable', {
+                page: {
+                    curr: 1
+                },
+                where: params
+            });
+        })
         $('button[type="reset"]').on('click', function () {
             table.reload('userTable', {
                 page: {
