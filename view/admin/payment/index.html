@@ -14,11 +14,16 @@
                             <input type="text" name="corporation" class="layui-input">
                         </div>
                     </div>
-
                     <div class="layui-inline">
                         <label class="layui-form-label">充值时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="datetime" class="layui-input" id="startTime" placeholder="" autocomplete="off">
+                        <div class="layui-inline" id="datetime">
+                            <div class="layui-input-inline">
+                                <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                            </div>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -28,6 +33,16 @@
                                 <option value="0">请选择充值方式</option>
                                 <option value="1">微信</option>
                                 <option value="2">支付宝</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <select name="pay_state" lay-filter="payStateFilter">
+                                <option value="0">请选择支付状态</option>
+                                <option value="1">已支付</option>
+                                <option value="2">未支付</option>
                             </select>
                         </div>
                     </div>
@@ -58,13 +73,23 @@
             table = layui.table,
             laydate = layui.laydate;
 
+        // laydate.render({
+        //     elem: '#startTime',
+        //     done: function (startTime) {
+        //         let params = Object.assign({}, form.val('searchForm'), { datetime: startTime });
+        //         reloadTable(params)
+        //     }
+        // })
         laydate.render({
-            elem: '#startTime',
-            done: function (startTime) {
-                let params = Object.assign({}, form.val('searchForm'), { datetime: startTime });
+            elem: '#datetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
+            done: function (value) {
+                let d = value.split(' - ')
+                let params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] })
                 reloadTable(params)
             }
-        })
+        });
 
         table.render({
             elem: '#currentTableId',
@@ -117,11 +142,18 @@
                 layer.msg('请输入搜索内容', { icon: 0 })
                 return false
             }
+            console.log(data.field)
             reloadTable(data.field)
             return false;
         });
 
         form.on('select(payTypeFilter)', function (data) {
+            let params = [];
+            params[data.elem.name] = data.value
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
+        })
+        form.on('select(payStateFilter)', function (data) {
             let params = [];
             params[data.elem.name] = data.value
             params = Object.assign({}, form.val('searchForm'), params)

@@ -104,7 +104,13 @@
                                autocomplete="off" class="layui-input" value="">
                     </div>
                 </div>
-
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="sale">跟进人</label>
+                    <div class="layui-input-block" id="sale">
+                        <input type="text" name="sale" lay-verify="required" placeholder="跟进人"
+                               autocomplete="off" class="layui-input" value="">
+                    </div>
+                </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label" for="isTest">测试账号</label>
                     <div class="layui-input-block" id="isTest">
@@ -196,7 +202,10 @@
                 layer.msg('公司名称不能为空', option);
                 return false;
             }
-
+            if (params.sale === '') {
+                layer.msg('跟进人不能为空', option);
+                return false;
+            }
             if (params.is_test === '1' && params.test_endtime === '') {
                 layer.msg('结束时间不能为空', option)
                 return false
