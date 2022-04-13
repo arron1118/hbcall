@@ -568,6 +568,7 @@
 
         let customerList = [];
         let importCount = 0;
+        // 导入最后一次导入的客户数据
         $('#lastImport').on('click', function () {
             $.post('{:url("/HbCall/getCustomerList")}', {}, (res) => {
                 if (res.code === 1 && res.data.length > 0) {
