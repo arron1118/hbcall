@@ -20,10 +20,20 @@ class Customer extends \think\Model
         ) : '-';
     }
 
-//    public function getPhoneAttr($value)
-//    {
-//        return substr_replace($value, '****', 3, 4);
-//    }
+    public function getCateAttr($value)
+    {
+        return $this->getCateList()[$value];
+    }
+
+    public function getCateList()
+    {
+        return [
+            0 => '意向客户',
+            1 => '重点客户',
+            2 => '成交客户',
+            3 => '无效客户',
+        ];
+    }
 
     public function user()
     {

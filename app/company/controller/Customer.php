@@ -7,6 +7,12 @@ use think\db\exception\DbException;
 
 class Customer extends \app\common\controller\CompanyController
 {
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->view->assign('cateList', (new CustomerModel())->getCateList());
+    }
     public function index()
     {
         return $this->view->fetch();
@@ -54,9 +60,11 @@ class Customer extends \app\common\controller\CompanyController
             $title = trim($this->request->param('title', ''));
             $phone = trim($this->request->param('phone', ''));
             $status = (int) $this->request->param('status', 0);
+            $cate = (int) $this->request->param('cate', 0);
 
             $where = [
-                ['company_id', '=', $this->userInfo->id]
+                ['company_id', '=', $this->userInfo->id],
+                ['cate', '=', $cate]
             ];
 
             if ($title) {

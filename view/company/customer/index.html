@@ -34,12 +34,22 @@
                 </div>
             </form>
             <div class="layui-form-item">
-                <label class="layui-form-label">筛选：</label>
+                <label class="layui-form-label" style="width: 100px;">筛选：</label>
                 <div class="layui-inline">
                     <div class="layui-btn-group">
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-checked distribution-status" data-status="0">所有</button>
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="1">未分配</button>
                         <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="2">已分配</button>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 100px;">客户分类：</label>
+                <div class="layui-inline">
+                    <div class="layui-btn-group">
+                        {foreach $cateList as $key => $val}
+                        <button type="button" class="layui-btn layui-btn-sm customer-cate {if $key === 0}layui-btn-checked{else /}layui-btn-primary{/if}" data-cate="{$key}">{$val}</button>
+                        {/foreach}
                     </div>
                 </div>
             </div>
@@ -268,7 +278,8 @@
 
         let reloadTable = function (params = {}) {
             params = Object.assign({}, {
-                status: $('.distribution-status').filter('.layui-btn-checked').data('status')
+                status: $('.distribution-status').filter('.layui-btn-checked').data('status'),
+                cate: $('.customer-cate').filter('.layui-btn-checked').data('cate'),
             }, params)
             table.reload('customerTable', {
                 where: params,
@@ -280,6 +291,14 @@
         $('.distribution-status').on('click', function () {
             let params = Object.assign({}, form.val('searchForm'), {
                 status: $(this).data('status')
+            })
+            reloadTable(params);
+
+            $(this).removeClass('layui-btn-primary').addClass('layui-btn-checked').siblings().removeClass('layui-btn-checked').addClass('layui-btn-primary')
+        });
+        $('.customer-cate').on('click', function () {
+            let params = Object.assign({}, form.val('searchForm'), {
+                cate: $(this).data('cate')
             })
             reloadTable(params);
 
