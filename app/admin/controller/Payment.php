@@ -21,6 +21,8 @@ class Payment extends \app\common\controller\AdminController
         parent::initialize();
 
         $this->model = new \app\company\model\Payment();
+        $this->view->assign('statusList', $this->model->getStatusList());
+        $this->view->assign('payTypeList', $this->model->getPayTypeList());
     }
 
     public function index()
@@ -40,16 +42,22 @@ class Payment extends \app\common\controller\AdminController
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
             $corporation = trim($this->request->param('corporation', ''));
-            $datetime = $this->request->param('datetime', '');
+            $startDate = $this->request->param('startDate', '');
+            $endDate = $this->request->param('endDate', '');
             $payType = (int) $this->request->param('pay_type', 0);
+            $status = (int) $this->request->param('status', -1);
 
             $where = [];
+            if ($status !== -1) {
+                $where[] = ['status', '=', $status];
+            }
+
             if ($corporation) {
                 $where[] = ['corporation', 'like', '%' . $corporation . '%'];
             }
 
-            if ($datetime) {
-                $where[] = [Db::raw('from_unixtime(create_time, "%Y-%m-%d")'), '=', $datetime];
+            if ($startDate && $endDate) {
+                $where[] = ['create_time', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             if ($payType > 0) {

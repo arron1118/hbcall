@@ -27,7 +27,7 @@ class Payment extends \think\Model
 
     public function getPayTypeList()
     {
-        return [1 => '微信', 2 => '支付宝', 3 => '手动充值'];
+        return ['所有', '微信', '支付宝', '手动充值'];
     }
 
     public function getStatusAttr($value)
@@ -37,7 +37,7 @@ class Payment extends \think\Model
 
     public function getStatusList()
     {
-        return ['未支付', '已支付', '已关闭'];
+        return ['-1' => '所有', '未支付', '已支付', '已关闭'];
     }
 
     public function company()

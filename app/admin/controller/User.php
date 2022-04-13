@@ -1,8 +1,6 @@
 <?php
 
-
 namespace app\admin\controller;
-
 
 use app\company\model\Company as CompanyModel;
 use app\common\model\User as UserModel;
@@ -14,6 +12,8 @@ class User extends \app\common\controller\AdminController
 {
     public function index()
     {
+        $this->view->assign('isTestList', (new CompanyModel())->getTestList());
+        $this->view->assign('statusList', (new CompanyModel())->getStatusList());
         return $this->view->fetch();
     }
 
@@ -24,7 +24,17 @@ class User extends \app\common\controller\AdminController
             $limit = (int) $this->request->param('limit', 10);
             $username = $this->request->param('username', '');
             $corporation = $this->request->param('corporation', '');
+            $is_test = (int) $this->request->param('is_test', -1);
+            $status = (int) $this->request->param('status', -1);
             $map = [];
+
+            if ($is_test !== -1) {
+                $map[] = ['is_test', '=', $is_test];
+            }
+
+            if ($status !== -1) {
+                $map[] = ['status', '=', $status];
+            }
 
             if ($username) {
                 $map[] = ['username', 'like', '%' . $username . '%'];
@@ -36,6 +46,9 @@ class User extends \app\common\controller\AdminController
 
             $total = CompanyModel::where($map)->count();
             $userList = CompanyModel::withCount('user')
+                ->withSum(['payment' => function ($query) {
+                    $query->where('status', 1);
+                }], 'amount')
                 ->with(['companyXnumber' => ['numberStore']])
                 ->hidden(['salt'])
                 ->where($map)->order('id', 'desc')

@@ -41,14 +41,14 @@ class Company extends \think\Model
         return $this->getTestList()[$value];
     }
 
-    protected function getStatusList()
+    public function getStatusList()
     {
-        return [0 => '禁止', 1 => '正常'];
+        return ['-1' => '所有', '禁止', '正常'];
     }
 
-    protected function getTestList()
+    public function getTestList()
     {
-        return [0 => '否', 1 => '是'];
+        return ['-1' => '所有', '否', '是'];
     }
 
     public function payment()

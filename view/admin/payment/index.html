@@ -30,19 +30,19 @@
                         <label class="layui-form-label">充值方式</label>
                         <div class="layui-input-inline">
                             <select name="pay_type" lay-filter="payTypeFilter">
-                                <option value="0">请选择充值方式</option>
-                                <option value="1">微信</option>
-                                <option value="2">支付宝</option>
+                                {foreach $payTypeList as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
                             </select>
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">状态</label>
+                        <label class="layui-form-label">支付状态</label>
                         <div class="layui-input-inline">
-                            <select name="pay_state" lay-filter="payStateFilter">
-                                <option value="0">请选择支付状态</option>
-                                <option value="1">已支付</option>
-                                <option value="2">未支付</option>
+                            <select name="status" lay-filter="payStateFilter">
+                                {foreach $statusList as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
                             </select>
                         </div>
                     </div>
@@ -73,20 +73,13 @@
             table = layui.table,
             laydate = layui.laydate;
 
-        // laydate.render({
-        //     elem: '#startTime',
-        //     done: function (startTime) {
-        //         let params = Object.assign({}, form.val('searchForm'), { datetime: startTime });
-        //         reloadTable(params)
-        //     }
-        // })
         laydate.render({
             elem: '#datetime',
             range: ['#startDate', '#endDate'],
             type: 'datetime',
             done: function (value) {
                 let d = value.split(' - ')
-                let params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] })
+                let params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] ? d[1] : '' })
                 reloadTable(params)
             }
         });
@@ -166,7 +159,10 @@
 
         let reloadTable = function (params) {
             table.reload('paymentTable', {
-                where: params
+                where: params,
+                page: {
+                    curr: 1
+                }
             })
         }
     });
