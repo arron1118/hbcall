@@ -42,7 +42,7 @@ body {
 }
 
 /**必填红点 */
-.layuimini-form > .layui-form-item > .required:after {
+.layuimini-form .layui-form-item .required:after {
     content: '*';
     color: red;
     position: absolute;
@@ -53,15 +53,15 @@ body {
     right: 5px;
 }
 
-.layuimini-form > .layui-form-item > .layui-form-label {
+.layuimini-form .layui-form-item .layui-form-label {
     width: 120px !important;
 }
 
-.layuimini-form > .layui-form-item > .layui-input-block {
+.layuimini-form .layui-form-item .layui-input-block {
     margin-left: 150px !important;
 }
 
-.layuimini-form > .layui-form-item > .layui-input-block > tip {
+.layuimini-form .layui-form-item tip {
     display: inline-block;
     margin-top: .625rem;
     line-height: 1rem;

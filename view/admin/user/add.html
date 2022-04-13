@@ -14,28 +14,6 @@
         font-weight: bold;
     }
 
-    .login-form {
-        background-color: #fff;
-        border: 1px solid #fff;
-        border-radius: 3px;
-        padding: 14px 20px;
-        box-shadow: 0 0 8px #eeeeee;
-    }
-
-    .login-form .layui-form-item {
-        position: relative;
-    }
-
-    .login-form .layui-form-item label {
-        position: absolute;
-        left: 1px;
-        top: 1px;
-        width: 100px;
-        line-height: 20px;
-        text-align: center;
-        color: #565656;
-    }
-
     .layui-form-item .layui-input-block {
         margin-left: 130px;
     }
@@ -67,7 +45,8 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label" for="password">密码</label>
                                 <div class="layui-input-block" id="password">
-                                    <input type="password" name="password" lay-verify="required|password" placeholder="密码"
+                                    <input type="password" name="password" lay-verify="required|password"
+                                           placeholder="密码"
                                            autocomplete="off" class="layui-input" value="">
                                 </div>
                             </div>
@@ -122,7 +101,8 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label" for="isTest">测试账号</label>
                                 <div class="layui-input-block" id="isTest">
-                                    <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1"
+                                    <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test"
+                                           value="1"
                                            lay-text="是|否">
                                 </div>
                             </div>
@@ -139,7 +119,8 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label" for="status">状态</label>
                                 <div class="layui-input-block" id="status">
-                                    <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="status" value="1"
+                                    <input type="checkbox" lay-skin="switch" lay-filter="statusFilter" name="status"
+                                           value="1"
                                            lay-text="启用|禁止" checked>
                                 </div>
                                 <div class="layui-input-block">
@@ -173,11 +154,13 @@
                                 <label class="layui-form-label" for="signingdatetime">合同时间</label>
                                 <div class="layui-input-block" id="signingdatetime">
                                     <div class="layui-input-inline">
-                                        <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                                        <input type="text" name="startDate" autocomplete="off" id="startDate"
+                                               class="layui-input" placeholder="开始日期">
                                     </div>
                                     <div class="layui-form-mid">-</div>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                                        <input type="text" name="endDate" autocomplete="off" id="endDate"
+                                               class="layui-input" placeholder="结束日期">
                                     </div>
                                 </div>
                             </div>
@@ -186,16 +169,15 @@
                                 <div class="layui-input-block layui-upload">
                                     <button type="button" class="layui-btn" id="newsImg">上传</button>
                                     <div class="layui-upload-list" style="padding-left: 112px;">
-                                        <img class="layui-upload-img" id="newsImgBox" style="max-height: 300px; width: auto;">
+                                        <img class="layui-upload-img" id="newsImgBox"
+                                             style="max-height: 300px; width: auto;">
                                     </div>
-                                    <input name="cover_img" type="hidden" />
+                                    <input name="cover_img" type="hidden"/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
 
                 <div class="layui-form-item mt-3">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
@@ -203,6 +185,7 @@
                     </button>
                 </div>
             </form>
+
         </div>
     </div>
 </div>
@@ -219,7 +202,7 @@
         //上传图片
         let uploadInst = upload.render({
             elem: '#newsImg',
-            url: '{:url("/news/upload")}' ,
+            url: '{:url("/news/upload")}',
             before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
@@ -272,9 +255,9 @@
 
         // 进行登录操作
         form.on('submit(open)', function (data) {
-            let params = data.field, option = { icon: 5 };
-           // console.log(params);
-           // return false
+            let params = data.field, option = {icon: 5};
+            // console.log(params);
+            // return false
             if (params.account === '') {
                 layer.msg('账号不能为空', option);
                 return false;
