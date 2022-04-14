@@ -61,6 +61,47 @@ class User extends \app\common\controller\AdminController
         return json($this->returnData);
     }
 
+    public function subUserList()
+    {
+        $this->view->assign('company_id', $this->request->param('id'));
+        return $this->view->fetch();
+    }
+
+    public function getSubUserList()
+    {
+        if ($this->request->isAjax()) {
+            $company_id = (int) $this->request->param('company_id');
+            $page = (int) $this->request->param('page', 1);
+            $limit = (int) $this->request->param('limit', 10);
+            $username = $this->request->param('username', '');
+            $phone = $this->request->param('phone', '');
+            $map = [
+                ['company_id', '=', $company_id]
+            ];
+
+            if ($username) {
+                $map[] = ['username', 'like', '%' . $username . '%'];
+            }
+
+            if ($phone) {
+                $map[] = ['phone', 'like', '%' . $phone . '%'];
+            }
+            $total = UserModel::where($map)->count();
+            $userList = UserModel::with(['userXnumber' => ['numberStore']])
+                ->hidden(['password', 'salt'])
+                ->withCount('callHistory')
+                ->withSum('expense', 'cost')
+                ->where($map)
+                ->order('id desc, logintime desc')
+                ->limit(($page - 1) * $limit, $limit)
+                ->select();
+
+            return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+        }
+
+        return json($this->returnData);
+    }
+
     public function add()
     {
         if ($this->request->isPost()) {

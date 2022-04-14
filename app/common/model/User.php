@@ -12,12 +12,12 @@ class User extends \think\Model
 
     public function getPrevtimeAttr($value)
     {
-        return $value ? date($this->getDateFormat(), $value) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getLogintimeAttr($value)
     {
-        return $value ? date($this->getDateFormat(), $value) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getStatusAttr($value)
@@ -27,7 +27,7 @@ class User extends \think\Model
 
     public function getTestEndtimeAttr($value)
     {
-        return $value > 0 ? date($this->getDateFormat(), $value) : '';
+        return getDateFormatInfo($value);
     }
 
     protected function getStatusList()
