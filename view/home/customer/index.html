@@ -43,8 +43,10 @@
                 <button type="button" class="layui-btn layui-btn-xs" lay-event="edit">回访记录</button>
             </script>
 
+            <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入客户</button>
             <script type="text/html" id="currentTableBar">
-                <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal" id="importExcel" lay-event="import">导入客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info">导入说明</button>
             </script>
         </div>
@@ -172,6 +174,8 @@
                            <img src="__STATIC__/images/customer-example-import.png" class="pt-3" />
                         </div>`
                 })
+            } else if (obj.event === 'importExcel') {
+                $('#importExcel').click();
             }
         })
 
