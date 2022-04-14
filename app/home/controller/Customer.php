@@ -91,4 +91,23 @@ class Customer extends \app\common\controller\HomeController
         }
         return $this->view->fetch();
     }
+
+    public function edit()
+    {
+        $customerId = (int) $this->request->param('customerId', 0);
+        $customer = CustomerModel::find($customerId);
+
+        if (!$customer) {
+            $this->returnData['msg'] = '未找到相关数据';
+            return json($this->returnData);
+        }
+
+        if ($this->request->isPost()) {
+            return json($this->returnData);
+        }
+
+        $this->view->assign('customer', $customer);
+
+        return $this->view->fetch();
+    }
 }

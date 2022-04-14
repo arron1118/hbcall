@@ -49,8 +49,8 @@
         <div class="col-12">
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
             <script type="text/html" id="barDemo">
-                <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="makeCall">点击拨号</button>
-<!--                <button type="button" class="layui-btn layui-btn-xs" lay-event="showRecord">回访记录</button>-->
+                <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="makeCall" title="点击拨号"><i class="fa fa-phone"></i></button>
+                <button type="button" class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></button>
             </script>
 
             <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入客户</button>
@@ -166,7 +166,7 @@
             switch (obj.event) {
                 case 'showRecord':
                     let index = layer.open({
-                        title: '回访记录列表',
+                        title: '回访记录',
                         type: 2,
                         shade: 0.2,
                         maxmin:true,
@@ -194,6 +194,12 @@
                     }
                     break;
                 case 'edit':
+                    layer.open({
+                        type: 2,
+                        title: '添加',
+                        area: ['100%', '100%'],
+                        content: '{:url("/customer/edit")}?customerId=' + editId
+                    });
                     break;
             }
         });

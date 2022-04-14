@@ -46,14 +46,16 @@
     <div class="row justify-content-center">
         <div class="col col-lg-8 col-md-10 bg-white">
             <form class="layui-form layuimini-form" lay-filter="customer-add-form" action="">
-                <div class="layui-form-item"></div>
+                <div class="layui-form-item">
+                    <input type="hidden" name="id" value="{$customer.id}" />
+                </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">类型</label>
                     <div class="layui-input-block">
                         <select name="cate" lay-verify="required">
                             {foreach $cateList as $key => $val}
                             {if $key >= 0}
-                            <option value="{$key}">{$val}</option>
+                            <option value="{$key}" {if $customer->getData('cate') === $key}selected{/if}>{$val}</option>
                             {/if}
                             {/foreach}
                         </select>
@@ -64,7 +66,7 @@
                     <label class="layui-form-label" for="account">客户名称</label>
                     <div class="layui-input-block" id="account">
                         <input type="text" name="title" lay-verify="required" placeholder="客户名称"
-                               autocomplete="off" class="layui-input" value="">
+                               autocomplete="off" class="layui-input" value="{$customer.title}">
                     </div>
                 </div>
 
@@ -72,7 +74,7 @@
                     <label class="layui-form-label" for="phone">手机号</label>
                     <div class="layui-input-block" id="phone">
                         <input type="text" name="phone" lay-verify="required|phone" placeholder="手机号"
-                               autocomplete="off" class="layui-input" value="">
+                               autocomplete="off" class="layui-input" value="{$customer.phone}">
                     </div>
                 </div>
 
@@ -80,7 +82,7 @@
                     <label class="layui-form-label" for="province">所在地</label>
                     <div class="layui-input-block" id="province">
                         <input type="text" name="province" placeholder="所在地"
-                               autocomplete="off" class="layui-input" value="">
+                               autocomplete="off" class="layui-input" value="{$customer.province}">
                     </div>
                 </div>
 
@@ -88,7 +90,7 @@
                     <label class="layui-form-label" for="email">邮箱</label>
                     <div class="layui-input-block" id="email">
                         <input type="text" name="email" placeholder="邮箱"
-                               autocomplete="off" class="layui-input" value="">
+                               autocomplete="off" class="layui-input" value="{$customer.email}">
                     </div>
                 </div>
 
@@ -96,12 +98,12 @@
                     <label class="layui-form-label" for="comment">备注</label>
                     <div class="layui-input-block" id="comment">
                         <textarea type="text" name="comment" placeholder="备注"
-                               autocomplete="off" class="layui-textarea"></textarea>
+                               autocomplete="off" class="layui-textarea">{$customer.comment}</textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
-                            lay-filter="open">添 加
+                            lay-filter="open">保 存
                     </button>
                 </div>
             </form>
