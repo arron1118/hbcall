@@ -40,14 +40,15 @@
             <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
             <script type="text/html" id="barDemo">
                 <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="makeCall">点击拨号</button>
-                <button type="button" class="layui-btn layui-btn-xs" lay-event="edit">回访记录</button>
+<!--                <button type="button" class="layui-btn layui-btn-xs" lay-event="showRecord">回访记录</button>-->
             </script>
 
             <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入客户</button>
             <script type="text/html" id="currentTableBar">
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info">导入说明</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
+                <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
             </script>
         </div>
 
@@ -94,15 +95,19 @@
             cols: [[
                 {field: 'id', title: '编号', align: "center", width: 150},
                 {field: 'title', title: '客户名称', align: "center"},
-                {field: 'phone', title: '联系电话', align: "center", templet: function(row){
+                {field: 'phone', title: '联系电话', align: "center", style: 'cursor: pointer;', templet: function(row){
                     let hidePhone = row.phone.replace(row.phone.substring(3, 7), '****')
-                    return '<span class="hide-phone d-inline">' + hidePhone + '</span><span class="show-phone d-none">' + row.phone + '</span> <i class="fa-regular fa-eye phone-icon"></i>';
+                    return '<span class="hide-phone d-inline">' + hidePhone + '</span><span class="show-phone d-none">' + row.phone + '</span> <i class="fa-regular fa-eye phone-icon" title="点击查看"></i>';
                     }, event: 'showPhone'},
                 {field: 'province', title: '所在地', align: "center"},
                 {field: 'email', title: '邮箱', align: "center"},
-                {field: 'called_count', title: '呼叫次数', align: "center"},
+                {field: 'cate', title: '类型', align: "center"},
+                {field: 'called_count', title: '呼叫次数', align: "center", sort: true,},
+                {field: 'record_count', title: '回访记录', align: "center", sort: true, event: 'showRecord', style: 'cursor: pointer; ', templet (row) {
+                    return '<span class="text-primary" title="点击查看">' + row.record_count + '</span>';
+                    }},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
-                {fixed: 'right', title:'回访记录', toolbar: '#barDemo'}
+                {fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
@@ -132,50 +137,56 @@
         table.on('tool(currentTableFilter)', function (obj) {
             let editId = obj.data.id;
             // 传这个Id去后台查出备忘列表，渲染
-            if (obj.event === 'edit') {
-                let index = layer.open({
-                    title: '回访记录列表',
-                    type: 2,
-                    shade: 0.2,
-                    maxmin:true,
-                    shadeClose: true,
-                    area: ['100%', '100%'],
-                    content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
-                return false;
-            } else if (obj.event === 'makeCall') {
-                makeCall({ phone: obj.data.phone, customerId: obj.data.id }, obj)
-            } else if (obj.event === 'showPhone') {
-                let hide = $(this).find('.hide-phone'), show = $(this).find('.show-phone'), icon = $(this).find('.phone-icon');
-                if (hide.hasClass('d-inline')) {
-                    hide.removeClass('d-inline').addClass('d-none')
-                    show.removeClass('d-none').addClass('d-inline')
-                    icon.removeClass('fa-eye').addClass('fa-eye-slash')
-                } else {
-                    hide.removeClass('d-none').addClass('d-inline')
-                    show.removeClass('d-inline').addClass('d-none')
-                    icon.removeClass('fa-eye-slash').addClass('fa-eye')
-                }
+            switch (obj.event) {
+                case 'showRecord':
+                    let index = layer.open({
+                        title: '回访记录列表',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['100%', '100%'],
+                        content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    break;
+                case 'makeCall':
+                    makeCall({ phone: obj.data.phone, customerId: obj.data.id }, obj);
+                    break;
+                case 'showPhone':
+                    let hide = $(this).find('.hide-phone'), show = $(this).find('.show-phone'), icon = $(this).find('.phone-icon');
+                    if (hide.hasClass('d-inline')) {
+                        hide.removeClass('d-inline').addClass('d-none')
+                        show.removeClass('d-none').addClass('d-inline')
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash')
+                    } else {
+                        hide.removeClass('d-none').addClass('d-inline')
+                        show.removeClass('d-inline').addClass('d-none')
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye')
+                    }
+                    break;
             }
         });
 
         table.on('toolbar(currentTableFilter)', function (obj) {
-            if (obj.event === 'info') {  // 监听删除操作
-                layer.open({
-                    type: 1,
-                    title: false,
-                    skin: 'layui-layer-rim',
-                    area: ['420px', '300px'],
-                    content: `<div class="p-3">
+            switch (obj.event) {
+                case 'info':
+                    layer.open({
+                        type: 1,
+                        title: false,
+                        skin: 'layui-layer-rim',
+                        area: ['420px', '300px'],
+                        content: `<div class="p-3">
                            注：只能上传Excel表格，格式为:<br /> ['客户名称', '电话号码', '所在地', '邮箱']
                            <img src="__STATIC__/images/customer-example-import.png" class="pt-3" />
                         </div>`
-                })
-            } else if (obj.event === 'importExcel') {
-                $('#importExcel').click();
+                    });
+                    break;
+                case 'importExcel':
+                    $('#importExcel').click();
+                    break;
             }
         })
 
@@ -300,7 +311,11 @@
                 let icon = 0;
                 if (res.code === 1) {
                     icon = 1;
-                    table.reload('customerTable')
+                    table.reload('customerTable', {
+                        page: {
+                            curr: 1
+                        }
+                    })
                 }
 
                 return layer.msg(res.msg, {icon: icon, time: 3000})

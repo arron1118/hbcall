@@ -48,7 +48,7 @@
                 <div class="layui-inline">
                     <div class="layui-btn-group">
                         {foreach $cateList as $key => $val}
-                        <button type="button" class="layui-btn layui-btn-sm customer-cate {if $key === 0}layui-btn-checked{else /}layui-btn-primary{/if}" data-cate="{$key}">{$val}</button>
+                        <button type="button" class="layui-btn layui-btn-sm customer-cate {if $key === -1}layui-btn-checked{else /}layui-btn-primary{/if}" data-cate="{$key}">{$val}</button>
                         {/foreach}
                     </div>
                 </div>
@@ -71,7 +71,7 @@
             </script>
 
             <script type="text/html" id="barDemo">
-                <div class="layui-btn layui-btn-xs" lay-event="edit">回访记录</div>
+<!--                <div class="layui-btn layui-btn-xs" lay-event="edit">回访记录</div>-->
             </script>
         </div>
 
@@ -126,10 +126,15 @@
                     }, event: 'showPhone'},
                 {field: 'province', title: '所在地', align: "center"},
                 {field: 'email', title: '邮箱', align: "center"},
+                {field: 'cate', title: '类型', align: "center"},
+                {field: 'username', title: '跟进人', align: "center"},
                 {field: 'called_count', title: '呼叫次数', align: "center"},
+                {field: 'record_count', title: '回访记录', align: "center", event: 'showRecord', style: 'cursor: pointer;', templet (row) {
+                    return '<span class="text-primary" title="点击查看">' + row.record_count + '</span>';
+                    }},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
                 {field: 'createtime', title: '创建时间', align: "center"},
-                {fixed: 'right', title: '回访记录', toolbar: '#barDemo', width: 150}
+                {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
             ]],
             page: {
                 limits: [15, 30, 45, 60, 90, 150, 300, 600, 900, 1500],
@@ -141,31 +146,33 @@
         table.on('tool(currentTableFilter)', function (obj) {
             let editId = obj.data.id;
             // 传这个Id去后台查出备忘列表，渲染
-            if (obj.event === 'edit') {
-                let index = layer.open({
-                    title: '回访记录列表',
-                    type: 2,
-                    shade: 0.2,
-                    maxmin: true,
-                    shadeClose: true,
-                    area: ['100%', '100%'],
-                    content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
-                return false;
-            } else if (obj.event === 'showPhone') {
-                let hide = $(this).find('.hide-phone'), show = $(this).find('.show-phone'), icon = $(this).find('.phone-icon');
-                if (hide.hasClass('d-inline')) {
-                    hide.removeClass('d-inline').addClass('d-none')
-                    show.removeClass('d-none').addClass('d-inline')
-                    icon.removeClass('fa-eye').addClass('fa-eye-slash')
-                } else {
-                    hide.removeClass('d-none').addClass('d-inline')
-                    show.removeClass('d-inline').addClass('d-none')
-                    icon.removeClass('fa-eye-slash').addClass('fa-eye')
-                }
+            switch (obj.event) {
+                case 'showRecord':
+                    let index = layer.open({
+                        title: '回访记录列表',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin: true,
+                        shadeClose: true,
+                        area: ['100%', '100%'],
+                        content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    break;
+                case 'showPhone':
+                    let hide = $(this).find('.hide-phone'), show = $(this).find('.show-phone'), icon = $(this).find('.phone-icon');
+                    if (hide.hasClass('d-inline')) {
+                        hide.removeClass('d-inline').addClass('d-none')
+                        show.removeClass('d-none').addClass('d-inline')
+                        icon.removeClass('fa-eye').addClass('fa-eye-slash')
+                    } else {
+                        hide.removeClass('d-none').addClass('d-inline')
+                        show.removeClass('d-inline').addClass('d-none')
+                        icon.removeClass('fa-eye-slash').addClass('fa-eye')
+                    }
+                    break;
             }
         });
 
@@ -262,7 +269,11 @@
                 let icon = 0;
                 if (res.code === 1) {
                     icon = 1;
-                    table.reload('customerTable')
+                    table.reload('customerTable', {
+                        page: {
+                            curr: 1
+                        }
+                    })
                 }
 
                 return layer.msg(res.msg, {icon: icon, time: 3000})

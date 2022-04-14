@@ -4,7 +4,7 @@ namespace app\company\controller;
 
 use app\common\model\CustomerRecord as RecordModel;
 
-class CustomerRecord extends \app\common\controller\HomeController
+class CustomerRecord extends \app\common\controller\CompanyController
 {
     public function index()
     {

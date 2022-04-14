@@ -68,20 +68,19 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
         <script type="text/html" id="toolbarDemo">
-            <div class="layui-btn-container">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i
-                        class="fa fa-plus"></i> 开通账号
-                </button>
-                <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
-            </div>
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i
+                    class="fa fa-plus"></i> 开通账号
+            </button>
+            <span class="ms-3 text-secondary">注：点击'已开通用户'列可查看用户列表内容</span>
+            <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
         </script>
    <div>
        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
    </div>
         <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs" lay-event="checkUserList" title="查看用户列表">
-                <i class="fa fa-users"></i>
-            </a>
+<!--            <a class="layui-btn layui-btn-xs" lay-event="checkUserList" title="查看用户列表">-->
+<!--                <i class="fa fa-users"></i>-->
+<!--            </a>-->
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑">
                 <i class="fa fa-user-edit"></i>
             </a>
@@ -126,7 +125,9 @@
                 {field: 'number', title: '已使用小号', align: "center", width: 140},
                 {field: 'ration', title: '座席', align: "center", edit: 'text'},
                 {field: 'limit_user', title: '限制用户数量', align: "center", edit: 'text', sort: true},
-                {field: 'user_count', title: '已开通用户', align: "center", sort: true},
+                {field: 'user_count', title: '已开通用户', align: "center", sort: true, event: 'checkUserList', style: 'cursor: pointer;', templet (row) {
+                    return '<span class="text-primary" title="点击查看用户列表">' + row.user_count + '</span>';
+                    }},
                 {field: 'rate', title: '费率(￥/元)', align: "center", edit: 'text', sort: true},
                 {
                     field: 'balance', title: '余额(￥/元)', align: "center", sort: true, templet: function (row) {

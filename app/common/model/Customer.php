@@ -34,7 +34,7 @@ class Customer extends \think\Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->bind(['username']);
     }
 
     public function company()
@@ -47,7 +47,7 @@ class Customer extends \think\Model
         return $this->hasMany(CallHistory::class);
     }
 
-    public function records()
+    public function record()
     {
         return $this->hasMany(CustomerRecord::class);
     }

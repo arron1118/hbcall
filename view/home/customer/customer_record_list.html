@@ -10,6 +10,9 @@
             <script type="text/html" id="barDemo">
                 <div class="layui-btn layui-btn-xs" lay-event="del">删除备忘录</div>
             </script>
+            <script type="text/html" id="currentTableBar">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加</button>
+            </script>
         </div>
 
     </div>
@@ -38,7 +41,7 @@
             where: {
                 customer_id: '{$customerId}'
             },
-            toolbar: true,
+            toolbar: '#currentTableBar',
             // height: 680,
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -67,16 +70,6 @@
         table.on('tool(currentTableFilter)', function (obj) {
             let delId = obj.data.id;
             if (obj.event === 'del') {
-                // layer.prompt({
-                //     formType: 2
-                //
-                // }, function(value, index){
-                //     console.log(value)
-                //     // obj.update({
-                //     //     email: value
-                //     // });
-                //     layer.close(index);
-                // });
                 let index = layer.open({
                     title: '备忘列表',
                     type: 2,

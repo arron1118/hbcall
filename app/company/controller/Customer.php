@@ -63,9 +63,12 @@ class Customer extends \app\common\controller\CompanyController
             $cate = (int) $this->request->param('cate', 0);
 
             $where = [
-                ['company_id', '=', $this->userInfo->id],
-                ['cate', '=', $cate]
+                ['company_id', '=', $this->userInfo->id]
             ];
+
+            if ($cate !== -1) {
+                $where[] = ['cate', '=', $cate];
+            }
 
             if ($title) {
                 $where[] = ['title', 'like', '%' . $title . '%'];
@@ -85,13 +88,14 @@ class Customer extends \app\common\controller\CompanyController
 
             $total = CustomerModel::where($where)->count();
 
-            $res = CustomerModel::field('id, title, phone, province, email, called_count, last_calltime, createtime')
+            $res = CustomerModel::with(['user'])
+                ->withCount(['record'])
                 ->where($where)
                 ->order('id', 'desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
 
-            $this->returnData['data'] = $res;
+            $this->returnData['data'] = $res->hidden(['user']);
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = 'success';
             $this->returnData['total'] = $total;
