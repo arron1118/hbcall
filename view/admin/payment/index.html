@@ -18,11 +18,13 @@
                         <label class="layui-form-label">充值时间</label>
                         <div class="layui-inline" id="datetime">
                             <div class="layui-input-inline">
-                                <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                                <input type="text" name="startDate" autocomplete="off" id="startDate"
+                                       class="layui-input" placeholder="开始日期">
                             </div>
                             <div class="layui-form-mid">-</div>
                             <div class="layui-input-inline">
-                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input"
+                                       placeholder="结束日期">
                             </div>
                         </div>
                     </div>
@@ -50,7 +52,8 @@
                         <button type="submit" class="layui-btn layui-btn-normal" lay-submit
                                 lay-filter="data-search-btn"><i class="fa fa-magnifying-glass"></i> 搜 索
                         </button>
-                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置</button>
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置
+                        </button>
                     </div>
                 </div>
             </form>
@@ -79,7 +82,7 @@
             type: 'datetime',
             done: function (value) {
                 let d = value.split(' - ')
-                let params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] ? d[1] : '' })
+                let params = Object.assign({}, form.val('searchForm'), {startDate: d[0], endDate: d[1] ? d[1] : ''})
                 reloadTable(params)
             }
         });
@@ -107,19 +110,32 @@
             cols: [[
                 {type: "checkbox", width: 50},
                 {field: 'payno', title: '订单号', align: 'center'},
+                {field: 'title', title: '类型', align: 'center'},
                 {field: 'corporation', title: '充值方', align: 'center'},
                 {field: 'amount', title: '充值金额(￥)', align: 'center'},
                 {field: 'create_time', title: '充值时间', align: "center"},
-                {field: 'pay_type', title: '充值方式', align: "center"},
-                {field: 'status', title: '状态', align: "center", templet: function(d) {
-                    if (d.status === '未支付') {
-                        return '<span class="text-warning">' + d.status + '</span>';
-                    } else if (d.status === '已关闭') {
-                        return '<span class="text-danger">' + d.status + '</span>';
-                    } else {
-                        return '<span class="text-info">' + d.status + '</span>';
+                {field: 'pay_time', title: '支付时间', align: "center"},
+                {
+                    field: 'pay_type', title: '充值方式', align: "center", templet(row) {
+                        if (row.pay_type === '微信') {
+                            return '<img width="20" src="__STATIC__/images/wepay-logo.png" title="' + row.pay_type + '" alt="' + row.pay_type + '" />';
+                        }
+                        if (row.pay_type === '支付宝') {
+                            return '<i class="fa-brands fa-alipay fs-4 text-primary"></i>'
+                        }
                     }
-                    }},
+                },
+                {
+                    field: 'status', title: '状态', align: "center", templet: function (d) {
+                        if (d.status === '未支付') {
+                            return '<span class="text-warning">' + d.status + '</span>';
+                        } else if (d.status === '已关闭') {
+                            return '<span class="text-danger">' + d.status + '</span>';
+                        } else {
+                            return '<span class="text-info">' + d.status + '</span>';
+                        }
+                    }
+                },
             ]],
             page: {
                 limits: [15, 20, 25, 30],
@@ -132,7 +148,7 @@
         // 监听操作
         form.on('submit(data-search-btn)', function (data) {
             if (data.field.corporation === '' && data.field.datetime === '') {
-                layer.msg('请输入搜索内容', { icon: 0 })
+                layer.msg('请输入搜索内容', {icon: 0})
                 return false
             }
             console.log(data.field)

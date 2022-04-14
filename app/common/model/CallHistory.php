@@ -35,29 +35,17 @@ class CallHistory extends \think\Model
 
     public function getStarttimeAttr($value)
     {
-        return $value ? (date('d', $value) === date('d', time()) ?
-            date('H:i:s', $value) :
-            (date('Y', $value) === date('Y', time()) ? date('m-d H:i:s', $value)
-                : date($this->getDateFormat(), $value))
-        ) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getReleasetimeAttr($value)
     {
-        return $value ? (date('d', $value) === date('d', time()) ?
-            date('H:i:s', $value) :
-            (date('Y', $value) === date('Y', time()) ? date('m-d H:i:s', $value)
-                : date($this->getDateFormat(), $value))
-        ) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getCreatetimeAttr($value)
     {
-        return $value ? (date('d', $value) === date('d', time()) ?
-            date('H:i:s', $value) :
-            (date('Y', $value) === date('Y', time()) ? date('m-d H:i:s', $value)
-                : date($this->getDateFormat(), $value))
-        ) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function user()

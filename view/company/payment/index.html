@@ -1,6 +1,6 @@
 {extend name="public/base" /}
 {block name="css"}
-    {include file="public/bootstrap" /}
+{include file="public/bootstrap" /}
 {/block}
 {block name="body"}
 <div class="container-fluid">
@@ -70,19 +70,32 @@
             cols: [[
                 // {type: "checkbox", width: 50},
                 {field: 'payno', title: '订单号', align: 'center'},
+                {field: 'title', title: '类型', align: 'center'},
                 {field: 'amount', title: '充值金额(￥)', align: 'center'},
                 {field: 'create_time', title: '充值时间', align: "center"},
-                {field: 'pay_type', title: '充值方式', align: "center"},
-                {field: 'status', title: '状态', align: "center", templet: function(d) {
-                    if (d.status === '未支付') {
-                        // return '<span style="color: #f00;">' + d.status + '</span>';
-                        return '<span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>';
-                    } else if (d.status === '已关闭') {
-                        return '<span class="text-danger">' + d.status + '</span>';
-                    } else {
-                        return '<span class="text-info">' + d.status + '</span>';
+                {field: 'pay_time', title: '支付时间', align: "center"},
+                {
+                    field: 'pay_type', title: '充值方式', align: "center", templet(row) {
+                        if (row.pay_type === '微信') {
+                            return '<img width="20" src="__STATIC__/images/wepay-logo.png" title="' + row.pay_type + '" alt="' + row.pay_type + '" />';
+                        }
+                        if (row.pay_type === '支付宝') {
+                            return '<i class="fa-brands fa-alipay fs-4 text-primary"></i>'
+                        }
                     }
-                    }},
+                },
+                {
+                    field: 'status', title: '状态', align: "center", templet: function (d) {
+                        if (d.status === '未支付') {
+                            // return '<span style="color: #f00;">' + d.status + '</span>';
+                            return '<span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>';
+                        } else if (d.status === '已关闭') {
+                            return '<span class="text-danger">' + d.status + '</span>';
+                        } else {
+                            return '<span class="text-info">' + d.status + '</span>';
+                        }
+                    }
+                },
             ]],
             page: {
                 limits: [15, 20, 25, 30],
@@ -103,12 +116,12 @@
         form.on('submit(data-money-btn)', function (data) {
             let result = data.field;
             if (!result.money) {
-                layer.msg('请输入要充值的金额！', { icon: 0 });
+                layer.msg('请输入要充值的金额！', {icon: 0});
                 return false;
             }
 
             if (result.money <= 0) {
-                layer.msg('请输入正确的金额！', { icon: 0 });
+                layer.msg('请输入正确的金额！', {icon: 0});
                 return false;
             }
 

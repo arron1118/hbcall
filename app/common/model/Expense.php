@@ -11,7 +11,7 @@ class Expense extends \think\Model
 
     public function getCreatetimeAttr($value)
     {
-        return date($this->getDateFormat(), $value);
+        return getDateFormatInfo($value);
     }
 
     public function user()

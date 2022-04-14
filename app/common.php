@@ -204,3 +204,25 @@ function createToken($password)
     return password_hash($password, PASSWORD_BCRYPT);
 }
 
+function getDateFormatInfo($time)
+{
+    if (!$time) {
+        return '-';
+    }
+
+    if (date('Y-m-d', $time) === date('Y-m-d', time())) {
+        return date('H:i:s', $time);
+    }
+
+//    if (date('Y-m', $time) === date('Y-m', time())) {
+//        return date('d H:i:s', $time);
+//    }
+
+    if (date('Y', $time) === date('Y', time())) {
+        return date('m-d H:i:s', $time);
+    }
+
+    return date('Y-m-d H:i:s', $time);
+}
+
+

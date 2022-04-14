@@ -8,16 +8,12 @@ class Customer extends \think\Model
 {
     public function getCreatetimeAttr($value)
     {
-        return $value ? date($this->getDateFormat(), $value) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getLastCalltimeAttr($value)
     {
-        return $value ? (date('d', $value) === date('d', time()) ?
-            date('H:i:s', $value) :
-            (date('Y', $value) === date('Y', time()) ? date('m-d H:i:s', $value)
-            : date($this->getDateFormat(), $value))
-        ) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getCateAttr($value)
@@ -28,10 +24,11 @@ class Customer extends \think\Model
     public function getCateList()
     {
         return [
-            0 => '意向客户',
-            1 => '重点客户',
-            2 => '成交客户',
-            3 => '无效客户',
+            '-1' => '全部',
+            '意向客户',
+            '重点客户',
+            '成交客户',
+            '无效客户',
         ];
     }
 

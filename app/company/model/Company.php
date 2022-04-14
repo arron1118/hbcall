@@ -18,17 +18,17 @@ class Company extends \think\Model
 
     public function getPrevtimeAttr($value)
     {
-        return $value > 0 ? date($this->getDateFormat(), $value) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getLogintimeAttr($value)
     {
-        return $value > 0 ? date($this->getDateFormat(), $value) : '-';
+        return getDateFormatInfo($value);
     }
 
     public function getTestEndtimeAttr($value)
     {
-        return $value > 0 ? date($this->getDateFormat(), $value) : '';
+        return getDateFormatInfo($value);
     }
 
     public function getStatusAttr($value)
@@ -43,12 +43,12 @@ class Company extends \think\Model
 
     public function getStatusList()
     {
-        return ['-1' => '所有', '禁止', '正常'];
+        return ['-1' => '全部', '禁止', '正常'];
     }
 
     public function getTestList()
     {
-        return ['-1' => '所有', '否', '是'];
+        return ['-1' => '全部', '否', '是'];
     }
 
     public function payment()

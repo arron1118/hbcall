@@ -14,7 +14,7 @@ class News extends \think\Model
 
     protected function getStatusList()
     {
-        return ['-1' => '已删除', '0' => '未发布', '1' => '已发布'];
+        return ['-1' => '已删除', '未发布',  '已发布'];
     }
 
     public function getContentAttr($value)
@@ -29,16 +29,16 @@ class News extends \think\Model
 
     public function getCreateTimeAttr($value)
     {
-        return date($this->dateFormat, $value);
+        return getDateFormatInfo($value);
     }
 
     public function getUpdateTimeAttr($value)
     {
-        return date($this->dateFormat, $value);
+        return getDateFormatInfo($value);
     }
 
     public function author()
     {
-        return $this->belongsTo('app\admin\model\Admin', 'author_id');
+        return $this->belongsTo(app\admin\model\Admin::class, 'author_id');
     }
 }
