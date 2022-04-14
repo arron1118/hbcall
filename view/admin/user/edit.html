@@ -177,10 +177,8 @@
                                 <label class="layui-form-label" for="newsImg">合同</label>
                                 <div class="layui-input-block layui-upload">
                                     <button type="button" class="layui-btn" id="newsImg">上传</button>
-                                    <div class="layui-upload-list" style="padding-left: 112px;">
-                                        <img class="layui-upload-img" id="newsImgBox" style="max-height: 300px; width: auto;">
-                                    </div>
-                                    <input name="cover_img" type="hidden" />
+                                    <div class="layui-upload-list" id="newsImgBox"></div>
+                                    <input name="cover_img" type="hidden"/>
                                 </div>
                             </div>
                         </div>
@@ -209,21 +207,26 @@
             form = layui.form,
             upload = layui.upload,
             laydate = layui.laydate;
+        let b = [];
         //上传图片
         let uploadInst = upload.render({
             elem: '#newsImg',
             url: '{:url("/news/upload")}' ,
+            multiple: true,
+            accept: 'images', //只允许上传图片
             before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
-                    $('#newsImgBox').attr('src', result); //图片链接（base64）
+                    $('#newsImgBox').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="max-height: 200px; width: auto;">')
                 });
             },
             done: function (res) {
                 let icon = 0;
                 if (res.code === 1) {
+                    let a = res['data']['savePath']
+                    b.push(a)
                     icon = 1;
-                    $('input[name="cover_img"]').val(res['data']['savePath']);
+                    $('input[name="cover_img"]').val(b);
                 }
 
                 return layer.msg(res.msg, {icon: icon, time: 3000})
@@ -267,6 +270,8 @@
         // 进行登录操作
         form.on('submit(edit)', function (data) {
             let params = data.field, option = { icon: 5 };
+            // console.log(params);
+            // return false
             if (params.account === '') {
                 layer.msg('账号不能为空', option);
                 return false;

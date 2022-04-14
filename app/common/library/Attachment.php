@@ -32,7 +32,7 @@ class Attachment
             try {
                 // 保存上传记录
                 $attachment = new AttachmentModel();
-                $attachment->admin_id = Session::get('admin')['id'];
+                $attachment->admin_id = 1;
                 $attachment->url = $saveName;
                 $attachment->mime_type = $file->getOriginalMime();
                 $attachment->file_extension = $file->getOriginalExtension();

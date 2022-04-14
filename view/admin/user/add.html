@@ -168,10 +168,7 @@
                                 <label class="layui-form-label" for="newsImg">合同</label>
                                 <div class="layui-input-block layui-upload">
                                     <button type="button" class="layui-btn" id="newsImg">上传</button>
-                                    <div class="layui-upload-list" id="newsImgBox">
-<!--                                        <img class="layui-upload-img" -->
-<!--                                             style="max-height: 300px; width: auto;">-->
-                                    </div>
+                                    <div class="layui-upload-list" id="newsImgBox"></div>
                                     <input name="cover_img" type="hidden"/>
                                 </div>
                             </div>
@@ -199,37 +196,30 @@
             form = layui.form,
             upload = layui.upload,
             laydate = layui.laydate;
-        //上传图片
+           let b = [];
         //多图片上传
         let uploadInst = upload.render({
             elem: '#newsImg',
             url: '{:url("/news/upload")}',
             multiple: true,
-           // accept: 'file',
+            accept: 'images', //只允许上传图片
             before: function (obj) {
-                console.log('1')
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
-                    console.log(index)
-                    console.log(file)
-                    console.log(result)
-                   // $('#newsImgBox').attr('src', result); //图片链接（base64）
                     $('#newsImgBox').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="max-height: 200px; width: auto;">')
                 });
             },
             done: function (res) {
-                console.log('12')
-                console.log('zhe',res)
                 let icon = 0;
                 if (res.code === 1) {
+                    let a = res['data']['savePath']
+                    b.push(a)
                     icon = 1;
-                    $('input[name="cover_img"]').val(res['data']['savePath']);
+                    $('input[name="cover_img"]').val(b);
                 }
-
                 return layer.msg(res.msg, {icon: icon, time: 3000})
             },
             error: function () {
-                console.log('13')
                 //演示失败状态，并实现重传
                 let demoText = $('#demoText');
                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
@@ -267,8 +257,8 @@
         // 进行登录操作
         form.on('submit(open)', function (data) {
             let params = data.field, option = {icon: 5};
-             console.log(params);
-             return false
+             // console.log(params);
+             // return false
             if (params.account === '') {
                 layer.msg('账号不能为空', option);
                 return false;
