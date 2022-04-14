@@ -13,6 +13,7 @@ class Customer extends \app\common\controller\CompanyController
 
         $this->view->assign('cateList', (new CustomerModel())->getCateList());
     }
+
     public function index()
     {
         return $this->view->fetch();
@@ -59,8 +60,8 @@ class Customer extends \app\common\controller\CompanyController
             $limit = (int)$this->request->param('limit', 10);
             $title = trim($this->request->param('title', ''));
             $phone = trim($this->request->param('phone', ''));
-            $status = (int) $this->request->param('status', 0);
-            $cate = (int) $this->request->param('cate', 0);
+            $status = (int) $this->request->param('status', -1);
+            $cate = (int) $this->request->param('cate', -1);
 
             $where = [
                 ['company_id', '=', $this->userInfo->id]
@@ -78,12 +79,10 @@ class Customer extends \app\common\controller\CompanyController
                 $where[] = ['phone', 'like', '%' . $phone . '%'];
             }
 
-            if ($status > 0) {
-                if ($status === 1) {
-                    $where[] = ['user_id', '=', 0];
-                } elseif ($status === 2) {
-                    $where[] = ['user_id', '>', 0];
-                }
+            if ($status === 0) {
+                $where[] = ['user_id', '=', 0];
+            } elseif ($status === 1) {
+                $where[] = ['user_id', '>', 0];
             }
 
             $total = CustomerModel::where($where)->count();
@@ -112,6 +111,22 @@ class Customer extends \app\common\controller\CompanyController
             $ids = trim($this->request->param('ids', ''), ',');
             $userId = $this->request->param('user_id', 0);
             $customers = CustomerModel::whereIn('id', $ids)->update(['user_id' => $userId]);
+            $this->returnData['data'] = $customers;
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '操作成功';
+
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
+
+    public function changeCate()
+    {
+        if ($this->request->isPost()) {
+            $ids = trim($this->request->param('ids', ''), ',');
+            $cateId = $this->request->param('cate', 0);
+            $customers = CustomerModel::whereIn('id', $ids)->update(['cate' => $cateId]);
             $this->returnData['data'] = $customers;
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = '操作成功';

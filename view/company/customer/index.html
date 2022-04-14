@@ -37,9 +37,9 @@
                 <label class="layui-form-label" style="width: 100px;">筛选：</label>
                 <div class="layui-inline">
                     <div class="layui-btn-group">
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-checked distribution-status" data-status="0">所有</button>
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="1">未分配</button>
-                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="2">已分配</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-checked distribution-status" data-status="-1">全部</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="0">未分配</button>
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary distribution-status" data-status="1">已分配</button>
                     </div>
                 </div>
             </div>
@@ -68,6 +68,8 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 分配客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
+                <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
             </script>
 
             <script type="text/html" id="barDemo">
@@ -120,9 +122,9 @@
                 {type: 'checkbox', fixed: 'left' },
                 {field: 'id', title: '编号', align: "center", width: 150, fixed: 'left'},
                 {field: 'title', title: '客户名称', align: "center"},
-                {field: 'phone', title: '联系电话', align: "center", templet: function (row) {
+                {field: 'phone', title: '联系电话', align: "center", style: 'cursor: pointer;', templet: function (row) {
                         let hidePhone = row.phone.replace(row.phone.substring(3, 7), '****')
-                        return '<span class="hide-phone d-inline">' + hidePhone + '</span><span class="show-phone d-none">' + row.phone + '</span> <i class="fa-regular fa-eye phone-icon"></i>';
+                        return '<span class="hide-phone d-inline">' + hidePhone + '</span><span class="show-phone d-none">' + row.phone + '</span> <i class="fa-regular fa-eye phone-icon" title="点击查看"></i>';
                     }, event: 'showPhone'},
                 {field: 'province', title: '所在地', align: "center"},
                 {field: 'email', title: '邮箱', align: "center"},
@@ -134,7 +136,7 @@
                     }},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
                 {field: 'createtime', title: '创建时间', align: "center"},
-                {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+                // {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
             ]],
             page: {
                 limits: [15, 30, 45, 60, 90, 150, 300, 600, 900, 1500],
@@ -177,15 +179,16 @@
         });
 
         table.on('toolbar(currentTableFilter)', function (obj) {
+            let checkStatus = table.checkStatus('customerTable').data;
+            let ids = '';
             switch (obj.event) {
                 case 'distribution':
-                    let checkStatus = table.checkStatus('customerTable').data;
                     if (checkStatus.length <= 0) {
                         layer.msg('请选择客户', option);
                         return false;
                     }
 
-                    let ids = '', userId = 0;
+                    let userId = 0;
                     $.each(checkStatus, (index, item) => {
                         ids += ',' + item.id
                     })
@@ -195,21 +198,71 @@
                         skin: 'layui-layer-rim',
                         area: ['420px', '500px'],
                         content: `
-                    <div class="row justify-content-center">
-                        <div class="col-12">
-                            <ul class="list-group">
-                                {foreach $user.user as $key => $val}
-                                <li class="list-group-item select-user" data-id="{$val.id}">{$val.username}</li>
-                                {/foreach}
-                            </ul>
-                        </div>
-                    </div>
-                    `,
+                                <div class="row justify-content-center">
+                                    <div class="col-12">
+                                        <ul class="list-group">
+                                            {foreach $user.user as $key => $val}
+                                            <li class="list-group-item select-user" data-id="{$val.id}">{$val.username}</li>
+                                            {/foreach}
+                                        </ul>
+                                    </div>
+                                </div>
+                                `,
                         success: function(layero, index){
                             layero.find('.select-user').on('click', function () {
                                 userId = $(this).data('id')
 
                                 $.post('{:url("/customer/distribution")}', { ids: ids, user_id: userId }, function (res) {
+                                    layer.close(index)
+                                    if (res.code === 1) {
+                                        option.icon = 1
+                                        layer.close(index)
+                                        table.reload('customerTable', {
+                                            page: {
+                                                curr: 1
+                                            }
+                                        })
+                                    }
+
+                                    layer.msg(res.msg, option)
+                                })
+                            })
+                        }
+                    });
+                    break;
+                case 'changeCate':
+                    if (checkStatus.length <= 0) {
+                        layer.msg('请选择客户', option);
+                        return false;
+                    }
+
+                    let cateId = 0;
+                    $.each(checkStatus, (index, item) => {
+                        ids += ',' + item.id
+                    })
+                    layer.open({
+                        type: 1,
+                        title: '选择分类',
+                        skin: 'layui-layer-rim',
+                        area: ['420px', '500px'],
+                        content: `
+                                <div class="row justify-content-center">
+                                    <div class="col-12">
+                                        <ul class="list-group">
+                                            {foreach $cateList as $key => $val}
+                                            {if $key >= 0}
+                                            <li class="list-group-item select-cate" data-id="{$key}">{$val}</li>
+                                            {/if}
+                                            {/foreach}
+                                        </ul>
+                                    </div>
+                                </div>
+                                `,
+                        success: function(layero, index){
+                            layero.find('.select-cate').on('click', function () {
+                                cateId = $(this).data('id')
+
+                                $.post('{:url("/customer/changeCate")}', { ids: ids, cate: cateId }, function (res) {
                                     layer.close(index)
                                     if (res.code === 1) {
                                         option.icon = 1

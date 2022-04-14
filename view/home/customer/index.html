@@ -6,7 +6,7 @@
 <div class="container-fluid">
     <div class="row mb-3 shadow-sm bg-white rounded">
         <div class="col pt-3">
-            <form class="layui-form layui-form-pane" action="">
+            <form class="layui-form layui-form-pane" lay-fileter="searchForm" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
                         <label class="layui-form-label">客户名称</label>
@@ -30,6 +30,16 @@
                     </div>
                 </div>
             </form>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 100px;">客户分类：</label>
+                <div class="layui-inline">
+                    <div class="layui-btn-group">
+                        {foreach $cateList as $key => $val}
+                        <button type="button" class="layui-btn layui-btn-sm customer-cate {if $key === -1}layui-btn-checked{else /}layui-btn-primary{/if}" data-cate="{$key}">{$val}</button>
+                        {/foreach}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -48,6 +58,7 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
                 <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
             </script>
         </div>
@@ -70,6 +81,7 @@
             form = layui.form;
 
         miniTab.listen();
+        let option = { icon: 0 }
         // 客户列表
         table.render({
             elem: '#currentTableId',
@@ -93,6 +105,7 @@
                 }
             },
             cols: [[
+                {type: 'checkbox', fixed: 'left' },
                 {field: 'id', title: '编号', align: "center", width: 150},
                 {field: 'title', title: '客户名称', align: "center"},
                 {field: 'phone', title: '联系电话', align: "center", style: 'cursor: pointer;', templet: function(row){
@@ -107,6 +120,7 @@
                     return '<span class="text-primary" title="点击查看">' + row.record_count + '</span>';
                     }},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
+                {field: 'createtime', title: '创建时间', align: "center"},
                 {fixed: 'right', title:'操作', align: 'center', toolbar: '#barDemo'}
             ]],
             page: {
@@ -115,6 +129,18 @@
             },
             skin: 'line'
         });
+
+        let reloadTable = function (params = {}) {
+            params = Object.assign({}, {
+                cate: $('.customer-cate').filter('.layui-btn-checked').data('cate'),
+            }, params)
+            table.reload('customerTable', {
+                where: params,
+                page: {
+                    curr: 1
+                }
+            })
+        }
 
         let getNowTime = function () {
             let d = new Date();
@@ -167,11 +193,23 @@
                         icon.removeClass('fa-eye-slash').addClass('fa-eye')
                     }
                     break;
+                case 'edit':
+                    break;
             }
         });
 
         table.on('toolbar(currentTableFilter)', function (obj) {
+            let checkStatus = table.checkStatus('customerTable').data;
+            let ids = '';
             switch (obj.event) {
+                case 'add':
+                    layer.open({
+                        type: 2,
+                        title: '添加',
+                        area: ['100%', '100%'],
+                        content: '{:url("/customer/add")}'
+                    });
+                    break;
                 case 'info':
                     layer.open({
                         type: 1,
@@ -187,29 +225,69 @@
                 case 'importExcel':
                     $('#importExcel').click();
                     break;
+                case 'changeCate':
+                    if (checkStatus.length <= 0) {
+                        layer.msg('请选择客户', option);
+                        return false;
+                    }
+
+                    let cateId = 0;
+                    $.each(checkStatus, (index, item) => {
+                        ids += ',' + item.id
+                    })
+                    layer.open({
+                        type: 1,
+                        title: '选择分类',
+                        skin: 'layui-layer-rim',
+                        area: ['420px', '500px'],
+                        content: `
+                                <div class="row justify-content-center">
+                                    <div class="col-12">
+                                        <ul class="list-group">
+                                            {foreach $cateList as $key => $val}
+                                            {if $key >= 0}
+                                            <li class="list-group-item select-cate" data-id="{$key}">{$val}</li>
+                                            {/if}
+                                            {/foreach}
+                                        </ul>
+                                    </div>
+                                </div>
+                                `,
+                        success: function(layero, index){
+                            layero.find('.select-cate').on('click', function () {
+                                cateId = $(this).data('id')
+
+                                $.post('{:url("/customer/changeCate")}', { ids: ids, cate: cateId }, function (res) {
+                                    layer.close(index)
+                                    if (res.code === 1) {
+                                        option.icon = 1
+                                        layer.close(index)
+                                        table.reload('customerTable', {
+                                            page: {
+                                                curr: 1
+                                            }
+                                        })
+                                    }
+
+                                    layer.msg(res.msg, option)
+                                })
+                            })
+                        }
+                    });
+                    break;
             }
         })
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             //执行搜索重载
-            table.reload('customerTable', {
-                page: {
-                    curr: 1
-                },
-                where: data.field
-            });
+            reloadTable(data.field)
 
             return false
         });
 
         $('button[type="reset"]').on('click', function () {
-            table.reload('customerTable', {
-                page: {
-                    curr: 1
-                },
-                where: {}
-            }, false)
+            reloadTable({})
         })
 
         let makeCall = function (params = { phone: '', customerId: 0 }, obj = null) {
@@ -308,9 +386,8 @@
             },
             done: function (res) {
                 layer.close(loading);
-                let icon = 0;
                 if (res.code === 1) {
-                    icon = 1;
+                    option.icon = 1;
                     table.reload('customerTable', {
                         page: {
                             curr: 1
@@ -318,7 +395,7 @@
                     })
                 }
 
-                return layer.msg(res.msg, {icon: icon, time: 3000})
+                return layer.msg(res.msg, option)
             },
             error: function () {
                 setTimeout(function () {
@@ -330,6 +407,15 @@
                 }, 1000);
             }
         });
+
+        $('.customer-cate').on('click', function () {
+            let params = Object.assign({}, form.val('searchForm'), {
+                cate: $(this).data('cate')
+            })
+            reloadTable(params);
+
+            $(this).removeClass('layui-btn-primary').addClass('layui-btn-checked').siblings().removeClass('layui-btn-checked').addClass('layui-btn-primary')
+        })
     });
 </script>
 

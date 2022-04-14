@@ -16,7 +16,7 @@
       "target": "_self",
       "child": [
         {
-          "title": "立即拨号",
+          "title": "呼叫中心",
           "href": "hbcall/callCenter.html",
           "icon": "fa fa-mobile-retro",
           "target": "_self"
