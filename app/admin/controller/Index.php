@@ -6,7 +6,7 @@ use app\common\controller\AdminController;
 use app\admin\model\admin;
 use app\common\model\CallHistory;
 use app\company\model\Company;
-use arron\Random;
+use app\company\model\Payment;
 use think\facade\Cookie;
 use think\facade\Db;
 use think\facade\Session;
@@ -41,6 +41,7 @@ class Index extends AdminController
 
     public function dashboard()
     {
+        $this->view->assign('totalPayment', Payment::where('status', 1)->sum('amount'));
         $this->view->assign(getCosts());
 
         return $this->view->fetch();

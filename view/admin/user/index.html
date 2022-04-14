@@ -79,10 +79,15 @@
        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
    </div>
         <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i
-                    class="fa fa-user-edit"></i> </a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i
-                    class="fa fa-trash-can"></i></a>
+            <a class="layui-btn layui-btn-xs" lay-event="checkUserList" title="查看用户列表">
+                <i class="fa fa-users"></i>
+            </a>
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑">
+                <i class="fa fa-user-edit"></i>
+            </a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除">
+                <i class="fa fa-trash-can"></i>
+            </a>
         </script>
 
     </div>
@@ -131,7 +136,7 @@
                 {field: 'payment_sum', title: '充值', align: 'center', sort: true},
                 {field: 'expense', title: '总消费', align: 'center', sort: true},
                 {field: 'logintime', title: '最后登录', align: "center", width: 180},
-                {field: 'logintime', title: '到期日期', align: "center", width: 180},
+                {field: 'test_endtime', title: '到期日期', align: "center", width: 180},
                 {
                     field: 'status', title: '试用', align: "center", templet: function (row) {
                         return `<input type="checkbox" name="try" value="${row.id}" lay-skin="switch" lay-text="是|否" lay-filter="tryFilter" ${row.is_test === '是' ? 'checked' : ''} disabled>`
@@ -143,7 +148,7 @@
                         return `<input type="checkbox" name="status" value="${row.id}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" ${row.status === '正常' ? 'checked' : ''}>`
                     }
                 },
-                {title: '操作', width: 100, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                {title: '操作', width: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
             ]],
             page: {
                 limits: [15, 30, 45, 60],
@@ -277,32 +282,46 @@
         // });
 
         table.on('tool(currentTableFilter)', function (obj) {
-            if (obj.event === 'edit') {
-                let index = layer.open({
-                    title: '编辑账号',
-                    type: 2,
-                    shade: 0.2,
-                    shadeClose: true,
-                    anim: 2,
-                    area: ['100%', '100%'],
-                    content: '{:url("/user/edit")}?id=' + obj.data.id,
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
-            } else if (obj.event === 'delete') {
-                layer.confirm('删除账号后，其账号下所有关联账号将全部删除', function (index) {
-                    $.post("{:url('/User/del')}", { id: obj.data.id }, function (res) {
-                        layer.close(index);
-                        let option = {icon: 0};
-                        if (res.code === 1) {
-                            option.icon = 1
-                            obj.del();
-                        }
+            switch (obj.event) {
+                case 'edit':
+                    let index = layer.open({
+                        title: '编辑账号',
+                        type: 2,
+                        shade: 0.2,
+                        shadeClose: true,
+                        anim: 2,
+                        area: ['100%', '100%'],
+                        content: '{:url("/user/edit")}?id=' + obj.data.id,
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    break;
+                case 'checkUserList':
+                    layer.open({
+                        title: '用户列表',
+                        type: 2,
+                        shade: 0.2,
+                        shadeClose: true,
+                        anim: 2,
+                        area: ['100%', '100%'],
+                        content: '{:url("/user/subUserList")}?id=' + obj.data.id,
+                    });
+                    break;
+                case 'delete':
+                    layer.confirm('删除账号后，其账号下所有关联账号将全部删除', function (index) {
+                        $.post("{:url('/User/del')}", { id: obj.data.id }, function (res) {
+                            layer.close(index);
+                            let option = {icon: 0};
+                            if (res.code === 1) {
+                                option.icon = 1
+                                obj.del();
+                            }
 
-                        layer.msg(res.msg, option)
-                    })
-                });
+                            layer.msg(res.msg, option)
+                        })
+                    });
+                    break;
             }
         });
 

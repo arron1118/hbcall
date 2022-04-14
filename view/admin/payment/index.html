@@ -15,20 +15,6 @@
                         </div>
                     </div>
                     <div class="layui-inline">
-                        <label class="layui-form-label">充值时间</label>
-                        <div class="layui-inline" id="datetime">
-                            <div class="layui-input-inline">
-                                <input type="text" name="startDate" autocomplete="off" id="startDate"
-                                       class="layui-input" placeholder="开始日期">
-                            </div>
-                            <div class="layui-form-mid">-</div>
-                            <div class="layui-input-inline">
-                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input"
-                                       placeholder="结束日期">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
                         <label class="layui-form-label">充值方式</label>
                         <div class="layui-input-inline">
                             <select name="pay_type" lay-filter="payTypeFilter">
@@ -46,6 +32,22 @@
                                 <option value="{$key}">{$val}</option>
                                 {/foreach}
                             </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">充值时间</label>
+                        <div class="layui-inline" id="datetime">
+                            <div class="layui-input-inline">
+                                <input type="text" name="startDate" autocomplete="off" id="startDate"
+                                       class="layui-input" placeholder="开始日期">
+                            </div>
+                            <div class="layui-form-mid">-</div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input"
+                                       placeholder="结束日期">
+                            </div>
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -121,7 +123,7 @@
                             return '<img width="20" src="__STATIC__/images/wepay-logo.png" title="' + row.pay_type + '" alt="' + row.pay_type + '" />';
                         }
                         if (row.pay_type === '支付宝') {
-                            return '<i class="fa-brands fa-alipay fs-4 text-primary"></i>'
+                            return '<i class="fa-brands fa-alipay fs-4 text-primary" title="' + row.pay_type + '"></i>'
                         }
                     }
                 },
