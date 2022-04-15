@@ -140,7 +140,7 @@
                 {field: 'test_endtime', title: '到期日期', align: "center", width: 180},
                 {
                     field: 'status', title: '试用', align: "center", templet: function (row) {
-                        return `<input type="checkbox" name="try" value="${row.id}" lay-skin="switch" lay-text="是|否" lay-filter="tryFilter" ${row.is_test === '是' ? 'checked' : ''} disabled>`
+                        return row.is_test
                     }
                 },
                 {

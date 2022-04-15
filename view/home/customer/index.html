@@ -51,6 +51,7 @@
             <script type="text/html" id="barDemo">
                 <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="makeCall" title="点击拨号"><i class="fa fa-phone"></i></button>
                 <button type="button" class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></button>
+                <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" title="删除"><i class="fa fa-trash-can"></i></button>
             </script>
 
             <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入客户</button>
@@ -174,9 +175,6 @@
                         area: ['100%', '100%'],
                         content: '{:url("/customer/customerRecordList")}?customerId=' + editId,
                     });
-                    $(window).on("resize", function () {
-                        layer.full(index);
-                    });
                     break;
                 case 'makeCall':
                     makeCall({ phone: obj.data.phone, customerId: obj.data.id }, obj);
@@ -196,10 +194,20 @@
                 case 'edit':
                     layer.open({
                         type: 2,
-                        title: '添加',
+                        title: '编辑',
                         area: ['100%', '100%'],
                         content: '{:url("/customer/edit")}?customerId=' + editId
                     });
+                    break;
+                case 'del':
+                    $.post('{:url("/customer/del")}', { id: editId }, function (res) {
+                        if (res.code === 1) {
+                            option.icon = 1;
+                            reloadTable()
+                        }
+
+                        layer.msg(res.msg, option);
+                    })
                     break;
             }
         });

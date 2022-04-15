@@ -10,7 +10,12 @@ class CustomerRecord extends \think\Model
 
     public function getCreateAtAttr($value)
     {
-        return date($this->getDateFormat(), $value);
+        return getDateFormatInfo($value);
+    }
+
+    public function getNextCallTimeAttr($value)
+    {
+        return date('Y-m-d H:i:s', $value);
     }
 
     public function customer()

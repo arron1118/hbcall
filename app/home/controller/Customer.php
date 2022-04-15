@@ -3,6 +3,7 @@
 namespace app\home\controller;
 
 use app\common\model\Customer as CustomerModel;
+use app\common\model\CustomerRecord as CustomerRecordModel;
 
 class Customer extends \app\common\controller\HomeController
 {
@@ -87,6 +88,17 @@ class Customer extends \app\common\controller\HomeController
     public function add()
     {
         if ($this->request->isPost()) {
+            $this->returnData['msg'] = '添加失败';
+            $param = $this->request->param();
+            $param['user_id'] = $this->userInfo->id;
+            $param['company_id'] = $this->userInfo->company_id;
+            $param['createtime'] = time();
+            $customer = new CustomerModel();
+            if ($customer->save($param)) {
+                $this->returnData['msg'] = '添加成功';
+                $this->returnData['code'] = 1;
+            }
+
             return json($this->returnData);
         }
         return $this->view->fetch();
@@ -103,6 +115,11 @@ class Customer extends \app\common\controller\HomeController
         }
 
         if ($this->request->isPost()) {
+            $this->returnData['msg'] = '保存失败';
+            if ($customer->save($this->request->param())) {
+                $this->returnData['msg'] = '保存成功';
+                $this->returnData['code'] = 1;
+            }
             return json($this->returnData);
         }
 
@@ -110,4 +127,19 @@ class Customer extends \app\common\controller\HomeController
 
         return $this->view->fetch();
     }
+
+    public function del($id)
+    {
+        if ($this->request->isPost()) {
+            $this->returnData['msg'] = '删除失败';
+            if ($id > 0) {
+                CustomerModel::destroy($id);
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '删除成功';
+            }
+
+            return json($this->returnData);
+        }
+    }
+
 }

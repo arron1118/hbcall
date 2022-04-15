@@ -3,6 +3,7 @@
 namespace app\common\model;
 
 use app\company\model\Company;
+use app\common\model\CustomerRecord;
 
 class Customer extends \think\Model
 {
@@ -30,6 +31,13 @@ class Customer extends \think\Model
             '成交客户',
             '无效客户',
         ];
+    }
+
+    public static function onAfterDelete($customer)
+    {
+        CustomerRecord::destroy(function ($query) use ($customer) {
+            $query->where('customer_id', $customer->id);
+        });
     }
 
     public function user()

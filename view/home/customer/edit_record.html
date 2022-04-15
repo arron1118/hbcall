@@ -1,0 +1,118 @@
+{extend name="public/base" /}
+{block name="css"}
+{include file="public/bootstrap" /}
+<style>
+    .logo-title {
+        text-align: center;
+        letter-spacing: 2px;
+        padding: 14px 0;
+    }
+
+    .logo-title h1 {
+        color: #1E9FFF;
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .login-form {
+        background-color: #fff;
+        border: 1px solid #fff;
+        border-radius: 3px;
+        padding: 14px 20px;
+        box-shadow: 0 0 8px #eeeeee;
+    }
+
+    .login-form .layui-form-item {
+        position: relative;
+    }
+
+    .login-form .layui-form-item label {
+        position: absolute;
+        left: 1px;
+        top: 1px;
+        width: 100px;
+        line-height: 20px;
+        text-align: center;
+        color: #565656;
+    }
+
+    .layui-form-item .layui-input-block {
+        margin-left: 130px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="container justify-content-center">
+    <div class="row justify-content-center">
+        <div class="col col-lg-8 col-md-10 bg-white">
+            <form class="layui-form layuimini-form" lay-filter="customer-add-form" action="">
+                <div class="layui-form-item">
+                    <input type="hidden" name="id" value="{$record.id}" />
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="comment">记录内容</label>
+                    <div class="layui-input-block" id="comment">
+                        <textarea type="text" name="content" placeholder="记录内容"
+                               autocomplete="off" class="layui-textarea">{$record.content}</textarea>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">下次回访</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" lay-verify="required" name="next_call_time" id="datetime" placeholder="yyyy-MM-dd H:i:s" value="{$record.next_call_time}">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
+                            lay-filter="open">保存
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'jquery', 'laydate'], function () {
+        let $ = layui.jquery,
+            laydate = layui.laydate,
+            form = layui.form;
+
+        let frameIndex = parent.layer.getFrameIndex(window.name);
+        let option = { icon: 5 }
+
+        laydate.render({
+            elem: '#datetime',
+            type: 'datetime'
+        })
+
+        // 进行登录操作
+        form.on('submit(open)', function (data) {
+            $.post("{:url('/CustomerRecord/edit')}", data.field, function (res) {
+                if (res.code === 1) {
+                    option.icon = 6
+
+                    parent.layer.close(frameIndex);
+                    parent.layui.table.reload('recordTable', {
+                        page: {
+                            curr: 1
+                        }
+                    });
+                }
+
+                parent.layer.msg(res.msg, option);
+            });
+
+            return false;
+        });
+
+    });
+</script>
+
+{/block}

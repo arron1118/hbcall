@@ -441,17 +441,11 @@
                             class: 'list-group-item list-group-item-action',
                             text: '添加回访记录',
                             click: function () {
-                                // makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone }), parent)
-                                layer.prompt({title: '回访记录', formType: 2}, function(text, index){
-                                    $.post('{:url("/CustomerRecord/add")}', { content: text, customer_id: item.id }, function (res) {
-                                        let option = { icon: 0 }
-                                        if (res.code) {
-                                            option.icon = 1;
-                                            layer.close(index);
-                                        }
-
-                                        layer.msg(res.msg, option)
-                                    });
+                                layer.open({
+                                    type: 2,
+                                    title: '添加',
+                                    area: ['700px', '600px'],
+                                    content: '{:url("/CustomerRecord/add")}?customer_id=' + item.id
                                 });
                             }
                         }).append($('<i />', {

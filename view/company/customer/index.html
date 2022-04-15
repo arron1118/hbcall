@@ -73,7 +73,7 @@
             </script>
 
             <script type="text/html" id="barDemo">
-<!--                <div class="layui-btn layui-btn-xs" lay-event="edit">回访记录</div>-->
+                <button type="button" class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></button>
             </script>
         </div>
 
@@ -136,7 +136,7 @@
                     }},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
                 {field: 'createtime', title: '创建时间', align: "center"},
-                // {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 150}
+                {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 80}
             ]],
             page: {
                 limits: [15, 30, 45, 60, 90, 150, 300, 600, 900, 1500],
@@ -174,6 +174,14 @@
                         show.removeClass('d-inline').addClass('d-none')
                         icon.removeClass('fa-eye-slash').addClass('fa-eye')
                     }
+                    break;
+                case 'edit':
+                    layer.open({
+                        type: 2,
+                        title: '编辑',
+                        area: ['100%', '100%'],
+                        content: '{:url("/customer/edit")}?customerId=' + editId
+                    });
                     break;
             }
         });
@@ -290,6 +298,14 @@
                     break;
                 case 'importExcel':
                     $('#importExcel').click();
+                    break;
+                case 'add':
+                    layer.open({
+                        type: 2,
+                        title: '添加',
+                        area: ['100%', '100%'],
+                        content: '{:url("/customer/add")}'
+                    });
                     break;
             }
         });

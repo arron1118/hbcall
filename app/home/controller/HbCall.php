@@ -297,12 +297,14 @@ class HbCall extends \app\common\controller\HomeController
     public function updateCustomerCalledCount()
     {
         if ($this->request->isPost()) {
-            $phone = $this->request->param('phone');
-            $where = [
-                'user_id' => $this->userInfo->id,
-                'phone' => $phone
-            ];
-            Customer::where($where)->inc('called_count')->update(['last_calltime' => time()]);
+            $customerId = $this->request->param('customerId', 0);
+            if ($customerId > 0) {
+                $where = [
+                    'user_id' => $this->userInfo->id,
+                    'id' => $customerId,
+                ];
+                Customer::where($where)->inc('called_count')->update(['last_calltime' => time()]);
+            }
         }
     }
 

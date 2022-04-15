@@ -39,14 +39,49 @@ class CustomerRecord extends \app\common\controller\HomeController
     {
         if ($this->request->isPost()) {
             $param = $this->request->param();
+            $param['next_call_time'] = strtotime($param['next_call_time']);
             if (RecordModel::create($param)) {
                 $this->returnData['code'] = 1;
-                $this->returnData['msg'] = '添加成功';
+                $this->returnData['msg'] = '保存成功';
             }
 
             return json($this->returnData);
         }
 
-        return json($this->returnData);
+        $this->view->assign('customer_id', $this->request->param('customer_id'));
+        return $this->view->fetch('customer/add_record');
+    }
+
+    public function edit($id)
+    {
+        $record = RecordModel::find($id);
+
+        if ($this->request->isPost()) {
+            $param = $this->request->param();
+            $param['next_call_time'] = strtotime($param['next_call_time']);
+            if ($record->save($param)) {
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '保存成功';
+            }
+
+            return json($this->returnData);
+        }
+
+        $this->view->assign('record', $record);
+        return $this->view->fetch('customer/edit_record');
+    }
+
+    public function del($id)
+    {
+        if ($this->request->isPost()) {
+            $this->returnData['msg'] = '删除失败';
+            if ($id > 0) {
+                RecordModel::destroy($id);
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '删除成功';
+            }
+
+            return json($this->returnData);
+        }
     }
 }

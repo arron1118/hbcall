@@ -142,4 +142,46 @@ class Customer extends \app\common\controller\CompanyController
         $this->view->assign('customerId', $this->request->param('customerId'));
         return $this->view->fetch();
     }
+
+    public function add()
+    {
+        if ($this->request->isPost()) {
+            $this->returnData['msg'] = '添加失败';
+            $param = $this->request->param();
+            $param['company_id'] = $this->userInfo->id;
+            $param['createtime'] = time();
+            $customer = new CustomerModel();
+            if ($customer->save($param)) {
+                $this->returnData['msg'] = '添加成功';
+                $this->returnData['code'] = 1;
+            }
+
+            return json($this->returnData);
+        }
+        return $this->view->fetch();
+    }
+
+    public function edit()
+    {
+        $customerId = (int) $this->request->param('customerId', 0);
+        $customer = CustomerModel::find($customerId);
+
+        if (!$customer) {
+            $this->returnData['msg'] = '未找到相关数据';
+            return json($this->returnData);
+        }
+
+        if ($this->request->isPost()) {
+            $this->returnData['msg'] = '保存失败';
+            if ($customer->save($this->request->param())) {
+                $this->returnData['msg'] = '保存成功';
+                $this->returnData['code'] = 1;
+            }
+            return json($this->returnData);
+        }
+
+        $this->view->assign('customer', $customer);
+
+        return $this->view->fetch();
+    }
 }
