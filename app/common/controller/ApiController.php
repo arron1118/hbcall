@@ -11,7 +11,7 @@ use think\Response;
 
 class ApiController extends \app\BaseController
 {
-    protected $noNeedLogin = ['login', 'getAesEncodeData', 'getAesDecodeData'];
+    protected $noNeedLogin = ['login', 'getAesEncodeData', 'getAesDecodeData', 'getSiteInfo'];
 
     protected $userInfo = null;
 
