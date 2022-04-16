@@ -170,9 +170,7 @@
                                 <label class="layui-form-label" for="newsImg">合同</label>
                                 <div class="layui-input-block layui-upload">
                                     <button type="button" class="layui-btn" id="newsImg">上传</button>
-                                    <div class="layui-upload-list" id="newsImgBox">
-
-                                    </div>
+                                    <div class="layui-upload-list" id="newsImgBox"></div>
                                     <input name="contract_attachment" type="hidden" value="{$userInfo.contract_attachment}"/>
                                 </div>
                             </div>
@@ -198,9 +196,23 @@
         let $ = layui.jquery,
             form = layui.form,
             upload = layui.upload,
-            laydate = layui.laydate;
+            laydate = layui.laydate,
+            option = { icon: 5 };
+
+        let appendAttachment = function (param = {
+            source: '',
+            name: '',
+        }) {
+            $('#newsImgBox').append('<img src="' + param.source + '" alt="' + param.name + '" class="layui-upload-img" style="max-height: 200px; width: auto;">')
+        }
+
         let b = [];
-        let contract_attachment = "{$userInfo.contract_attachment}";
+        let contract_attachment = "{$userInfo.contract_attachment}".split(',');
+        $.each(contract_attachment, (index, item) => {
+            if (item !== '') {
+                appendAttachment({ source: item })
+            }
+        })
         //上传图片
         let uploadInst = upload.render({
             elem: '#newsImg',
@@ -208,21 +220,22 @@
             multiple: true,
             accept: 'images', //只允许上传图片
             before: function (obj) {
+                if (contract_attachment.length > 0) {
+                    $('#newsImgBox').html('')
+                }
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
-                    $('#newsImgBox').append('<img src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img" style="max-height: 200px; width: auto;">')
+                    appendAttachment({ source: result, name: file.name })
                 });
             },
             done: function (res) {
-                let icon = 0;
                 if (res.code === 1) {
-                    let a = res['data']['savePath']
-                    b.push(a)
-                    icon = 1;
+                    option.icon = 6;
+                    b.push(res.data?.savePath);
                     $('input[name="contract_attachment"]').val(b);
                 }
 
-                return layer.msg(res.msg, {icon: icon, time: 3000})
+                return layer.msg(res.msg, option)
             },
             error: function () {
                 //演示失败状态，并实现重传
@@ -233,6 +246,7 @@
                 });
             },
         });
+
         //
         let frameIndex = parent.layer.getFrameIndex(window.name);
 
@@ -302,9 +316,7 @@
 
         // 进行登录操作
         form.on('submit(edit)', function (data) {
-            let params = data.field, option = { icon: 5 };
-            // console.log(params);
-            // return false
+            let params = data.field;
             if (params.account === '') {
                 layer.msg('账号不能为空', option);
                 return false;
@@ -339,13 +351,11 @@
                 if (res.code === 1) {
                     option.icon = 6;
                     option.time = 2500;
-                    layer.msg(res.msg, option, function () {
-                        parent.layer.close(frameIndex);
-                        parent.layui.table.reload('userTable');
-                    });
-                } else {
-                    layer.msg(res.msg, option);
+                    parent.layer.close(frameIndex);
+                    parent.layui.table.reload('userTable');
                 }
+
+                parent.layer.msg(res.msg, option);
             });
 
             return false;

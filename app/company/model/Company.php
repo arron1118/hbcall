@@ -31,6 +31,16 @@ class Company extends \think\Model
         return getDateFormatInfo($value);
     }
 
+    public function getContractStartDatetimeAttr($value)
+    {
+        return $value ? date($this->getDateFormat(), $value) : '';
+    }
+
+    public function getContractEndDatetimeAttr($value)
+    {
+        return $value ? date($this->getDateFormat(), $value) : '';
+    }
+
     public function getStatusAttr($value)
     {
         return $this->getStatusList()[$value];

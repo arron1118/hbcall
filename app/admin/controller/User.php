@@ -139,11 +139,21 @@ class User extends \app\common\controller\AdminController
                         return json($this->returnData);
                     }
                 }
+            } else {
+                unset($params['test_endtime']);
             }
 //            if ($params['ration'] > 0 && NumberStore::where('status', '=', '0')->count() < $params['ration']) {
 //                $this->returnData['msg'] = '剩余座席不足';
 //                return json($this->returnData);
 //            }
+
+            if ($params['contract_start_datetime']) {
+                $params['contract_start_datetime'] = strtotime($params['contract_start_datetime']);
+            }
+
+            if ($params['contract_end_datetime']) {
+                $params['contract_end_datetime'] = strtotime($params['contract_end_datetime']);
+            }
 
             $CompanyModel = new CompanyModel();
 
