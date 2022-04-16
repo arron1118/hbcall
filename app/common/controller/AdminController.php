@@ -40,4 +40,20 @@ class AdminController extends \app\BaseController
         $this->view->assign('user', $this->userInfo);
     }
 
+    public function upload()
+    {
+        $upload = (new \app\common\library\Attachment())->upload('file');
+
+        if (!$upload) {
+            $this->returnData['msg'] = '上传失败: 未找到文件';
+            return $this->returnData;
+        }
+
+        $this->returnData['code'] = 1;
+        $this->returnData['data']['savePath'] = $upload['savePath'];
+        $this->returnData['msg'] = '上传成功';
+
+        return $this->returnData;
+    }
+
 }

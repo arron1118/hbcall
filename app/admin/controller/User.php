@@ -249,6 +249,11 @@ class User extends \app\common\controller\AdminController
             $userInfo->rate = $data['rate'];
             $userInfo->limit_user = $data['limit_user'];
             $userInfo->status = isset($data['status']) && $data['status'];
+            $userInfo->phone = $data['phone'];
+            $userInfo->address = $data['address'];
+            $userInfo->contract_attachment = $data['contract_attachment'];
+            $userInfo->contract_start_datetime = strtotime($data['contract_start_datetime']);
+            $userInfo->contract_end_datetime = strtotime($data['contract_end_datetime']);
             if ($userInfo->save()) {
                 // 更新企业小号关联表
                 if ($userInfo->companyXnumber) {

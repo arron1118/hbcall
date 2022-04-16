@@ -46,7 +46,6 @@ class Attachment
                 exit($dbException);
             }
 
-
             return [
                 'savePath' => $saveName
             ];

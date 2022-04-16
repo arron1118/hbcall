@@ -106,13 +106,6 @@
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <label class="layui-form-label" for="corporation">公司名称</label>
-                                <div class="layui-input-block" id="corporation">
-                                    <input type="text" name="corporation" lay-verify="required" placeholder="公司名称"
-                                           autocomplete="off" class="layui-input" value="{$userInfo.corporation}" readonly>
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
                                 <label class="layui-form-label" for="isTest">测试账号</label>
                                 <div class="layui-input-block" id="isTest">
                                     <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo.is_test === '是'}checked{/if}>
@@ -141,35 +134,35 @@
                         </div>
                         <div class="layui-tab-item">
                             <div class="layui-form-item">
-                                <label class="layui-form-label" for="signingcompany">公司名称</label>
-                                <div class="layui-input-block" id="signingcompany">
-                                    <input type="text" name="signingcompany" lay-verify="" placeholder="公司名称"
-                                           autocomplete="off" class="layui-input" value="">
+                                <label class="layui-form-label" for="corporation">公司名称</label>
+                                <div class="layui-input-block" id="corporation">
+                                    <input type="text" name="corporation" lay-verify="required" placeholder="公司名称"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.corporation}" readonly>
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <label class="layui-form-label" for="signingtel">联系电话</label>
-                                <div class="layui-input-block" id="signingtel">
-                                    <input type="text" name="signingtel" lay-verify="" placeholder="联系电话"
-                                           autocomplete="off" class="layui-input" value="">
+                                <label class="layui-form-label" for="phone">联系电话</label>
+                                <div class="layui-input-block" id="phone">
+                                    <input type="text" name="phone" lay-verify="required|phone" placeholder="联系电话"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.phone}">
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <label class="layui-form-label" for="signingaddress">联系地址</label>
-                                <div class="layui-input-block" id="signingaddress">
-                                    <input type="text" name="signingaddress" lay-verify="" placeholder="联系地址"
-                                           autocomplete="off" class="layui-input" value="">
+                                <label class="layui-form-label" for="address">联系地址</label>
+                                <div class="layui-input-block" id="address">
+                                    <input type="text" name="address" lay-verify="" placeholder="联系地址"
+                                           autocomplete="off" class="layui-input" value="{$userInfo.address}">
                                 </div>
                             </div>
                             <div class="layui-form-item">
-                                <label class="layui-form-label" for="signingdatetime">合同时间</label>
-                                <div class="layui-input-block" id="signingdatetime">
+                                <label class="layui-form-label" for="contractDatetime">合同时间</label>
+                                <div class="layui-input-block" id="contractDatetime">
                                     <div class="layui-input-inline">
-                                        <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                                        <input type="text" name="contract_start_datetime" value="{$userInfo.contract_start_datetime}" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
                                     </div>
                                     <div class="layui-form-mid">-</div>
                                     <div class="layui-input-inline">
-                                        <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                                        <input type="text" name="contract_end_datetime" value="{$userInfo.contract_end_datetime}" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
                                     </div>
                                 </div>
                             </div>
@@ -177,16 +170,15 @@
                                 <label class="layui-form-label" for="newsImg">合同</label>
                                 <div class="layui-input-block layui-upload">
                                     <button type="button" class="layui-btn" id="newsImg">上传</button>
-                                    <div class="layui-upload-list" id="newsImgBox"></div>
-                                    <input name="cover_img" type="hidden"/>
+                                    <div class="layui-upload-list" id="newsImgBox">
+
+                                    </div>
+                                    <input name="contract_attachment" type="hidden" value="{$userInfo.contract_attachment}"/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-
-
 
                 <div class="layui-form-item">
                     <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
@@ -208,6 +200,7 @@
             upload = layui.upload,
             laydate = layui.laydate;
         let b = [];
+        let contract_attachment = "{$userInfo.contract_attachment}";
         //上传图片
         let uploadInst = upload.render({
             elem: '#newsImg',
@@ -226,7 +219,7 @@
                     let a = res['data']['savePath']
                     b.push(a)
                     icon = 1;
-                    $('input[name="cover_img"]').val(b);
+                    $('input[name="contract_attachment"]').val(b);
                 }
 
                 return layer.msg(res.msg, {icon: icon, time: 3000})
@@ -243,19 +236,59 @@
         //
         let frameIndex = parent.layer.getFrameIndex(window.name);
 
-        let d = new Date();
+        let getDateTime = function (param = {}) {
+            let defaultParam = {
+                year: 0,
+                month: 0,
+                day: 0,
+                hour: 0,
+                minute: 0,
+                second: 0
+            };
+            param = Object.assign(defaultParam, param)
+            let d = new Date();
+            let year = d.getFullYear() + param.year,
+                month = d.getMonth() + 1 + param.month,
+                day = d.getDate() + param.day,
+                hour = d.getHours() + param.hour,
+                minute = d.getMinutes() + param.minute,
+                second = d.getSeconds() + param.second;
+
+            if (month < 10) {
+                month = '0' + month;
+            }
+
+            if (day < 10) {
+                day = '0' + day;
+            }
+
+            if (hour < 10) {
+                hour = '0' + hour;
+            }
+
+            if (minute < 10) {
+                minute = '0' + minute;
+            }
+
+            if (second < 10) {
+                second = '0' + second;
+            }
+
+            return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+        }
+
         // 时间限制为现在
-        let minDate = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDay() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        let minDate = getDateTime();
         laydate.render({
             elem: '#testEndTime',
             type: 'datetime',
-            min: minDate
+            min: minDate,
+            value: getDateTime({ day: 1 }),
         })
         laydate.render({
-            elem: '#signingdatetime',
+            elem: '#contractDatetime',
             range: ['#startDate', '#endDate'],
             type: 'datetime',
-            min: minDate
             // done: function (value) {
             //     let d = value.split(' - ')
             //     let params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] ? d[1] : '' })
