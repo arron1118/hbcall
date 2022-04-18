@@ -28,7 +28,7 @@ class Company extends \think\Model
 
     public function getTestEndtimeAttr($value)
     {
-        return getDateFormatInfo($value);
+        return $value ? date($this->getDateFormat(), $value) : '';
     }
 
     public function getContractStartDatetimeAttr($value)

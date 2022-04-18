@@ -296,7 +296,6 @@ class User extends \app\common\controller\AdminController
 
         $numberList = NumberStore::select();
         $this->view->assign('numberList', $numberList);
-
         $this->view->assign('userInfo', $userInfo);
         return $this->view->fetch();
     }
