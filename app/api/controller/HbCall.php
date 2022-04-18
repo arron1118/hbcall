@@ -60,7 +60,7 @@ class HbCall extends \app\common\controller\ApiController
         $total = CallHistory::where($map)->count();
         $historyList = CallHistory::field('id, called_number, createtime, username, call_duration')
             ->where($map)
-            ->order('starttime DESC')
+            ->order('createtime DESC')
             ->limit(($page - 1) * $limit, $limit)
             ->select();
         foreach ($historyList as $key => &$item) {
