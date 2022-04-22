@@ -61,6 +61,11 @@ class Company extends \think\Model
         return ['-1' => '全部', '否', '是'];
     }
 
+    public function getCompanyList()
+    {
+        return $this->field('id, corporation')->where('status', 1)->order('id desc, logintime desc')->select()->toArray();
+    }
+
     public function payment()
     {
         return $this->hasMany(Payment::class);

@@ -26,14 +26,9 @@ class HbCall extends \app\common\controller\AdminController
 
     public function callHistoryList()
     {
-        $company = $this->getCompanyList();
+        $company = (new Company())->getCompanyList();
         $this->view->assign('company', $company);
         return $this->view->fetch('hbcall/history_list');
-    }
-
-    public function getCompanyList()
-    {
-        return Company::field('id, username')->order('id desc, logintime desc')->select();
     }
 
     public function getUserList($company_id = 0)
