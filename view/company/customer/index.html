@@ -67,6 +67,7 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 分配客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
                 <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
@@ -74,6 +75,7 @@
 
             <script type="text/html" id="barDemo">
                 <button type="button" class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></button>
+                <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i></button>
             </script>
         </div>
 
@@ -136,7 +138,7 @@
                     }},
                 {field: 'last_calltime', title: '最近呼叫', align: "center"},
                 {field: 'createtime', title: '创建时间', align: "center"},
-                {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 80}
+                {fixed: 'right', title: '操作', toolbar: '#barDemo', width: 100}
             ]],
             page: {
                 limits: [15, 30, 45, 60, 90, 150, 300, 600, 900, 1500],

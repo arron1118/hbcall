@@ -27,7 +27,7 @@ class User extends \think\Model
 
     public function getTestEndtimeAttr($value)
     {
-        return getDateFormatInfo($value);
+        return date($this->getDateFormat(), $value);
     }
 
     protected function getStatusList()

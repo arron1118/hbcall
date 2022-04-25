@@ -129,13 +129,54 @@
             form = layui.form;
 
         let frameIndex = parent.layer.getFrameIndex(window.name);
-        let d = new Date();
+
+        let getDateTime = function (param = {}) {
+            let defaultParam = {
+                year: 0,
+                month: 0,
+                day: 0,
+                hour: 0,
+                minute: 0,
+                second: 0
+            };
+            param = Object.assign(defaultParam, param)
+            let d = new Date();
+            let year = d.getFullYear() + param.year,
+                month = d.getMonth() + 1 + param.month,
+                day = d.getDate() + param.day,
+                hour = d.getHours() + param.hour,
+                minute = d.getMinutes() + param.minute,
+                second = d.getSeconds() + param.second;
+
+            if (month < 10) {
+                month = '0' + month;
+            }
+
+            if (day < 10) {
+                day = '0' + day;
+            }
+
+            if (hour < 10) {
+                hour = '0' + hour;
+            }
+
+            if (minute < 10) {
+                minute = '0' + minute;
+            }
+
+            if (second < 10) {
+                second = '0' + second;
+            }
+
+            return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
+        }
+
         // 时间限制为现在
-        let minDate = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDay() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+        let minDate = getDateTime();
         laydate.render({
             elem: '#testEndTime',
             type: 'datetime',
-            // min: minDate
+            min: minDate
         })
         form.on('switch(testFilter)', function (obj) {
             let endtimeItem = $('.test-endtime')
