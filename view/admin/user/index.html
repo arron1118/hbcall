@@ -137,15 +137,14 @@
                 {field: 'payment_sum', title: '充值', align: 'center', sort: true},
                 {field: 'expense', title: '总消费', align: 'center', sort: true},
                 {field: 'logintime', title: '最后登录', align: "center", width: 180},
-                {field: 'test_endtime', title: '到期日期', align: "center", width: 180},
                 {
                     field: 'status', title: '试用', align: "center", templet: function (row) {
                         return row.is_test
                     }
                 },
+                {field: 'test_endtime', title: '到期日期', align: "center", width: 180},
                 {
                     field: 'status', title: '状态', align: "center", templet: function (row) {
-                        // return `<span class="${row.status === '正常' ? 'text-info' : 'text-danger'}">${row.status}</span>`
                         return `<input type="checkbox" name="status" value="${row.id}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" ${row.status === '正常' ? 'checked' : ''}>`
                     }
                 },
@@ -238,19 +237,6 @@
                 layer.msg(res.msg, option)
             })
         }
-        // form.on('switch(tryFilter)', function (obj) {
-        //     let status = obj.elem.checked ? 1 : 0;
-        //     let params = { id: obj.value, status: status };
-        //     if (!status) {
-        //         parent.layer.confirm('禁止后，该账号下的所有拨号账号将无法正常使用', { icon: 3, title: '提示' }, function (index) {
-        //             updateUserField(params)
-        //             parent.layer.close(index)
-        //         })
-        //     } else {
-        //         updateUserField(params)
-        //     }
-        //
-        // })
         form.on('switch(statusFilter)', function (obj) {
             let status = obj.elem.checked ? 1 : 0;
             let params = {id: obj.value, status: status};
@@ -262,7 +248,6 @@
             } else {
                 updateUserField(params)
             }
-
         })
 
         // 单元格编辑
@@ -276,11 +261,6 @@
                 layer.msg(res.msg, option)
             })
         });
-
-        //监听表格复选框选择
-        // table.on('checkbox(currentTableFilter)', function (obj) {
-        //     console.log('pi',obj)
-        // });
 
         table.on('tool(currentTableFilter)', function (obj) {
             switch (obj.event) {

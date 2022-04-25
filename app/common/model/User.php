@@ -27,12 +27,12 @@ class User extends \think\Model
 
     public function getTestEndtimeAttr($value)
     {
-        return date($this->getDateFormat(), $value);
+        return $value ? date($this->getDateFormat(), $value) : '';
     }
 
-    protected function getStatusList()
+    public function getStatusList()
     {
-        return [0 => '禁止登录', 1 => '正常'];
+        return ['-1' => '全部', '禁止', '正常'];
     }
 
     public function getIsTestAttr($value)
@@ -40,9 +40,9 @@ class User extends \think\Model
         return $this->getTestList()[$value];
     }
 
-    protected function getTestList()
+    public function getTestList()
     {
-        return [0 => '否', 1 => '是'];
+        return ['-1' => '全部', '否', '是'];
     }
 
     public function company()

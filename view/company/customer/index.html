@@ -185,23 +185,44 @@
                         content: '{:url("/customer/edit")}?customerId=' + editId
                     });
                     break;
+                case 'delete':
+                    layer.confirm('确定删除么？', { title: '温馨提示' }, function () {
+                        $.post('{:url("/customer/del")}', { id: editId }, function (res) {
+                            if (res.code === 1) {
+                                option.icon = 1;
+                                reloadTable()
+                            }
+
+                            layer.msg(res.msg, option);
+                        })
+                    })
+                    break;
             }
         });
 
         table.on('toolbar(currentTableFilter)', function (obj) {
             let checkStatus = table.checkStatus('customerTable').data;
             let ids = '';
+
+            if (['distribution', 'changeCate', 'delete'].includes(obj.event)) {
+                let temp = [];
+                if (checkStatus.length <= 0) {
+                    layer.msg('请选择客户', option);
+                    return false;
+                }
+
+                $.each(checkStatus, (index, item) => {
+                    temp.push(item.id)
+                })
+
+                if (temp.length > 0) {
+                    ids = temp.join(',')
+                }
+            }
+
             switch (obj.event) {
                 case 'distribution':
-                    if (checkStatus.length <= 0) {
-                        layer.msg('请选择客户', option);
-                        return false;
-                    }
-
                     let userId = 0;
-                    $.each(checkStatus, (index, item) => {
-                        ids += ',' + item.id
-                    })
                     layer.open({
                         type: 1,
                         title: '选择用户',
@@ -241,15 +262,7 @@
                     });
                     break;
                 case 'changeCate':
-                    if (checkStatus.length <= 0) {
-                        layer.msg('请选择客户', option);
-                        return false;
-                    }
-
                     let cateId = 0;
-                    $.each(checkStatus, (index, item) => {
-                        ids += ',' + item.id
-                    })
                     layer.open({
                         type: 1,
                         title: '选择分类',
@@ -307,6 +320,18 @@
                         title: '添加',
                         area: ['100%', '100%'],
                         content: '{:url("/customer/add")}'
+                    });
+                    break;
+                case 'delete':
+                    layer.confirm('确定删除么？', { title: '温馨提示' }, function () {
+                        $.post('{:url("/customer/del")}', { id: ids }, function (res) {
+                            if (res.code === 1) {
+                                option.icon = 1;
+                                reloadTable()
+                            }
+
+                            layer.msg(res.msg, option);
+                        })
                     });
                     break;
             }

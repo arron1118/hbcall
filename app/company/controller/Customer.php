@@ -4,9 +4,12 @@ namespace app\company\controller;
 
 use app\common\model\Customer as CustomerModel;
 use think\db\exception\DbException;
+use app\common\traits\CustomerTrait;
 
 class Customer extends \app\common\controller\CompanyController
 {
+    use CustomerTrait;
+
     public function initialize()
     {
         parent::initialize();

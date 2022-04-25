@@ -4,9 +4,12 @@ namespace app\home\controller;
 
 use app\common\model\Customer as CustomerModel;
 use app\common\model\CustomerRecord as CustomerRecordModel;
+use app\common\traits\CustomerTrait;
 
 class Customer extends \app\common\controller\HomeController
 {
+    use CustomerTrait;
+
     public function initialize()
     {
         parent::initialize();
@@ -126,20 +129,6 @@ class Customer extends \app\common\controller\HomeController
         $this->view->assign('customer', $customer);
 
         return $this->view->fetch();
-    }
-
-    public function del($id)
-    {
-        if ($this->request->isPost()) {
-            $this->returnData['msg'] = '删除失败';
-            if ($id > 0) {
-                CustomerModel::destroy($id);
-                $this->returnData['code'] = 1;
-                $this->returnData['msg'] = '删除成功';
-            }
-
-            return json($this->returnData);
-        }
     }
 
 }

@@ -59,6 +59,7 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
                 <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
             </script>
@@ -200,13 +201,15 @@
                     });
                     break;
                 case 'del':
-                    $.post('{:url("/customer/del")}', { id: editId }, function (res) {
-                        if (res.code === 1) {
-                            option.icon = 1;
-                            reloadTable()
-                        }
+                    layer.confirm('确定删除么？', { title: '温馨提示' }, function () {
+                        $.post('{:url("/customer/del")}', { id: editId }, function (res) {
+                            if (res.code === 1) {
+                                option.icon = 1;
+                                reloadTable()
+                            }
 
-                        layer.msg(res.msg, option);
+                            layer.msg(res.msg, option);
+                        })
                     })
                     break;
             }
@@ -215,6 +218,23 @@
         table.on('toolbar(currentTableFilter)', function (obj) {
             let checkStatus = table.checkStatus('customerTable').data;
             let ids = '';
+
+            if (['changeCate', 'delete'].includes(obj.event)) {
+                let temp = [];
+                if (checkStatus.length <= 0) {
+                    layer.msg('请选择客户', option);
+                    return false;
+                }
+
+                $.each(checkStatus, (index, item) => {
+                    temp.push(item.id)
+                })
+
+                if (temp.length > 0) {
+                    ids = temp.join(',')
+                }
+            }
+
             switch (obj.event) {
                 case 'add':
                     layer.open({
@@ -240,15 +260,7 @@
                     $('#importExcel').click();
                     break;
                 case 'changeCate':
-                    if (checkStatus.length <= 0) {
-                        layer.msg('请选择客户', option);
-                        return false;
-                    }
-
                     let cateId = 0;
-                    $.each(checkStatus, (index, item) => {
-                        ids += ',' + item.id
-                    })
                     layer.open({
                         type: 1,
                         title: '选择分类',
@@ -287,6 +299,18 @@
                                 })
                             })
                         }
+                    });
+                    break;
+                case 'delete':
+                    layer.confirm('确定删除么？', { title: '温馨提示' }, function () {
+                        $.post('{:url("/customer/del")}', { id: ids }, function (res) {
+                            if (res.code === 1) {
+                                option.icon = 1;
+                                reloadTable()
+                            }
+
+                            layer.msg(res.msg, option);
+                        })
                     });
                     break;
             }

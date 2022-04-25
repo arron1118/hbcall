@@ -6,4 +6,14 @@
 <script src="__STATIC__/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
 <script src="__STATIC__/lib/layui_exts/excel.js"></script>
 
-
+<script>
+    $.ajaxSetup({
+        statusCode: {
+            200: function (data) {
+                if (data.code === 5003) {
+                    window.location.href = data.url
+                }
+            }
+        }
+    })
+</script>

@@ -16,6 +16,10 @@ class Check
         if (!in_array($request->action(), $this->noNeedLogin)) {
             $token = $request->cookie('hbcall_admin_token');
             if (!$this->checkToken($token)) {
+                if ($request->isAjax()) {
+                    return json(['url' => (string) url('/index/login', [], true, true), 'code' => 5003]);
+                }
+
                 return redirect((string) url('/index/login'));
             }
         }

@@ -5,10 +5,7 @@ namespace app\company\controller;
 
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
-use app\company\model\Company;
 use app\common\model\User as UserModel;
-use think\facade\Session;
-use function Composer\Autoload\includeFile;
 
 class User extends \app\common\controller\CompanyController
 {
@@ -16,6 +13,8 @@ class User extends \app\common\controller\CompanyController
 
     public function index()
     {
+        $this->view->assign('isTestList', (new UserModel())->getTestList());
+        $this->view->assign('statusList', (new UserModel())->getStatusList());
         return $this->view->fetch();
     }
 
@@ -26,9 +25,14 @@ class User extends \app\common\controller\CompanyController
             $limit = (int) $this->request->param('limit', 10);
             $username = $this->request->param('username', '');
             $phone = $this->request->param('phone', '');
+            $is_test = (int) $this->request->param('is_test', -1);
             $map = [
                 ['company_id', '=', $this->userInfo->id]
             ];
+
+            if ($is_test !== -1) {
+                $map[] = ['is_test', '=', $is_test];
+            }
 
             if ($username) {
                 $map[] = ['username', 'like', '%' . $username . '%'];
@@ -41,6 +45,7 @@ class User extends \app\common\controller\CompanyController
             $userList = UserModel::with(['userXnumber' => ['numberStore']])
                 ->hidden(['password', 'salt'])
                 ->withCount('callHistory')
+                ->withCount('customer')
                 ->withSum('expense', 'cost')
                 ->where($map)
                 ->order('id desc, logintime desc')
@@ -236,6 +241,25 @@ class User extends \app\common\controller\CompanyController
     protected function getAxbNumber($id)
     {
         return NumberStore::where('id', $id)->value('number');
+    }
+
+    public function updateUser()
+    {
+        if ($this->request->isPost()) {
+            $this->returnData['msg'] = '更新失败';
+            if ($this->request->has('id')) {
+                $param = $this->request->param();
+                $user = UserModel::find($param['id']);
+                if ($user->save($param)) {
+                    $this->returnData['msg'] = '更新成功';
+                    $this->returnData['code'] = 1;
+                }
+            }
+
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
     }
 
     public function profile()
