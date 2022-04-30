@@ -1,6 +1,6 @@
-{extend name="public/base" /}
+{extend name="../common/public/base" /}
 {block name="css"}
-    {include file="public/bootstrap" /}
+    {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
 <div class="container-fluid">
@@ -18,7 +18,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">发布时间</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="time" class="layui-input" id="newsTitle" placeholder=""
+                            <input type="text" name="time" class="layui-input" id="newsDate" placeholder=""
                                    autocomplete="off">
                         </div>
                     </div>
@@ -28,9 +28,6 @@
                                 lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
                         </button>
                     </div>
-                    <div class="layui-inline">
-                        <div class="layui-btn" id="importExcel"><i class="fa fa-file-import"></i> 批量导入</div>
-                    </div>
                 </div>
             </form>
         </div>
@@ -38,15 +35,28 @@
 </div>
 <div class="layuimini-container">
     <div class="layuimini-main">
+        <button class="layui-btn layui-btn-sm d-none" id="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
         <script type="text/html" id="toolbarNews">
             <div class="layui-btn-container">
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 发布</button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="fa fa-trash-can"></i> 删除</button>
+                <button class="layui-btn layui-btn-sm" lay-event="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="fa fa-trash-can"></i> 热量删除</button>
             </div>
         </script>
 
-        <table class="layui-hide" id="newsTableId" lay-filter="newsTableFilter" lay-even
-               lay-data="{id: 'newsTableFilter'}"></table>
+        <table class="layui-table" id="newsTableId" lay-filter="newsTableFilter" lay-even lay-data="">
+            <thead>
+                <tr>
+                    <th lay-data="{type: 'checkbox', width: 50}"></th>
+                    <th lay-data="{field: 'id', title: 'ID', width: 100}"></th>
+                    <th lay-data="{field: 'title', title: '标题'}"></th>
+                    <th lay-data="{field: 'is_top', title: '置顶', align: 'center'}"></th>
+                    <th lay-data="{field: 'view', title: '查看', align: 'center'}"></th>
+                    <th lay-data="{field: 'update_time', title: '更新时间', align: 'center'}"></th>
+                    <th lay-data="{title: '操作', width: 100, toolbar: '#newsTableBar', align: 'center'}"></th>
+                </tr>
+            </thead>
+        </table>
 
         <script type="text/html" id="newsTableBar">
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i> </a>
@@ -69,8 +79,34 @@
             table = layui.table;
 
         laydate.render({
-            elem: '#newsTitle'
+            elem: '#newsDate'
         });
+
+        table.init('newsTableFilter', {
+            url: '{:url("/news/index")}',
+            id: 'newsTable',
+            toolbar: '#toolbarNews',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.data,
+                    'count': res.count
+                }
+            },
+            page: {
+                limits: [15, 30, 45, 60],
+                limit: 15,
+            },
+            skin: 'line',
+            even: true,
+        })
 
         upload.render({
             elem: '#importExcel',
@@ -182,45 +218,9 @@
             }
         }
 
-        table.render({
-            elem: '#newsTableId',
-            url: '{:url("/news/index")}',
-            id: 'newsTable',
-            toolbar: '#toolbarNews',
-            defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            //异步请求，格式化数据
-            parseData: function (res) {
-                return {
-                    'code': 0,
-                    'msg': '',
-                    'data': res.data,
-                    'count': res.count
-                }
-            },
-            cols: [[
-                {type: "checkbox", width: 50},
-                {field: 'title', title: '标题'},
-                {field: 'is_top', title: '置顶', align: 'center'},
-                {field: 'view', title: '查看', align: "center"},
-                {field: 'update_time', title: '更新时间', align: "center"},
-                {title: '操作', minWidth: 150, toolbar: '#newsTableBar', align: "center"}
-            ]],
-            page: {
-                limits: [15, 30, 45, 60],
-                limit: 15,
-            },
-            skin: 'line',
-            even: true,
-        });
-
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             let params = JSON.stringify(data.field);
-            console.log(params);
             //todo
             //执行搜索重载
             table.reload('newsTable', {
@@ -238,69 +238,76 @@
          */
         // 表头
         table.on('toolbar(newsTableFilter)', function (obj) {
-            if (obj.event === 'add') {
-                let index = layer.open({
-                    title: '发布新闻',
-                    type: 2,
-                    shade: 0.2,
-                    maxmin: true,
-                    shadeClose: true,
-                    area: ['100%', '100%'],
-                    content: '{:url("/news/add")}',
-                });
-                //???
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
-            } else if (obj.event === 'delete') {  // 监听删除操作
-                let checkStatus = table.checkStatus('newsTable'),
-                    data = checkStatus.data;
-                if (data.length < 1) {
-                    layer.msg('请勾选需要删除的数据');
-                    return false;
-                }
-
-                let ids = [];
-                $(data).each(function (i) {
-                    ids.push(data[i].id);
-                });
-
-                layer.confirm('删除 ' + data.length + ' 条数据？确定么', function (index) {
-                    $.post("{:url('/news/delete')}", {ids: ids}, function (res) {
-                        layer.msg(res.msg, {icon: 6});
-                        layer.close(index);
-
-                        table.reload('newsTable');
+            switch (obj.event) {
+                case 'add':
+                    let index = layer.open({
+                        title: '发布新闻',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin: true,
+                        shadeClose: true,
+                        area: ['100%', '100%'],
+                        content: '{:url("/news/add")}',
                     });
-                });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    break;
+                case 'importExcel':
+                    $('#importExcel').click();
+                    break;
+                case 'delete':  // 监听删除操作
+                    let checkStatus = table.checkStatus('newsTable'),
+                        data = checkStatus.data;
+                    if (data.length < 1) {
+                        layer.msg('请勾选需要删除的数据');
+                        return false;
+                    }
+
+                    let ids = [];
+                    $(data).each(function (i) {
+                        ids.push(data[i].id);
+                    });
+
+                    layer.confirm('删除 ' + data.length + ' 条数据？确定么', function (index) {
+                        $.post("{:url('/news/delete')}", {ids: ids}, function (res) {
+                            layer.msg(res.msg, {icon: 6});
+                            layer.close(index);
+
+                            table.reload('newsTable');
+                        });
+                    });
+                    break;
             }
         });
 
         //表内
         table.on('tool(newsTableFilter)', function (obj) {
-            if (obj.event === 'edit') {
-                let index = layer.open({
-                    title: '编辑新闻',
-                    type: 2,
-                    shade: 0.2,
-                    maxmin: true,
-                    shadeClose: true,
-                    area: ['100%', '100%'],
-                    content: '{:url("/news/edit")}?id=' + obj.data.id,
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
-            } else if (obj.event === 'del') {
-                layer.confirm('真的删除这条数据么', function (index) {
-                    $.post("{:url('/news/delete')}", {ids: obj.data.id}, function (res) {
-                        layer.msg(res.msg, {icon: 6});
+            switch (obj.event) {
+                case 'edit':
+                    let index = layer.open({
+                        title: '编辑新闻',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin: true,
+                        shadeClose: true,
+                        area: ['100%', '100%'],
+                        content: '{:url("/news/edit")}?id=' + obj.data.id,
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    break;
+                case 'del':
+                    layer.confirm('真的删除这条数据么', function (index) {
+                        $.post("{:url('/news/delete')}", {ids: obj.data.id}, function (res) {
+                            layer.msg(res.msg, {icon: 6});
 
-                        obj.del();
-                        layer.close(index);
-                    })
-
-                });
+                            obj.del();
+                            layer.close(index);
+                        })
+                    });
+                    break;
             }
         });
 

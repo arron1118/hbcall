@@ -2,10 +2,9 @@
 
 namespace app\common\model;
 
-use app\company\model\Company;
-use app\common\model\CustomerRecord;
+use \think\Model;
 
-class Customer extends \think\Model
+class Customer extends Model
 {
     public function getCreatetimeAttr($value)
     {
@@ -47,7 +46,7 @@ class Customer extends \think\Model
 
     public function company()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Company::class)->bind(['corporation']);
     }
 
     public function callHistory()

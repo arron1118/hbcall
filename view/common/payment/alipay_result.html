@@ -1,0 +1,33 @@
+{extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="container h-100">
+    <div class="row justify-content-center align-items-center text-center">
+        <div class="col-3 me-2">
+            <h6 class="">ok</h6>
+        </div>
+        <!--<div class="col-3" >
+             <h6 class="">支付宝支付</h6>
+            <img src="/static/images/xiaoqiang.png">
+        </div>-->
+    </div>
+</div>
+
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['jquery', 'table'], function () {
+        let $ = layui.jquery,
+            table = layui.table;
+
+        let FrameIndex = parent.layer.getFrameIndex(window.name);
+        parent.layui.table.reload('paymentTable');
+        parent.layer.close(FrameIndex);
+
+    });
+</script>
+
+{/block}

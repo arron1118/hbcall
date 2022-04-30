@@ -1,6 +1,6 @@
-{extend name="public/base" /}
+{extend name="../common/public/base" /}
 {block name="css"}
-{include file="public/bootstrap" /}
+{include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
 <div class="container-fluid">
@@ -72,15 +72,69 @@
                     class="fa fa-plus"></i> 开通账号
             </button>
             <span class="ms-3 text-secondary">注：点击'已开通用户'列可查看用户列表内容</span>
-            <!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
         </script>
-   <div>
-       <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
-   </div>
+        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="{
+            url: '{:url(\"/user/getUserList\")}',
+            id: 'userTable',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            page: {
+                limits: [15, 30, 45, 60],
+                limit: 15,
+            },
+            skin: 'line',
+            even: true,
+        }">
+            <thead>
+            <tr>
+                <th lay-data="{field: 'id', title: '编号', width: 100, fixed: 'left'}"></th>
+                <th lay-data="{field: 'username', title: '账号', fixed: 'left'}"></th>
+                <th lay-data="{field: 'ration', title: '座席', align: 'center', edit: 'text'}"></th>
+                <th lay-data="{field: 'limit_user', title: '限制用户数量', align: 'center', edit: 'text', sort: true}"></th>
+                <th lay-data="{field: 'user_count', title: '已开通用户', align: 'center', sort: true, event: 'checkUserList', style: 'cursor: pointer;', templet: '#hasUser'}"></th>
+                <th lay-data="{field: 'rate', title: '费率(￥/元)', align: 'center', edit: 'text', sort: true}"></th>
+                <th lay-data="{field: 'balance', title: '余额(￥/元)', align: 'center', sort: true, templet: '#balance'}"></th>
+                <th lay-data="{field: 'payment_sum', title: '充值', align: 'center', sort: true}"></th>
+                <th lay-data="{field: 'expense', title: '总消费', align: 'center', sort: true}"></th>
+                <th lay-data="{field: 'logintime', title: '最后登录', align: 'center', width: 180}"></th>
+                <th lay-data="{field: 'is_test', title: '试用', align: 'center'}"></th>
+                <th lay-data="{field: 'test_endtime', title: '到期日期', align: 'center', width: 180}"></th>
+                <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#status'}"></th>
+                <th lay-data="{title: '操作', width: 150, toolbar: '#currentTableBar', align: 'center', fixed: 'right'}"></th>
+            </tr>
+            </thead>
+        </table>
+        <script type="text/html" id="balance">
+            {{# if (d.balance < 0) { }}
+                <div class="layui-bg-red">{{d.balance}}</div>
+            {{# } else { }}
+            {{d.balance}}
+            {{# } }}
+        </script>
+        <script type="text/html" id="hasUser">
+            <span class="text-primary" title="点击查看用户列表">{{d.user_count}}</span>
+        </script>
+        <script type="text/html" id="status">
+            {{# if(d.status === '正常') { }}
+            <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" checked>
+            {{# } else { }}
+            <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter">
+            {{# } }}
+        </script>
         <script type="text/html" id="currentTableBar">
-<!--            <a class="layui-btn layui-btn-xs" lay-event="checkUserList" title="查看用户列表">-->
-<!--                <i class="fa fa-users"></i>-->
-<!--            </a>-->
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑">
                 <i class="fa fa-user-edit"></i>
             </a>
@@ -99,64 +153,6 @@
         let $ = layui.jquery,
             form = layui.form,
             table = layui.table;
-        table.render({
-            elem: '#currentTableId',
-            url: '{:url("/user/getUserList")}',
-            id: 'userTable',
-            toolbar: '#toolbarDemo',
-            defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            //异步请求，格式化数据
-            parseData: function (res) {
-                return {
-                    'code': 0,
-                    'msg': '',
-                    'data': res.rows,
-                    'count': res.total
-                }
-            },
-            cols: [[
-                // {type: "checkbox", width: 50, fixed: 'left'},
-                {field: 'id', title: '编号', width: 100, fixed: 'left'},
-                {field: 'username', title: '账号', fixed: 'left'},
-                // {field: 'number', title: '已使用小号', align: "center", width: 140},
-                {field: 'ration', title: '座席', align: "center", edit: 'text'},
-                {field: 'limit_user', title: '限制用户数量', align: "center", edit: 'text', sort: true},
-                {field: 'user_count', title: '已开通用户', align: "center", sort: true, event: 'checkUserList', style: 'cursor: pointer;', templet (row) {
-                    return '<span class="text-primary" title="点击查看用户列表">' + row.user_count + '</span>';
-                    }},
-                {field: 'rate', title: '费率(￥/元)', align: "center", edit: 'text', sort: true},
-                {
-                    field: 'balance', title: '余额(￥/元)', align: "center", sort: true, templet: function (row) {
-                        return row.balance < 0 ? '<div class="layui-bg-red">' + row.balance + '</div>' : row.balance;
-                    }
-                },
-                {field: 'payment_sum', title: '充值', align: 'center', sort: true},
-                {field: 'expense', title: '总消费', align: 'center', sort: true},
-                {field: 'logintime', title: '最后登录', align: "center", width: 180},
-                {
-                    field: 'status', title: '试用', align: "center", templet: function (row) {
-                        return row.is_test
-                    }
-                },
-                {field: 'test_endtime', title: '到期日期', align: "center", width: 180},
-                {
-                    field: 'status', title: '状态', align: "center", templet: function (row) {
-                        return `<input type="checkbox" name="status" value="${row.id}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" ${row.status === '正常' ? 'checked' : ''}>`
-                    }
-                },
-                {title: '操作', width: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
-            ]],
-            page: {
-                limits: [15, 30, 45, 60],
-                limit: 15,
-            },
-            skin: 'line',
-            even: true,
-        });
 
         let reloadTable = function (params = {}) {
             //执行搜索重载
@@ -291,7 +287,7 @@
                     break;
                 case 'delete':
                     layer.confirm('删除账号后，其账号下所有关联账号将全部删除', function (index) {
-                        $.post("{:url('/User/del')}", { id: obj.data.id }, function (res) {
+                        $.post("{:url('/User/del')}", {id: obj.data.id}, function (res) {
                             layer.close(index);
                             let option = {icon: 0};
                             if (res.code === 1) {

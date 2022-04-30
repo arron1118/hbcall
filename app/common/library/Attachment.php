@@ -9,7 +9,6 @@ use think\exception\FileException;
 use think\facade\Config;
 use think\facade\Filesystem;
 use app\common\model\Attachment as AttachmentModel;
-use think\facade\Session;
 
 class Attachment
 {

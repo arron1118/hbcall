@@ -1,12 +1,8 @@
 <?php
 
-
 namespace app\admin\controller;
 
-
 use think\db\exception\DbException;
-use think\facade\Config;
-use think\facade\Session;
 
 class News extends \app\common\controller\AdminController
 {

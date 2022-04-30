@@ -1,0 +1,75 @@
+
+<script src="__STATIC__/lib/layui-v2.6.8/layui.js" charset="utf-8"></script>
+<script src="__STATIC__/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+<script src="__STATIC__/js/lay-config.js?v=2.0.0" charset="utf-8"></script>
+<script src="__STATIC__/lib/bootstrap/js/bootstrap.bundle.min.js" charset="utf-8"></script>
+<script src="__STATIC__/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
+<script src="__STATIC__/lib/layui_exts/excel.js"></script>
+<script src="__STATIC__/js/utils.js"></script>
+
+<script>
+    $.ajaxSetup({
+        statusCode: {
+            200: function (data) {
+                if (data.code === 5003) {
+                    window.location.href = data.url
+                }
+            }
+        }
+    })
+</script>
+
+{if (in_array($module, ['company', 'home']))}
+
+<script>
+    layui.use(['jquery', 'layer'], function () {
+        let $ = layui.jquery,
+            layer = layui.layer;
+
+        let balance = parseInt(utils.cookie('balance'));
+
+        // 提醒信息
+        let tipIndex = null;
+        let tips = function () {
+            tipIndex = layer.config({
+                extend: 'skin/red.css',
+            }).open({
+                type: 1,
+                title: '温馨提示',
+                content: '<div style="padding: 30px 20px;">您的余额已经不足，请联系管理员及时充值！</div>',
+                offset: 'rt',
+                shade: false,
+                closeBtn: 1,
+                skin: 'layer-ext-red'
+            });
+        }
+
+        // 定时弹窗提醒
+        let time = 3600 * 1000, interval = null, intervalCheck = null;
+        let check = function () {
+            if (parseInt(utils.cookie('balance')) > 0) {
+                clearInterval(intervalCheck);
+                clearInterval(interval);
+                layer.close(tipIndex)
+            }
+        };
+
+        if (isNaN(balance)) {
+            intervalCheck = setInterval(function () {
+                check();
+            }, time);
+        }
+
+        if (balance <= 0) {
+            if (!utils.cookie('balance_tips')) {
+                tips();
+                utils.cookie('balance_tips', 1);
+
+                interval = setInterval(function () {
+                    tips();
+                }, time);
+            }
+        }
+    })
+</script>
+{/if}

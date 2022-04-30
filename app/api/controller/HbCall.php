@@ -6,10 +6,6 @@ namespace app\api\controller;
 
 use app\common\model\CallHistory;
 use app\common\model\Expense;
-use app\company\model\Company;
-use Curl\Curl;
-use think\facade\Config;
-use think\facade\Db;
 use think\facade\Event;
 use app\common\traits\HbCallTrait;
 

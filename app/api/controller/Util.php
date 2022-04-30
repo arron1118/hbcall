@@ -5,7 +5,7 @@ namespace app\api\controller;
 
 
 use app\common\model\NumberStore;
-use app\company\model\Company;
+use app\common\model\Company;
 use think\db\exception\PDOException;
 
 class Util extends \app\common\controller\ApiController

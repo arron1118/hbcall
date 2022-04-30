@@ -1,0 +1,276 @@
+{extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="container-fluid">
+    <div class="row rounded mb-3 shadow-sm bg-white">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
+                <div class="layui-form-item">
+                    {if ($module === 'admin')}
+                    <div class="layui-inline">
+                        <label class="layui-form-label">充值方</label>
+                        <div class="layui-input-inline">
+                            <select name="company_id" lay-filter="corporationFilter">
+                                <option value="0">全部</option>
+                                {foreach $company as $key => $val}
+                                <option value="{$val.id}">{$val.corporation}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="layui-inline">
+                        <label class="layui-form-label">充值方式</label>
+                        <div class="layui-input-inline">
+                            <select name="pay_type" lay-filter="payTypeFilter">
+                                {foreach $payTypeList as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">支付状态</label>
+                        <div class="layui-input-inline">
+                            <select name="status" lay-filter="payStateFilter">
+                                {foreach $statusList as $key => $val}
+                                <option value="{$key}">{$val}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" id="datetime">
+                        <label class="layui-form-label">充值时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="startDate" autocomplete="off" id="startDate"
+                                   class="layui-input" placeholder="开始日期">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input"
+                                   placeholder="结束日期">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">订单号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="payno" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit lay-filter="data-search-btn">
+                            <i class="fa fa-magnifying-glass"></i> 搜 索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary">
+                            <i class="fa fa-refresh"></i> 重 置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {if ($module === 'company')}
+    <div class="row rounded mb-3 shadow-sm bg-white">
+        <div class="col pt-3">
+            <form class="layui-form layui-form-pane" lay-filter="paymentForm" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">支付方式</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="pay_type" value="1" title="微信" checked="">
+                            <input type="radio" name="pay_type" value="2" title="支付宝">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">金额/元</label>
+                        <div class="layui-input-inline">
+                            <input type="number" min="0" name="money" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-money-btn">立即充值
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {/if}
+</div>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
+        <thead>
+            <tr>
+                <th lay-data="{field: 'id', title: 'ID', align: 'center', width: 100, fixed: 'left'}"></th>
+                <th lay-data="{field: 'payno', title: '订单号', align: 'center', width: 250}"></th>
+                <th lay-data="{field: 'title', title: '类型', align: 'center'}"></th>
+                <th lay-data="{field: 'corporation', title: '充值方', align: 'center'}"></th>
+                <th lay-data="{field: 'amount', title: '金额(￥)', align: 'center'}"></th>
+                <th lay-data="{field: 'create_time', title: '充值时间', align: 'center'}"></th>
+                <th lay-data="{field: 'pay_time', title: '支付时间', align: 'center'}"></th>
+                <th lay-data="{field: 'pay_type', title: '充值方式', align: 'center', templet: '#paymentType'}"></th>
+                <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#paymentStatus'}"></th>
+            </tr>
+        </thead>
+        </table>
+        <script type="text/html" id="paymentType">
+            {{# if (d.pay_type === '微信') { }}
+                <img width="20" src="__STATIC__/images/wepay-logo.png" title="{{d.pay_type}}" alt="{{d.pay_type}}" />
+            {{# } }}
+            {{# if (d.pay_type === '支付宝') { }}
+                <i class="fa-brands fa-alipay fs-4 text-primary" title="{{d.pay_type}}"></i>
+            {{# } }}
+        </script>
+
+        <script type="text/html" id="paymentStatus">
+            {{# if (d.status === '未支付') { }}
+                {if ($module === 'admin')}
+                <span class="text-warning">{{d.status}}</span>
+                {elseif ($module === 'company') /}
+                <span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>
+                {/if}
+            {{# } else if (d.status === '已关闭') { }}
+            <span class="text-danger">{{d.status}}</span>
+            {{# } else { }}
+            <span class="text-info">{{d.status}}</span>
+            {{# } }}
+        </script>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'table', 'jquery', 'laydate'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#datetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
+            done: function (value) {
+                let d = value.split(' - ')
+                let params = Object.assign({}, form.val('searchForm'), {startDate: d[0], endDate: d[1] ? d[1] : ''})
+                reloadTable(params)
+            }
+        });
+
+        table.init('currentTableFilter', {
+            id: 'paymentTable',
+            url: '{:url("/payment/getOrderList")}',
+            method: 'post',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            page: {
+                limits: [15, 20, 25, 30],
+                limit: 15
+            },
+            skin: 'line',
+            even: true,
+        })
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            if (obj.event === 'gopay') {
+                let payType = obj.data.pay_type === '微信' ? 1 : 2;
+                pay(payType, obj.data.amount, obj.data.payno);
+            }
+        })
+
+        // 监听操作
+        form.on('submit(data-search-btn)', function (data) {
+            if (data.field.corporation === '' && data.field.datetime === '') {
+                layer.msg('请输入搜索内容', {icon: 0})
+                return false
+            }
+            reloadTable(data.field)
+            return false;
+        });
+
+        form.on('submit(data-money-btn)', function (data) {
+            let result = data.field;
+            if (!result.money) {
+                layer.msg('请输入要充值的金额！', {icon: 0});
+                return false;
+            }
+
+            if (result.money <= 0) {
+                layer.msg('请输入正确的金额！', {icon: 0});
+                return false;
+            }
+
+            pay(result.pay_type, result.money);
+            return false;
+        });
+
+        // 支付页面
+        let pay = function (payType, amount, payNo = '') {
+            layer.open({
+                title: '支付',
+                type: 2,
+                area: ['100%', '100%'],
+                content: '{:url("/payment/pay")}?payType=' + payType + '&amount=' + amount + '&payno=' + payNo,
+                btn: false,
+                cancel: function (index, layero) {
+                    layer.close(index);
+                    table.reload('paymentTable');
+                }
+            });
+        }
+
+        form.on('select(payTypeFilter)', function (data) {
+            let params = [];
+            params[data.elem.name] = data.value
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
+        })
+        form.on('select(payStateFilter)', function (data) {
+            let params = [];
+            params[data.elem.name] = data.value
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
+        })
+        form.on('select(corporationFilter)', function (data) {
+            let params = [];
+            params[data.elem.name] = data.value
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
+        })
+
+        $('button[type=reset]').on('click', function (e) {
+            reloadTable({})
+        })
+
+        let reloadTable = function (params) {
+            table.reload('paymentTable', {
+                where: params,
+                page: {
+                    curr: 1
+                }
+            })
+        }
+    });
+</script>
+
+{/block}

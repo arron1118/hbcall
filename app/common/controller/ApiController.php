@@ -3,11 +3,9 @@
 
 namespace app\common\controller;
 
-use think\facade\Session;
 use app\common\model\User as UserModel;
-use app\company\model\Company as CompanyModel;
+use app\common\model\Company as CompanyModel;
 use app\common\library\Aes;
-use think\Response;
 
 class ApiController extends \app\BaseController
 {

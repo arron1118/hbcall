@@ -1,6 +1,6 @@
-{extend name="public/base" /}
+{extend name="../common/public/base" /}
 {block name="css"}
-{include file="public/bootstrap" /}
+{include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
 <div class="layuimini-container">
@@ -12,11 +12,43 @@
             </div>
         </script>
 
-        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
+        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="{
+            url: '{:url(\"/XnumberStore/getNumberList\")}',
+            id: 'XnumberStoreTable',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            page: {
+                limits: [15, 30, 45, 60],
+                limit: 15,
+            },
+            skin: 'line',
+            even: true,
+        }">
+            <thead>
+                <tr>
+                    <th lay-data="{field: 'id', align: 'center', width: 100}">ID</th>
+                    <th lay-data="{field: 'number', align: 'center', edit: 'text'}">号码</th>
+                    <th lay-data="{field: 'company_xnumber_count', align: 'center'}">企业使用情况</th>
+                    <th lay-data="{field: 'user_xnumber_count', align: 'center'}">用户使用情况</th>
+                </tr>
+            </thead>
+        </table>
 
         <script type="text/html" id="currentTableBar">
             <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
-            <!--            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
         </script>
 
     </div>
@@ -31,124 +63,40 @@
             form = layui.form,
             table = layui.table;
 
-        table.render({
-            elem: '#currentTableId',
-            url: '{:url("/XnumberStore/getNumberList")}',
-            id: 'XnumberStoreTable',
-            toolbar: '#toolbarDemo',
-            defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            //异步请求，格式化数据
-            parseData: function (res) {
-                return {
-                    'code': 0,
-                    'msg': '',
-                    'data': res.rows,
-                    'count': res.total
-                }
-            },
-            cols: [[
-                {field: 'number', title: '号码', align: 'center', edit: 'text'},
-                {field: 'company_xnumber_count', title: '企业使用情况', align: 'center'},
-                {field: 'user_xnumber_count', title: '用户使用情况', align: 'center'},
-            ]],
-            page: {
-                limits: [15, 30, 45, 60],
-                limit: 15,
-            },
-            skin: 'line',
-            even: true,
-        });
-
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            //执行搜索重载
-            table.reload('userTable', {
-                page: {
-                    curr: 1
-                },
-                where: data.field
-            });
-
-            return false
-        });
-
-        $('button[type="reset"]').on('click', function () {
-            table.reload('userTable', {
-                page: {
-                    curr: 1
-                },
-                where: {}
-            }, false)
-        })
-
-        //验证输入的是数字
-        function isPhoneNo(phone) {
-            let pattern = /^1[3456789]\d{9}$/;
-            return pattern.test(phone);
-        }
         /**
          * toolbar监听事件
          */
         let option = { icon: 0 };
         table.on('toolbar(currentTableFilter)', function (obj) {
-            if (obj.event === 'add') {  // 监听添加操作
-                layer.prompt({title: '输入号码'}, function (input, index) {
-                    if (input.length !== 11 || !isPhoneNo(input)) {
-                        layer.msg('请输入正确的号码', { icon: 2 });
-                        return false;
-                    }
-
-                    $.post('{:url("/XnumberStore/add")}', { number: input }, function (res) {
-                        if (res.code === 1) {
-                            option.icon = 1
-                            layer.close(index)
-                            table.reload('XnumberStoreTable', {
-                                page: {
-                                    curr: 1
-                                }
-                            });
+            switch (obj.event) {  // 监听添加操作
+                case 'add':
+                    layer.prompt({title: '输入号码'}, function (input, index) {
+                        if (input.length !== 11 || !utils.isPhone(input)) {
+                            layer.msg('请输入正确的号码', { icon: 2 });
+                            return false;
                         }
 
-                        layer.msg(res.msg, option)
-                    })
-                });
-            } else if (obj.event === 'delete') {  // 监听删除操作
-                let checkStatus = table.checkStatus('currentTableId'),
-                    data = checkStatus.data;
-                console.log(data);
-                if(data === '' || data === 'undefind'){
-                    layer.msg('请勾选需要删除的数据');
-                    return false;
-                }else{
-                    let ids=[],url='';
-                    $(data).each(function (i) {
-                        ids.push(data[i].id);
+                        $.post('{:url("/XnumberStore/add")}', { number: input }, function (res) {
+                            if (res.code === 1) {
+                                option.icon = 1
+                                layer.close(index)
+                                table.reload('XnumberStoreTable', {
+                                    page: {
+                                        curr: 1
+                                    }
+                                });
+                            }
+
+                            layer.msg(res.msg, option)
+                        })
                     });
-                    console.log(ids);
-                    $.post(url,ids,function () {
-                        //todo
-                    });
-                }
+                    break;
             }
         });
 
-        let updateUserField = function (param) {
-            $.post('{:url("/User/updateUser")}', param, function (res) {
-                if (res.code === 1) {
-                    option.icon = 1
-                }
-
-                layer.msg(res.msg, option)
-            })
-        }
-
         // 单元格编辑
         table.on('edit(currentTableFilter)', function (obj) {
-            if (obj.value.length !== 11 || !isPhoneNo(obj.value)) {
+            if (obj.value.length !== 11 || !utils.isPhone(obj.value)) {
                 layer.msg('请输入正确的号码', { icon: 2 });
                 return false;
             }
@@ -161,38 +109,6 @@
                 layer.msg(res.msg, option)
             })
         });
-
-        // table.on('tool(currentTableFilter)', function (obj) {
-        //     if (obj.event === 'edit') {
-        //         let index = layer.open({
-        //             title: '编辑账号',
-        //             type: 2,
-        //             shade: 0.2,
-        //             shadeClose: true,
-        //             anim: 2,
-        //             area: ['100%', '100%'],
-        //             content: '{:url("/user/edit")}?id=' + obj.data.id,
-        //         });
-        //         $(window).on("resize", function () {
-        //             layer.full(index);
-        //         });
-        //         return false;
-        //     } else if (obj.event === 'delete') {
-        //         console.log(obj);
-        //         console.log(obj.data.id);
-        //         let id = obj.data.id, url='';
-        //         layer.confirm('真的删除行么', function (index) {
-        //             $.post(url,id,function () {
-        //                 //todo
-        //                 obj.del();
-        //                 layer.close(index);
-        //             })
-        //
-        //         });
-        //     }
-        // });
-
-
     });
 </script>
 

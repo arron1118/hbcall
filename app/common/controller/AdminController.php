@@ -4,12 +4,11 @@
 namespace app\common\controller;
 
 use app\admin\model\Admin;
-use think\facade\Session;
 use think\facade\View;
 
 class AdminController extends \app\BaseController
 {
-    protected $middleware = [\app\admin\middleware\Check::class];
+    protected $middleware = [\app\common\middleware\Check::class];
 
     protected $view = null;
 
@@ -32,7 +31,6 @@ class AdminController extends \app\BaseController
         ];
 
         $this->view = View::instance();
-//        $this->view->engine()->layout('layout');
         $token = $this->request->cookie('hbcall_admin_token');
         if ($token) {
             $this->userInfo = Admin::where('token', $token)->find();

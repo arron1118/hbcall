@@ -1,6 +1,6 @@
-{extend name="public/base" /}
+{extend name="../common/public/base" /}
 {block name="css"}
-    {include file="public/bootstrap" /}
+    {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
 <div class="container-fluid">
@@ -37,33 +37,12 @@
     <div class="layuimini-main">
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
-
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加</button>
-<!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
             </div>
         </script>
 
-        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter" lay-even></table>
-
-        <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i> </a>
-        </script>
-
-    </div>
-</div>
-{/block}
-
-{block name="js"}
-<script>
-    layui.use(['form', 'table'], function () {
-        let $ = layui.jquery,
-            form = layui.form,
-            table = layui.table;
-
-        table.render({
-            elem: '#currentTableId',
-            url: '{:url("/user/getSubUserList", ["company_id" => $company_id])}',
+        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="{
+            url: '{:url(\"/user/getSubUserList\", [\"company_id\" => $company_id])}',
             id: 'userTable',
             toolbar: true,
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -80,23 +59,41 @@
                     'count': res.total
                 }
             },
-            cols: [[
-                {type: "checkbox", width: 50},
-                {field: 'username', title: '账号'},
-                {field: 'phone', title: '手机号', align: "center"},
-                {field: 'number', title: '小号', align: "center",},
-                {field: 'call_history_count', title: '呼叫总数', align: "center", sort: true },
-                {field: 'expense_sum', title: '总消费', align: "center", sort: true },
-                {field: 'logintime', title: '登录时间', align: "center"},
-                // {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
-            ]],
             page: {
                 limits: [10, 20, 30, 40],
                 limit: 10,
             },
             skin: 'line',
             even: true,
-        });
+        }">
+            <thead>
+            <tr>
+                <th lay-data="{field: 'id', title: 'ID'}"></th>
+                <th lay-data="{field: 'username', title: '账号'}"></th>
+                <th lay-data="{field: 'phone', title: '手机号', align: 'center'}"></th>
+                <th lay-data="{field: 'number', title: '小号', align: 'center',}"></th>
+                <th lay-data="{field: 'call_history_count', title: '呼叫总数', align: 'center', sort: true }"></th>
+                <th lay-data="{field: 'expense_sum', title: '总消费', align: 'center', sort: true }"></th>
+                <th lay-data="{field: 'logintime', title: '登录时间', align: 'center'}"></th>
+            </tr>
+            </thead>
+        </table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i> </a>
+        </script>
+
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    layui.use(['form', 'table'], function () {
+        let $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
 
         let search = function (params) {
             table.reload('userTable', {

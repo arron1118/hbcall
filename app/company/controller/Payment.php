@@ -6,7 +6,6 @@ namespace app\company\controller;
 use app\common\traits\PaymentTrait;
 use chillerlan\QRCode\QRCode;
 use think\facade\Config;
-use think\facade\Event;
 use Yansongda\Pay\Pay;
 
 class Payment extends \app\common\controller\CompanyController
@@ -17,30 +16,9 @@ class Payment extends \app\common\controller\CompanyController
     {
         parent::initialize();
 
-        $this->model = new \app\company\model\Payment();
-    }
-
-    public function index()
-    {
-        Event::trigger('Payment');
-        return $this->view->fetch();
-    }
-
-    /**
-     * 获取订单列表
-     * @return \think\response\Json
-     */
-    public function getOrderList()
-    {
-        if ($this->request->isPost()) {
-            $page = (int)$this->request->param('page', 1);
-            $limit = (int)$this->request->param('limit', 10);
-//            $total = $this->model->where('company_id', $this->userInfo->id)->count();
-//            $historyList = $this->model->where('company_id', $this->userInfo->id)->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
-            $total = $this->userInfo->payment()->count();
-            $historyList = $this->userInfo->payment()->order('id DESC')->limit(($page - 1) * $limit, $limit)->select();
-            return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
-        }
+        $this->model = new \app\common\model\Payment();
+        $this->view->assign('statusList', $this->model->getStatusList());
+        $this->view->assign('payTypeList', $this->model->getPayTypeList());
     }
 
     /**
@@ -69,10 +47,9 @@ class Payment extends \app\common\controller\CompanyController
         if ($payType === 1) {
             $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($data);
             $qr = (new QRCode())->render($pay->code_url);
-//        echo '<img src="' . $qr->render($pay->code_url) . '" />';
             $this->view->assign('payno', $data['out_trade_no']);
             $this->view->assign('qr', $qr);
-            return $this->view->fetch('payment/wxpay');
+            return $this->view->fetch('common@payment/wxpay');
         } else if ($payType === 2) {
             return Pay::alipay(Config::get('payment.alipay.web'))->web($data)->send();
         }
@@ -80,7 +57,6 @@ class Payment extends \app\common\controller\CompanyController
 
     public function alipayResult()
     {
-        return redirect(url('payment/index'));
-//        return $this->view->fetch();
+        return redirect(url('common@payment/index'));
     }
 }

@@ -2,7 +2,9 @@
 
 namespace app\common\model;
 
-class CustomerRecord extends \think\Model
+use \think\Model;
+
+class CustomerRecord extends Model
 {
     protected $autoWriteTimestamp = true;
 

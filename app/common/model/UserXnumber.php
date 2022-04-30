@@ -3,8 +3,9 @@
 
 namespace app\common\model;
 
+use \think\Model;
 
-class UserXnumber extends \think\Model
+class UserXnumber extends Model
 {
 
     public function user()

@@ -4,7 +4,7 @@
 namespace app\common\event;
 
 
-use app\company\model\Company;
+use app\common\model\Company;
 use Curl\Curl;
 use think\facade\Config;
 use think\facade\Request;
@@ -47,8 +47,6 @@ class CallHistory
         }
 
         $callList = $callList->order('id asc')->limit(100)->select();
-//        dump($callList);
-//        dump($HistoryModel->getLastSql());
         $returnData = ['total' => count($callList), 'success' => 0, 'error' => 0];
         if (!empty($callList)) {
             $curl = new Curl();
@@ -64,12 +62,8 @@ class CallHistory
                         'date' => $date
                     ]);
 
-//                    dump($curl->error_code);
-//                    dump($curl->error_message);
                     $response = json_decode($curl->response, true);
 
-//                    dump($val->toArray());
-//                    dump($response);
                     if (!is_null($response) && $response['code'] === 1000) {
                         $returnData['success'] += 1;
                         if (!empty($response['data'])) {
@@ -85,7 +79,6 @@ class CallHistory
                                 $val->releasecause = $response['data']['releasecause'];
                             }
 
-//                            $val->caller_number = $response['data']['callerNumber'];
                             $val->starttime = strtotime($response['data']['starttime']);
                             $val->releasetime = strtotime($response['data']['releasetime']);
                             $val->call_duration = $response['data']['callDuration'];
@@ -97,19 +90,6 @@ class CallHistory
                             }
 
                             $val->save();
-
-                            /*$temp['id'] = $val->id;
-                            $temp['callid'] = $response['data']['callid'];
-                            $temp['caller_number'] = $response['data']['callerNumber'];
-                            $temp['starttime'] = strtotime($response['data']['starttime']);
-                            $temp['releasetime'] = strtotime($response['data']['releasetime']);
-                            $temp['call_duration'] = $response['data']['callDuration'];
-                            $temp['finish_type'] = $response['data']['finishType'];
-                            $temp['finish_state'] = $response['data']['finishState'];
-                            $temp['releasecause'] = $response['data']['releasecause'];
-                            $temp['record_url'] = $response['data']['recordUrl'];
-                            $temp['status'] = 1;
-                            $news[] = $temp;*/
 
                             if ($response['data']['callDuration'] > 0) {
                                 // 添加消费记录
@@ -143,7 +123,6 @@ class CallHistory
 
             dump('总共：' . $returnData['total'] . ' 成功：' . $returnData['success'] . ' 失败：' . $returnData['error']);
 
-//            dump($news);
             if (!empty($news)) {
                 $HistoryModel->saveAll($news);
             }

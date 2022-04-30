@@ -1,6 +1,6 @@
-{extend name="public/base" /}
+{extend name="../common/public/base" /}
 {block name="css"}
-{include file="public/bootstrap" /}
+{include file="../common/public/bootstrap" /}
 <style>
     .lqp-hover:hover .card-img {
         transform: rotateY(90deg);
@@ -22,7 +22,7 @@
                                 </div>
                                 <div class="col-4">
                                     <div class="mb-4">账号：<span class="fw-bold">{$user.username}</span></div>
-                                    <div> 手机：<span class="fw-bold">***********</span></div>
+                                    <div> 手机：<span class="fw-bold">{$user.phone}</span></div>
                                 </div>
                             </div>
                         </div>
@@ -184,8 +184,6 @@
 
 {/block}
 {block name="js"}
-<script src="__STATIC__/js/jquery.rotate.js"></script>
-
 <script src="__STATIC__/lib/echarts/echarts.min.js"></script>
 <script>
     layui.use(['layer', 'miniTab'], function () {

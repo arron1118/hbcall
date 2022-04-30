@@ -57,6 +57,12 @@ abstract class BaseController
     protected $module = '';
 
     /**
+     * Token 过期时间
+     * @var float|int
+     */
+    protected $token_expire_time = 3600 * 24 * 7;
+
+    /**
      * 构造方法
      * @access public
      * @param  App  $app  应用对象
@@ -69,6 +75,8 @@ abstract class BaseController
         $this->agent = new Agent();
 
         $this->module = app('http')->getName();
+        $this->view->assign('module', $this->module);
+        $this->view->assign('app_name', config('app.app_name'));
 
         // 控制器初始化
         $this->initialize();

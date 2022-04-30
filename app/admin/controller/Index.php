@@ -3,20 +3,15 @@
 namespace app\admin\controller;
 
 use app\common\controller\AdminController;
-use app\admin\model\admin;
 use app\common\model\CallHistory;
-use app\company\model\Company;
-use app\company\model\Payment;
-use think\facade\Cookie;
+use app\common\model\Company;
+use app\common\model\Payment;
 use think\facade\Db;
-use think\facade\Session;
 use app\common\model\Expense;
 
 class Index extends AdminController
 {
     protected $lang = [];
-
-    protected $token_expire_time = 3600 * 24;
 
     public function initialize()
     {
@@ -36,7 +31,7 @@ class Index extends AdminController
 
     public function index()
     {
-        return $this->view->fetch();
+        return $this->view->fetch('common@index/index');
     }
 
     public function dashboard()
@@ -44,7 +39,7 @@ class Index extends AdminController
         $this->view->assign('totalPayment', Payment::where('status', 1)->sum('amount'));
         $this->view->assign(getCosts());
 
-        return $this->view->fetch();
+        return $this->view->fetch('common@index/dashboard');
     }
 
     public function getReport()
@@ -156,70 +151,6 @@ SQL;
         }
 
         return json($this->returnData);
-    }
-
-    public function login()
-    {
-        /*$salt = getRandChar(6);
-        $pwd = getEncryptPassword('123456', $salt);
-        dump($salt);
-        dump($pwd);*/
-        if ($this->userInfo && $this->userInfo->token_expire_time > time()) {
-            return redirect(url('/index'));
-        }
-
-        if ($this->request->isPost()) {
-            /*$check = $this->request->checkToken('__token__');
-            if(false === $check) {
-                $token = $this->request->buildToken();
-                return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
-            }*/
-
-            $param = $this->request->param();
-            $user = Admin::getByUsername($param['username']);
-            if (!$user) {
-                return json(['data' => [], 'msg' => lang('Account is incorrect'), 'code' => 0]);
-            }
-
-            if (!$user->getData('status')) {
-                return json(['data' => [], 'msg' => lang('Account is locked'), 'code' => 0]);
-            }
-
-            $password = getEncryptPassword($param['password'], $user->salt);
-            if ($password !== $user->password) {
-                return json(['data' => [], 'msg' => lang('Password is incorrect'), 'code' => 0]);
-            }
-
-            if (!captcha_check($param['captcha'])) {
-                return json(['data' => [], 'msg' => lang('Captcha is incorrect'), 'code' => 0]);
-            }
-
-            $now = time();
-            $user->prevtime = $user->getData('logintime');
-            $user->logintime = $now;
-            $user->loginip = $this->request->ip();
-            $user->token = createToken($password);
-            $user->token_expire_time = $now + $this->token_expire_time;
-            $user->device = $this->agent->device();
-            $user->platform = $this->agent->platform();
-            $user->platform_version = $this->agent->version($this->agent->platform());
-            $user->browser = $this->agent->browser();
-            $user->browser_version = $this->agent->version($this->agent->browser());
-            $user->save();
-
-            Cookie::set('hbcall_admin_token', $user->token);
-            Session::set('admin', $user->toArray());
-
-            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/index')]);
-        }
-        return $this->view->fetch();
-    }
-
-    public function logout()
-    {
-        Cookie::delete('hbcall_admin_token');
-        Session::delete('admin');
-        return redirect((string)url('/index/login'));
     }
 
 }

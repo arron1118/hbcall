@@ -2,9 +2,9 @@
 
 namespace app\common\model;
 
-use app\company\model\Company;
+use \think\Model;
 
-class CompanyXnumber extends \think\Model
+class CompanyXnumber extends Model
 {
     public function company()
     {

@@ -3,166 +3,17 @@
 
 namespace app\admin\controller;
 
-use chillerlan\QRCode\QRCode;
-use think\Collection;
-use think\facade\Config;
-use think\facade\Db;
-use think\facade\Event;
-use think\facade\Session;
-use think\response\Json;
-use Yansongda\Pay\Pay;
-use Yansongda\Pay\Exceptions\GatewayException;
-
+use app\common\traits\PaymentTrait;
 
 class Payment extends \app\common\controller\AdminController
 {
+    use PaymentTrait;
 
     public function initialize() {
         parent::initialize();
 
-        $this->model = new \app\company\model\Payment();
+        $this->model = new \app\common\model\Payment();
         $this->view->assign('statusList', $this->model->getStatusList());
         $this->view->assign('payTypeList', $this->model->getPayTypeList());
-    }
-
-    public function index()
-    {
-
-        Event::trigger('Payment');
-        return $this->view->fetch();
-    }
-
-    /**
-     * 获取订单列表
-     * @return \think\response\Json
-     */
-    public function getOrderList()
-    {
-        if ($this->request->isPost()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
-            $corporation = trim($this->request->param('corporation', ''));
-            $startDate = $this->request->param('startDate', '');
-            $endDate = $this->request->param('endDate', '');
-            $payType = (int) $this->request->param('pay_type', 0);
-            $status = (int) $this->request->param('status', -1);
-
-            $where = [];
-            if ($status !== -1) {
-                $where[] = ['status', '=', $status];
-            }
-
-            if ($corporation) {
-                $where[] = ['corporation', 'like', '%' . $corporation . '%'];
-            }
-
-            if ($startDate && $endDate) {
-                $where[] = ['create_time', 'between', [strtotime($startDate), strtotime($endDate)]];
-            }
-
-            if ($payType > 0) {
-                $where[] = ['pay_type', '=', $payType];
-            }
-
-            $total = $this->model::where($where)->count();
-
-            $historyList = $this->model::where($where)
-                ->order('id DESC')
-                ->limit(($page - 1) * $limit, $limit)
-                ->select();
-            return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
-        }
-    }
-
-    /**
-     * 检测订单
-     * @return \think\response\Json
-     * @throws \Yansongda\Pay\Exceptions\GatewayException
-     * @throws \Yansongda\Pay\Exceptions\InvalidArgumentException
-     * @throws \Yansongda\Pay\Exceptions\InvalidSignException
-     */
-    public function checkOrder()
-    {
-        $payno = $this->request->param('payno');
-        $res = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno]);
-        return json($res);
-    }
-
-    /**
-     * 支付
-     * @return \think\response\Json
-     */
-    public function wxpay()
-    {
-        $amount = (float) $this->request->param('amount', 0);
-        if ($amount <= 0) {
-            return json(['code' => 0, 'msg' => '请输入正确的金额']);
-        }
-
-        $orderNo = $this->request->param('payno', '');
-        $title = '余额充值';
-
-        if (!$orderNo) {
-            $orderNo = getOrderNo();
-            $order = [
-                'payno' => $orderNo,
-                'company_id' => Session::get('company.id'),
-                'title' => $title,
-                'amount' => $amount,
-                'pay_type' => 1,
-                'create_time' => time(),
-            ];
-            $this->model->save($order);
-        }
-
-        $wxOrder = [
-            'out_trade_no' => $orderNo,
-            'total_fee' => $amount * 100, // **单位：分**
-            'body' => '喵头鹰呼叫系统 - 余额充值',
-        ];
-
-        $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($wxOrder);
-        $qr = (new QRCode())->render($pay->code_url);
-//        echo '<img src="' . $qr->render($pay->code_url) . '" />';
-        $this->view->assign('payno', $orderNo);
-        $this->view->assign('qr', $qr);
-        return $this->view->fetch();
-    }
-
-    public function alipay()
-    {
-        $amount = (float) $this->request->param('amount', 0);
-        if ($amount <= 0) {
-            return json(['code' => 0, 'msg' => '请输入正确的金额']);
-        }
-
-        $orderNo = $this->request->param('payno', '');
-        $title = '余额充值';
-        if (!$orderNo) {
-            $orderNo = getOrderNo();
-            $order = [
-                'payno' => $orderNo,
-                'company_id' => Session::get('company.id'),
-                'title' => $title,
-                'amount' => $amount,
-                'pay_type' => 2,
-                'create_time' => time(),
-            ];
-            $this->model->save($order);
-        }
-
-        $alipayOrder = [
-            'out_trade_no' => $orderNo,
-            'total_amount' => $amount, // **单位：分**
-            'subject' => '喵头鹰呼叫系统 - ' . $title,
-        ];
-
-        return Pay::alipay(Config::get('payment.alipay.web'))->web($alipayOrder)->send();
-    }
-
-    public function alipayResult()
-    {
-        return redirect(url('payment/index'));
-//        return $this->view->fetch();
     }
 }

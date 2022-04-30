@@ -3,22 +3,11 @@
 namespace app\company\controller;
 
 use app\common\controller\CompanyController;
-use app\common\model\CallHistory;
-use app\common\model\Expense;
-use app\common\model\User;
-use app\company\model\Company;
-use arron\Random;
-use Jenssegers\Agent\Agent;
-use think\facade\Cookie;
 use think\facade\Db;
-use think\facade\Session;
-use think\response\View;
 
 class Index extends CompanyController
 {
     protected $lang = [];
-
-    protected $token_expire_time = 3600 * 24 * 7;
 
     public function initialize()
     {
@@ -38,7 +27,7 @@ class Index extends CompanyController
 
     public function index()
     {
-        return $this->view->fetch();
+        return $this->view->fetch('common@index/index');
     }
 
     public function dashboard()
@@ -151,67 +140,4 @@ SQL;
         }
         return json($this->returnData);
     }
-
-    public function login()
-    {
-        if ($this->userInfo && $this->userInfo->token_expire_time > time()) {
-            return redirect(url('/index'));
-        }
-
-        if ($this->request->isPost()) {
-            /*$check = $this->request->checkToken('__token__');
-            if(false === $check) {
-                $token = $this->request->buildToken();
-                return json(['data' => ['token' => $token], 'msg' => lang('Invalid token') . '，请重新提交', 'code' => 0]);
-            }*/
-
-            $param = $this->request->param();
-            $user = Company::getByUsername($param['username']);
-            if (!$user) {
-                return json(['data' => [], 'msg' => lang('Account is incorrect'), 'code' => 0]);
-            }
-
-            if (!$user->getData('status')) {
-                return json(['data' => [], 'msg' => lang('Account is locked'), 'code' => 0]);
-            }
-
-            $password = getEncryptPassword($param['password'], $user->salt);
-            if ($password !== $user->password) {
-                return json(['data' => [], 'msg' => lang('Password is incorrect'), 'code' => 0]);
-            }
-
-            if (!captcha_check($param['captcha'])) {
-                return json(['data' => [], 'msg' => lang('Captcha is incorrect'), 'code' => 0]);
-            }
-
-            $now = time();
-            $token = createToken($password);
-            $user->prevtime = $user->getData('logintime');
-            $user->logintime = $now;
-            $user->loginip = $this->request->ip();
-            $user->token = $token;
-            $user->token_expire_time = $now + $this->token_expire_time;
-            $user->platform = $this->agent->platform() ?: '';
-            $user->platform_version = $this->agent->version($this->agent->platform()) ?: '';
-            $user->browser = $this->agent->browser() ?: '';
-            $user->browser_version = $this->agent->version($this->agent->browser()) ?: '';
-            $user->device = $this->agent->device() ?: '';
-
-            $user->save();
-
-            Cookie::set('hbcall_company_token', $token, $this->token_expire_time);
-            Session::set('company', $user->toArray());
-
-            return json(['data' => [], 'msg' => lang('Logined'), 'code' => 1, 'url' => (string)url('/index')]);
-        }
-        return $this->view->fetch();
-    }
-
-    public function logout()
-    {
-        $this->delSession();
-        Cookie::delete('hbcall_company_token');
-        return redirect((string) url('/index/login'));
-    }
-
 }

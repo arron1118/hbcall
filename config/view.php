@@ -25,6 +25,7 @@ return [
 
     'tpl_replace_string' => [
         '__STATIC__' => '/static',
-        '__PUBLIC__' => public_path()
+        '__PUBLIC__' => public_path(),
+        '__VIEW__' => base_path() . '/view',
     ]
 ];

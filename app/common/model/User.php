@@ -3,8 +3,9 @@
 
 namespace app\common\model;
 
+use \think\Model;
 
-class User extends \think\Model
+class User extends Model
 {
     protected $autoWriteTimestamp = true;
 
@@ -47,7 +48,7 @@ class User extends \think\Model
 
     public function company()
     {
-        return $this->belongsTo(\app\company\model\Company::class);
+        return $this->belongsTo(Company::class);
     }
 
     public function userXnumber()

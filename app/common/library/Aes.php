@@ -7,7 +7,7 @@ class Aes
     /**
      * @var array|string[]
      */
-    private array $config = [
+    private $config = [
         'cipher_algo' => 'AES-128-CBC',
         'passphrase' => 'UbHJAz3LqCQ71Efq',
         'options' => OPENSSL_RAW_DATA,
@@ -16,11 +16,6 @@ class Aes
     ];
 
     public function __construct($config = []){
-//        $config['iv'] = md5(time() . uniqid(), true);
-//        if (!isset($config['iv']) || !$config['iv']) {
-//            $config['iv'] = substr(md5($this->config['passphrase']), 0, 16);
-//        }
-
         $this->config = array_merge($this->config, $config);
     }
 

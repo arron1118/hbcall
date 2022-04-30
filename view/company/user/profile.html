@@ -1,7 +1,6 @@
-{extend name="public/base" /}
+{extend name="../common/public/base" /}
 {block name="css"}
-<link rel="stylesheet" href="__STATIC__/lib/bootstrap/css/bootstrap.min.css" media="all">
-<link rel="stylesheet" href="__STATIC__/lib/bootstrap/font/bootstrap-icons.css" media="all">
+{include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
 <div class="layuimini-container">

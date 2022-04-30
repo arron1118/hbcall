@@ -18,7 +18,7 @@ class Payment
             $where['company_id'] = $cid;
         }
 
-        $notpay = \app\company\model\Payment::where($where)->select();
+        $notpay = \app\common\model\Payment::where($where)->select();
         foreach ($notpay as $key => $value) {
             if ($value->getData('pay_type') === 1) {
                 // 检查微信订单是否已支付
@@ -60,7 +60,6 @@ class Payment
                     Log::error($e->raw['alipay_trade_query_response']);
                     $response = $e->raw['alipay_trade_query_response'];
                     if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {
-//                    $value->delete();
                         $value->status = 2;
                         $value->comment = $response['sub_msg'];
                         $value->save();

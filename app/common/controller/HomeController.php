@@ -4,11 +4,10 @@
 namespace app\common\controller;
 
 use app\common\model\User;
-use think\facade\Session;
 
 class HomeController extends \app\BaseController
 {
-    protected $middleware = [\app\home\middleware\Check::class];
+    protected $middleware = [\app\common\middleware\Check::class];
 
     /**
      * 用户信息

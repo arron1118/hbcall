@@ -4,9 +4,9 @@
 namespace app\common\model;
 
 
-use app\company\model\Company;
+use \think\Model;
 
-class Expense extends \think\Model
+class Expense extends Model
 {
 
     public function getCreatetimeAttr($value)

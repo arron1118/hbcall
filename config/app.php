@@ -32,4 +32,6 @@ return [
     'error_message'    => '页面错误！请稍后再试～',
     // 显示错误信息
     'show_error_msg'   => false,
+
+    'app_name' => env('app.name', '喵头鹰呼叫系统'),
 ];

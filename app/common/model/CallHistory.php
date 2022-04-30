@@ -1,13 +1,10 @@
 <?php
 
-
 namespace app\common\model;
 
-
 use think\Model;
-use think\model\relation\BelongsTo;
 
-class CallHistory extends \think\Model
+class CallHistory extends Model
 {
     protected $autoWriteTimestamp = true;
 
@@ -27,11 +24,6 @@ class CallHistory extends \think\Model
 
         return $minute . ':' . $second;
     }
-
-//    public function getCalledNumberAttr($value)
-//    {
-//        return substr_replace($value, '****', 3, 4);
-//    }
 
     public function getStarttimeAttr($value)
     {
@@ -55,7 +47,7 @@ class CallHistory extends \think\Model
 
     public function company()
     {
-        return $this->belongsTo(\app\company\model\Company::class)->bind(['corporation']);
+        return $this->belongsTo(\app\common\model\Company::class)->bind(['corporation']);
     }
 
     public function expense()

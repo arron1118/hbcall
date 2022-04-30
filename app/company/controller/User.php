@@ -1,6 +1,5 @@
 <?php
 
-
 namespace app\company\controller;
 
 use app\common\model\NumberStore;

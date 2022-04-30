@@ -2,14 +2,16 @@
 
 namespace app\admin\controller;
 
-use app\company\model\Company as CompanyModel;
+use app\common\model\Company as CompanyModel;
 use app\common\model\User as UserModel;
-use app\admin\model\Admin;
 use app\common\model\NumberStore;
 use think\facade\Session;
+use app\common\traits\UserTrait;
 
 class User extends \app\common\controller\AdminController
 {
+    use UserTrait;
+
     public function index()
     {
         $this->view->assign('isTestList', (new CompanyModel())->getTestList());
@@ -336,44 +338,6 @@ class User extends \app\common\controller\AdminController
         }
 
         $this->view->assign('userProfile', $this->userInfo);
-        return $this->view->fetch();
-    }
-
-    public function resetPassword()
-    {
-        if ($this->request->isPost()) {
-            $old_password = trim($this->request->param('old_password'));
-            $new_password = trim($this->request->param('new_password'));
-            $confirm_password = trim($this->request->param('confirm_password'));
-            $user = Admin::find(Session::get('admin.id'));
-            if (empty($old_password)) {
-                $this->returnData['msg'] = lang('Please enter your old password');
-                return json($this->returnData);
-            }
-            if (empty($new_password)) {
-                $this->returnData['msg'] = lang('Please enter a new password');
-                return json($this->returnData);
-            }
-            if (empty($confirm_password)) {
-                $this->returnData['msg'] = lang('Please enter a confirmation password');
-                return json($this->returnData);
-            }
-            if (getEncryptPassword($old_password, $user->salt) !== $user->password) {
-                $this->returnData['msg'] = lang('The old password entered is incorrect');
-                return json($this->returnData);
-            }
-            if ($new_password !== $confirm_password) {
-                $this->returnData['msg'] = lang('The confirmation password entered is incorrect');
-                return json($this->returnData);
-            }
-            $user->password = getEncryptPassword($confirm_password, $user->salt);
-            if ($user->save()) {
-                $this->returnData['msg'] = lang('Password modification successful, please log in again');
-                $this->returnData['code'] = 1;
-            }
-
-            return json($this->returnData);
-        }
         return $this->view->fetch();
     }
 

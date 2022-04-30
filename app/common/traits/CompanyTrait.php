@@ -3,7 +3,7 @@
 namespace app\common\traits;
 
 use app\common\model\User;
-use app\company\model\Company;
+use app\common\model\Company;
 
 trait CompanyTrait
 {

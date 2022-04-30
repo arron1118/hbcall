@@ -46,6 +46,12 @@
           "target": "_self"
         },
         {
+          "title": "客户管理",
+          "href": "customer/index.html",
+          "icon": "fa fa-users-gear",
+          "target": "_self"
+        },
+        {
           "title": "资讯",
           "href": "news/index.html",
           "icon": "fa fa-newspaper",

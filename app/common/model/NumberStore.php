@@ -3,10 +3,9 @@
 
 namespace app\common\model;
 
+use \think\Model;
 
-use app\company\model\Company;
-
-class NumberStore extends \think\Model
+class NumberStore extends Model
 {
 
     public function getStatusAttr($value)
@@ -21,12 +20,12 @@ class NumberStore extends \think\Model
 
     public function company()
     {
-        return $this->belongsTo(\app\company\model\Company::class);
+        return $this->belongsTo(Company::class);
     }
 
     public function user()
     {
-        return $this->belongsTo(\app\common\model\User::class)->bind(['number']);
+        return $this->belongsTo(User::class)->bind(['number']);
     }
 
     public function companyXnumber()

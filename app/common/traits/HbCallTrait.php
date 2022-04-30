@@ -3,7 +3,6 @@
 namespace app\common\traits;
 
 use app\common\model\CallHistory;
-use app\common\model\User;
 use Curl\Curl;
 use think\facade\Config;
 

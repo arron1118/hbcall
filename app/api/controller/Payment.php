@@ -4,13 +4,12 @@
 namespace app\api\controller;
 
 use app\common\traits\PaymentTrait;
-use app\company\model\Company;
+use app\common\model\Company;
 use think\facade\Config;
 use think\facade\Db;
-use think\facade\Log;
 use Yansongda\Pay\Exceptions\GatewayException;
 use Yansongda\Pay\Pay;
-use app\company\model\Payment as PaymentModel;
+use app\common\model\Payment as PaymentModel;
 
 class Payment extends \app\common\controller\ApiController
 {
@@ -197,7 +196,7 @@ class Payment extends \app\common\controller\ApiController
             $this->returnApiData();
         }
 
-        $payment = \app\company\model\Payment::where('payno', $payno)->find();
+        $payment = \app\common\model\Payment::where('payno', $payno)->find();
 
         if ($payment) {
             $payType = $payment->getData('pay_type');

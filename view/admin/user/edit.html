@@ -1,6 +1,6 @@
-{extend name="public/base" /}
+{extend name="../common/public/base" /}
 {block name="css"}
-{include file="public/bootstrap" /}
+{include file="../common/public/bootstrap" /}
 <style>
     .logo-title {
         text-align: center;
@@ -169,7 +169,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label" for="newsImg">合同</label>
                                 <div class="layui-input-block layui-upload">
-                                    <button type="button" class="layui-btn" id="newsImg">上传</button>
+                                    <button type="button" class="layui-btn layui-btn-sm" id="newsImg">上传</button>
                                     <div class="layui-upload-list" id="newsImgBox"></div>
                                     <input name="contract_attachment" type="hidden" value="{$userInfo.contract_attachment}"/>
                                 </div>
@@ -250,49 +250,8 @@
         //
         let frameIndex = parent.layer.getFrameIndex(window.name);
 
-        let getDateTime = function (param = {}) {
-            let defaultParam = {
-                year: 0,
-                month: 0,
-                day: 0,
-                hour: 0,
-                minute: 0,
-                second: 0
-            };
-            param = Object.assign(defaultParam, param)
-            let d = new Date();
-            let year = d.getFullYear() + param.year,
-                month = d.getMonth() + 1 + param.month,
-                day = d.getDate() + param.day,
-                hour = d.getHours() + param.hour,
-                minute = d.getMinutes() + param.minute,
-                second = d.getSeconds() + param.second;
-
-            if (month < 10) {
-                month = '0' + month;
-            }
-
-            if (day < 10) {
-                day = '0' + day;
-            }
-
-            if (hour < 10) {
-                hour = '0' + hour;
-            }
-
-            if (minute < 10) {
-                minute = '0' + minute;
-            }
-
-            if (second < 10) {
-                second = '0' + second;
-            }
-
-            return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-        }
-
         // 时间限制为现在
-        let minDate = getDateTime();
+        let minDate = utils.getDateTime();
         laydate.render({
             elem: '#testEndTime',
             type: 'datetime',

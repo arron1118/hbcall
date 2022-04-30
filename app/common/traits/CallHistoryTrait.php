@@ -3,17 +3,32 @@
 namespace app\common\traits;
 
 use app\common\model\CallHistory;
-use think\facade\Session;
+use app\common\model\Company;
 
 trait CallHistoryTrait
 {
+
+    public function callHistoryList()
+    {
+        if ($this->module === 'admin') {
+            $company = (new Company())->getCompanyList();
+            $this->view->assign('company', $company);
+        }
+
+        if ($this->module === 'company') {
+            $this->view->assign('users', $this->userInfo->user);
+        }
+
+        return $this->view->fetch('common@hbcall/history_list');
+    }
+
     public function getHistoryList()
     {
         if ($this->request->isPost()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $companyId = (int) $this->request->param('company_id', Session::get('company.id'));
-            $userId = (int) $this->request->param('user_id', 0);
+            $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
+            $userId = (int) $this->request->param('user_id', $this->module === 'home' ? $this->userInfo->id : 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
             $operate = $this->request->param('operate', '');
@@ -27,7 +42,7 @@ trait CallHistoryTrait
                 ['caller_number', '<>', '']
             ];
 
-            if ($companyId) {
+            if ($companyId > 0) {
                 $map[] = ['company_id', '=', $companyId];
             }
 

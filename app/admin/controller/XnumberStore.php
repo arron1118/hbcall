@@ -3,8 +3,6 @@
 namespace app\admin\controller;
 
 use app\common\model\NumberStore;
-use app\common\model\User;
-use app\company\model\Company;
 
 class XnumberStore extends \app\common\controller\AdminController
 {
@@ -15,31 +13,6 @@ class XnumberStore extends \app\common\controller\AdminController
 
     public function index()
     {
-        // 小号对应企业
-//        $number = NumberStore::find(1);
-//        foreach ($number->companyXnumber as $key => $val) {
-//            dump($val->company->toArray());
-//        }
-        // 小号对应用户
-//        $number = NumberStore::find(1);
-//        foreach ($number->userXnumber as $key => $val) {
-//            dump($val->user->hidden(['password'])->toArray());
-//        }
-
-        // 企业小号
-//        $company = Company::find(2);
-//        $companyXnumber = $company->companyXnumber;
-//        dump($companyXnumber->number_store_id);
-//        dump($companyXnumber->numberStore->number);
-
-        // 用户小号
-//        $user = User::find(71);
-//        $userXnumber = $user->userXnumber;
-//        dump($userXnumber);
-//        dump($userXnumber->numberStore->number);
-//        $userXnumber->number_store_id = 2;
-//        $userXnumber->save();
-
         return $this->view->fetch();
     }
 

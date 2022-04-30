@@ -17,7 +17,6 @@ return [
             'http' => [ // optional
                 'timeout' => 5.0,
                 'connect_timeout' => 5.0,
-                // 更多配置项请参考 [Guzzle](https://guzzle-cn.readthedocs.io/zh_CN/latest/request-options.html)
             ],
             // 'mode' => 'dev', // optional,设置此参数，将进入沙箱模式
         ],
@@ -36,7 +35,6 @@ return [
             'http' => [ // optional
                 'timeout' => 5.0,
                 'connect_timeout' => 5.0,
-                // 更多配置项请参考 [Guzzle](https://guzzle-cn.readthedocs.io/zh_CN/latest/request-options.html)
             ],
             // 'mode' => 'dev', // optional,设置此参数，将进入沙箱模式
         ]

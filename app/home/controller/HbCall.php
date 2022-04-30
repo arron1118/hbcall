@@ -1,30 +1,23 @@
 <?php
 
-
 namespace app\home\controller;
-
 
 use app\common\model\CallHistory;
 use app\common\model\Customer;
-use app\company\model\Company;
 use Curl\Curl;
 use think\db\exception\DbException;
 use think\facade\Config;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use think\facade\Filesystem;
+use app\common\traits\CallHistoryTrait;
 
 class HbCall extends \app\common\controller\HomeController
 {
+    use CallHistoryTrait;
+
     protected $stopStartDateTime = '2022-03-14 19:00:00';
     protected $stopEndDateTime = '2022-03-14 21:00:00';
 
     public function callCenter()
     {
-//        $str = '2021/06/20';
-//        $strTime = strtotime($str);
-//        dump((bool)$strTime);
-//        $next = date('Y-m-d H:i:s', $strTime + 86400 - 1);
-
         return $this->view->fetch();
     }
 
@@ -40,38 +33,6 @@ class HbCall extends \app\common\controller\HomeController
             return json(['rows' => $callHistory, 'msg' => '', 'code' => 1]);
         }
 
-        return json($this->returnData);
-    }
-
-    public function callHistoryList()
-    {
-        return $this->view->fetch('hbcall/history_list');
-    }
-
-    public function getHistoryList()
-    {
-        if ($this->request->isPost()) {
-            $page = (int)$this->request->param('page', 1);
-            $limit = (int)$this->request->param('limit', 10);
-            $startDate = $this->request->param('startDate', '');
-            $endDate = $this->request->param('endDate', '');
-            $map = [
-                ['user_id', '=', $this->userInfo->id],
-                ['caller_number', '<>', '']
-            ];
-
-            if ($startDate && $endDate) {
-                $map[] = ['createtime', 'between', [strtotime($startDate), strtotime($endDate)]];
-            }
-
-            $total = CallHistory::where($map)->count();
-            $historyList = CallHistory::with(['expense', 'customer'])
-                ->where($map)
-                ->order('createtime DESC, id DESC')
-                ->limit(($page - 1) * $limit, $limit)
-                ->select();
-            return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
-        }
         return json($this->returnData);
     }
 
@@ -176,136 +137,6 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         return json($response);
-    }
-
-    public function getCustomerList()
-    {
-        if ($this->request->isPost()) {
-            $where = [
-                'user_id' => $this->userInfo->id
-            ];
-            $lastData = Customer::where($where)->order('id', 'desc')->findOrEmpty();
-            if ($lastData->toArray()) {
-                $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))));
-                $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))) + 3600 * 24 - 1);
-                $res = Customer::field('id, title, phone, called_count, last_calltime')
-                    ->where($where)
-                    ->whereBetweenTime('createtime', $lastDateStart, $lastDateEnd)
-                    ->order('called_count')
-                    ->order('id', 'desc')
-                    ->select();
-                $this->returnData['data'] = $res;
-                $this->returnData['code'] = 1;
-                $this->returnData['msg'] = 'success';
-                return json($this->returnData);
-            }
-
-            return json($this->returnData);
-        }
-
-        return json($this->returnData);
-    }
-
-    public function importCustomer()
-    {
-        if ($this->request->isPost()) {
-            $data = $this->request->param('customers');
-            if (!$data) {
-                $this->returnData['msg'] = lang('No data was found');
-                return json($this->returnData);
-            }
-
-            foreach($data as $key => &$val) {
-                $val['createtime'] = time();
-                $val['company_id'] = $this->userInfo->company_id;
-                $val['user_id'] = $this->userInfo->id;
-            }
-
-            try {
-                $res = (new Customer())->saveAll($data);
-
-                $this->returnData['code'] = 1;
-                $this->returnData['msg'] = lang('The import was successful');
-                $this->returnData['data'] = $res;
-
-                return json($this->returnData);
-            } catch (DbException $dbException) {
-                $this->returnData['code'] = $dbException->getCode();
-                $this->returnData['msg'] = $dbException->getMessage();
-                $this->returnData['data'] = $dbException->getData();
-
-                return json($this->returnData);
-            }
-        }
-
-        return $this->returnData;
-    }
-
-    public function importExcel()
-    {
-        if ($this->request->isPost()) {
-            $file = request()->file('file');
-            $data = $this->readExcel($file);
-            try {
-                $res = (new Customer())->saveAll($data);
-
-                $this->returnData['code'] = 1;
-                $this->returnData['msg'] = lang('The import was successful');
-                $this->returnData['data'] = $res;
-
-                return json($this->returnData);
-            } catch (DbException $dbException) {
-                $this->returnData['code'] = $dbException->getCode();
-                $this->returnData['msg'] = $dbException->getMessage();
-                $this->returnData['data'] = $dbException->getData();
-
-                return json($this->returnData);
-            }
-        }
-
-        return json($this->returnData);
-    }
-
-    protected function readExcel($file)
-    {
-        return readExcel($file, [
-            'createtime' => time(),
-            'company_id' => $this->userInfo->company_id,
-            'user_id' => $this->userInfo->id,
-        ]);
-    }
-
-    public function deleteCustomer ()
-    {
-        if ($this->request->isPost()) {
-            $data = $this->request->param('customerList');
-            $where = [
-                'user_id' => $this->userInfo->id,
-            ];
-
-            if (Customer::where($where)->whereIn('id', $data)->delete()) {
-                $this->returnData['code'] = 1;
-                $this->returnData['msg'] = '删除成功';
-            }
-
-            return json($this->returnData);
-        }
-
-        return json($this->returnData);
-    }
-
-    public function updateCustomerCalledCount()
-    {
-        if ($this->request->isPost()) {
-            $customerId = $this->request->param('customerId', 0);
-            if ($customerId > 0) {
-                $where = [
-                    'user_id' => $this->userInfo->id,
-                    'id' => $customerId,
-                ];
-                Customer::where($where)->inc('called_count')->update(['last_calltime' => time()]);
-            }
-        }
     }
 
     public function downloadTemplate()

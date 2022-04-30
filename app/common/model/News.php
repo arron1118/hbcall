@@ -3,8 +3,10 @@
 
 namespace app\common\model;
 
+use \think\Model;
+use app\admin\model\Admin;
 
-class News extends \think\Model
+class News extends Model
 {
 
     public function getStatusAttr($value)
@@ -39,6 +41,6 @@ class News extends \think\Model
 
     public function author()
     {
-        return $this->belongsTo(app\admin\model\Admin::class, 'author_id');
+        return $this->belongsTo(Admin::class, 'author_id');
     }
 }
