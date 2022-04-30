@@ -4,9 +4,12 @@ namespace app\company\controller;
 
 use app\common\controller\CompanyController;
 use think\facade\Db;
+use app\common\traits\ReportTrait;
 
 class Index extends CompanyController
 {
+    use ReportTrait;
+
     protected $lang = [];
 
     public function initialize()
@@ -37,82 +40,82 @@ class Index extends CompanyController
         return $this->view->fetch();
     }
 
-    public function getReport()
-    {
-        if ($this->request->isPost()) {
-            $result['totalCallHistory'] = $this->userInfo->callHistory()->count();
-            $result['totalCallAndPickUp'] = $this->userInfo->callHistory()->where('call_duration', '>', 0)->count();
-            $result['totalCallAndNoPickUp'] = $this->userInfo->callHistory()->where('call_duration', '=', 0)->count();
-            $result['totalCallDuration'] = $this->userInfo->expense()->sum('duration');
-            $result['chartData'] = [
-                [
-                    'name' => $this->lang['totalBetweenZeroAndSixty'],
-                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [1, 60])->count()
-                ],
-                [
-                    'name' => $this->lang['totalBetweenOneToThree'],
-                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [61, 180])->count()
-                ],
-                [
-                    'name' => $this->lang['totalBetweenThreeToFive'],
-                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [181, 300])->count()
-                ],
-                [
-                    'name' => $this->lang['totalGtFive'],
-                    'value' => $this->userInfo->callHistory()->where('call_duration', '>', 300)->count()
-                ]
-            ];
-            $this->returnData['code'] = 1;
-            $this->returnData['data'] = $result;
-            $this->returnData['msg'] = 'success';
-            return json($this->returnData);
-        }
-
-        return json($this->returnData);
-    }
-
-    public function getHoursData()
-    {
-        if ($this->request->isPost()) {
-            $hours = $this->request->param('hours', 7);
-            $sql = <<<SQL
-select date_format(t3.datetime, '%m-%d %H:%i') as datetime, max(t3.sum) as sum, max(t3.duration) as duration, max(t3.expense) as expense
-from (
-         SELECT date_format(@cdate := date_add(@cdate, interval -1 hour), '%Y-%m-%d %H') datetime,
-                0 as                                                                     sum,
-                0 as                                                                     duration,
-                0 as expense
-         from (SELECT @cdate := DATE_ADD(date_format(current_timestamp(), '%Y-%m-%d %H'), INTERVAL 1 hour)
-               from hbcall_call_history limit {$hours}
-              ) t1
-         UNION ALL
-         select * from (select from_unixtime(temp.createtime, '%Y-%m-%d %H') as datetime,
-                      count(*)                                    as sum,
-                      sum(duration)            as duration,
-                      sum(cost)                                   as expense
-               from (select ch.id, ch.createtime, e.duration, e.cost from hbcall_call_history ch
-                                                                              inner join
-                                                                          hbcall_expense e on e.call_history_id = ch.id
-                     where from_unixtime(ch.createtime, '%Y-%m-%d %H') between date_add(
-                             date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
-                             hour) and date_format(current_timestamp(), '%Y-%m-%d %H')) as temp
-               GROUP BY datetime) temp
-     ) t3
-where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
-                                   hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
-GROUP BY t3.datetime
-order by t3.datetime ;
-SQL;
-
-            $res = Db::query($sql);
-            $this->returnData['data'] = $res;
-            $this->returnData['msg'] = 'success';
-            $this->returnData['code'] = 1;
-            return json($this->returnData);
-        }
-
-        return json($this->returnData);
-    }
+//    public function getReport()
+//    {
+//        if ($this->request->isPost()) {
+//            $result['totalCallHistory'] = $this->userInfo->callHistory()->count();
+//            $result['totalCallAndPickUp'] = $this->userInfo->callHistory()->where('call_duration', '>', 0)->count();
+//            $result['totalCallAndNoPickUp'] = $this->userInfo->callHistory()->where('call_duration', '=', 0)->count();
+//            $result['totalCallDuration'] = $this->userInfo->expense()->sum('duration');
+//            $result['chartData'] = [
+//                [
+//                    'name' => $this->lang['totalBetweenZeroAndSixty'],
+//                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [1, 60])->count()
+//                ],
+//                [
+//                    'name' => $this->lang['totalBetweenOneToThree'],
+//                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [61, 180])->count()
+//                ],
+//                [
+//                    'name' => $this->lang['totalBetweenThreeToFive'],
+//                    'value' => $this->userInfo->callHistory()->whereBetween('call_duration', [181, 300])->count()
+//                ],
+//                [
+//                    'name' => $this->lang['totalGtFive'],
+//                    'value' => $this->userInfo->callHistory()->where('call_duration', '>', 300)->count()
+//                ]
+//            ];
+//            $this->returnData['code'] = 1;
+//            $this->returnData['data'] = $result;
+//            $this->returnData['msg'] = 'success';
+//            return json($this->returnData);
+//        }
+//
+//        return json($this->returnData);
+//    }
+//
+//    public function getHoursData()
+//    {
+//        if ($this->request->isPost()) {
+//            $hours = $this->request->param('hours', 7);
+//            $sql = <<<SQL
+//select date_format(t3.datetime, '%m-%d %H:%i') as datetime, max(t3.sum) as sum, max(t3.duration) as duration, max(t3.expense) as expense
+//from (
+//         SELECT date_format(@cdate := date_add(@cdate, interval -1 hour), '%Y-%m-%d %H') datetime,
+//                0 as                                                                     sum,
+//                0 as                                                                     duration,
+//                0 as expense
+//         from (SELECT @cdate := DATE_ADD(date_format(current_timestamp(), '%Y-%m-%d %H'), INTERVAL 1 hour)
+//               from hbcall_call_history limit {$hours}
+//              ) t1
+//         UNION ALL
+//         select * from (select from_unixtime(temp.createtime, '%Y-%m-%d %H') as datetime,
+//                      count(*)                                    as sum,
+//                      sum(duration)            as duration,
+//                      sum(cost)                                   as expense
+//               from (select ch.id, ch.createtime, e.duration, e.cost from hbcall_call_history ch
+//                                                                              inner join
+//                                                                          hbcall_expense e on e.call_history_id = ch.id
+//                     where from_unixtime(ch.createtime, '%Y-%m-%d %H') between date_add(
+//                             date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
+//                             hour) and date_format(current_timestamp(), '%Y-%m-%d %H')) as temp
+//               GROUP BY datetime) temp
+//     ) t3
+//where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
+//                                   hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
+//GROUP BY t3.datetime
+//order by t3.datetime ;
+//SQL;
+//
+//            $res = Db::query($sql);
+//            $this->returnData['data'] = $res;
+//            $this->returnData['msg'] = 'success';
+//            $this->returnData['code'] = 1;
+//            return json($this->returnData);
+//        }
+//
+//        return json($this->returnData);
+//    }
 
     public function getTopList()
     {

@@ -177,7 +177,7 @@
         }
 
         let getChartData = function () {
-            $.post('{:url("/Index/getReport")}', {}, function (res) {
+            $.post('{:url("/Index/getDashboardReport")}', {}, function (res) {
                 $('.totalCallHistory').text(res.data.totalCallHistory)
                 $('.totalCallAndPickUp').text(res.data.totalCallAndPickUp)
                 $('.totalCallAndNoPickUp').text(res.data.totalCallAndNoPickUp)

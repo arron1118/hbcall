@@ -3,6 +3,7 @@
 namespace app\common\traits;
 
 use app\common\model\Company;
+use think\facade\Config;
 use think\facade\Event;
 
 trait PaymentTrait
@@ -68,10 +69,9 @@ trait PaymentTrait
         return json($this->returnData);
     }
 
-    protected function createOrder(Company $company, $amount, $payType = 1): array
+    protected function createOrder(Company $company, $amount, $payType = 1, $orderNo = ''): array
     {
-        $orderNo = $this->params['payno'] ?? '';
-        $title = '喵头鹰呼叫系统 - 余额充值';
+        $title = Config::get('app.app_name') . ' - 余额充值';
         if (!$orderNo) {
             $data = $this->addOrder($company, $amount, $payType);
             $orderNo = $data['orderNo'];

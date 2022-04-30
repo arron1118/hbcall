@@ -2,7 +2,9 @@
 
 namespace app\common\traits;
 
+use app\common\model\CallHistory;
 use app\common\model\Company;
+use app\common\model\Expense;
 use think\facade\Db;
 
 trait ReportTrait
@@ -68,6 +70,93 @@ SQL;
         $this->returnData['code'] = 1;
         $this->returnData['data'] = Db::query($sql);
         $this->returnData['msg'] = 'success';
+
+        return json($this->returnData);
+    }
+
+    public function getDashboardReport()
+    {
+        if ($this->request->isPost()) {
+            $whereCompany = [];
+            if ($this->module === 'company') {
+                $whereCompany[] = ['company_id', '=', $this->userInfo->id];
+            }
+
+            $result['totalCallHistory'] = CallHistory::where($whereCompany)->count();
+            $result['totalCallAndPickUp'] = CallHistory::where($whereCompany)->where('call_duration', '>', 0)->count();
+            $result['totalCallAndNoPickUp'] = CallHistory::where($whereCompany)->where('call_duration', '=', 0)->count();
+            $result['totalCallDuration'] = Expense::where($whereCompany)->sum('duration');
+            $result['chartData'] = [
+                [
+                    'name' => $this->lang['totalBetweenZeroAndSixty'],
+                    'value' => CallHistory::where($whereCompany)->whereBetween('call_duration', [1, 60])->count()
+                ],
+                [
+                    'name' => $this->lang['totalBetweenOneToThree'],
+                    'value' => CallHistory::where($whereCompany)->whereBetween('call_duration', [61, 180])->count()
+                ],
+                [
+                    'name' => $this->lang['totalBetweenThreeToFive'],
+                    'value' => CallHistory::where($whereCompany)->whereBetween('call_duration', [181, 300])->count()
+                ],
+                [
+                    'name' => $this->lang['totalGtFive'],
+                    'value' => CallHistory::where($whereCompany)->where('call_duration', '>', 300)->count()
+                ]
+            ];
+            $this->returnData['code'] = 1;
+            $this->returnData['data'] = $result;
+            $this->returnData['msg'] = 'success';
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
+
+    public function getHoursData()
+    {
+        if ($this->request->isPost()) {
+            $hours = $this->request->param('hours', 7);
+            $where = ' 1 = 1';
+            if ($this->module === 'company') {
+                $where = ' ch.company_id = ' . $this->userInfo->id;
+            }
+
+            $sql = <<<SQL
+select date_format(t3.datetime, '%m-%d %H:%i') as datetime, max(t3.sum) as sum, max(t3.duration) as duration, max(t3.expense) as expense
+from (
+         SELECT date_format(@cdate := date_add(@cdate, interval -1 hour), '%Y-%m-%d %H') datetime,
+                0 as                                                                     sum,
+                0 as                                                                     duration,
+                0 as expense
+         from (SELECT @cdate := DATE_ADD(date_format(current_timestamp(), '%Y-%m-%d %H'), INTERVAL 1 hour)
+               from hbcall_call_history limit {$hours}
+              ) t1
+         UNION ALL
+         select * from (select from_unixtime(temp.createtime, '%Y-%m-%d %H') as datetime,
+                               count(*)                                    as sum,
+                               sum(duration)            as duration,
+                               sum(cost)                                   as expense
+                        from (select ch.id, ch.createtime, e.duration, e.cost from hbcall_call_history ch
+                                 inner join
+                             hbcall_expense e on e.call_history_id = ch.id
+                        where {$where} and from_unixtime(ch.createtime, '%Y-%m-%d %H') between date_add(
+                                date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
+                                hour) and date_format(current_timestamp(), '%Y-%m-%d %H')) as temp
+                        GROUP BY datetime) temp
+     ) t3
+where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
+                                   hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
+GROUP BY t3.datetime
+order by t3.datetime ;
+SQL;
+
+            $res = Db::query($sql);
+            $this->returnData['data'] = $res;
+            $this->returnData['msg'] = 'success';
+            $this->returnData['code'] = 1;
+            return json($this->returnData);
+        }
 
         return json($this->returnData);
     }

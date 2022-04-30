@@ -151,6 +151,7 @@ class Payment extends \app\common\controller\ApiController
     {
         $amount = (float)($this->params['amount'] ?? 0);
         $payType = (int)($this->params['payType'] ?? 1);
+        $orderNo = $this->params['payno'] ?? '';
         if ($amount <= 0) {
             $this->returnData['msg'] = '请输入正确的金额';
             $this->returnApiData();
@@ -161,7 +162,7 @@ class Payment extends \app\common\controller\ApiController
             $this->returnApiData();
         }
 
-        $data = $this->createOrder($this->userInfo, $amount, $payType);
+        $data = $this->createOrder($this->userInfo, $amount, $payType, $orderNo);
 
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = 'success';
