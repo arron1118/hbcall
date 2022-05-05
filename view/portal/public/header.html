@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark lqp-scroll sticky-top">
     <div class="container d-flex flex-row">
-        <a class="navbar-brand" href="#"> <img src="__STATIC__/images/logo.png" style="width: 120px; height: auto;" alt="喵头鹰呼叫系统"/></a>
+        <a class="navbar-brand" href="#"> <img src="__STATIC__/images/logo.png" style="width: 120px; height: auto;" alt="{$app_name}"/></a>
         <div class="border-start ps-4 text-light divIWantedToHide">咨询：136 2285 0769<br/>咨询：130 6619 2701</div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -13,7 +13,7 @@
                     <div class="position-relative border border-primary px-4 py-2 px-4 lqp-borderradius20">
                         <ul class="d-flex flex-row p-0 m-0 justify-content-between">
                             {if is_null($user)}
-                            <li class="text-nowrap "><a class="text-light stretched-link" target="_blank" href="home.php{:url('/index/login')}">登录</a></li>
+                            <li class="text-nowrap "><a class="text-light stretched-link" target="_blank" href="home.php{:url('/user/login')}">登录</a></li>
                             {else /}
                             <li class="text-nowrap "><a class="text-light stretched-link" target="_blank" href="home.php{:url('/index')}">控制中心</a></li>
                             {/if}

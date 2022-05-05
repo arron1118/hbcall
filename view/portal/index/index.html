@@ -1,4 +1,4 @@
-{extend name="../common/public/base" /}
+{extend name="public/base" /}
 {block name="content"}
 <!--     轮播 -->
 <div class="container-fluid mb-5 lqp-bgi">
@@ -172,7 +172,7 @@
     <div class="container m-auto customerBox">
         <div class="row mb-5 text-center">
             <div class="col-12">
-                <h3>汇邦动态</h3>
+                <h3 class="title">汇邦动态</h3>
                 <h6 class="text-muted my-4">我们提供云端通讯接口，与行业系统无缝对接，共同打造一个完整的行业服务方案</h6>
             </div>
         </div>
@@ -187,6 +187,7 @@
 
 {block name="js"}
 <script>
+    console.log(window)
     let getNewsList = function (p = 1, limit = 6) {
         $.get('/news/getList', {page: p, limit: limit}, function (res) {
             if(res.list.length > 0){
@@ -209,13 +210,12 @@
                                                 ${intro}
                                             </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </li>
                     `;
                 });
-                $('.lqp-news').html(newsList);
+                $('.lqp-news').append(newsList);
 
                 //vis:5 当数量=5||>5的时候才滚动.创建完元素再调用
                 $(".customerBox").slide({
@@ -229,8 +229,8 @@
 
             }
 
-        })}
+        })
+    }
     getNewsList();
-
 </script>
 {/block}
