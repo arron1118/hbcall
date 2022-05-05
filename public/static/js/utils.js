@@ -1,4 +1,4 @@
-(function (global, factory) {
+!function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('@popperjs/core')) :
         typeof define === 'function' && define.amd ? define(['@popperjs/core'], factory) :
             (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.utils = factory(global));
@@ -86,13 +86,18 @@
         }
     }
 
+    function isPhone(phone) {
+        let pattern = /^1[3456789]\d{9}$/;
+        return pattern.test(phone);
+    }
+
     const caller = {
         success: function (param) {
             layer.config({
                 extend: 'skin/blue.css',
             }).open({
                 type: 1,
-                title: param.info ? param.info : '拨号成功！',
+                title: param.info ?? '拨号成功！',
                 closeBtn: 2,
                 area: '400px;',
                 shade: 0.8,
@@ -127,7 +132,7 @@
             layer.config({
                 extend: 'skin/red.css',
             }).open({
-                title: param.info ? param.info : '温馨提示',
+                title: param.info ?? '温馨提示',
                 type: 1,
                 area: '400px',
                 shade: 0.8,
@@ -149,7 +154,8 @@
         getDateTime,
         cookie,
         caller,
+        isPhone,
     }
-})));
+}));
 
 
