@@ -92,7 +92,7 @@
                 extend: 'skin/blue.css',
             }).open({
                 type: 1,
-                title: param.info ?? '拨号成功！',
+                title: param.info ? param.info : '拨号成功！',
                 closeBtn: 2,
                 area: '400px;',
                 shade: 0.8,
@@ -127,7 +127,7 @@
             layer.config({
                 extend: 'skin/red.css',
             }).open({
-                title: param.info ?? '温馨提示',
+                title: param.info ? param.info : '温馨提示',
                 type: 1,
                 area: '400px',
                 shade: 0.8,

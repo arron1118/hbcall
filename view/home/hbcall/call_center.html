@@ -309,7 +309,7 @@
                 }
             }).append($('<div />', {
                 class: 'col-6 text-truncate',
-                text: item.customer?.title,
+                text: item.customer ? item.customer.title : '',
             })).append($('<span />', {
                 class: 'phone col-3',
                 text: item.called_number.toString().replace(item.called_number.toString().substring(3, 7), '****')
