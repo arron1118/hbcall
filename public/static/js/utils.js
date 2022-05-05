@@ -86,11 +86,6 @@
         }
     }
 
-    function isPhone(phone) {
-        let pattern = /^1[3456789]\d{9}$/;
-        return pattern.test(phone);
-    }
-
     const caller = {
         success: function (param) {
             layer.config({
@@ -154,7 +149,6 @@
         getDateTime,
         cookie,
         caller,
-        isPhone,
     }
 })));
 
