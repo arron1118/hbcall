@@ -9,6 +9,7 @@ use Curl\Curl;
 use think\facade\Config;
 use think\facade\Request;
 use think\facade\Session;
+use app\common\model\Expense;
 
 /**
  * Class CallHistory
@@ -20,20 +21,30 @@ class CallHistory
 
     public function handle(Request $request)
     {
-        $year = $request::param('year', date('Y'));
-        $month = $request::param('month', date('m'));
-        $day = $request::param('day', date('d'));
+        $year = trim($request::param('year', date('Y')));
+        $month = trim($request::param('month', date('m')));
+        $day = trim($request::param('day', date('d')));
+        strlen($month) === 1 && $month = '0' . $month;
+        strlen($day) === 1 && $day = '0' . $day;
+
         $date = $year . '-' . $month . '-' . $day;
         $uid = $request::param('uid', 0);
+        dump('日期：' . $date);
 
-        $module = app('http')->getName();
+//        $module = app('http')->getName();
         $time = strtotime($date);
-        $map = [
-            ['status', '=', '0']
-        ];
-        if ($module === 'home') {
-            $map[] = ['user_id', '=', Session::get('user.id')];
+        $endTime = time() - 300;
+        if (date('Y-m-d', time()) !== $date) {
+            $endTime = $time + 86400 - 1;
         }
+        $map = [
+//            ['status', '=', '0'],
+//            ['user_id', '=', 133],
+            ['sync_at', '=', '']
+        ];
+//        if ($module === 'home') {
+//            $map[] = ['user_id', '=', Session::get('user.id')];
+//        }
 
         if ($uid) {
             $map[] = ['user_id', '=', $uid];
@@ -43,17 +54,16 @@ class CallHistory
         $callList = $HistoryModel->where($map);
             // id 为5183后开启
         if (!$uid) {
-            $callList->whereBetweenTime('createtime', $time, $time + 86400 - 1);
+            $callList->whereBetweenTime('createtime', $time, $endTime);
         }
 
         $callList = $callList->order('id asc')->limit(100)->select();
-        $returnData = ['total' => count($callList), 'success' => 0, 'error' => 0];
+        $returnData = ['total' => count($callList), 'success' => 0, 'error' => 0, 'response' => []];
         if (!empty($callList)) {
             $curl = new Curl();
             $curl->setHeader('Content-Type', 'application/x-www-form-urlencoded');
             $news = [];
             $date = date('Ymd', $time);
-            dump($date);
 
             foreach ($callList as $val) {
                 try {
@@ -64,8 +74,9 @@ class CallHistory
 
                     $response = json_decode($curl->response, true);
 
+                    $returnData['response'][] = $response;
                     if (!is_null($response) && $response['code'] === 1000) {
-                        $returnData['success'] += 1;
+                        ++$returnData['success'];
                         if (!empty($response['data'])) {
                             if (!is_array($response['data'])) {
                                 $response['data'] = json_decode($response['data'], true);
@@ -83,45 +94,48 @@ class CallHistory
                             $val->releasetime = strtotime($response['data']['releasetime']);
                             $val->call_duration = $response['data']['callDuration'];
                             $val->record_url = $response['data']['recordUrl'];
-                            $val->status = 1;
 
                             if (!$val->getData('createtime')) {
                                 $val->createtime = strtotime($response['data']['starttime']);
                             }
 
-                            $val->save();
-
                             if ($response['data']['callDuration'] > 0) {
                                 // 添加消费记录
-                                $company = Company::find($val->company_id);
-                                $ExpenseModel = new \app\common\model\Expense();
-                                $ExpenseModel->duration =  ceil($response['data']['callDuration'] / 60);
-                                $ExpenseModel->rate = $company->rate;
-                                $ExpenseModel->cost = $ExpenseModel->duration * $company->rate;
-                                $ExpenseModel->title = '通话消费';
-                                $ExpenseModel->user_id = $val->user_id;
-                                $ExpenseModel->company_id = $val->company_id;
-                                $ExpenseModel->call_history_id = $val->id;
-                                $ExpenseModel->createtime = strtotime($response['data']['starttime']) + 300;
-                                $ExpenseModel->save();
+                                $ExpenseModel = Expense::where('call_history_id', $val->id)->findOrEmpty();
+                                if ($ExpenseModel->isEmpty()) {
+                                    $company = Company::find($val->company_id);
 
-                                // 扣费
-                                $company->balance = $company->balance - $ExpenseModel->cost;
-                                $company->expense = $company->expense + $ExpenseModel->cost;
-                                $company->save();
+                                    $ExpenseModel = new Expense();
+                                    $ExpenseModel->duration =  ceil($response['data']['callDuration'] / 60);
+                                    $ExpenseModel->rate = $company->rate;
+                                    $ExpenseModel->cost = $ExpenseModel->duration * $company->rate;
+                                    $ExpenseModel->title = '通话消费';
+                                    $ExpenseModel->user_id = $val->user_id;
+                                    $ExpenseModel->company_id = $val->company_id;
+                                    $ExpenseModel->call_history_id = $val->id;
+                                    $ExpenseModel->createtime = strtotime($response['data']['starttime']) + 300;
+                                    $ExpenseModel->save();
+
+                                    // 扣费
+                                    $company->balance = $company->balance - $ExpenseModel->cost;
+                                    $company->expense = $company->expense + $ExpenseModel->cost;
+                                    $company->save();
+                                }
                             }
-                        } else {
-                            $val->status = 1;
-                            $val->save();
                         }
+
+                        $val->status = 1;
+                        $val->sync_at = time();
+                        $val->save();
                     }
                 } catch (\ErrorException $e) {
-                    $returnData['error'] += 1;
+                    ++$returnData['error'];
                     dump($e);
                 }
             }
 
             dump('总共：' . $returnData['total'] . ' 成功：' . $returnData['success'] . ' 失败：' . $returnData['error']);
+            dump($returnData['response']);
 
             if (!empty($news)) {
                 $HistoryModel->saveAll($news);

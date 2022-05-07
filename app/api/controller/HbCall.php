@@ -84,7 +84,8 @@ class HbCall extends \app\common\controller\ApiController
      */
     public function updateCallHistory()
     {
-//        return date('Y-m-d H:i:s', 1639122363);
+//        return strtotime('2022-05-06 23:59:59');
+//        dump(date('Y-m-d', time()) === '2022-05-06');
         Event::trigger('CallHistory');
         return 'Done!';
     }
