@@ -33,7 +33,7 @@ class CallHistory
 
 //        $module = app('http')->getName();
         $time = strtotime($date);
-        $endTime = time() - 300;
+        $endTime = time() - 600;
         if (date('Y-m-d', time()) !== $date) {
             $endTime = $time + 86400 - 1;
         }
@@ -66,6 +66,11 @@ class CallHistory
             $date = date('Ymd', $time);
 
             foreach ($callList as $val) {
+                if (!$val->createtime) {
+                    continue;
+                }
+
+//                $date = date('Ymd', $val->getData('createtime'));
                 try {
                     $curl->post(Config::get('hbcall.record_api'), [
                         'subid' => $val['subid'],
