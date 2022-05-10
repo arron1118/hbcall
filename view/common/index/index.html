@@ -146,10 +146,9 @@
 
         miniAdmin.render(options);
 
-            $('.app-download').mouseover(function(){
-                console.log('aaaaaaaaa')
+            $('.app-download').hover(function(){
                 $('.app-download-content').show();
-            }).mouseout(function() {
+            }, function() {
                 $('.app-download-content').hide();
             })
     });

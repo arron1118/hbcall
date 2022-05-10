@@ -61,12 +61,12 @@
             }
 
             //隐藏试用
-            let pages2=[
+            let pages2 = [
                 'buy',
                 'detailIndex'
             ];
 
-            if(pages2.includes(pageName)){
+            if (pages2.includes(pageName)) {
                 $('.lqp-user').addClass('d-none');
             }
             // 底部导航
@@ -76,7 +76,7 @@
                 }).append($('<h6 />', {
                     class: "text-white mb-3"
                 }).text(item1.title)).append($('<ul />', {
-                    class:"nav nav-sm nav-x-0  flex-column"
+                    class: "nav nav-sm nav-x-0  flex-column"
                 }));
                 $.each(res.menuList, function (index, item) {
                     if (item.showInBottom && item.bottomId === item1.id) {
@@ -104,8 +104,8 @@
     // 初始化导航
     navInit();
 
-   //经过卡片给shadow
-   $('.shadowitems').hover(
+    //经过卡片给shadow
+    $('.shadowitems').hover(
         function () {
             $(this).addClass('shadow-lg');
         },
@@ -113,7 +113,7 @@
             $(this).removeClass('shadow-lg');
         },
     );
-   //轮播图
+    //轮播图
     $('.lqp-carousel').hover(
         function () {
             $('.carousel-control-prev').css({left: 0})
@@ -149,7 +149,7 @@
         let paramsData = $(this).closest('form[name="applyForm"]').serializeArray();
         let flag = false;
         // console.log(paramsData);
-        $(paramsData).each(function (index,item) {
+        $(paramsData).each(function (index, item) {
             if (['mc', 'mz', 'sj', 'em'].includes(item.name)) {
                 if ($.trim(item.value) !== '') {
                     // 正则
@@ -157,14 +157,15 @@
                         let telVerify = /^1[3456789]{1}\d{9}$/;
                         return telVerify.test(phone)
                     }
+
                     // 手机格式验证
-                    if(item.name === "sj"){
-                      if(!code(item.value)){
-                          layer.msg('手机格式不正确！')
-                          return false;
-                      }else{
-                          flag = true;
-                      }
+                    if (item.name === "sj") {
+                        if (!code(item.value)) {
+                            layer.msg('手机格式不正确！')
+                            return false;
+                        } else {
+                            flag = true;
+                        }
                     }
                     // flag = true;
                 } else {
@@ -198,13 +199,13 @@
                 console.log(3);
                 console.log(textStatus);
             },
-            statusCode:{
-                200:function () {
-                    layer.msg('申请成功!',function () {
+            statusCode: {
+                200: function () {
+                    layer.msg('申请成功!', function () {
                         let a = $('form[name="applyForm"]');
-                              for(let i=0; i<a.length; i++){
-                                  $(a)[i].reset();
-                              }
+                        for (let i = 0; i < a.length; i++) {
+                            $(a)[i].reset();
+                        }
                         // $('#myform').reset()   这样是错误的 JQuery中没有reset方法
                         // 需要转成dom 再用reset方法即 $('#myform')[0].reset()
                     });
