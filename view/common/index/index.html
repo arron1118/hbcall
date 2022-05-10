@@ -25,6 +25,15 @@
             </ul>
 
             <ul class="layui-nav layui-layout-right">
+                {if ($module !== 'admin')}
+                <li class="layui-nav-item" lay-unselect>
+                    <a href="javascript:;" class="app-download">手机版</a>
+                    <div class="app-download-content" style="text-align: center; color: #666; background-color: #fff; padding: 8px; border: 1px solid #ddd; overflow: hidden; display: none; height: 200px; width: 170px; position: absolute; top: 60px; right: 0; z-index: 999999">
+                        <img src="__STATIC__/images/apk.png" class="" style="width: 160px; height: 160px; margin: 0;"/>
+                        <p style="line-height: 20px;">下载喵头鹰App <br /><span style="color: #999;">(安卓版)</span></p>
+                    </div>
+                </li>
+                {/if}
                 <li class="layui-nav-item" lay-unselect>
                     <a href="/index.html" target="_blank"><i class="fa fa-home"></i></a>
                 </li>
@@ -134,8 +143,15 @@
             options.iniUrl = '__STATIC__/api/homeInit.json';
         {/if}
 
+
         miniAdmin.render(options);
 
+            $('.app-download').mouseover(function(){
+                console.log('aaaaaaaaa')
+                $('.app-download-content').show();
+            }).mouseout(function() {
+                $('.app-download-content').hide();
+            })
     });
 </script>
 {/block}
