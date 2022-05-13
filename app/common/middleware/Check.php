@@ -53,7 +53,12 @@ class Check
         if ($this->token) {
             $userInfo = $this->model::getByToken($this->token);
 
-            return !(!$userInfo || $userInfo->token_expire_time < time());
+            if ($this->module === 'home' && $userInfo && $userInfo->getData('is_test') && $userInfo->getData('test_endtime') < time()) {
+                $userInfo->status = 0;
+                $userInfo->save();
+            }
+
+            return !(!$userInfo || !$userInfo->getData('status') || $userInfo->token_expire_time < time());
         }
 
         return false;

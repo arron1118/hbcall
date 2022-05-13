@@ -83,18 +83,29 @@ class User extends ApiController
                 $this->returnApiData();
             }
 
+            $now = time();
+            $user->token_expire_time = $now + $this->token_expire_time;
+
+            // 试用用户试用期结束后禁止登录
+            if ($this->userType === 'user' && $user->getData('is_test')) {
+                $user->token_expire_time = $user->token_expire_time;
+
+                if ($user->getData('test_endtime') < time()) {
+                    $this->returnData['msg'] = '测试时间结束，' . lang('Account is locked');
+                    $this->returnApiData();
+                }
+            }
+
             $password = getEncryptPassword($this->params['password'], $user->salt);
             if ($password !== $user->password) {
                 $this->returnData['msg'] = lang('Password is incorrect');
                 $this->returnApiData();
             }
 
-            $now = time();
             $user->prevtime = $user->getData('logintime');
             $user->logintime = $now;
             $user->loginip = $this->request->ip();
             $user->token = createToken($password);
-            $user->token_expire_time = $now + $this->token_expire_time;
             $user->platform = $this->agent->platform();
             $user->platform_version = $this->agent->version($this->agent->platform());
             $user->browser = $this->agent->browser();

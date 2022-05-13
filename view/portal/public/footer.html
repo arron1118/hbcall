@@ -169,15 +169,15 @@
 </div>
 <!--回到顶部-->
 <div class="list-group position-fixed shadow zindex-fixed text-center" style="bottom: 30%; right: 20px; width: 60px;">
-    <a href="javascript:;" class="list-group-item position-relative app-phone p-2">
+    <a href="javascript:;" class="list-group-item position-relative app-phone p-2" title="手机版">
         <img src="__STATIC__/images/apk.png" class="" style="width: 30px; height: 30px; margin: 0;"/>
         <span class="" style="font-size: 12px">手机版</span>
-        <div class="app-download-content zindex-fixed" style="text-align: center; color: #666; background-color: #fff; padding: 8px; border: 1px solid #ddd; overflow: hidden; display: none; height: 220px; width: 170px; position: absolute; top: 0; right: 60px;">
-            <img src="__STATIC__/images/apk.png" class="" style="width: 160px; height: 160px; margin: 0;"/>
+        <div class="app-download-content d-none zindex-fixed bg-white position-absolute overflow-hidden text-center p-2" style=" color: #666; border: 1px solid #ddd; height: 220px; width: 170px; top: 0; right: 60px;">
+            <img src="__STATIC__/images/apk.png" class="m-0" style="width: 160px; height: 160px;"/>
             <p style="line-height: 20px;">下载喵头鹰App <br /><span style="color: #999;">(安卓版)</span></p>
         </div>
     </a>
-    <a class="list-group-item lqp-top" href="#top">
+    <a class="list-group-item lqp-top" href="#top" title="回到顶部">
         <i class="bi bi-chevron-double-up fs-2"></i>
     </a>
 </div>
@@ -255,8 +255,8 @@
         $(this).css("cursor","pointer")
     });
     $('.app-phone').hover(function(){
-        $(this).find('.app-download-content').show();
+        $(this).find('.app-download-content').removeClass('d-none');
     }, function() {
-        $(this).find('.app-download-content').hide();
+        $(this).find('.app-download-content').addClass('d-none');
     })
 </script>

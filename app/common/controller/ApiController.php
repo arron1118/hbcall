@@ -48,31 +48,42 @@ class ApiController extends \app\BaseController
         $action = $this->request->action();
 
         if (!in_array($action, $this->noNeedLogin)) {
+            $this->returnData['code'] = 5003;
             if (!$this->token) {
-                response(['code' => 5003, 'msg' => '权限不足：未登录'], 200, [], 'json')->send();
-                exit;
+                $this->returnData['msg'] = '权限不足：未登录';
+                $this->returnApiData();
             }
 
             if (!$this->userType) {
+                $this->returnData['code'] = 0;
                 $this->returnData['msg'] = '未提供正确的参数：userType';
-                response($this->returnData, 200, [], 'json')->send();
-                exit;
+                $this->returnApiData();
             }
 
             if ($this->userType === 'user') {
                 $this->userInfo = UserModel::where('token', $this->token)->find();
+
+                if ($this->userInfo && $this->userInfo->getData('is_test') && $this->userInfo->getData('test_endtime') < time()) {
+                    $this->userInfo->status = 0;
+                    $this->userInfo->save();
+                }
             } else if ($this->userType === 'company') {
                 $this->userInfo = CompanyModel::where('token', $this->token)->find();
             }
 
             if (!$this->userInfo) {
-                response(['code' => 5003, 'msg' => '用户不存在或未登录'], 200, [], 'json')->send();
-                exit;
+                $this->returnData['msg'] = '用户不存在或未登录';
+                $this->returnApiData();
+            }
+
+            if (!$this->userInfo->getData('status')) {
+                $this->returnData['msg'] = lang('Account is locked');
+                $this->returnApiData();
             }
 
             if ($this->userInfo->token_expire_time < time()) {
-                response(['code' => 5003, 'msg' => '登录过期，请重新登录'], 200, [], 'json')->send();
-                exit;
+                $this->returnData['msg'] = '登录过期，请重新登录';
+                $this->returnApiData();
             }
         }
     }

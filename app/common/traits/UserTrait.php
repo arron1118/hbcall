@@ -13,7 +13,7 @@ trait UserTrait
 
     public function login()
     {
-        if ($this->userInfo && $this->userInfo->token_expire_time > time()) {
+        if ($this->userInfo && $this->userInfo->token_expire_time > time() && $this->userInfo->getData('status')) {
             return redirect(url('/index'));
         }
 
@@ -37,9 +37,22 @@ trait UserTrait
                 return json($this->returnData);
             }
 
+            $now = time();
+            $user->token_expire_time = $now + $this->token_expire_time;
+
             if (!$user->getData('status')) {
                 $this->returnData['msg'] = lang('Account is locked');
                 return json($this->returnData);
+            }
+
+            // 试用用户试用期结束后禁止登录
+            if ($this->module === 'home' && $user->getData('is_test')) {
+                $user->token_expire_time = $user->getData('test_endtime');
+
+                if ($user->getData('test_endtime') < time()) {
+                    $this->returnData['msg'] = '测试时间结束，' . lang('Account is locked');
+                    return json($this->returnData);
+                }
             }
 
             $password = getEncryptPassword($param['password'], $user->salt);
@@ -53,12 +66,10 @@ trait UserTrait
                 return json($this->returnData);
             }
 
-            $now = time();
             $user->prevtime = $user->getData('logintime');
             $user->logintime = $now;
             $user->loginip = $this->request->ip();
             $user->token = createToken($password);
-            $user->token_expire_time = $now + $this->token_expire_time;
             $user->device = $this->agent->device();
             $user->platform = $this->agent->platform();
             $user->platform_version = $this->agent->version($this->agent->platform());
