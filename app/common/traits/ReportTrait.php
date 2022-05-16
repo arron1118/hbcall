@@ -11,6 +11,9 @@ trait ReportTrait
 {
     public function index()
     {
+//        dump(strtotime('2022-05-09 00:00:00'));
+//        dump(strtotime('2022-05-16 23:59:59'));
+
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
             $this->view->assign('companies', $company);

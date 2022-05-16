@@ -33,7 +33,7 @@ class CallHistory
 
 //        $module = app('http')->getName();
         $time = strtotime($date);
-        $endTime = time() - 600;
+        $endTime = time() - 1800;
         if (date('Y-m-d', time()) !== $date) {
             $endTime = $time + 86400 - 1;
         }
