@@ -28,9 +28,10 @@
                 {if ($module !== 'admin')}
                 <li class="layui-nav-item" lay-unselect>
                     <a href="javascript:;" class="app-download">手机版</a>
-                    <div class="app-download-content" style="text-align: center; color: #666; background-color: #fff; padding: 8px; border: 1px solid #ddd; overflow: hidden; display: none; height: 200px; width: 170px; position: absolute; top: 60px; right: 0; z-index: 999999">
+                    <div class="app-download-content"
+                         style="text-align: center; color: #666; background-color: #fff; padding: 8px; border: 1px solid #ddd; overflow: hidden; display: none; height: 200px; width: 170px; position: absolute; top: 60px; right: 0; z-index: 999999">
                         <img src="__STATIC__/images/apk.png" class="" style="width: 160px; height: 160px; margin: 0;"/>
-                        <p style="line-height: 20px;">下载喵头鹰App <br /><span style="color: #999;">(安卓版)</span></p>
+                        <p style="line-height: 20px;">下载喵头鹰App <br/><span style="color: #999;">(安卓版)</span></p>
                     </div>
                 </li>
                 {/if}
@@ -50,16 +51,18 @@
                     <a href="javascript:;">{$user.username}</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" layuimini-content-href="user/profile.html" data-title="基本资料" data-icon="fa fa-gears">基本资料<span class="layui-badge-dot"></span></a>
+                            <a href="javascript:;" layuimini-content-href="{:url('/user/profile')}" data-title="基本资料"
+                               data-icon="fa fa-gears">基本资料<span class="layui-badge-dot"></span></a>
                         </dd>
                         <dd>
-                            <a href="javascript:;" layuimini-content-href="user/resetPassword.html" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
+                            <a href="javascript:;" layuimini-content-href="{:url('/user/resetPassword')}" data-title="修改密码"
+                               data-icon="fa fa-gears">修改密码</a>
                         </dd>
                         <dd>
                             <hr>
                         </dd>
                         <dd>
-                            <a href="user/logout.html" class="login-out">退出登录</a>
+                            <a href="{:url('/user/logout')}" class="login-out">退出登录</a>
                         </dd>
                     </dl>
                 </li>
@@ -119,11 +122,12 @@
 {block name="js"}
 <script>
     layui.use(['jquery', 'layer', 'miniAdmin'], function () {
-        var $ = layui.jquery,
+        const $ = layui.jquery,
             layer = layui.layer,
             miniAdmin = layui.miniAdmin;
-
-        var options = {
+        // 初始化接口
+        miniAdmin.render({
+            iniUrl: "{:url('/index/getMenu')}",
             clearUrl: "__STATIC__/api/clear.json", // 缓存清理接口
             urlHashLocation: true,      // 是否打开hash定位
             bgColorDefault: 4,      // 主题默认配置
@@ -132,25 +136,13 @@
             loadingTime: 0,             // 初始化加载时间
             pageAnim: true,             // iframe窗口动画
             maxTabNum: 20,              // 最大的tab打开数量
-        };
+        });
 
-        // 初始化接口
-        {if ($module === 'admin')}
-            options.iniUrl = '__STATIC__/api/adminInit.json';
-        {elseif ($module === 'company') /}
-            options.iniUrl = '__STATIC__/api/companyInit.json';
-        {else /}
-            options.iniUrl = '__STATIC__/api/homeInit.json';
-        {/if}
-
-
-        miniAdmin.render(options);
-
-            $('.app-download').hover(function(){
-                $('.app-download-content').show();
-            }, function() {
-                $('.app-download-content').hide();
-            })
+        $('.app-download').hover(function () {
+            $('.app-download-content').show();
+        }, function () {
+            $('.app-download-content').hide();
+        })
     });
 </script>
 {/block}

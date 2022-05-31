@@ -123,4 +123,12 @@ abstract class BaseController
         return $v->failException(true)->check($data);
     }
 
+    /**
+     * 获取菜单
+     * @return mixed
+     */
+    public function getMenu()
+    {
+        return config('menu.' . $this->module);
+    }
 }

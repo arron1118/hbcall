@@ -73,31 +73,7 @@
             </button>
             <span class="ms-3 text-secondary">注：点击'已开通用户'列可查看用户列表内容</span>
         </script>
-        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="{
-            url: '{:url(\"/user/getUserList\")}',
-            id: 'userTable',
-            toolbar: '#toolbarDemo',
-            defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            //异步请求，格式化数据
-            parseData: function (res) {
-                return {
-                    'code': 0,
-                    'msg': '',
-                    'data': res.rows,
-                    'count': res.total
-                }
-            },
-            page: {
-                limits: [15, 30, 45, 60],
-                limit: 15,
-            },
-            skin: 'line',
-            even: true,
-        }">
+        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
             <thead>
             <tr>
                 <th lay-data="{field: 'id', title: '编号', width: 100, fixed: 'left'}"></th>
@@ -153,6 +129,32 @@
         let $ = layui.jquery,
             form = layui.form,
             table = layui.table;
+
+        table.init('currentTableFilter', {
+            url: '{:url("/user/getUserList")}',
+            id: 'userTable',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            page: {
+                limits: [15, 30, 45, 60],
+                limit: 15,
+            },
+            skin: 'line',
+            even: true,
+        })
 
         let reloadTable = function (params = {}) {
             //执行搜索重载

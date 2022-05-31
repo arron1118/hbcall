@@ -11,9 +11,6 @@ use think\facade\Config;
 
 class PortalController extends \app\BaseController
 {
-
-    protected $view = null;
-
     protected $userInfo = null;
 
     protected $returnData = [
@@ -27,8 +24,6 @@ class PortalController extends \app\BaseController
     public function initialize()
     {
         $this->returnData['msg'] = lang('Unknown error');
-
-        $this->view = View::instance();
 
         // 用户登录状态
         $this->token = $this->request->cookie('hbcall_user_token');

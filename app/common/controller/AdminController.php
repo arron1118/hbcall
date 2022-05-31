@@ -10,8 +10,6 @@ class AdminController extends \app\BaseController
 {
     protected $middleware = [\app\common\middleware\Check::class];
 
-    protected $view = null;
-
     protected $model = null;
 
     protected $userInfo = null;
@@ -30,7 +28,6 @@ class AdminController extends \app\BaseController
             'data' => []
         ];
 
-        $this->view = View::instance();
         $token = $this->request->cookie('hbcall_admin_token');
         if ($token) {
             $this->userInfo = Admin::where('token', $token)->find();

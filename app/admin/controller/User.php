@@ -199,12 +199,12 @@ class User extends \app\common\controller\AdminController
         if ($this->request->isAjax()) {
             $data = $this->request->param();
 
-            if (intval($data['limit_user']) !== 0 && $userInfo->user_count > $data['limit_user']) {
+            if ((int)$data['limit_user'] !== 0 && $userInfo->user_count > $data['limit_user']) {
                 $this->returnData['msg'] = '该公司已开通用户数大于限制用户数';
                 return json($this->returnData);
             }
 
-            if (intval($data['ration']) === 0) {
+            if ((int)$data['ration'] === 0) {
                 $this->returnData['msg'] = '座席不能为 0';
                 return json($this->returnData);
             }

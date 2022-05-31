@@ -28,6 +28,11 @@ return [
     // 异常页面的模板文件
     'exception_tmpl'   => app()->getThinkPath() . 'tpl/think_exception.tpl',
 
+    'http_exception_template' => [
+        404 => '404.html',
+        500 => '500.html',
+    ],
+
     // 错误显示信息,非调试模式有效
     'error_message'    => '页面错误！请稍后再试～',
     // 显示错误信息

@@ -41,31 +41,7 @@
             </div>
         </script>
 
-        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="{
-            url: '{:url(\"/user/getSubUserList\", [\"company_id\" => $company_id])}',
-            id: 'userTable',
-            toolbar: true,
-            defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            //异步请求，格式化数据
-            parseData: function (res) {
-                return {
-                    'code': 0,
-                    'msg': '',
-                    'data': res.rows,
-                    'count': res.total
-                }
-            },
-            page: {
-                limits: [10, 20, 30, 40],
-                limit: 10,
-            },
-            skin: 'line',
-            even: true,
-        }">
+        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
             <thead>
             <tr>
                 <th lay-data="{field: 'id', title: 'ID'}"></th>
@@ -94,6 +70,32 @@
         let $ = layui.jquery,
             form = layui.form,
             table = layui.table;
+
+        table.init('currentTableFilter', {
+            url: '{:url("/user/getSubUserList", ["company_id" => $company_id])}',
+            id: 'userTable',
+            toolbar: true,
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            //异步请求，格式化数据
+            parseData: function (res) {
+                return {
+                    'code': 0,
+                    'msg': '',
+                    'data': res.rows,
+                    'count': res.total
+                }
+            },
+            page: {
+                limits: [10, 20, 30, 40],
+                limit: 10,
+            },
+            skin: 'line',
+            even: true,
+        })
 
         let search = function (params) {
             table.reload('userTable', {
