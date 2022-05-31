@@ -50,7 +50,7 @@ trait CustomerRecordTrait
         }
 
         $this->view->assign('customer_id', $this->request->param('customer_id'));
-        return $this->view->fetch('customer/add_record');
+        return $this->view->fetch('common@customer/add_record');
     }
 
     public function edit($id)
@@ -69,7 +69,7 @@ trait CustomerRecordTrait
         }
 
         $this->view->assign('record', $record);
-        return $this->view->fetch('customer/edit_record');
+        return $this->view->fetch('common@customer/edit_record');
     }
 
     public function del($id)
