@@ -12,10 +12,22 @@ class User extends \app\common\controller\AdminController
 {
     use UserTrait;
 
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->view->assign([
+            'callTypeList' => (new CompanyModel())->callTypeList(),
+        ]);
+    }
+
     public function index()
     {
-        $this->view->assign('isTestList', (new CompanyModel())->getTestList());
-        $this->view->assign('statusList', (new CompanyModel())->getStatusList());
+        $company = new CompanyModel();
+        $this->view->assign([
+            'isTestList' => $company->getTestList(),
+            'statusList' => $company->getStatusList()
+        ]);
         return $this->view->fetch();
     }
 
@@ -260,6 +272,7 @@ class User extends \app\common\controller\AdminController
             $userInfo->ration = $data['ration'];
             $userInfo->rate = $data['rate'];
             $userInfo->limit_user = $data['limit_user'];
+            $userInfo->call_type = $data['call_type'];
             $userInfo->status = isset($data['status']) && $data['status'];
             $userInfo->phone = $data['phone'];
             $userInfo->address = $data['address'];

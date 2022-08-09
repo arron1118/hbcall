@@ -101,39 +101,52 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         $curl = new Curl();
-        $curl->post(Config::get('hbcall.call_api'), [
-            'telA' => $this->userInfo->phone,   // 主叫
-            'telB' => $mobile,    // 被叫
-            'telX' => $this->userInfo->userXnumber->numberStore->number,   // 小号
-        ]);
+        $params = [
+            'CallType' => $this->userInfo->company->call_type
+        ];
+
+        if ($this->userInfo->company->getData('call_type') === 1) {
+            $params['telA'] = $this->userInfo->phone;
+            $params['telB'] = $mobile;
+            $params['telX'] = $this->userInfo->userXnumber->numberStore->number;
+        } else {
+            $params['caller'] = $this->userInfo->phone;
+            $params['called'] = $mobile;
+        }
+
+        $curl->post(Config::get('hbcall.call_api'), $params);
         $response = json_decode($curl->response, true);
 
-        if ($response['code'] === 1000) {
-            try {
-                $CallHistory = new CallHistory();
-                $CallHistory->user_id = $this->userInfo->id;
-                $CallHistory->username = $this->userInfo->username;
-                $CallHistory->company_id = $this->userInfo->company_id;
-                $CallHistory->company = $this->userInfo->company->corporation;
-                $CallHistory->subid = $response['data']['subid'];
-                $CallHistory->caller_number = $this->userInfo->phone;
-                $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
-                $CallHistory->called_number = $mobile;
-                $CallHistory->customer_id = $customerId;
-                $CallHistory->device = $this->agent->device();
-                $CallHistory->platform = $this->agent->platform();
-                $CallHistory->platform_version = $this->agent->version($this->agent->platform());
-                $CallHistory->browser = $this->agent->browser();
-                $CallHistory->browser_version = $this->agent->version($this->agent->browser());
+        if ($response) {
+            if ($response['code'] === 1000) {
+                try {
+                    $CallHistory = new CallHistory();
+                    $CallHistory->user_id = $this->userInfo->id;
+                    $CallHistory->username = $this->userInfo->username;
+                    $CallHistory->company_id = $this->userInfo->company_id;
+                    $CallHistory->company = $this->userInfo->company->corporation;
+                    $CallHistory->subid = $response['data']['subid'];
+                    $CallHistory->caller_number = $this->userInfo->phone;
+                    $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
+                    $CallHistory->called_number = $mobile;
+                    $CallHistory->customer_id = $customerId;
+                    $CallHistory->device = $this->agent->device();
+                    $CallHistory->platform = $this->agent->platform();
+                    $CallHistory->platform_version = $this->agent->version($this->agent->platform());
+                    $CallHistory->browser = $this->agent->browser();
+                    $CallHistory->browser_version = $this->agent->version($this->agent->browser());
 
-                if ($customer) {
-                    $CallHistory->customer = $customer->title;
+                    if ($customer) {
+                        $CallHistory->customer = $customer->title;
+                    }
+
+                    $CallHistory->save();
+                } catch (DbException $dbException) {
+
                 }
-
-                $CallHistory->save();
-            } catch (DbException $dbException) {
-
             }
+        } else {
+            $response['msg'] = '暂时无法呼叫';
         }
 
         return json($response);

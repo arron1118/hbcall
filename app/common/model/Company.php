@@ -45,6 +45,11 @@ class Company extends Model
         return $this->getTestList()[$value];
     }
 
+    public function getCallTypeAttr($value)
+    {
+        return $this->getCallTypeList()[$value];
+    }
+
     public function getStatusList()
     {
         return ['-1' => '全部', '禁止', '正常'];
@@ -53,6 +58,16 @@ class Company extends Model
     public function getTestList()
     {
         return ['-1' => '全部', '否', '是'];
+    }
+
+    public function callTypeList()
+    {
+        return [1 => 'AXB线路', 2 => '网通回拨', 3 => '电信回拨'];
+    }
+
+    public function getCallTypeList()
+    {
+        return [1 => 'axb', 2 => 'callback', 3 => 'DxCallBack'];
     }
 
     public function getCompanyList()

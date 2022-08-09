@@ -30,6 +30,22 @@
                             </div>
                         </div>
                         <div class="layui-form-item">
+                            <label class="layui-form-label">呼叫线路</label>
+                            <div class="layui-input-block">
+                                {php}
+                                    $call_type = '';
+                                    if ($user['call_type'] === 'axb') {
+                                        $call_type = 'AXB线路';
+                                    } elseif ($user['call_type'] === 'callback'){
+                                        $call_type = '网通回拨';
+                                    } else {
+                                        $call_type = '电信回拨';
+                                    }
+                                {/php}
+                                <input type="text" name="balance" value="{$call_type}" class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">配额</label>
                             <div class="layui-input-block">
                                 <input type="text" name="ration" value="{$user.ration}" class="layui-input" disabled>
