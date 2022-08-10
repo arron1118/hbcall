@@ -181,6 +181,7 @@ class HbCall extends \app\common\controller\HomeController
             $response['msg'] = '暂时无法呼叫';
         }
 
+        $response['call_type'] = $call_type;
         return json($response);
     }
 

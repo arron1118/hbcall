@@ -93,9 +93,7 @@
 
     const caller = {
         success: function (param) {
-            layer.config({
-                extend: 'skin/blue.css',
-            }).open({
+            let option = {
                 type: 1,
                 title: param.info ? param.info : '拨号成功！',
                 closeBtn: 2,
@@ -105,30 +103,62 @@
                 btnAlign: 'c',
                 moveType: 1,
                 skin: 'layer-ext-blue',
-                content: `
+            }
+            switch (param.call_type) {
+                case 1:
+                    option.content = `
                             <div style="padding: 50px; line-height: 30px; font-weight: 300;">
                                 <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${param.data.xNumber}</h3> 进行通话。</p>
                             </div>
-                        `,
-                success: function (layero, index) {
-                    // 10秒倒计时
-                    let t = 10;
-                    let time = document.getElementsByClassName("clock")[0];
-                    let getTime = function () {
-                        t--;
-                        time.innerHTML = t;
-                        if (t < 0) {
-                            clearInterval(inter);
-                            // 关闭当前窗
-                            layer.close(index);
-                        }
-                    };
+                        `
+                    option.success = function (layero, index) {
+                        // 10秒倒计时
+                        let t = 10;
+                        let time = document.getElementsByClassName("clock")[0];
+                        let getTime = function () {
+                            t--;
+                            time.innerHTML = t;
+                            if (t < 0) {
+                                clearInterval(inter);
+                                // 关闭当前窗
+                                layer.close(index);
+                            }
+                        };
 
-                    let inter = setInterval(getTime, 1000);
-                }
-            });
+                        let inter = setInterval(getTime, 1000);
+                    }
+                    break;
+
+                case 2:
+                    option.content = param.msg
+                    option.time = 3000
+                    break;
+
+                case 3:
+                case 4:
+                    option.content = param.message
+                    option.time = 3000
+                    break;
+            }
+
+            layer.config({
+                extend: 'skin/blue.css',
+            }).open(option);
         },
         fail: function (param) {
+            let msg = ''
+            switch (param.call_type) {
+                case 1:
+                case 2:
+                    msg = param.msg
+                    break;
+
+                case 3:
+                case 4:
+                    msg = param.message
+                    break;
+            }
+
             layer.config({
                 extend: 'skin/red.css',
             }).open({
@@ -143,7 +173,7 @@
                 skin: 'layer-ext-red',
                 content: `
                         <div style="padding: 50px; line-height: 30px; font-weight: 300;">
-                            <p>${param.msg}</p>
+                            <p>${msg}</p>
                         </div>
                     `
             })
