@@ -16,6 +16,7 @@ class User extends \app\common\controller\HomeController
             $username = trim($this->request->param('username'));
             $realname = trim($this->request->param('realname'));
             $phone = trim($this->request->param('phone'));
+            $callback_number = trim($this->request->param('callback_number'));
             if (empty($username)) {
                 $this->returnData['msg'] = '请输入昵称';
                 return json($this->returnData);
@@ -34,6 +35,7 @@ class User extends \app\common\controller\HomeController
             $this->userInfo->username = $username;
             $this->userInfo->realname = $realname;
             $this->userInfo->phone = $phone;
+            $this->userInfo->callback_number = $callback_number;
             $this->userInfo->save();
 
             $this->returnData['code'] = 1;
