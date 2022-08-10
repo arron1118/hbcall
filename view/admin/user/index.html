@@ -108,9 +108,11 @@
             {{# if(d.call_type === 'axb') { }}
             AXB线路
             {{# } else if (d.call_type === 'callback') { }}
-            网通回拨
+            三网通回拨
             {{# } else if (d.call_type === 'DxCallBack') { }}
             电信回拨
+            {{# } else if (d.call_type === 'YDCallBack') { }}
+            移动回拨
             {{# } }}
         </script>
         <script type="text/html" id="status">

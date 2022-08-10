@@ -3,6 +3,7 @@
 namespace app\common\traits;
 
 use app\common\model\CallHistory;
+use app\common\model\Customer;
 use Curl\Curl;
 use think\facade\Config;
 
@@ -22,6 +23,8 @@ trait HbCallTrait
         }
 
         $mobile = trim($this->params['mobile'] ?? '');
+        $customerId = $this->request->param('customerId', 0);
+        $customer = Customer::find($customerId);
 
         // 试用账号到期后无法拨号
         if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
@@ -48,11 +51,6 @@ trait HbCallTrait
             }
         }
 
-        if (!$this->userInfo->userXnumber) {
-            $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
-            $this->returnApiData();
-        }
-
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
             $this->returnData['msg'] = lang('Please enter the correct mobile phone number');
             $this->returnApiData();
@@ -67,34 +65,74 @@ trait HbCallTrait
             'CallType' => $this->userInfo->company->call_type
         ];
 
-        if ($this->userInfo->company->getData('call_type') === 1) {
-            $params['telA'] = $this->userInfo->phone;
-            $params['telB'] = $mobile;
-            $params['telX'] = $this->userInfo->userXnumber->numberStore->number;
-        } else {
-            $params['caller'] = $this->userInfo->phone;
-            $params['called'] = $mobile;
+        $call_type = $this->userInfo->company->getData('call_type');
+        switch ($call_type) {
+            case 1:
+                if (!$this->userInfo->userXnumber) {
+                    $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
+                    $this->returnApiData();
+                }
+
+                $params['telA'] = $this->userInfo->phone;
+                $params['telB'] = $mobile;
+                $params['telX'] = $this->userInfo->userXnumber->numberStore->number;
+                break;
+
+            case 2:
+                $params['caller'] = $this->userInfo->phone;
+                $params['called'] = $mobile;
+                break;
+
+            case 3:
+            case 4:
+                if (!$this->userInfo->userXnumber) {
+                    $this->returnData['msg'] = '请提供正确的回拨号码后，再重新拨号';
+                    $this->returnApiData();
+                }
+                $params['caller'] = $this->userInfo->phone;
+                $params['called'] = $mobile;
+                $params['callerX'] = $this->userInfo->callback_number;
+                break;
         }
 
         $curl->post(Config::get('hbcall.call_api'), $params);
         $response = json_decode($curl->response, true);
 
         if ($response) {
-            if ($response['code'] === 1000) {
+            if ($response['code'] === '1000' || $response['code'] === '0000') {
                 $CallHistory = new CallHistory();
                 $CallHistory->user_id = $this->userInfo->id;
                 $CallHistory->username = $this->userInfo->username;
                 $CallHistory->company_id = $this->userInfo->company_id;
                 $CallHistory->company = $this->userInfo->company->corporation;
-                $CallHistory->subid = $response['data']['subid'];
                 $CallHistory->caller_number = $this->userInfo->phone;
                 $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
                 $CallHistory->called_number = $mobile;
+                $CallHistory->customer_id = $customerId;
                 $CallHistory->device = $this->agent->device();
                 $CallHistory->platform = $this->agent->platform();
                 $CallHistory->platform_version = $this->agent->version($this->agent->platform());
                 $CallHistory->browser = $this->agent->browser();
                 $CallHistory->browser_version = $this->agent->version($this->agent->browser());
+                switch ($call_type) {
+                    case 1:
+                        $CallHistory->subid = $response['data']['subid'];
+                        break;
+
+                    case 2:
+                        $CallHistory->subid = $response['data']['callid'];
+                        break;
+
+                    case 3:
+                    case 4:
+                        $CallHistory->subid = $response['data']['bindId'];
+                        break;
+                }
+
+                if ($customer) {
+                    $CallHistory->customer = $customer->title;
+                }
+
                 $CallHistory->save();
 
                 $this->returnData['code'] = 1;

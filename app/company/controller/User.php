@@ -173,20 +173,22 @@ class User extends \app\common\controller\CompanyController
 
             $userInfo->username = $params['username'];
             $userInfo->phone = $params['phone'];
+            $userInfo->callback_number = $params['callback_number'];
             $userInfo->limit_call_number = $params['limit_call_number'];
 
             if ($userInfo->save()) {
                 // 保存小号关联数据
-                if ($userInfo->userXnumber) {
-                    $userInfo->userXnumber->number_store_id = $params['number_store_id'];
-                    $userInfo->userXnumber->save();
-                } else {
-                    $userInfo->userXnumber()->save(['number_store_id' => $params['number_store_id']]);
+                if (isset($params['number_store_id'])) {
+                    if ($userInfo->userXnumber) {
+                        $userInfo->userXnumber->number_store_id = $params['number_store_id'];
+                        $userInfo->userXnumber->save();
+                    } else {
+                        $userInfo->userXnumber()->save(['number_store_id' => $params['number_store_id']]);
+                    }
                 }
 
                 $this->returnData['msg'] = '保存成功';
                 $this->returnData['code'] = 1;
-                $this->returnData['data'] = $userInfo->userXnumber;
             } else {
                 $this->returnData['msg'] = '保存失败';
             }

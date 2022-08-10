@@ -38,7 +38,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label" for="call_type">呼叫线路</label>
                                 <div class="layui-input-block" id="call_type">
-                                    <select name="call_type" lay-filter="required">
+                                    <select name="call_type" lay-verify="required">
                                         {foreach $callTypeList as $key => $val}
                                         <option value="{$key}">{$val}</option>
                                         {/foreach}
@@ -79,7 +79,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label" for="xnumber">小号</label>
                                 <div class="layui-input-block" id="xnumber">
-                                    <select name="number_store_id" lay-filter="required">
+                                    <select name="number_store_id">
                                         {foreach $numberList as $val}
                                         <option value="{$val.id}">{$val.number}</option>
                                         {/foreach}
@@ -284,10 +284,7 @@
                 layer.msg('公司名称不能为空', option);
                 return false;
             }
-            if (params.sale === '') {
-                layer.msg('跟进人不能为空', option);
-                return false;
-            }
+
             if (params.is_test === '1' && params.test_endtime === '') {
                 layer.msg('结束时间不能为空', option)
                 return false

@@ -50,8 +50,51 @@
                 <div class="layui-form-item logo-title">
                     <h1>编辑账号</h1>
                 </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">呼叫线路</label>
+                    <div class="layui-input-block">
+                        {php}
+                        $call_type = '';
+                        switch ($user['call_type']) {
+                        case 'axb':
+                        $call_type = 'AXB线路';
+                        break;
+
+                        case 'callback':
+                        $call_type = '三网通回拨';
+                        break;
+
+                        case 'DxCallBack':
+                        $call_type = '电信回拨';
+                        break;
+
+                        case 'YDCallBack':
+                        $call_type = '移动回拨';
+                        break;
+                        }
+                        {/php}
+                        <input type="text" name="" value="{$call_type}" class="layui-input" disabled>
+                        <tip>提示：当前使用呼叫线路</tip>
+                    </div>
+                </div>
 
                 <div class="layui-form-item">
+                    <label class="layui-form-label" for="account">账号</label>
+                    <div class="layui-input-block" id="account">
+                        <input type="text" name="username" lay-verify="required|account" placeholder="账号"
+                               autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
+                        <tip>提示：此昵称作为登录账号使用，创建后暂不支持更改</tip>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" for="password">密码</label>
+                    <div class="layui-input-block" id="password">
+                        <input type="password" name="password" lay-verify="required|password" placeholder="密码"
+                               autocomplete="off" class="layui-input" value="{$userInfo.password}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item {if $user->getData('call_type') !== 1}d-none{/if}">
                     <label class="layui-form-label">小号</label>
                     <div class="layui-input-block">
                         <select name="number_store_id">
@@ -69,19 +112,12 @@
                     </div>
                 </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="account">账号</label>
-                    <div class="layui-input-block" id="account">
-                        <input type="text" name="username" lay-verify="required|account" placeholder="账号"
-                               autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
-                        <tip>提示：此昵称作为登录账号使用，创建后暂不支持更改</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="password">密码</label>
-                    <div class="layui-input-block" id="password">
-                        <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                               autocomplete="off" class="layui-input" value="{$userInfo.password}">
+                <div class="layui-form-item {if !in_array($user->getData('call_type'), [3, 4])}d-none{/if}">
+                    <label class="layui-form-label" for="callback_number">回拨号码<span class="text-danger" style="margin: 0 5px;">*</span></label>
+                    <div class="layui-input-block" id="callback_number">
+                        <input type="text" name="callback_number" placeholder="回拨号码"
+                               autocomplete="off" class="layui-input" value="{$userInfo.callback_number}">
+                        <tip>提示：呼叫线路为<strong>电信回拨</strong>、<strong>移动回拨</strong>时，必须提供回拨号码才能进行拨号</tip>
                     </div>
                 </div>
                 <div class="layui-form-item {if $user.id !== 1} d-none {/if}">
@@ -185,10 +221,7 @@
         // 进行登录操作
         form.on('submit(edit)', function (data) {
             let params = data.field, option = { icon: 5 };
-            if (!params.number_store_id) {
-                layer.msg('请选择小号')
-                return false
-            }
+
             if (params.phone === '') {
                 layer.msg('手机号不能为空');
                 return false;

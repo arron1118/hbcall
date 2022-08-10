@@ -62,12 +62,12 @@ class Company extends Model
 
     public function callTypeList()
     {
-        return [1 => 'AXB线路', 2 => '网通回拨', 3 => '电信回拨'];
+        return [1 => 'AXB线路', 2 => '三网通回拨', 3 => '电信回拨', 4 => '移动回拨'];
     }
 
     public function getCallTypeList()
     {
-        return [1 => 'axb', 2 => 'callback', 3 => 'DxCallBack'];
+        return [1 => 'axb', 2 => 'callback', 3 => 'DxCallBack', 4 => 'YDCallBack'];
     }
 
     public function getCompanyList()
