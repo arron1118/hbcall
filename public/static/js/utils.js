@@ -130,13 +130,21 @@
                     break;
 
                 case 2:
-                    option.content = param.msg
+                    option.content = `
+                            <div style="padding: 50px; line-height: 30px; font-weight: 300;">
+                                <p>${param.msg}</p>
+                            </div>
+                        `
                     option.time = 3000
                     break;
 
                 case 3:
                 case 4:
-                    option.content = param.message
+                    option.content = `
+                            <div style="padding: 50px; line-height: 30px; font-weight: 300;">
+                                <p>${param.message}</p>
+                            </div>
+                        `
                     option.time = 3000
                     break;
             }
