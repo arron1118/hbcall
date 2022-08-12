@@ -142,7 +142,7 @@ trait HbCallTrait
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '拨号成功';
             } else {
-                $this->returnData['msg'] = $response['msg'] ?: $response['message'];
+                $this->returnData['msg'] = $response['msg'] ?? $response['message'];
             }
         } else {
             $this->returnData['msg'] = '暂时无法呼叫';
