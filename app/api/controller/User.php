@@ -123,9 +123,11 @@ class User extends ApiController
 
             Session::set('api_' . $this->userType, $user->toArray());
 
+            $user->call_type = $user->company->getData('call_type');
+
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('logined');
-            $this->returnData['data'] = $user->hidden(['password', 'salt'])->toArray();
+            $this->returnData['data'] = $user->hidden(['password', 'salt', 'company'])->toArray();
 
             $this->returnApiData();
         }
