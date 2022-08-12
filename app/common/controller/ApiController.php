@@ -48,8 +48,8 @@ class ApiController extends \app\BaseController
         $action = $this->request->action();
 
         if (!in_array($action, $this->noNeedLogin)) {
-            $this->returnData['code'] = 5003;
             if (!$this->token) {
+                $this->returnData['code'] = 5003;
                 $this->returnData['msg'] = '权限不足：未登录';
                 $this->returnApiData();
             }
@@ -72,16 +72,19 @@ class ApiController extends \app\BaseController
             }
 
             if (!$this->userInfo) {
+                $this->returnData['code'] = 5003;
                 $this->returnData['msg'] = '用户不存在或未登录';
                 $this->returnApiData();
             }
 
             if (!$this->userInfo->getData('status')) {
+                $this->returnData['code'] = 5003;
                 $this->returnData['msg'] = lang('Account is locked');
                 $this->returnApiData();
             }
 
             if ($this->userInfo->token_expire_time < time()) {
+                $this->returnData['code'] = 5003;
                 $this->returnData['msg'] = '登录过期，请重新登录';
                 $this->returnApiData();
             }
