@@ -99,7 +99,7 @@ trait HbCallTrait
         $response = json_decode($curl->response, true);
 
         if ($response) {
-            if ($response['code'] === '1000' || $response['code'] === '0000') {
+            if ($response['code'] == '1000' || $response['code'] == '0000') {
                 $CallHistory = new CallHistory();
                 $CallHistory->user_id = $this->userInfo->id;
                 $CallHistory->username = $this->userInfo->username;

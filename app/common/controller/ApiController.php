@@ -51,6 +51,7 @@ class ApiController extends \app\BaseController
             if (!$this->token) {
                 $this->returnData['code'] = 5003;
                 $this->returnData['msg'] = '权限不足：未登录';
+                $this->returnData['data'] = $this->params;
                 $this->returnApiData();
             }
 
