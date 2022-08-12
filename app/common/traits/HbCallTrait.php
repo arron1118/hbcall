@@ -85,7 +85,7 @@ trait HbCallTrait
 
             case 3:
             case 4:
-                if (!$this->userInfo->userXnumber) {
+                if ($this->userInfo->callback_number === '') {
                     $this->returnData['msg'] = '请提供正确的回拨号码后，再重新拨号';
                     $this->returnApiData();
                 }
@@ -117,6 +117,10 @@ trait HbCallTrait
                 switch ($call_type) {
                     case 1:
                         $CallHistory->subid = $response['data']['subid'];
+                        $this->returnData['data'] = [
+                            'xNumber' => $this->userInfo->userXnumber->numberStore->number,
+                            'mobile' => $mobile,
+                        ];
                         break;
 
                     case 2:
@@ -137,12 +141,8 @@ trait HbCallTrait
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '拨号成功';
-                $this->returnData['data'] = [
-                    'xNumber' => $this->userInfo->userXnumber->numberStore->number,
-                    'mobile' => $mobile,
-                ];
             } else {
-                $this->returnData['msg'] = $response['msg'];
+                $this->returnData['msg'] = $response['msg'] ?: $response['message'];
             }
         } else {
             $this->returnData['msg'] = '暂时无法呼叫';
