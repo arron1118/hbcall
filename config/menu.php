@@ -8,7 +8,7 @@ return [
         ],
         "logoInfo" => [
             "title" => "",
-            "image" => "/static/images/logo1.png",
+            "image" => "/static/images/logo.png",
             "href" => ""
         ],
         "menuInfo" => [
@@ -77,7 +77,7 @@ return [
         ],
         "logoInfo" => [
             "title" => "",
-            "image" => "/static/images/logo1.png",
+            "image" => "/static/images/logo.png",
             "href" => ""
         ],
         "menuInfo" => [
@@ -134,7 +134,7 @@ return [
         ],
         "logoInfo" => [
             "title" => "",
-            "image" => "/static/images/logo1.png",
+            "image" => "/static/images/logo.png",
             "href" => ""
         ],
         "menuInfo" => [
