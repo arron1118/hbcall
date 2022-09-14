@@ -26,7 +26,7 @@ class Payment extends \app\common\controller\ApiController
 
     public function index()
     {
-        $title = '喵头鹰呼叫系统 - PC场景下单并支付测试';
+        $title = config('app.app_name') . ' - PC场景下单并支付测试';
         // 支付宝支付
         $order = [
             'out_trade_no' => getOrderNo(),

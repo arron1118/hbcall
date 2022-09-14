@@ -38,5 +38,5 @@ return [
     // 显示错误信息
     'show_error_msg'   => false,
 
-    'app_name' => env('app.name', '喵头鹰呼叫系统'),
+    'app_name' => env('app.name', '速客外呼系统'),
 ];
