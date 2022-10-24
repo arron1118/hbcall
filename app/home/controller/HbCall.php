@@ -8,6 +8,7 @@ use Curl\Curl;
 use think\db\exception\DbException;
 use think\facade\Config;
 use app\common\traits\CallHistoryTrait;
+use think\facade\Log;
 
 class HbCall extends \app\common\controller\HomeController
 {

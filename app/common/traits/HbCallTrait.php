@@ -98,7 +98,6 @@ trait HbCallTrait
 
         $curl->post(Config::get('hbcall.call_api'), $params);
         $response = json_decode($curl->response, true);
-        Log::info($curl->response);
 
         if ($response) {
             if ($response['code'] == '1000' || $response['code'] == '0000') {
