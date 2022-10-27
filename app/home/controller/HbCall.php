@@ -136,11 +136,11 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         $curl->post(Config::get('hbcall.call_api'), $params);
-        Log::info($curl->response);
+//        Log::info($curl->response);
         $response = json_decode($curl->response, true);
 
         if ($response) {
-            if ($response['code'] == '1000' || $response['code'] == '0000') {
+            if ($response['code'] === '1000' || $response['code'] === '0000' || $response['code'] === '1003') {
                 try {
                     $CallHistory = new CallHistory();
                     $CallHistory->user_id = $this->userInfo->id;
