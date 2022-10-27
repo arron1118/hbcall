@@ -115,6 +115,7 @@ class HbCall extends \app\common\controller\HomeController
                 break;
 
             case 2:
+            case 5:
                 $params['caller'] = $this->userInfo->phone;
                 $params['called'] = $mobile;
                 break;

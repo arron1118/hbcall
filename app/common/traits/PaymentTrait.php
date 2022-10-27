@@ -77,21 +77,23 @@ trait PaymentTrait
             $orderNo = $data['orderNo'];
         }
 
+        $return = [];
+
         if ($payType === 1) {
-            return [
+            $return = [
                 'out_trade_no' => $orderNo,
                 'total_fee' => $amount * 100, // **单位：分**
                 'body' => $title,
             ];
         } else if ($payType === 2) {
-            return [
+            $return = [
                 'out_trade_no' => $orderNo,
                 'total_amount' => $amount, // **单位：分**
                 'subject' => $title,
             ];
         }
 
-        return [];
+        return $return;
     }
 
     protected function addOrder(Company $company, $amount, $payType, $title = '余额充值')
