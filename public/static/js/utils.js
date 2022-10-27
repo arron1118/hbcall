@@ -130,6 +130,7 @@
                     break;
 
                 case 2:
+                case 5:
                     option.content = `
                             <div style="padding: 50px; line-height: 30px; font-weight: 300;">
                                 <p>${param.msg}</p>
@@ -158,6 +159,7 @@
             switch (param.call_type) {
                 case 1:
                 case 2:
+                case 5:
                     msg = param.msg
                     break;
 
