@@ -80,6 +80,7 @@ trait HbCallTrait
                 break;
 
             case 2:
+            case 5:
                 $params['caller'] = $this->userInfo->phone;
                 $params['called'] = $mobile;
                 break;
@@ -100,7 +101,7 @@ trait HbCallTrait
         $response = json_decode($curl->response, true);
 
         if ($response) {
-            if ($response['code'] == '1000' || $response['code'] == '0000') {
+            if ($response['code'] == '1000' || $response['code'] == '0000' || $response['code'] == '1003') {
                 $CallHistory = new CallHistory();
                 $CallHistory->user_id = $this->userInfo->id;
                 $CallHistory->username = $this->userInfo->username;
@@ -125,6 +126,7 @@ trait HbCallTrait
                         break;
 
                     case 2:
+                    case 5:
                         $CallHistory->subid = $response['data']['callid'];
                         break;
 

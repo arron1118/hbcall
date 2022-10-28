@@ -140,7 +140,7 @@ class HbCall extends \app\common\controller\HomeController
         $response = json_decode($curl->response, true);
 
         if ($response) {
-            if ($response['code'] === '1000' || $response['code'] === '0000' || $response['code'] === '1003') {
+            if ($response['code'] == '1000' || $response['code'] == '0000' || $response['code'] == '1003') {
                 try {
                     $CallHistory = new CallHistory();
                     $CallHistory->user_id = $this->userInfo->id;
@@ -162,6 +162,7 @@ class HbCall extends \app\common\controller\HomeController
                             break;
 
                         case 2:
+                        case 5:
                             $CallHistory->subid = $response['data']['callid'];
                             break;
 

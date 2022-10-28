@@ -397,7 +397,7 @@
 
         let makeCall = function (params = { phone: '', customerId: 0 }, obj = null) {
             $.post('{:url("/hbcall/makeCall")}', { mobile: params.phone, customerId: params.customerId }, function (res) {
-                if (res.code === '1000' || res.code === '0000' || res.code === '1003') {
+                if (res.code == '1000' || res.code == '0000' || res.code == '1003') {
                     // 更新客户拨号记录
                     $.post('{:url("/Customer/updateCustomerCalledCount")}', { phone: params.phone, customerId: params.customerId }, function (r) {
                     })
