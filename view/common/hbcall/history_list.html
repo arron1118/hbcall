@@ -65,6 +65,21 @@
                         </div>
                     </div>
 
+                    {if ($module === 'company' || $module === 'admin')}
+                    <div class="layui-inline">
+                        <label class="layui-form-label">主叫号码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="caller_number" class="layui-input" value="" placeholder="主叫号码">
+                        </div>
+                    </div>
+                    {/if}
+                    <div class="layui-inline">
+                        <label class="layui-form-label">被叫号码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="called_number" class="layui-input" value="" placeholder="被叫号码">
+                        </div>
+                    </div>
+
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-normal" lay-submit
                                 lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
@@ -87,6 +102,7 @@
                 <th lay-data="{field: 'subid', title: '编号', align: 'center', width: 240}"></th>
                 {if ($module !== 'home')}
                 <th lay-data="{field: 'username', title: '操作人', align: 'center'}"></th>
+                <th lay-data="{field: 'caller_number', title: '主叫号码', align: 'center'}"></th>
                 {/if}
                 <th lay-data="{field: '', title: '客户名称', align: 'center', templet: function (row) {
                         return row.customer ? row.customer.title : '';
@@ -201,15 +217,15 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            if (data.field.datetime === "" && data.field.duration === "") {
-                layer.msg('搜索内容不能为空', { icon: 0 })
-                return false
-            }
-
-            if (data.field.duration !== "" && data.field.operate === "") {
-                layer.msg('请选择操作符', { icon: 0 })
-                return false
-            }
+            // if (data.field.datetime === "" && data.field.duration === "") {
+            //     layer.msg('搜索内容不能为空', { icon: 0 })
+            //     return false
+            // }
+            //
+            // if (data.field.duration !== "" && data.field.operate === "") {
+            //     layer.msg('请选择操作符', { icon: 0 })
+            //     return false
+            // }
             search(data.field);
 
             return false;
