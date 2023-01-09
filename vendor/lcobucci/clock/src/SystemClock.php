@@ -10,8 +10,11 @@ use function date_default_timezone_get;
 
 final class SystemClock implements Clock
 {
-    public function __construct(private DateTimeZone $timezone)
+    private DateTimeZone $timezone;
+
+    public function __construct(DateTimeZone $timezone)
     {
+        $this->timezone = $timezone;
     }
 
     public static function fromUTC(): self
