@@ -28,7 +28,10 @@ class PortalController extends \app\BaseController
         // 用户登录状态
         $this->token = $this->request->cookie('hbcall_user_token');
         if ($this->token) {
-            $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->find();
+            $this->userInfo = User::with(['company', 'userXnumber'])->where([
+                ['token', '=', $this->token],
+                ['token_expire_time', '>', time()]
+            ])->find();
         }
 
         $this->view->assign('user', $this->userInfo);
