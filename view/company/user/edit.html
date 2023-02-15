@@ -104,6 +104,13 @@
                 </div>
 
                 <div class="layui-form-item">
+                    <label class="layui-form-label" for="realname">真实姓名</label>
+                    <div class="layui-input-block" id="realname">
+                        <input type="text" name="realname" placeholder="真实姓名" autocomplete="off" class="layui-input" value="{$userInfo.realname}">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
                     <label class="layui-form-label" for="phone">手机号<span class="text-danger" style="margin: 0 5px;">*</span></label>
                     <div class="layui-input-block" id="phone">
                         <input type="text" name="phone" lay-verify="required|phone" placeholder="手机号"
