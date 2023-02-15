@@ -7,8 +7,8 @@ return [
             "href" => (string) url('/index/dashboard')
         ],
         "logoInfo" => [
-            "title" => "",
-            "image" => "/static/images/logo.png",
+            "title" => "外呼系统",
+            "image" => "",
             "href" => ""
         ],
         "menuInfo" => [
@@ -76,8 +76,8 @@ return [
             "href" => (string) url('/index/dashboard')
         ],
         "logoInfo" => [
-            "title" => "",
-            "image" => "/static/images/logo.png",
+            "title" => "外呼系统",
+            "image" => "",
             "href" => ""
         ],
         "menuInfo" => [
@@ -133,8 +133,8 @@ return [
             "href" => (string) url('/hbcall/callCenter')
         ],
         "logoInfo" => [
-            "title" => "",
-            "image" => "/static/images/logo.png",
+            "title" => "外呼系统",
+            "image" => "",
             "href" => ""
         ],
         "menuInfo" => [
