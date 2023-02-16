@@ -497,7 +497,7 @@
 
 /**自定义滚动条样式 */
 ::-webkit-scrollbar {
-    display: none
+    /*display: none*/
 }
 
 

@@ -51,16 +51,6 @@
                     </div>
                     {/if}
                     <div class="layui-inline">
-                        <label class="layui-form-label">分类</label>
-                        <div class="layui-input-inline">
-                            <select name="cate" lay-filter="cateFilter">
-                                {foreach $cateList as $key => $val}
-                                <option value="{$key}">{$val}</option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-inline">
                         <label class="layui-form-label">客户名称</label>
                         <div class="layui-input-inline">
                             <input type="text" name="title" autocomplete="off" class="layui-input">
@@ -91,25 +81,39 @@
 
 <div class="container-fluid bg-white rounded-3 py-2">
     <div class="row justify-content-center">
-        <div class="col-12">
+        <div class="col-lg-2 pt-2">
+            <div class="card">
+                <div class="card-header fw-bold">
+                    分类
+                </div>
+                <div class="list-group list-group-flush">
+                    {foreach $cateList as $key => $val}
+                    <button type="button" class="list-group-item list-group-item-action cate-list {if $key === -1}active{/if}" data-name="cate" data-key="{$key}" title="{$val}">
+                        {$val}
+                    </button>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-10">
             <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">
                 <thead>
                 <tr>
-                    <th lay-data="{type: 'checkbox', fixed: 'left' }"></th>
+                    <th lay-data="{type: 'checkbox', fixed: 'left'}"></th>
                     <th lay-data="{field: 'id', title: 'ID', align: 'center', width: 100, fixed: 'left'}"></th>
-                    <th lay-data="{field: 'title', title: '客户名称', align: 'center'}"></th>
+                    <th lay-data="{field: 'title', title: '客户名称', align: 'center', width: 200}"></th>
                     <th lay-data="{field: 'phone', title: '联系电话', align: 'center', style: 'cursor: pointer;', templet: '#phone', event: 'showPhone', width: 150}"></th>
-                    <th lay-data="{field: 'province', title: '所在地', align: 'center'}"></th>
-                    <th lay-data="{field: 'email', title: '邮箱', align: 'center'}"></th>
-                    <th lay-data="{field: 'cate', title: '类型', align: 'center'}"></th>
+                    <th lay-data="{field: 'province', title: '所在地', align: 'center', width: 100}"></th>
+                    <th lay-data="{field: 'email', title: '邮箱', align: 'center', width: 240}"></th>
+                    <th lay-data="{field: 'cate', title: '类型', align: 'center', width: 100}"></th>
                     {if ($module === 'admin')}
-                    <th lay-data="{field: 'corporation', title: '所属公司', align: 'center'}"></th>
+                    <th lay-data="{field: 'corporation', title: '所属公司', align: 'center', width: 300}"></th>
                     {/if}
                     {if ($module !== 'home')}
-                    <th lay-data="{field: 'username', title: '跟进人', align: 'center'}"></th>
+                    <th lay-data="{field: 'username', title: '跟进人', align: 'center', width: 150}"></th>
                     {/if}
-                    <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center'}"></th>
-                    <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', event: 'showRecord', style: 'cursor: pointer;', templet: '#record'}"></th>
+                    <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center', width: 50}"></th>
+                    <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', width: 50, event: 'showRecord', style: 'cursor: pointer;', templet: '#record'}"></th>
                     <th lay-data="{field: 'last_calltime', title: '最近呼叫', align: 'center', width: 180}"></th>
                     <th lay-data="{field: 'createtime', title: '创建时间', align: 'center', width: 180}"></th>
                     {if ($module !== 'admin')}
@@ -155,6 +159,7 @@
         </div>
 
     </div>
+
 </div>
 
 {/block}
@@ -198,6 +203,7 @@
             },
             even: true,
             skin: 'line',
+            cellMinWidth: 50,
         })
 
         table.on('tool(currentTableFilter)', function (obj) {
@@ -492,6 +498,14 @@
             params[data.elem.name] = data.value
             params = Object.assign({}, form.val('searchForm'), params)
             reloadTable(params);
+        })
+
+        $('.cate-list').on('click', function (e) {
+            let key = $(this).data('key'), name = $(this).data('name'), params = [];
+            params[name] = key
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
+            $(this).addClass('active').siblings().removeClass('active')
         })
 
         // 监听搜索操作
