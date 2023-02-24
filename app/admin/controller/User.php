@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\common\model\Company as CompanyModel;
 use app\common\model\User as UserModel;
 use app\common\model\NumberStore;
+use chillerlan\QRCode\Data\Number;
 use think\facade\Session;
 use app\common\traits\UserTrait;
 
@@ -18,6 +19,7 @@ class User extends \app\common\controller\AdminController
 
         $this->view->assign([
             'callTypeList' => (new CompanyModel())->callTypeList(),
+            'numberList' => NumberStore::select(),
         ]);
     }
 
@@ -189,8 +191,6 @@ class User extends \app\common\controller\AdminController
 
             return json($this->returnData);
         }
-        $numberList = NumberStore::select();
-        $this->view->assign('numberList', $numberList);
 
         return $this->view->fetch();
     }
@@ -202,13 +202,21 @@ class User extends \app\common\controller\AdminController
             $this->returnData['msg'] = '错误参数: ' . $userId;
             return json($this->returnData);
         }
-        $userInfo = CompanyModel::withCount('user')->find($userId);
+        $userInfo = CompanyModel::withCount('user')
+            ->with(['companyXnumber'])
+            ->find($userId)
+            ->withAttr('status', function ($value) {
+                return $value;
+            })
+            ->withAttr('is_test', function ($value) {
+                return $value;
+            });
         if (!$userInfo) {
             $this->returnData['msg'] = '未找到数据';
             return json($this->returnData);
         }
 
-        if ($this->request->isAjax()) {
+        if ($this->request->isPost()) {
             $data = $this->request->param();
 
             if ((int)$data['limit_user'] !== 0 && $userInfo->user_count > $data['limit_user']) {
@@ -269,6 +277,7 @@ class User extends \app\common\controller\AdminController
                 $userInfo->password = getEncryptPassword(trim($data['password']), $userInfo->salt);
             }
 
+            $userInfo->realname = $data['realname'];
             $userInfo->ration = $data['ration'];
             $userInfo->rate = $data['rate'];
             $userInfo->limit_user = $data['limit_user'];
@@ -309,10 +318,14 @@ class User extends \app\common\controller\AdminController
             return json($this->returnData);
         }
 
-        $numberList = NumberStore::select();
-        $this->view->assign('numberList', $numberList);
-        $this->view->assign('userInfo', $userInfo);
-        return $this->view->fetch();
+        $userInfo = $userInfo->append(['companyXnumber.number_store_id']);
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = '获取成功';
+        $this->returnData['data'] = [
+            'userInfo' => $userInfo,
+            'callTypeList' => (new CompanyModel())->getCalltypeList(),
+        ];
+        return json($this->returnData);
     }
 
     public function updateUser()

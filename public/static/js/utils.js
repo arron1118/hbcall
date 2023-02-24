@@ -155,19 +155,19 @@
             }).open(option);
         },
         fail: function (param) {
-            let msg = ''
-            switch (param.call_type) {
-                case 1:
-                case 2:
-                case 5:
-                    msg = param.msg
-                    break;
-
-                case 3:
-                case 4:
-                    msg = param.message
-                    break;
-            }
+            let msg = param.msg
+            // switch (param.call_type) {
+            //     case 1:
+            //     case 2:
+            //     case 5:
+            //         msg = param.msg
+            //         break;
+            //
+            //     case 3:
+            //     case 4:
+            //         msg = param.message
+            //         break;
+            // }
 
             layer.config({
                 extend: 'skin/red.css',

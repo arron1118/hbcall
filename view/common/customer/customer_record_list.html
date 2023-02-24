@@ -23,16 +23,16 @@
             <script type="text/html" id="currentTableBar">
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加</button>
             </script>
-            {/if}
             <script type="text/html" id="tool">
                 <button type="button" class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></button>
                 <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" title="删除"><i class="fa fa-trash-can"></i></button>
             </script>
+            {/if}
         </div>
 
     </div>
 </div>
-
+{include file="./record_offcanvas" /}
 {/block}
 {block name="js"}
 <script src="__STATIC__/lib/layui_exts/excel.js"></script>

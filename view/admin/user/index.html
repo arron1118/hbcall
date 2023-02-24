@@ -68,7 +68,7 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
         <script type="text/html" id="toolbarDemo">
-            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i
                     class="fa fa-plus"></i> 开通账号
             </button>
             <span class="ms-3 text-secondary">注：点击'已开通用户'列可查看用户列表内容</span>
@@ -77,19 +77,19 @@
             <thead>
             <tr>
                 <th lay-data="{field: 'id', title: '编号', width: 100, fixed: 'left'}"></th>
-                <th lay-data="{field: 'username', title: '账号', fixed: 'left'}"></th>
-                <th lay-data="{field: 'ration', title: '座席', align: 'center', edit: 'text'}"></th>
-                <th lay-data="{field: 'limit_user', title: '限制用户数量', align: 'center', edit: 'text', sort: true}"></th>
-                <th lay-data="{field: 'user_count', title: '已开通用户', align: 'center', sort: true, event: 'checkUserList', style: 'cursor: pointer;', templet: '#hasUser'}"></th>
-                <th lay-data="{field: 'call_type', title: '呼叫线路', align: 'center', templet: '#callType'}"></th>
-                <th lay-data="{field: 'rate', title: '费率(￥/元)', align: 'center', edit: 'text', sort: true}"></th>
-                <th lay-data="{field: 'balance', title: '余额(￥/元)', align: 'center', sort: true, templet: '#balance'}"></th>
-                <th lay-data="{field: 'payment_sum', title: '充值', align: 'center', sort: true}"></th>
-                <th lay-data="{field: 'expense', title: '总消费', align: 'center', sort: true}"></th>
+                <th lay-data="{field: 'username', title: '账号', fixed: 'left', width: 200,}"></th>
+                <th lay-data="{field: 'ration', title: '座席', align: 'center', edit: 'text', width: 80}"></th>
+                <th lay-data="{field: 'limit_user', title: '限制用户数量', align: 'center', edit: 'text', sort: true, width: 130}"></th>
+                <th lay-data="{field: 'user_count', title: '已开通用户', align: 'center', sort: true, event: 'checkUserList', width: 130, style: 'cursor: pointer;', templet: '#hasUser'}"></th>
+                <th lay-data="{field: 'call_type', title: '呼叫线路', align: 'center', templet: '#callType', width: 150,}"></th>
+                <th lay-data="{field: 'rate', title: '费率(￥/元)', align: 'center', edit: 'text', sort: true, width: 120}"></th>
+                <th lay-data="{field: 'balance', title: '余额(￥/元)', align: 'center', sort: true, templet: '#balance', width: 120}"></th>
+                <th lay-data="{field: 'payment_sum', title: '充值', align: 'center', sort: true, width: 150}"></th>
+                <th lay-data="{field: 'expense', title: '总消费', align: 'center', sort: true, width: 150}"></th>
                 <th lay-data="{field: 'logintime', title: '最后登录', align: 'center', width: 180}"></th>
-                <th lay-data="{field: 'is_test', title: '试用', align: 'center'}"></th>
+                <th lay-data="{field: 'is_test', title: '试用', align: 'center', width: 120}"></th>
                 <th lay-data="{field: 'test_endtime', title: '到期日期', align: 'center', width: 180}"></th>
-                <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#status'}"></th>
+                <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#status', width: 100}"></th>
                 <th lay-data="{title: '操作', width: 150, toolbar: '#currentTableBar', align: 'center', fixed: 'right'}"></th>
             </tr>
             </thead>
@@ -123,7 +123,7 @@
             {{# } }}
         </script>
         <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑">
+            <a class="layui-btn layui-btn-xs data-count-edit" data-id="{{ d.id }}" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" title="编辑">
                 <i class="fa fa-user-edit"></i>
             </a>
             <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除">
@@ -133,14 +133,189 @@
 
     </div>
 </div>
+{include file="user/edit" /}
 {/block}
 
 {block name="js"}
+<script src="__STATIC__/lib/jquery-form-4.3.0/jquery.form.min.js"></script>
 <script>
-    layui.use(['jquery', 'form', 'table'], function () {
+    layui.use(['jquery', 'form', 'table', 'laydate', 'upload'], function () {
         let $ = layui.jquery,
             form = layui.form,
-            table = layui.table;
+            upload = layui.upload,
+            laydate = layui.laydate,
+            table = layui.table,
+            option = { time: 2500, icon: 5 };
+
+        let appendAttachment = function (param = {
+            source: '',
+            name: '',
+        }) {
+            $('#newsImgBox').append('<img src="' + param.source + '" alt="' + param.name + '" class="mx-auto d-block m-3" style="max-height: 200px; width: auto;">')
+        }
+
+        let b = [];
+        //上传图片
+        let uploadInst = upload.render({
+            elem: '#newsImg',
+            url: '{:url("/news/upload")}' ,
+            multiple: true,
+            accept: 'images', //只允许上传图片
+            before: function (obj) {
+                //预读本地文件示例，不支持ie8
+                obj.preview(function (index, file, result) {
+                    appendAttachment({ source: result, name: file.name })
+                });
+            },
+            done: function (res) {
+                let op = { title: res.msg }
+                if (res.code === 1) {
+                    op.icon = 'success'
+                    b.push(res.data?.savePath);
+                    $('input[name="contract_attachment"]').val(b);
+                }
+
+                return Toast.fire(op)
+            },
+            error: function () {
+                //演示失败状态，并实现重传
+                let demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            },
+        });
+        // 时间限制为现在
+        let minDate = utils.getDateTime();
+        laydate.render({
+            elem: '#testEndTime',
+            type: 'datetime',
+            min: minDate,
+            value: utils.getDateTime({ day: 1 }),
+        })
+        laydate.render({
+            elem: '#contractDatetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
+            min: minDate
+            // done: function (value) {
+            //     let d = value.split(' - ')
+            //     let params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] ? d[1] : '' })
+            //     reloadTable(params)
+            // }
+        })
+        $('#isTest').on('click', function (e) {
+            let endtimeItem = $('.test-endtime')
+            if (e.target.checked) {
+                endtimeItem.removeClass('d-none')
+                $(this).val(1)
+            } else {
+                endtimeItem.addClass('d-none')
+            }
+        })
+        let offcanvas = $('#offcanvas')
+        offcanvas.on('show.bs.offcanvas', e => {
+            let id = $(e.relatedTarget).data('id')
+            let f = document.formEditor, title = ''
+
+            $('#newsImgBox').html('')
+            if (id) {
+                title = '编辑'
+                $.get('{:url("/User/edit")}', { id: id }, res => {
+                    if (res.code === 1) {
+                        for (let i = 0; i < f.elements.length; i++) {
+                            let name = f.elements[i].name,
+                                nodeName = f.elements[i].nodeName,
+                                el = $(e.currentTarget).find('[name="' + name + '"]');
+
+                            if (nodeName === 'SELECT') {
+                                let v = ''
+                                if (name === 'call_type') {
+                                    v = Object.keys(res.data['callTypeList']).find(key => res.data['callTypeList'][key] === res.data['userInfo'][name]);
+                                } else if (name === 'number_store_id') {
+                                    v = res.data['userInfo']['companyXnumber']['number_store_id']
+                                }
+                                el.val(v)
+                            } else {
+                                el.val(res.data['userInfo'][name])
+                            }
+
+                            if (['username', 'corporation'].includes(name)) {
+                                el.prop('readonly', true)
+                            }
+
+                            if (['is_test', 'status'].includes(name)) {
+                                if (res.data['userInfo'][name] === 1) {
+                                    el.prop('checked', true)
+                                    if ('is_test' === name) {
+                                        $('.test-endtime').removeClass('d-none')
+                                    }
+                                } else {
+                                    el.prop('checked', false)
+                                    if ('is_test' === name) {
+                                        $('.test-endtime').addClass('d-none')
+                                    }
+                                }
+                            }
+                        }
+
+                        let imgs = res.data['userInfo']['contract_attachment'].split(',')
+                        $.each(imgs, (index, item) => {
+                            item !== '' && appendAttachment({
+                                source: item
+                            })
+                        })
+                    }
+                })
+            } else {
+                title = '添加'
+                f.reset()
+                $('input[name=username], input[name=corporation]').prop('readonly', false)
+                $('.test-endtime').addClass('d-none')
+            }
+
+            $('.offcanvas-title').text(title)
+        })
+
+        $('form[name="formEditor"]').submit(function () {
+            let formData = $(this).serializeArray(),
+                id = $('[name="id"]').val(),
+                url = id ? '{:url("/User/edit")}' : '{:url("/User/add")}',
+                rate = $(this).find('input[name=rate]');
+            if (rate.val() < 0) {
+                Toast.fire({
+                    title: '费率不能小于0',
+                    timer: 2000
+                }).then(() => {
+                    rate.focus()
+                })
+
+                return false
+            }
+
+            $.post(url, formData, function (res) {
+                let option = { title: res.msg }
+                if (res.code === 1) {
+                    option.icon = 'success'
+                    option.timer = 2000
+                    let params = [],
+                        cate_item = $('.cate-list.active')
+                    params[cate_item.data('name')] = cate_item.data('key')
+                    Toast.fire(option).then(function () {
+                        table.reload('userTable', {
+                            where: Object.assign({}, form.val('searchForm'), params)
+                        })
+                        $('[data-bs-dismiss="offcanvas"]').click()
+                    })
+                } else {
+                    Toast.fire(option)
+                }
+
+            })
+
+            return false
+        })
 
         table.init('currentTableFilter', {
             url: '{:url("/user/getUserList")}',

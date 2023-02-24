@@ -43,7 +43,11 @@
                         <div class="col">
                             <div class="row">
                                 <div class="col p-0 position-relative">
-                                    <i class="fa fa-info-circle position-absolute call-info" style=" top: 10px; right: 10px; "></i>
+                                    <button type="button" class="btn btn-sm position-absolute top-0 end-0 call-info" data-bs-toggle="modal"
+                                            id="infoToggleModal" data-bs-target="#infoModal"
+                                    >
+                                        <i class="fa fa-info-circle fs-5 text-secondary" data-bs-toggle="tooltip" data-bs-title="注意事项"></i>
+                                    </button>
                                     <input type="text" name="phone" value=""
                                            placeholder="请输入号码"
                                            class="w-100 callinginput fs-1 border-0 text-center py-5 bg-transparent"
@@ -62,74 +66,94 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="infoModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h1 class="modal-title fs-6">温馨提示</h1>
+            </div>
+            <div class="modal-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item border-0">1、只允许拨打本公司业务电话，不允许拨打其他行业电话。</li>
+                    <li class="list-group-item border-0">2、拨号当中不允许出现：金融、地产相关高频行业。</li>
+                    <li class="list-group-item border-0">3、通话中不允许出现：代开发票、造假等违法字眼。</li>
+                    <li class="list-group-item border-0">4、不允许在通话中辱骂。</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal" data-bs-target="#infoModal">我知道了</button>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="../common/customer/record_offcanvas" /}
 {/block}
 {block name="js"}
-<script src="__STATIC__/lib/layui_exts/excel.js"></script>
+<!--<script src="__STATIC__/lib/layui_exts/excel.js"></script>-->
 <script>
-    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table'], function () {
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate'], function () {
         let $ = layui.jquery,
             layer = layui.layer,
             miniTab = layui.miniTab,
             element = layui.element,
             excel = layui.excel,
             table = layui.table,
+            laydate = layui.laydate,
             upload = layui.upload;
 
         miniTab.listen();
 
+        // 回访记录模态
+        const recordModal = new bootstrap.Modal('#recordModal')
+        const recordForm = $('form[name=record-add-form]')
+        $('#recordModal').on('show.bs.modal', function (e) {
+            // 重置表单
+            document['record-add-form'].reset()
+            laydate.render({
+                elem: '#record-datetime',
+                type: 'datetime',
+            })
+        })
+        recordForm.submit(function (e) {
+            $.post("{:url('/CustomerRecord/add')}", $(this).serialize(), function (res) {
+                let op = { title: res.msg }
+                if (res.code === 1) {
+                    op.icon = 'success'
+                    recordModal.hide()
+                }
+
+                Toast.fire(op)
+            })
+
+            return false
+        })
+        // 提示信息模态
+        const infoModal = new bootstrap.Modal('#infoModal')
         // 输入框获取焦点
         let inputFocus = function () {
             $("#input").focus();
         };
         inputFocus();
 
-        // 右键事件
-        document.oncontextmenu = function (e) {
-            // 阻止默认事件
-            e.preventDefault()
-        }
-        // 点击删除右键菜单
-        document.onclick = function (e) {
+        // 移除用户右键菜单
+        let removeContextmenu = function () {
             $('#right-contextmenu').remove()
         }
 
-        let callInfoIcon = $('.call-info'), callTipsIndex = null, showCallInfoTimes = utils.cookie('showCallInfoTimes');
-        let showCallTips = function () {
-            callTipsIndex = layer.tips('点击查看注意事项', callInfoIcon, {
-                tips: [1, '#3595cc'],
-                time: 5000,
-            });
-        }
-        showCallTips();
-        callInfoIcon.on('click', function () {
-            showCallInfo()
+        // 监听键盘、鼠标、滚轮事件
+        $(window).on('keydown mousewheel mousedown', function (e) {
+            let target = $(e.target.parentElement)
+            if (target.hasClass('customer-context-menu')) {
+                target.click()
+            } else {
+                removeContextmenu()
+            }
         })
-        callInfoIcon.hover(function () {
-            showCallTips()
-        }, function () {
-            layer.close(callTipsIndex)
-        })
-        let showCallInfo = function () {
-            parent.layer.open({
-                type: 1,
-                time: 0,
-                title: ['温馨提示', 'background-color: #009688; color: #fff'],
-                closeBtn: false,
-                shadeClose: true,
-                content: `
-                <ul class="" style="line-height: 1.5rem; padding: 1rem; ">
-                    <li class="">1、只允许拨打本公司业务电话，不允许拨打其他行业电话。</li>
-                    <li class="">2、拨号当中不允许出现：金融、地产相关高频行业。</li>
-                    <li class="">3、通话中不允许出现：代开发票、造假等违法字眼。</li>
-                    <li class="">4、不允许在通话中辱骂。</li>
-                </ul>
-                `
-            });
-        }
+
+        let showCallInfoTimes = utils.cookie('showCallInfoTimes');
         // 首次显示呼叫提示信息
         if (!showCallInfoTimes || parseInt(showCallInfoTimes) === 0) {
-            showCallInfo()
+            infoModal.show(document.getElementById('infoToggleModal'))
             utils.cookie('showCallInfoTimes', 1)
         }
 
@@ -220,30 +244,14 @@
             }
         })
 
-        // 按键盘
-        /*$(window).on('keydown', function (e) {
-            // 大键盘||小键盘
-            if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
-                if (callinginput.val().length < 11) {
-                    callinginput.val(callinginput.val() + e.key);
-                    // callinginput.val() + e.key;
-                    console.log('lpp');
-                    console.log(callinginput.val() + e.key);
-                }
-
-            } else if (e.keyCode === 13) {
-                makeCall();
-            }
-        });*/
-
         let makeCall = function (params = { phone: '', customerId: 0 }, addList = null, customerCalled = null) {
             if (params.phone.length < 11 || !utils.isPhone(params.phone)) {
-                layer.msg('请输入正确的号码', { icon: 2 });
+                Toast.fire('请输入正确的号码');
                 return false;
             }
 
             $.post('{:url("/hbcall/makeCall")}', { mobile: params.phone, customerId: params.customerId }, function (res) {
-                if (res.code == '1000' || res.code == '0000' || res.code == '1003') {
+                if ((res.code == '1000' || res.code == '0000' || res.code == '1003') && res.code !== 0) {
                     if (customerCalled) {
                         // 更新客户拨号记录
                         $.post('{:url("/Customer/updateCustomerCalledCount")}', { phone: params.phone, customerId: params.customerId }, function (r) {
@@ -293,6 +301,7 @@
         let createItem = function (item) {
             return $('<div />', {
                 class: 'row p-2 mx-1 border-bottom call-history-item',
+                style: 'cursor: pointer',
                 click: function () {
                     item.createtime = utils.getDateTime()
                     makeCall({ phone: item.called_number, customerId: item.customer ? item.customer.id : 0 }, createItem(item))
@@ -329,6 +338,7 @@
             }
             let listItem = $('<div />', {
                 class: aClass,
+                style: 'cursor: pointer',
                 click: function () {
                     makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone, customer: { id: item.id, title: item.title }, createtime: utils.getDateTime() }), this)
                 },
@@ -344,19 +354,24 @@
                 },
                 // 右键菜单
                 contextmenu: function (e) {
+                    // 阻止默认事件
+                    e.preventDefault()
+
                     let parent = this,
                         ts = $('<div />', {
                             class: 'shadow-sm text-primary position-absolute',
                             css: { left: e.clientX + 'px', top: e.clientY + 'px', width: '150px' },
                             id: 'right-contextmenu'
                         }).append($('<div />', {
-                            class: 'list-group'
+                            class: 'list-group customer-context-menu'
                         }).append($('<div />', {
                             type: 'button',
                             class: 'list-group-item list-group-item-action',
                             text: '立即拨号',
                             click: function () {
                                 makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone }), parent)
+
+                                removeContextmenu()
                             }
                         }).append($('<i />', {
                             class: 'fa fa-phone float-end small lh-base',
@@ -364,14 +379,13 @@
                         }))).append($('<div />', {
                             type: 'button',
                             class: 'list-group-item list-group-item-action',
+                            'data-bs-toggle': 'modal',
+                            'data-bs-target': '#recordModal',
                             text: '添加回访记录',
-                            click: function () {
-                                layer.open({
-                                    type: 2,
-                                    title: '添加',
-                                    area: ['700px', '600px'],
-                                    content: '{:url("/CustomerRecord/add")}?customer_id=' + item.id
-                                });
+                            click: function (e) {
+                                recordForm.find('input[name=customer_id]').val(item.id)
+
+                                removeContextmenu()
                             }
                         }).append($('<i />', {
                             class: 'fa fa-book-bookmark float-end small lh-base',
@@ -391,11 +405,14 @@
                                 //
                                 //     layer.msg(res.msg, {icon: icon, time: 3000});
                                 // })
+
+                                removeContextmenu()
                             }
                         }).append($('<i />', {
                             class: 'fa fa-trash-alt float-end text-sm lh-base'
                         }))));
-                    $('#right-contextmenu').remove()
+
+                    removeContextmenu()
 
                     $('html body').append(ts)
                 }
@@ -432,44 +449,60 @@
                 type: 1,
                 title: false,
                 skin: 'layui-layer-rim',
-                area: ['420px', '300px'],
+                area: ['510px', '430px'],
                 content: `<div class="p-3">
                            注：只能上传Excel表格，格式为:<br /> ['客户名称', '电话号码', '所在地', '邮箱']
                            <img src="__STATIC__/images/customer-example-import.png" class="pt-3" />
                         </div>`
             })
         })
-        let loading = null;
-        upload.render({
+        let loading = null, flag = false;
+        let uploadIns = upload.render({
             elem: '#importExcel',
             url: '{:url("/Customer/importExcel")}',
             accept: 'file', //普通文件
             exts: 'xls|excel|xlsx', //导入表格
             auto: true,  //选择文件后不自动上传
             before: function (obj) {
-                loading = layer.load(); //上传loading
+                // loading = layer.load(); //上传loading
+
+                if (!flag) {
+                    let layero = layer.confirm('是否允许上传重复的客户，注：重复的客户以客户电话为准',
+                        { icon: 3, title: '温馨提示', btn: ['允许', '不允许'] }, function (index) {
+                            uploadIns.config.data.is_repeat_customer = 1
+                            layer.close(index)
+                            flag = true
+                            uploadIns.upload()
+                        }, function (index) {
+                            uploadIns.config.data.is_repeat_customer = 0
+                            flag = true
+                            uploadIns.upload()
+                        })
+                }
+
+                return flag
             },
             // 选择文件回调
             choose: function (obj) {
             },
             done: function (res) {
                 layer.close(loading);
-                let icon = 0;
+                let op = { title: res.msg };
                 if (res.code === 1) {
-                    icon = 1;
+                    op.icon = 'success';
                     customerContainer.html('')
                     $.each(res.data, (index, item) => {
                         customerContainer.prepend(createCustomerItem(item))
                     })
                 }
 
-                return layer.msg(res.msg, {icon: icon, time: 3000})
+                Toast.fire(op)
+                flag = false
             },
             error: function () {
+                flag = false
                 setTimeout(function () {
-                    layer.msg("上传失败！", {
-                        icon: 1
-                    });
+                    Toast.fire("上传失败！");
                     //关闭所有弹出层
                     layer.closeAll(); //疯狂模式，关闭所有层
                 }, 1000);
@@ -508,13 +541,13 @@
 
         let clearCustomer = function (customer) {
             $.post('{:url("/Customer/del")}', { id: customer }, res => {
-                let icon = 0;
+                let op = { title: res.msg };
                 if (res.code === 1) {
-                    icon = 1;
+                    op.icon = 'success';
                     customerContainer.html('')
                 }
 
-                layer.msg(res.msg, {icon: icon, time: 3000});
+                Toast.fire(op);
             })
         }
         // 下载客户管理模板

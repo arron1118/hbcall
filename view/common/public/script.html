@@ -3,6 +3,7 @@
 <script src="__STATIC__/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 <script src="__STATIC__/js/lay-config.js?v=2.0.0" charset="utf-8"></script>
 <script src="__STATIC__/lib/bootstrap/js/bootstrap.bundle.min.js" charset="utf-8"></script>
+<script src="__STATIC__/lib/sweetalert2-11.7.2/sweetalert2.all.min.js"></script>
 <script src="__STATIC__/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
 <script src="__STATIC__/lib/layui_exts/excel.js"></script>
 <script src="__STATIC__/js/utils.js"></script>
@@ -17,6 +18,18 @@
             }
         }
     })
+
+    let Toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        showConfirmButton: false,
+        timer: 3000,
+        icon: 'warning',
+    })
+
+    // 启用 bootstrap Tooltip
+    const tooltipTriggerList = $('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 </script>
 
 {if (in_array($module, ['company', 'home']))}

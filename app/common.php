@@ -169,7 +169,7 @@ SCRIPT;
 
 
 if (!function_exists('readExcel')) {
-    function readExcel($file, $appendColumns = [])
+    function readExcel($file, $appendColumns = [], $is_repeat_customer = 0)
     {
         $read = \PhpOffice\PhpSpreadsheet\IOFactory::createReader(ucfirst($file->extension()));
         $spreadsheet = $read->load($file);
@@ -179,19 +179,38 @@ if (!function_exists('readExcel')) {
         $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
         $log = [];
 
-        for ($i = 2; $i < $highestRow; $i++) {
+        for ($i = 2; $i <= $highestRow; $i++) {
             $title = $sheet->getCellByColumnAndRow(1, $i)->getValue();
             $phone = $sheet->getCellByColumnAndRow(2, $i)->getValue();
             $province = $sheet->getCellByColumnAndRow(3, $i)->getValue();
             $email = $sheet->getCellByColumnAndRow(4, $i)->getValue();
+            $comment = $sheet->getCellByColumnAndRow(5, $i)->getValue();
             if ($title && $phone) {
-                $a = array_merge($appendColumns, [
-                    'title' => trim($title),
-                    'phone' => trim($phone),
-                    'province' => trim($province ?? ''),
-                    'email' => trim($email ?? ''),
-                ]);
-                array_push($log, $a);
+                if (!$is_repeat_customer) {
+                    $customer = \app\common\model\Customer::where([
+                        'phone' => $phone
+                    ])->findOrEmpty();
+
+                    if ($customer->isEmpty()) {
+                        $a = array_merge($appendColumns, [
+                            'title' => trim($title),
+                            'phone' => trim($phone),
+                            'province' => trim($province ?? ''),
+                            'email' => trim($email ?? ''),
+                            'comment' => trim($comment ?? ''),
+                        ]);
+                        array_push($log, $a);
+                    }
+                } else {
+                    $a = array_merge($appendColumns, [
+                        'title' => trim($title),
+                        'phone' => trim($phone),
+                        'province' => trim($province ?? ''),
+                        'email' => trim($email ?? ''),
+                        'comment' => trim($comment ?? ''),
+                    ]);
+                    array_push($log, $a);
+                }
             }
         }
 

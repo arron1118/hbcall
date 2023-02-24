@@ -10,10 +10,13 @@ class Customer extends \app\common\controller\AdminController
 
     use CustomerTrait;
 
+    protected $cateList = [];
+
     public function initialize()
     {
         parent::initialize();
 
-        $this->view->assign('cateList', (new CustomerModel())->getCateList());
+        $this->cateList = (new CustomerModel())->getCateList();
+        $this->view->assign('cateList', $this->cateList);
     }
 }

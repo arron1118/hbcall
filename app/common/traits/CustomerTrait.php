@@ -5,6 +5,7 @@ namespace app\common\traits;
 use app\common\model\Customer as CustomerModel;
 use app\common\model\Company;
 use think\db\exception\DbException;
+use think\facade\View;
 
 trait CustomerTrait
 {
@@ -142,8 +143,6 @@ trait CustomerTrait
 
             return json($this->returnData);
         }
-
-        return $this->view->fetch('common@customer/add');
     }
 
     public function changeCate()
@@ -166,13 +165,16 @@ trait CustomerTrait
     {
         if ($this->request->isPost()) {
             $file = request()->file('file');
-            $data = $this->readExcel($file);
+            // 1 允许导入重复客户 0 不允许导入重复客户
+            $is_repeat_customer = $this->request->param('is_repeat_customer/d', 0);
+            $data = $this->readExcel($file, $is_repeat_customer);
             try {
                 $res = (new CustomerModel())->saveAll($data);
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = lang('The import was successful');
                 $this->returnData['data'] = $res;
+                $this->returnData['is_repeat_customer'] = $is_repeat_customer;
 
                 return json($this->returnData);
             } catch (DbException $dbException) {
@@ -187,7 +189,7 @@ trait CustomerTrait
         return json($this->returnData);
     }
 
-    protected function readExcel($file)
+    protected function readExcel($file, $is_repeat_customer = 0)
     {
         $field = [
             'createtime' => time(),
@@ -201,12 +203,12 @@ trait CustomerTrait
             $field['user_id'] = 0;
         }
 
-        return readExcel($file, $field);
+        return readExcel($file, $field, $is_repeat_customer);
     }
 
     public function edit()
     {
-        $customerId = (int) $this->request->param('customerId', 0);
+        $customerId = (int) $this->request->param('id', 0);
         $customer = CustomerModel::find($customerId);
 
         if (!$customer) {
@@ -223,9 +225,11 @@ trait CustomerTrait
             return json($this->returnData);
         }
 
-        $this->view->assign('customer', $customer);
-
-        return $this->view->fetch('common@customer/edit');
+        $this->returnData['data'] = $customer;
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = '获取成功';
+        $this->returnData['cateList'] = (new CustomerModel())->getCateList();
+        return json($this->returnData);
     }
 
     public function del($id)

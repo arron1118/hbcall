@@ -101,15 +101,15 @@
                 <th lay-data="{field: 'id', title: 'ID', align: 'center', width: 100, fixed: 'left'}"></th>
                 <th lay-data="{field: 'subid', title: '编号', align: 'center', width: 240}"></th>
                 {if ($module !== 'home')}
-                <th lay-data="{field: 'username', title: '操作人', align: 'center'}"></th>
-                <th lay-data="{field: 'caller_number', title: '主叫号码', align: 'center'}"></th>
+                <th lay-data="{field: 'username', title: '操作人', align: 'center', width: 200}"></th>
+                <th lay-data="{field: 'caller_number', title: '主叫号码', align: 'center', width: 150}"></th>
                 {/if}
-                <th lay-data="{field: '', title: '客户名称', align: 'center', templet: function (row) {
+                <th lay-data="{field: '', title: '客户名称', align: 'center', width: 200, templet: function (row) {
                         return row.customer ? row.customer.title : '';
                     }}"></th>
-                <th lay-data="{field: 'called_number', title: '被叫号码', align: 'center'}"></th>
-                <th lay-data="{field: 'createtime', title: '呼叫时间', align: 'center', sort: true}"></th>
-                <th lay-data="{field: 'call_duration', title: '通话时长（分）', sort: true, align: 'center'}"></th>
+                <th lay-data="{field: 'called_number', title: '被叫号码', align: 'center', width: 150}"></th>
+                <th lay-data="{field: 'createtime', title: '呼叫时间', align: 'center', sort: true, width: 180}"></th>
+                <th lay-data="{field: 'call_duration', title: '通话时长（分）', sort: true, align: 'center', width: 150}"></th>
                 <th lay-data="{field: 'cost', title: '消费金额（￥/元）', align: 'center'}"></th>
                 <th lay-data="{title: '录音', minWidth: 150, align: 'center', templet: '#record'}"></th>
             </tr>

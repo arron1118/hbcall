@@ -137,7 +137,7 @@
             {if ($module !== 'admin')}
             <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入客户</button>
             <script type="text/html" id="currentTableBar">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加客户</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i class="fa fa-plus"></i> 添加客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入客户</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
@@ -153,15 +153,14 @@
                 {if ($module === 'home')}
                 <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" lay-event="makeCall" title="点击拨号"><i class="fa fa-phone"></i></button>
                 {/if}
-                <button type="button" class="layui-btn layui-btn-xs" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></button>
+                <button type="button" class="layui-btn layui-btn-info layui-btn-xs" data-bs-toggle="offcanvas" data-id="{{ d.id }}" data-bs-target="#offcanvas" title="编辑"><i class="fa fa-user-edit"></i></button>
                 <button type="button" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i></button>
             </script>
         </div>
-
     </div>
-
 </div>
 
+{include file="customer/edit" /}
 {/block}
 {block name="js"}
 <script src="__STATIC__/lib/layui_exts/excel.js"></script>
@@ -175,6 +174,63 @@
             table = layui.table,
             upload = layui.upload,
             form = layui.form;
+
+        let offcanvas = $('#offcanvas')
+        offcanvas.on('show.bs.offcanvas', e => {
+            let id = $(e.relatedTarget).data('id')
+            let f = document.formEditor, title = ''
+            if (id) {
+                title = '编辑'
+                $.get('{:url("/customer/edit")}', { id: id }, res => {
+                    if (res.code === 1) {
+                        for (let i = 0; i < f.elements.length; i++) {
+                            let name = f.elements[i].name,
+                                nodeName = f.elements[i].nodeName,
+                                el = $(e.currentTarget).find('[name="' + name + '"]');
+
+                            if (nodeName === 'SELECT') {
+                                let v = Object.keys(res.cateList).find(key => res.cateList[key] === res.data[name])
+                                el.val(v)
+                            } else {
+                                el.val(res.data[name])
+                            }
+
+                        }
+                    }
+                })
+            } else {
+                title = '添加'
+                f.reset()
+            }
+
+            $('.offcanvas-title').text(title)
+        })
+
+        $('form[name="formEditor"]').submit(function () {
+            let formData = $(this).serialize(), id = $('[name="id"]').val()
+            let url = id ? '{:url("/customer/edit")}' : '{:url("/customer/add")}'
+            $.post(url, formData, function (res) {
+                let option = { title: res.msg }
+                if (res.code === 1) {
+                    option.icon = 'success'
+                    option.timer = 1500
+                    let params = [],
+                        cate_item = $('.cate-list.active')
+                    params[cate_item.data('name')] = cate_item.data('key')
+                    Toast.fire(option).then(function () {
+                        table.reload('customerTable', {
+                            where: Object.assign({}, form.val('searchForm'), params)
+                        })
+                        $('[data-bs-dismiss="offcanvas"]').click()
+                    })
+                } else {
+                    Toast.fire(option)
+                }
+
+            })
+
+            return false
+        })
 
         miniTab.listen();
         let option = { icon: 0 }
@@ -239,23 +295,20 @@
                 case 'makeCall':
                     makeCall({ phone: obj.data.phone, customerId: obj.data.id }, obj);
                     break;
-                case 'edit':
-                    layer.open({
-                        type: 2,
-                        title: '编辑',
-                        area: ['100%', '100%'],
-                        content: '{:url("/customer/edit")}?customerId=' + editId
-                    });
-                    break;
                 case 'delete':
-                    layer.confirm('确定删除么？', { title: '温馨提示' }, function () {
+                    layer.confirm('确定删除么？', { title: '温馨提示' }, function (index) {
+                        layer.close(index)
                         $.post('{:url("/customer/del")}', { id: editId }, function (res) {
+                            let op = { title: res.msg }
                             if (res.code === 1) {
-                                option.icon = 1;
-                                reloadTable()
+                                op.icon = 'success';
+                                op.timer = 1500
+                                Toast.fire(op).then(() => {
+                                    reloadTable()
+                                })
+                            } else {
+                                Toast.fire(op);
                             }
-
-                            layer.msg(res.msg, option);
                         })
                     })
                     break;
@@ -269,7 +322,7 @@
             if (['distribution', 'changeCate', 'delete'].includes(obj.event)) {
                 let temp = [];
                 if (checkStatus.length <= 0) {
-                    layer.msg('请选择客户', option);
+                    Toast.fire('请选择客户', { timer: 1500 });
                     return false;
                 }
 
@@ -308,18 +361,21 @@
                                 userId = $(this).data('id')
 
                                 $.post('{:url("/customer/distribution")}', { ids: ids, user_id: userId }, function (res) {
-                                    layer.close(index)
+                                    let op = { title: res.msg }
                                     if (res.code === 1) {
-                                        option.icon = 1
                                         layer.close(index)
-                                        table.reload('customerTable', {
-                                            page: {
-                                                curr: 1
-                                            }
+                                        op.icon = 'success'
+                                        op.timer = 1500
+                                        Toast.fire(op).then(() => {
+                                            table.reload('customerTable', {
+                                                page: {
+                                                    curr: 1
+                                                }
+                                            })
                                         })
+                                    } else {
+                                        Toast.fire(op)
                                     }
-
-                                    layer.msg(res.msg, option)
                                 })
                             })
                         }
@@ -350,14 +406,17 @@
                                 cateId = $(this).data('id')
 
                                 $.post('{:url("/customer/changeCate")}', { ids: ids, cate: cateId }, function (res) {
-                                    layer.close(index)
+                                    let op = { title: res.msg }
                                     if (res.code === 1) {
-                                        option.icon = 1
                                         layer.close(index)
-                                        table.reload('customerTable')
+                                        op.icon = 'success'
+                                        op.timer = 1500
+                                        Toast.fire(op).then(() => {
+                                            table.reload('customerTable')
+                                        })
+                                    } else {
+                                        Toast.fire(op)
                                     }
-
-                                    layer.msg(res.msg, option)
                                 })
                             })
                         }
@@ -368,7 +427,7 @@
                         type: 1,
                         title: false,
                         skin: 'layui-layer-rim',
-                        area: ['420px', '300px'],
+                        area: ['510px', '430px'],
                         content: `<div class="p-3">
                            注：只能上传Excel表格，格式为:<br /> ['客户名称', '电话号码', '所在地', '邮箱']
                            <img src="__STATIC__/images/customer-example-import.png" class="pt-3" />
@@ -378,23 +437,20 @@
                 case 'importExcel':
                     $('#importExcel').click();
                     break;
-                case 'add':
-                    layer.open({
-                        type: 2,
-                        title: '添加',
-                        area: ['100%', '100%'],
-                        content: '{:url("/customer/add")}'
-                    });
-                    break;
                 case 'delete':
-                    layer.confirm('确定删除么？', { title: '温馨提示' }, function () {
+                    layer.confirm('确定删除么？', { title: '温馨提示' }, function (index) {
                         $.post('{:url("/customer/del")}', { id: ids }, function (res) {
+                            layer.close(index)
+                            let op = { title: res.msg }
                             if (res.code === 1) {
-                                option.icon = 1;
-                                reloadTable()
+                                op.icon = 'success'
+                                op.timer = 1500
+                                Toast.fire(op).then(() => {
+                                    reloadTable()
+                                })
+                            } else {
+                                Toast.fire(op)
                             }
-
-                            layer.msg(res.msg, option);
                         })
                     });
                     break;
@@ -403,7 +459,7 @@
 
         let makeCall = function (params = { phone: '', customerId: 0 }, obj = null) {
             $.post('{:url("/hbcall/makeCall")}', { mobile: params.phone, customerId: params.customerId }, function (res) {
-                if (res.code == '1000' || res.code == '0000' || res.code == '1003') {
+                if ((res.code == '1000' || res.code == '0000' || res.code == '1003') && res.code !== 0) {
                     // 更新客户拨号记录
                     $.post('{:url("/Customer/updateCustomerCalledCount")}', { phone: params.phone, customerId: params.customerId }, function (r) {
                     })
@@ -421,24 +477,40 @@
         }
 
         // 导入客户
-        let loading = null;
-        upload.render({
+        let loading = null, flag = false;
+        let uploadIns = upload.render({
             elem: '#importExcel',
             url: '{:url("/customer/importExcel")}',
             accept: 'file', //普通文件
             exts: 'xls|excel|xlsx', //导入表格
             auto: true,  //选择文件后不自动上传
             before: function (obj) {
-                loading = layer.load(); //上传loading
+                // loading = layer.load(); //上传loading
+                if (!flag) {
+                    let layero = layer.confirm('是否允许上传重复的客户，注：重复的客户以客户电话为准',
+                        { icon: 3, title: '温馨提示', btn: ['允许', '不允许'] }, function (index) {
+                        uploadIns.config.data.is_repeat_customer = 1
+                        layer.close(index)
+                        flag = true
+                        uploadIns.upload()
+                    }, function (index) {
+                        uploadIns.config.data.is_repeat_customer = 0
+                        flag = true
+                        uploadIns.upload()
+                    })
+                }
+
+                return flag
             },
             // 选择文件回调
             choose: function (obj) {
             },
             done: function (res) {
-                layer.close(loading);
-                let icon = 0;
+                layer.close(loading)
+                let op = { title: res.msg }
                 if (res.code === 1) {
-                    icon = 1;
+                    op.icon = 'success';
+                    op.timer = 1500
                     table.reload('customerTable', {
                         page: {
                             curr: 1
@@ -446,15 +518,15 @@
                     })
                 }
 
-                return layer.msg(res.msg, {icon: icon, time: 3000})
+                flag = false
+                Toast.fire(op)
             },
             error: function () {
+                flag = false
                 setTimeout(function () {
-                    layer.msg("上传失败！", {
-                        icon: 1
-                    });
+                    Toast.fire("上传失败！");
                     //关闭所有弹出层
-                    layer.closeAll(); //疯狂模式，关闭所有层
+                    layer.close(loading); //疯狂模式，关闭所有层
                 }, 1000);
             }
         });
