@@ -68,8 +68,11 @@ trait CustomerRecordTrait
             return json($this->returnData);
         }
 
-        $this->view->assign('record', $record);
-        return $this->view->fetch('common@customer/edit_record');
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = '获取成功';
+        $this->returnData['data'] = $record;
+
+        return json($this->returnData);
     }
 
     public function del($id)

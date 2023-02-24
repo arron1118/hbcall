@@ -271,6 +271,7 @@
             } else {
                 title = '添加'
                 f.reset()
+                $('[name="id"]').val('')
                 $('input[name=username], input[name=corporation]').prop('readonly', false)
                 $('.test-endtime').addClass('d-none')
             }
