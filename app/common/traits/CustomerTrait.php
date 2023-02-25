@@ -35,6 +35,8 @@ trait CustomerTrait
             $cate = (int) $this->request->param('cate', -1);
             $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
             $userId = (int) $this->request->param('user_id', $this->module === 'home' ? $this->userInfo->id : 0);
+            $startDate = $this->request->param('startDate', '');
+            $endDate = $this->request->param('endDate', '');
 
             $where = [];
 
@@ -62,6 +64,10 @@ trait CustomerTrait
                 $where[] = ['user_id', '=', 0];
             } elseif ($status === 1) {
                 $where[] = ['user_id', '>', 0];
+            }
+
+            if ($startDate && $endDate) {
+                $where[] = ['createtime', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             $total = CustomerModel::where($where)->count();

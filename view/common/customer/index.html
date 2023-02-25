@@ -64,12 +64,21 @@
                         </div>
                     </div>
 
+                    <div class="layui-inline" id="datetime">
+                        <label class="layui-form-label">时间筛选</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                        </div>
+                    </div>
+
                     <div class="layui-inline">
                         <button type="submit" class="layui-btn layui-btn-normal" lay-submit
                                 lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
                         </button>
-                    </div>
-                    <div class="layui-inline">
                         <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置
                         </button>
                     </div>
@@ -165,7 +174,7 @@
 {block name="js"}
 <script src="__STATIC__/lib/layui_exts/excel.js"></script>
 <script>
-    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form'], function () {
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'laydate'], function () {
         let $ = layui.jquery,
             layer = layui.layer,
             miniTab = layui.miniTab,
@@ -173,7 +182,19 @@
             excel = layui.excel,
             table = layui.table,
             upload = layui.upload,
+            laydate = layui.laydate,
             form = layui.form;
+
+        laydate.render({
+            elem: '#datetime',
+            range: ['#startDate', '#endDate'],
+            type: 'datetime',
+            done: function (value) {
+                let d = value.split(' - ')
+                let data = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] })
+                reloadTable(data)
+            }
+        });
 
         let offcanvas = $('#offcanvas')
         offcanvas.on('show.bs.offcanvas', e => {
