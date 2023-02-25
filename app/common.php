@@ -169,7 +169,7 @@ SCRIPT;
 
 
 if (!function_exists('readExcel')) {
-    function readExcel($file, $appendColumns = [], $is_repeat_customer = 0)
+    function readExcel($file, $appendColumns = [], $is_repeat_customer = 0, $company_id = 0)
     {
         $read = \PhpOffice\PhpSpreadsheet\IOFactory::createReader(ucfirst($file->extension()));
         $spreadsheet = $read->load($file);
@@ -188,7 +188,8 @@ if (!function_exists('readExcel')) {
             if ($title && $phone) {
                 if (!$is_repeat_customer) {
                     $customer = \app\common\model\Customer::where([
-                        'phone' => $phone
+                        'phone' => $phone,
+                        'company_id' => $company_id
                     ])->findOrEmpty();
 
                     if ($customer->isEmpty()) {

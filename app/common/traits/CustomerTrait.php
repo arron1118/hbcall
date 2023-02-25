@@ -203,7 +203,7 @@ trait CustomerTrait
             $field['user_id'] = 0;
         }
 
-        return readExcel($file, $field, $is_repeat_customer);
+        return readExcel($file, $field, $is_repeat_customer, $field['company_id']);
     }
 
     public function edit()
