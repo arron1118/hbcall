@@ -24,11 +24,13 @@ class CallHistory
         $year = trim($request::param('year', date('Y')));
         $month = trim($request::param('month', date('m')));
         $day = trim($request::param('day', date('d')));
+        $limit = trim($request::param('limit/d', 100));
         strlen($month) === 1 && $month = '0' . $month;
         strlen($day) === 1 && $day = '0' . $day;
 
         $date = $year . '-' . $month . '-' . $day;
         $uid = $request::param('uid', 0);
+        dump('请求时间：' . date('Y-m-d H:i:s'));
         dump('日期：' . $date);
 
 //        $module = app('http')->getName();
@@ -40,7 +42,8 @@ class CallHistory
         $map = [
 //            ['status', '=', '0'],
 //            ['user_id', '=', 133],
-            ['sync_at', '=', '']
+//            ['company_id', '=', 38],
+            ['sync_at', '=', '0']
         ];
 //        if ($module === 'home') {
 //            $map[] = ['user_id', '=', Session::get('user.id')];
@@ -57,7 +60,7 @@ class CallHistory
             $callList->whereBetweenTime('createtime', $time, $endTime);
         }
 
-        $callList = $callList->order('id asc')->limit(100)->select();
+        $callList = $callList->order('id asc')->limit($limit)->select();
         $returnData = ['total' => count($callList), 'success' => 0, 'error' => 0, 'response' => []];
         if (!empty($callList)) {
             $curl = new Curl();
@@ -72,17 +75,24 @@ class CallHistory
 
 //                $date = date('Ymd', $val->getData('createtime'));
                 try {
-                    $curl->post(Config::get('hbcall.record_api'), [
-                        'subid' => $val['subid'],
-                        'date' => $date
-                    ]);
-
+                    if ($val->call_type === 3) {
+                        $curl->get(Config::get('hbcall.dx_record_api'), [
+                            'callid' => $val['subid'],
+//                            'date' => $date
+                        ]);
+                    } else {
+                        $curl->post(Config::get('hbcall.record_api'), [
+                            'subid' => $val['subid'],
+                            'date' => $date
+                        ]);
+                    }
                     $response = json_decode($curl->response, true);
+//                    dump($response);
 
                     $returnData['response'][] = $response;
-                    if (!is_null($response) && $response['code'] === 1000) {
+                    if (!is_null($response) && ((isset($response['code']) && $response['code'] === 1000) || $response['statusCode'] === 200)) {
                         ++$returnData['success'];
-                        if (!empty($response['data'])) {
+                        if (!is_null($response['data']) && !empty($response['data'])) {
                             if (!is_array($response['data'])) {
                                 $response['data'] = json_decode($response['data'], true);
                             }
@@ -122,8 +132,8 @@ class CallHistory
                                     $ExpenseModel->save();
 
                                     // 扣费
-                                    $company->balance = $company->balance - $ExpenseModel->cost;
-                                    $company->expense = $company->expense + $ExpenseModel->cost;
+                                    $company->balance -= $ExpenseModel->cost;
+                                    $company->expense += $ExpenseModel->cost;
                                     $company->save();
                                 }
                             }

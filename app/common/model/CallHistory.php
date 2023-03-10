@@ -42,12 +42,12 @@ class CallHistory extends Model
 
     public function user()
     {
-        return $this->belongsTo(\app\common\model\User::class)->bind(['user_username' => 'username', 'loginip']);
+        return $this->belongsTo(User::class)->bind(['user_username' => 'username', 'loginip']);
     }
 
     public function company()
     {
-        return $this->belongsTo(\app\common\model\Company::class)->bind(['corporation']);
+        return $this->belongsTo(Company::class)->bind(['corporation']);
     }
 
     public function expense()

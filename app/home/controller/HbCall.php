@@ -101,19 +101,6 @@ class HbCall extends \app\common\controller\HomeController
 
         $call_type = $this->userInfo->company->getData('call_type');
         switch ($call_type) {
-            case 1:
-                if (!$this->userInfo->userXnumber) {
-                    $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
-                    $this->returnData['info'] = lang('Tips');
-                    $this->returnData['status'] = 0;
-                    return json($this->returnData);
-                }
-
-                $params['telA'] = $this->userInfo->phone;
-                $params['telB'] = $mobile;
-                $params['telX'] = $this->userInfo->userXnumber->numberStore->number;
-                break;
-
             case 2:
             case 5:
                 $params['caller'] = $this->userInfo->phone;
@@ -133,6 +120,20 @@ class HbCall extends \app\common\controller\HomeController
                 $params['called'] = $mobile;
                 $params['callerX'] = $this->userInfo->callback_number;
                 break;
+
+
+            default:
+                if (!$this->userInfo->userXnumber) {
+                    $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
+                    $this->returnData['info'] = lang('Tips');
+                    $this->returnData['status'] = 0;
+                    return json($this->returnData);
+                }
+
+                $params['telA'] = $this->userInfo->phone;
+                $params['telB'] = $mobile;
+                $params['telX'] = $this->userInfo->userXnumber->numberStore->number;
+                break;
         }
 
         $curl->post(Config::get('hbcall.call_api'), $params);
@@ -147,6 +148,8 @@ class HbCall extends \app\common\controller\HomeController
                     $CallHistory->username = $this->userInfo->username;
                     $CallHistory->company_id = $this->userInfo->company_id;
                     $CallHistory->company = $this->userInfo->company->corporation;
+                    $CallHistory->call_type = $this->userInfo->company->getData('call_type');
+                    $CallHistory->rate = $this->userInfo->company->rate;
                     $CallHistory->caller_number = $this->userInfo->phone;
                     $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
                     $CallHistory->called_number = $mobile;
@@ -157,10 +160,6 @@ class HbCall extends \app\common\controller\HomeController
                     $CallHistory->browser = $this->agent->browser();
                     $CallHistory->browser_version = $this->agent->version($this->agent->browser());
                     switch ($call_type) {
-                        case 1:
-                            $CallHistory->subid = $response['data']['subid'];
-                            break;
-
                         case 2:
                         case 5:
                             $CallHistory->subid = $response['data']['callid'];
@@ -169,6 +168,10 @@ class HbCall extends \app\common\controller\HomeController
                         case 3:
                         case 4:
                             $CallHistory->subid = $response['data']['bindId'];
+                            break;
+
+                        default:
+                            $CallHistory->subid = $response['data']['subid'];
                             break;
                     }
 
