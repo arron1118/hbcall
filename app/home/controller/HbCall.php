@@ -151,8 +151,8 @@ class HbCall extends \app\common\controller\HomeController
                     $CallHistory->call_type = $this->userInfo->company->getData('call_type');
                     $CallHistory->rate = $this->userInfo->company->rate;
                     $CallHistory->caller_number = $this->userInfo->phone;
-                    $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
                     $CallHistory->called_number = $mobile;
+                    $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
                     $CallHistory->customer_id = $customerId;
                     $CallHistory->device = $this->agent->device();
                     $CallHistory->platform = $this->agent->platform();
@@ -168,6 +168,7 @@ class HbCall extends \app\common\controller\HomeController
                         case 3:
                         case 4:
                             $CallHistory->subid = $response['data']['bindId'];
+                            $CallHistory->axb_number = $this->userInfo->callback_number;
                             break;
 
                         default:

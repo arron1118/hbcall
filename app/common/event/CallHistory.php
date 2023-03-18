@@ -77,71 +77,133 @@ class CallHistory
                 try {
                     if ($val->call_type === 3) {
                         $curl->get(Config::get('hbcall.dx_record_api'), [
-                            'callid' => $val['subid'],
-//                            'date' => $date
+                            'bindId' => $val['subid'],
                         ]);
+                        $response = json_decode($curl->response, true);
+
+                        $returnData['response'][] = $response;
+                        if (!is_null($response) && $response['statusCode'] === 200) {
+                            ++$returnData['success'];
+                            $data = $response['data'];
+                            if (!is_null($data) && !empty($data)) {
+                                if (!is_array($data)) {
+                                    $data = json_decode($data, true);
+                                }
+
+                                // 更新通话记录
+                                if (isset($data['callId'])) {
+                                    $val->callid = $data['callId'];
+                                    $val->finish_type = $data['callStatus'];
+                                    $val->finish_state = $data['finishStatus'];
+                                }
+
+                                $val->starttime = strtotime($data['startTime']);
+                                $val->releasetime = strtotime($data['endTime']);
+                                $val->call_duration = $data['duration'];
+                                $val->record_url = $data['preRecordUrl'];
+
+                                if (!$val->getData('createtime')) {
+                                    $val->createtime = strtotime($data['startTime']);
+                                }
+
+                                if (!$val->axb_number) {
+                                    $val->axb_number = $data['telX'];
+                                }
+
+                                if ($data['duration'] > 0) {
+                                    // 添加消费记录
+                                    $ExpenseModel = Expense::where('call_history_id', $val->id)->findOrEmpty();
+                                    if ($ExpenseModel->isEmpty()) {
+                                        $company = Company::find($val->company_id);
+
+                                        $ExpenseModel = new Expense();
+                                        $ExpenseModel->duration =  ceil($data['duration'] / 60);
+                                        $ExpenseModel->rate = $company->rate;
+                                        $ExpenseModel->cost = $ExpenseModel->duration * $company->rate;
+                                        $ExpenseModel->title = '通话消费';
+                                        $ExpenseModel->user_id = $val->user_id;
+                                        $ExpenseModel->company_id = $val->company_id;
+                                        $ExpenseModel->call_history_id = $val->id;
+                                        $ExpenseModel->createtime = strtotime($data['startTime']) + 300;
+                                        $ExpenseModel->save();
+
+                                        // 扣费
+                                        $company->balance -= $ExpenseModel->cost;
+                                        $company->expense += $ExpenseModel->cost;
+                                        $company->save();
+                                    }
+                                }
+                            }
+
+                            $val->status = 1;
+                            $val->sync_at = time();
+                            $val->save();
+                        }
                     } else {
                         $curl->post(Config::get('hbcall.record_api'), [
                             'subid' => $val['subid'],
                             'date' => $date
                         ]);
-                    }
-                    $response = json_decode($curl->response, true);
-//                    dump($response);
+                        $response = json_decode($curl->response, true);
 
-                    $returnData['response'][] = $response;
-                    if (!is_null($response) && ((isset($response['code']) && $response['code'] === 1000) || $response['statusCode'] === 200)) {
-                        ++$returnData['success'];
-                        if (!is_null($response['data']) && !empty($response['data'])) {
-                            if (!is_array($response['data'])) {
-                                $response['data'] = json_decode($response['data'], true);
-                            }
+                        $returnData['response'][] = $response;
+                        if (!is_null($response) && (isset($response['code']) && $response['code'] === 1000)) {
+                            ++$returnData['success'];
+                            if (!is_null($data) && !empty($data)) {
+                                if (!is_array($data)) {
+                                    $data = json_decode($data, true);
+                                }
 
-                            // 更新通话记录
-                            if (isset($response['data']['callid'])) {
-                                $val->callid = $response['data']['callid'];
-                                $val->finish_type = $response['data']['finishType'];
-                                $val->finish_state = $response['data']['finishState'];
-                                $val->releasecause = $response['data']['releasecause'];
-                            }
+                                // 更新通话记录
+                                if (isset($data['callid'])) {
+                                    $val->callid = $data['callid'];
+                                    $val->finish_type = $data['finishType'];
+                                    $val->finish_state = $data['finishState'];
+                                    $val->releasecause = $data['releasecause'];
+                                }
 
-                            $val->starttime = strtotime($response['data']['starttime']);
-                            $val->releasetime = strtotime($response['data']['releasetime']);
-                            $val->call_duration = $response['data']['callDuration'];
-                            $val->record_url = $response['data']['recordUrl'];
+                                $val->starttime = strtotime($data['starttime']);
+                                $val->releasetime = strtotime($data['releasetime']);
+                                $val->call_duration = $data['callDuration'];
+                                $val->record_url = $data['recordUrl'];
 
-                            if (!$val->getData('createtime')) {
-                                $val->createtime = strtotime($response['data']['starttime']);
-                            }
+                                if (!$val->getData('createtime')) {
+                                    $val->createtime = strtotime($data['starttime']);
+                                }
 
-                            if ($response['data']['callDuration'] > 0) {
-                                // 添加消费记录
-                                $ExpenseModel = Expense::where('call_history_id', $val->id)->findOrEmpty();
-                                if ($ExpenseModel->isEmpty()) {
-                                    $company = Company::find($val->company_id);
+                                if (!$val->axb_number) {
+                                    $val->axb_number = $data['xNumber'];
+                                }
 
-                                    $ExpenseModel = new Expense();
-                                    $ExpenseModel->duration =  ceil($response['data']['callDuration'] / 60);
-                                    $ExpenseModel->rate = $company->rate;
-                                    $ExpenseModel->cost = $ExpenseModel->duration * $company->rate;
-                                    $ExpenseModel->title = '通话消费';
-                                    $ExpenseModel->user_id = $val->user_id;
-                                    $ExpenseModel->company_id = $val->company_id;
-                                    $ExpenseModel->call_history_id = $val->id;
-                                    $ExpenseModel->createtime = strtotime($response['data']['starttime']) + 300;
-                                    $ExpenseModel->save();
+                                if ($data['callDuration'] > 0) {
+                                    // 添加消费记录
+                                    $ExpenseModel = Expense::where('call_history_id', $val->id)->findOrEmpty();
+                                    if ($ExpenseModel->isEmpty()) {
+                                        $company = Company::find($val->company_id);
 
-                                    // 扣费
-                                    $company->balance -= $ExpenseModel->cost;
-                                    $company->expense += $ExpenseModel->cost;
-                                    $company->save();
+                                        $ExpenseModel = new Expense();
+                                        $ExpenseModel->duration =  ceil($data['callDuration'] / 60);
+                                        $ExpenseModel->rate = $company->rate;
+                                        $ExpenseModel->cost = $ExpenseModel->duration * $company->rate;
+                                        $ExpenseModel->title = '通话消费';
+                                        $ExpenseModel->user_id = $val->user_id;
+                                        $ExpenseModel->company_id = $val->company_id;
+                                        $ExpenseModel->call_history_id = $val->id;
+                                        $ExpenseModel->createtime = strtotime($data['starttime']) + 300;
+                                        $ExpenseModel->save();
+
+                                        // 扣费
+                                        $company->balance -= $ExpenseModel->cost;
+                                        $company->expense += $ExpenseModel->cost;
+                                        $company->save();
+                                    }
                                 }
                             }
-                        }
 
-                        $val->status = 1;
-                        $val->sync_at = time();
-                        $val->save();
+                            $val->status = 1;
+                            $val->sync_at = time();
+                            $val->save();
+                        }
                     }
                 } catch (\ErrorException $e) {
                     ++$returnData['error'];

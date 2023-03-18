@@ -127,6 +127,7 @@ trait HbCallTrait
                     case 3:
                     case 4:
                         $CallHistory->subid = $response['data']['bindId'];
+                        $CallHistory->axb_number = $this->userInfo->callback_number;
                         break;
 
                     default:

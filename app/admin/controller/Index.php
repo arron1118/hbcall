@@ -6,6 +6,8 @@ use app\common\controller\AdminController;
 use app\common\traits\ReportTrait;
 use app\common\model\Company;
 use app\common\model\Payment;
+use Curl\Curl;
+use think\facade\Config;
 
 class Index extends AdminController
 {
