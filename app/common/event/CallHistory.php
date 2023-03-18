@@ -149,6 +149,7 @@ class CallHistory
                         $returnData['response'][] = $response;
                         if (!is_null($response) && (isset($response['code']) && $response['code'] === 1000)) {
                             ++$returnData['success'];
+                            $data = $response['data'];
                             if (!is_null($data) && !empty($data)) {
                                 if (!is_array($data)) {
                                     $data = json_decode($data, true);
