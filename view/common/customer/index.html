@@ -113,7 +113,7 @@
                     <th lay-data="{field: 'title', title: '客户名称', align: 'center', width: 200}"></th>
                     <th lay-data="{field: 'phone', title: '联系电话', align: 'center', style: 'cursor: pointer;', templet: '#phone', event: 'showPhone', width: 150}"></th>
                     <th lay-data="{field: 'province', title: '所在地', align: 'center', width: 100}"></th>
-                    <th lay-data="{field: 'email', title: '邮箱', align: 'center', width: 240}"></th>
+                    <th lay-data="{field: 'comment', title: '备注', align: 'center', width: 240}"></th>
                     <th lay-data="{field: 'cate', title: '类型', align: 'center', width: 100}"></th>
                     {if ($module === 'admin')}
                     <th lay-data="{field: 'corporation', title: '所属公司', align: 'center', width: 300}"></th>
@@ -121,8 +121,8 @@
                     {if ($module !== 'home')}
                     <th lay-data="{field: 'username', title: '跟进人', align: 'center', width: 150}"></th>
                     {/if}
-                    <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center', width: 50}"></th>
-                    <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', width: 50, event: 'showRecord', style: 'cursor: pointer;', templet: '#record'}"></th>
+                    <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center', width: 100}"></th>
+                    <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', width: 100, event: 'showRecord', style: 'cursor: pointer;', templet: '#record'}"></th>
                     <th lay-data="{field: 'last_calltime', title: '最近呼叫', align: 'center', width: 180}"></th>
                     <th lay-data="{field: 'createtime', title: '创建时间', align: 'center', width: 180}"></th>
                     {if ($module !== 'admin')}

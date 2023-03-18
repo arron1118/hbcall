@@ -86,7 +86,8 @@ class HbCall extends \app\common\controller\ApiController
     {
 //        return strtotime('2022-05-06 23:59:59');
 //        dump(date('Y-m-d', time()) === '2022-05-06');
-        Event::trigger('CallHistory');
+        $event = Event::trigger('CallHistory');
+        dump($event);
         return 'Done!';
     }
 }

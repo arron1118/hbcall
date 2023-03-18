@@ -61,7 +61,13 @@ class CallHistory
         }
 
         $callList = $callList->order('id asc')->limit($limit)->select();
-        $returnData = ['total' => count($callList), 'success' => 0, 'error' => 0, 'response' => []];
+        $returnData = [
+            'total' => count($callList),
+            'success' => 0,
+            'error' => 0,
+            'response' => [],
+            'errList' => []
+        ];
         if (!empty($callList)) {
             $curl = new Curl();
             $curl->setHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -81,7 +87,9 @@ class CallHistory
                         ]);
                         $response = json_decode($curl->response, true);
 
-                        $returnData['response'][] = $response;
+                        $returnData['response'][] = [
+                            $val->subid => $response['statusCode'],
+                        ];
                         if (!is_null($response) && $response['statusCode'] === 200) {
                             ++$returnData['success'];
                             $data = $response['data'];
@@ -146,7 +154,9 @@ class CallHistory
                         ]);
                         $response = json_decode($curl->response, true);
 
-                        $returnData['response'][] = $response;
+                        $returnData['response'][] = [
+                            $val->subid => $response['code'],
+                        ];
                         if (!is_null($response) && (isset($response['code']) && $response['code'] === 1000)) {
                             ++$returnData['success'];
                             $data = $response['data'];
@@ -208,12 +218,15 @@ class CallHistory
                     }
                 } catch (\ErrorException $e) {
                     ++$returnData['error'];
-                    dump($e);
+                    $returnData['errList'][] = [
+                        $val->subid => $e->getMessage()
+                    ];
                 }
             }
 
             dump('总共：' . $returnData['total'] . ' 成功：' . $returnData['success'] . ' 失败：' . $returnData['error']);
             dump($returnData['response']);
+            return $returnData;
 
             if (!empty($news)) {
                 $HistoryModel->saveAll($news);

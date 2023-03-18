@@ -125,6 +125,11 @@
             <a class="layui-btn layui-btn-xs layui-btn-info" lay-event="preview">查看</a>
         </script>
 
+        {if ($module === 'admin')}
+        <script type="text/html" id="syncCallHistory">
+            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="syncCallHistory"><i class="fa fa-refresh"></i> 同步数据</button>
+        </script>
+        {/if}
     </div>
 </div>
 
@@ -152,7 +157,7 @@
         table.init('currentTableFilter', {
             url: '{:url("/HbCall/getHistoryList")}',
             method: 'post',
-            toolbar: true,
+            toolbar: '#syncCallHistory',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
                 layEvent: 'LAYTABLE_TIPS',

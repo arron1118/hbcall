@@ -215,7 +215,18 @@ trait CustomerTrait
     public function edit()
     {
         $customerId = (int) $this->request->param('id', 0);
-        $customer = CustomerModel::find($customerId);
+        $customerModel = new CustomerModel();
+        if ($this->module === 'home') {
+            $customerModel = $customerModel->where([
+                'user_id' => $this->userInfo->id,
+            ]);
+        } elseif ($this->module === 'company') {
+            $customerModel = $customerModel->where([
+                'company_id' => $this->userInfo->id,
+            ]);
+        }
+
+        $customer = $customerModel->find($customerId);
 
         if (!$customer) {
             $this->returnData['msg'] = '未找到相关数据';
@@ -230,6 +241,8 @@ trait CustomerTrait
             }
             return json($this->returnData);
         }
+
+//        $customer->phone = substr_replace($customer->phone, '****', 3, 4);
 
         $this->returnData['data'] = $customer;
         $this->returnData['code'] = 1;
