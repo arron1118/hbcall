@@ -6,9 +6,6 @@ use \think\Model;
 
 class Company extends Model
 {
-    protected $autoWriteTimestamp = true;
-
-    protected $createTime = 'create_at';
 
     public function getPrevtimeAttr($value)
     {
@@ -103,5 +100,10 @@ class Company extends Model
     public function companyXnumber()
     {
         return $this->hasOne(CompanyXnumber::class)->bind(['number']);
+    }
+
+    public function customerPhoneRecord()
+    {
+        return $this->hasMany(CustomerPhoneRecord::class);
     }
 }

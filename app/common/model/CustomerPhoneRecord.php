@@ -1,14 +1,15 @@
 <?php
-
+declare (strict_types = 1);
 
 namespace app\common\model;
 
+use think\Model;
 
-use \think\Model;
-
-class Expense extends Model
+/**
+ * @mixin \think\Model
+ */
+class CustomerPhoneRecord extends Model
 {
-
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -17,5 +18,10 @@ class Expense extends Model
     public function company()
     {
         return $this->belongsTo(Company::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 }

@@ -7,10 +7,6 @@ use \think\Model;
 
 class User extends Model
 {
-    protected $autoWriteTimestamp = true;
-
-    protected $createTime = 'create_at';
-
     public function getPrevtimeAttr($value)
     {
         return getDateFormatInfo($value);
@@ -69,5 +65,10 @@ class User extends Model
     public function customer()
     {
         return $this->hasMany(Customer::class);
+    }
+
+    public function customerPhoneRecord()
+    {
+        return $this->hasMany(CustomerPhoneRecord::class);
     }
 }

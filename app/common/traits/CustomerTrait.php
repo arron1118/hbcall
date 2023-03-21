@@ -4,8 +4,8 @@ namespace app\common\traits;
 
 use app\common\model\Customer as CustomerModel;
 use app\common\model\Company;
+use app\common\model\CustomerPhoneRecord;
 use think\db\exception\DbException;
-use think\facade\View;
 
 trait CustomerTrait
 {
@@ -29,8 +29,8 @@ trait CustomerTrait
         if ($this->request->isPost()) {
             $page = (int)$this->request->param('page', 1);
             $limit = (int)$this->request->param('limit', 10);
-            $title = trim($this->request->param('title', ''));
-            $phone = trim($this->request->param('phone', ''));
+            $operate = trim($this->request->param('operate', ''));
+            $keyword = trim($this->request->param('keyword', ''));
             $status = (int) $this->request->param('status', -1);
             $cate = (int) $this->request->param('cate', -1);
             $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
@@ -52,12 +52,8 @@ trait CustomerTrait
                 $where[] = ['cate', '=', $cate];
             }
 
-            if ($title) {
-                $where[] = ['title', 'like', '%' . $title . '%'];
-            }
-
-            if ($phone) {
-                $where[] = ['phone', 'like', '%' . $phone . '%'];
+            if ($keyword) {
+                $where[] = [$operate, 'like', '%' . $keyword . '%'];
             }
 
             if ($status === 0) {
@@ -67,7 +63,7 @@ trait CustomerTrait
             }
 
             if ($startDate && $endDate) {
-                $where[] = ['createtime', 'between', [strtotime($startDate), strtotime($endDate)]];
+                $where[] = ['create_time', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             $total = CustomerModel::where($where)->count();
@@ -102,11 +98,11 @@ trait CustomerTrait
             ];
             $lastData = CustomerModel::where($where)->order('id', 'desc')->findOrEmpty();
             if ($lastData->toArray()) {
-                $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))));
-                $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->createtime))) + 3600 * 24 - 1);
+                $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->create_time))));
+                $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->create_time))) + 3600 * 24 - 1);
                 $res = CustomerModel::field('id, title, phone, called_count, last_calltime')
                     ->where($where)
-                    ->whereBetweenTime('createtime', $lastDateStart, $lastDateEnd)
+                    ->whereBetweenTime('create_time', $lastDateStart, $lastDateEnd)
                     ->order('called_count')
                     ->order('id', 'desc')
                     ->select();
@@ -140,7 +136,7 @@ trait CustomerTrait
             } elseif ($this->module === 'company') {
                 $param['company_id'] = $this->userInfo->id;
             }
-            $param['createtime'] = time();
+            $param['create_time'] = time();
             $customer = new CustomerModel();
             if ($customer->save($param)) {
                 $this->returnData['msg'] = '添加成功';
@@ -198,7 +194,7 @@ trait CustomerTrait
     protected function readExcel($file, $is_repeat_customer = 0)
     {
         $field = [
-            'createtime' => time(),
+            'create_time' => time(),
         ];
 
         if ($this->module === 'home') {
@@ -242,9 +238,7 @@ trait CustomerTrait
             return json($this->returnData);
         }
 
-//        $customer->phone = substr_replace($customer->phone, '****', 3, 4);
-
-        $this->returnData['data'] = $customer;
+        $this->returnData['data'] = $customer->getOrigin();
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '获取成功';
         $this->returnData['cateList'] = (new CustomerModel())->getCateList();
@@ -256,7 +250,19 @@ trait CustomerTrait
         if ($this->request->isPost()) {
             $this->returnData['msg'] = '删除失败';
             if ($id > 0) {
-                CustomerModel::destroy(function ($query) use ($id) {
+                $module = $this->module;
+                $user = $this->userInfo;
+
+                CustomerModel::destroy(function ($query) use ($id, $module, $user) {
+                    if ($module === 'home') {
+                        $query->where([
+                            'user_id' => $user->id,
+                        ]);
+                    } elseif ($module === 'company') {
+                        $query->where([
+                            'company_id' => $user->id,
+                        ]);
+                    }
                     $query->where('id', 'in', $id);
                 });
                 $this->returnData['code'] = 1;
@@ -269,17 +275,55 @@ trait CustomerTrait
         return json($this->returnData);
     }
 
-    public function updateCustomerCalledCount()
+    public function getCustomerPhone($id)
     {
-        if ($this->request->isPost()) {
-            $customerId = $this->request->param('customerId', 0);
-            if ($customerId > 0) {
-                $where = [
-                    'user_id' => $this->userInfo->id,
-                    'id' => $customerId,
-                ];
-                CustomerModel::where($where)->inc('called_count')->update(['last_calltime' => time()]);
+        if ($this->request->isAjax()) {
+            if (!$id) {
+                $this->returnData['msg'] = '错误参数';
+                return json($this->returnData);
             }
+            $customerModel = new CustomerModel();
+            $customerPhoneRecord = new CustomerPhoneRecord();
+            if ($this->module === 'home') {
+                $customerPhoneRecord->company_id = $this->userInfo->company_id;
+                $customerPhoneRecord->company_name = $this->userInfo->company->username;
+                $customerPhoneRecord->user_id = $this->userInfo->id;
+                $customerPhoneRecord->user_name = $this->userInfo->username;
+
+                $customerModel = $customerModel->where([
+                    'user_id' => $this->userInfo->id,
+                ]);
+            } elseif ($this->module === 'company') {
+                $customerPhoneRecord->company_id = $this->userInfo->id;
+                $customerPhoneRecord->company_name = $this->userInfo->username;
+
+                $customerModel = $customerModel->where([
+                    'company_id' => $this->userInfo->id,
+                ]);
+            } elseif ($this->module === 'admin') {
+                $customerPhoneRecord->admin_id = $this->userInfo->id;
+                $customerPhoneRecord->admin_name = $this->userInfo->username;
+            }
+
+            $customer = $customerModel->find($id);
+            if ($customer) {
+                $this->returnData['data'] = $customer->getData('phone');
+                $this->returnData['msg'] = '获取成功';
+                $this->returnData['code'] = 1;
+
+                // 保存查看记录
+                $customerPhoneRecord->customer_id = $customer->id;
+                $customerPhoneRecord->customer_phone = $customer->getData('phone');
+                $customerPhoneRecord->customer_title = $customer->title;
+                $customerPhoneRecord->save();
+
+                // 更新查看数量
+                $customer->check_phone_num += 1;
+                $customer->save();
+            }
+            return json($this->returnData);
         }
+
+        return json($this->returnData);
     }
 }

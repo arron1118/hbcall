@@ -39,15 +39,15 @@ trait ReportTrait
         }
 
         if ($startDate && !$endDate) {
-            $where .= ' and createtime > ' . strtotime($startDate);
+            $where .= ' and create_time > ' . strtotime($startDate);
         }
 
         if (!$startDate && $endDate) {
-            $where .= ' and createtime < ' . strtotime($endDate);
+            $where .= ' and create_time < ' . strtotime($endDate);
         }
 
         if ($startDate && $endDate) {
-            $where .= ' and (createtime between ' . strtotime($startDate) . ' and ' . strtotime($endDate) . ')';
+            $where .= ' and (create_time between ' . strtotime($startDate) . ' and ' . strtotime($endDate) . ')';
         }
 
         $prefix = config('database.connections.mysql.prefix');
@@ -136,14 +136,14 @@ from (
                from hbcall_call_history limit {$hours}
               ) t1
          UNION ALL
-         select * from (select from_unixtime(temp.createtime, '%Y-%m-%d %H') as datetime,
+         select * from (select from_unixtime(temp.create_time, '%Y-%m-%d %H') as datetime,
                                count(*)                                    as sum,
                                sum(duration)            as duration,
                                sum(cost)                                   as expense
-                        from (select ch.id, ch.createtime, e.duration, e.cost from hbcall_call_history ch
+                        from (select ch.id, ch.create_time, e.duration, e.cost from hbcall_call_history ch
                                  inner join
                              hbcall_expense e on e.call_history_id = ch.id
-                        where {$where} and from_unixtime(ch.createtime, '%Y-%m-%d %H') between date_add(
+                        where {$where} and from_unixtime(ch.create_time, '%Y-%m-%d %H') between date_add(
                                 date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
                                 hour) and date_format(current_timestamp(), '%Y-%m-%d %H')) as temp
                         GROUP BY datetime) temp

@@ -210,6 +210,11 @@
                     col.append($('<span />', {
                         class: cssClass + ' fs-2'
                     }).css(css).html(text).on('click', function (e) {
+                        if (callinginput.val().length < 11 || !utils.isPhone(callinginput.val())) {
+                            Toast.fire('请输入正确的号码');
+                            return false;
+                        }
+
                         makeCall({ phone: callinginput.val() }, createItem({called_number: callinginput.val()}));
                     }));
                 } else {
@@ -240,23 +245,19 @@
                     return false
                 }
             } else if (e.keyCode === 13) {
+                if ($(this).val().length < 11 || !utils.isPhone($(this).val())) {
+                    Toast.fire('请输入正确的号码');
+                    return false;
+                }
+
                 makeCall({ phone: $(this).val() }, createItem({called_number: $(this).val()}));
             }
         })
 
         let makeCall = function (params = { phone: '', customerId: 0 }, addList = null, customerCalled = null) {
-            if (params.phone.length < 11 || !utils.isPhone(params.phone)) {
-                Toast.fire('请输入正确的号码');
-                return false;
-            }
-
             $.post('{:url("/hbcall/makeCall")}', { mobile: params.phone, customerId: params.customerId }, function (res) {
                 if ((res.code == '1000' || res.code == '0000' || res.code == '1003') && res.code !== 0) {
                     if (customerCalled) {
-                        // 更新客户拨号记录
-                        $.post('{:url("/Customer/updateCustomerCalledCount")}', { phone: params.phone, customerId: params.customerId }, function (r) {
-                        })
-
                         $(customerCalled).addClass('text-black-50')
 
                         let callTime = utils.getDateTime()
@@ -284,26 +285,13 @@
             });
         }
 
-        // 呼叫历史
-        // $.post('{:url("/hbcall/getCallHistory")}', {}, function (res) {
-        //     if (res.code === 1) {
-        //         let div = $('<div />', {
-        //             class: 'list-group list-group-flush'
-        //         });
-        //         res.rows.forEach((item, index) => {
-        //             div.append(createItem(item))
-        //         })
-        //
-        //         $('.call-history-list').append(div)
-        //     }
-        // })
         // 创建历史列表
         let createItem = function (item) {
             return $('<div />', {
                 class: 'row p-2 mx-1 border-bottom call-history-item',
                 style: 'cursor: pointer',
                 click: function () {
-                    item.createtime = utils.getDateTime()
+                    item.create_time = utils.getDateTime()
                     makeCall({ phone: item.called_number, customerId: item.customer ? item.customer.id : 0 }, createItem(item))
                 },
                 mouseover: function () {
@@ -327,7 +315,7 @@
                 text: '点击拨号'
             })).append($('<div />', {
                 class: 'text-muted col-3 text-end call-datetime',
-                text: item.createtime
+                text: item.create_time
             }))
         }
         // 创建客户列表
@@ -340,17 +328,15 @@
                 class: aClass,
                 style: 'cursor: pointer',
                 click: function () {
-                    makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone, customer: { id: item.id, title: item.title }, createtime: utils.getDateTime() }), this)
+                    makeCall({ phone: item.phone, customerId: item.id }, createItem({ called_number: item.phone, customer: { id: item.id, title: item.title }, create_time: utils.getDateTime() }), this)
                 },
                 mouseover: function () {
                     $(this).children('.click-call').removeClass('d-none')
                     $(this).children('.called-customer').addClass('d-none')
-                    $(this).children('.phone').text(item.phone)
                 },
                 mouseout: function () {
                     $(this).children('.click-call').addClass('d-none')
                     $(this).children('.called-customer').removeClass('d-none')
-                    $(this).children('.phone').text(item.phone.toString().replace(item.phone.toString().substring(3, 7), '****'))
                 },
                 // 右键菜单
                 contextmenu: function (e) {
@@ -396,20 +382,28 @@
                             text: '从列表中删除',
                             click: function () {
                                 $(parent).remove();
-                                // $.post('{:url("/HbCall/deleteCustomer")}', { customerList: [item.id] }, res => {
-                                //     let icon = 0;
-                                //     if (res.code === 1) {
-                                //         icon = 1;
-                                //         $(parent).remove()
-                                //     }
-                                //
-                                //     layer.msg(res.msg, {icon: icon, time: 3000});
-                                // })
 
                                 removeContextmenu()
                             }
                         }).append($('<i />', {
                             class: 'fa fa-trash-alt float-end text-sm lh-base'
+                        }))).append($('<button />', {
+                            type: 'button',
+                            class: 'list-group-item list-group-item-action',
+                            text: '查看电话',
+                            click: function () {
+                                removeContextmenu()
+                                let p = $(parent).find('.phone')
+                                if (!p.data('show')) {
+                                    $.get('{:url("/customer/getCustomerPhone")}', { id: item.id }, function (res) {
+                                        if (res.code === 1 && res.data) {
+                                            $(parent).find('.phone').text(res.data).data('show', true)
+                                        }
+                                    })
+                                }
+                            }
+                        }).append($('<i />', {
+                            class: 'fa fa-search float-end text-sm lh-base'
                         }))));
 
                     removeContextmenu()
@@ -425,7 +419,8 @@
                 alt: item.title
             })).append($('<div />', {
                 class: 'phone col-3',
-                text: item.phone.toString().replace(item.phone.toString().substring(3, 7), '****')
+                text: item.phone,
+                'data-show': 'false'
             }))
 
             if (isCalled) {
@@ -529,14 +524,6 @@
         $('.clear-customer').on('click', function () {
             customerList = []
             customerContainer.html('')
-            // clearCustomer(customerList)
-            // const customerList = customerContainer.find('.customer-id');
-            // let customerIds = [];
-            // $.each(customerList, (index, item) => {
-            //     let cid = $(item).data('id')
-            //     customerIds.push(cid)
-            // })
-            // clearCustomer(customerIds)
         })
 
         let clearCustomer = function (customer) {

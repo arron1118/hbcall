@@ -3,9 +3,9 @@
     {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container-fluid">
-    <div class="row bg-white rounded-3 shadow-sm mb-3">
-        <div class="col pt-3">
+<div class="container-fluid bg-white rounded-3 py-3">
+    <div class="row">
+        <div class="col">
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">
@@ -32,20 +32,19 @@
             </form>
         </div>
     </div>
-</div>
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <button class="layui-btn layui-btn-sm d-none" id="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
-        <script type="text/html" id="toolbarNews">
-            <div class="layui-btn-container">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 发布</button>
-                <button class="layui-btn layui-btn-sm" lay-event="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
-            </div>
-        </script>
+    <div class="row">
+        <div class="col">
+            <button class="layui-btn layui-btn-sm d-none" id="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
+            <script type="text/html" id="toolbarNews">
+                <div class="layui-btn-container">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 发布</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
+                    <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
+                </div>
+            </script>
 
-        <table class="layui-table" id="newsTableId" lay-filter="newsTableFilter" lay-even lay-data="">
-            <thead>
+            <table class="layui-table" id="newsTableId" lay-filter="newsTableFilter" lay-even lay-data="">
+                <thead>
                 <tr>
                     <th lay-data="{type: 'checkbox', width: 50}"></th>
                     <th lay-data="{field: 'id', title: 'ID', width: 100}"></th>
@@ -55,14 +54,15 @@
                     <th lay-data="{field: 'update_time', title: '更新时间', align: 'center'}"></th>
                     <th lay-data="{title: '操作', width: 100, toolbar: '#newsTableBar', align: 'center'}"></th>
                 </tr>
-            </thead>
-        </table>
+                </thead>
+            </table>
 
-        <script type="text/html" id="newsTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i> </a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" title="删除"><i class="fa fa-trash-can"></i> </a>
-        </script>
+            <script type="text/html" id="newsTableBar">
+                <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i> </a>
+                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" title="删除"><i class="fa fa-trash-can"></i> </a>
+            </script>
 
+        </div>
     </div>
 </div>
 {/block}

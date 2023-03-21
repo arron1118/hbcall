@@ -4,6 +4,7 @@ namespace app\home\controller;
 
 use app\common\model\CallHistory;
 use app\common\model\Customer;
+use app\common\model\Customer as CustomerModel;
 use Curl\Curl;
 use think\db\exception\DbException;
 use think\facade\Config;
@@ -26,7 +27,6 @@ class HbCall extends \app\common\controller\HomeController
     {
         if ($this->request->isPost()) {
             $callHistory = CallHistory::with('customer')
-//                ->field('called_number, createtime')
                 ->where('user_id', '=', $this->userInfo->id)
                 ->order('id', 'desc')
                 ->limit(20)
@@ -78,6 +78,10 @@ class HbCall extends \app\common\controller\HomeController
                 $this->returnData['status'] = 0;
                 return json($this->returnData);
             }
+        }
+
+        if ($customer) {
+            $mobile = $customer->getData('phone');
         }
 
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
@@ -178,11 +182,16 @@ class HbCall extends \app\common\controller\HomeController
 
                     if ($customer) {
                         $CallHistory->customer = $customer->title;
+
+                        CustomerModel::where([
+                            'user_id' => $this->userInfo->id,
+                            'id' => $customerId,
+                        ])->inc('called_count')->update(['last_calltime' => time()]);
                     }
 
                     $CallHistory->save();
                 } catch (DbException $dbException) {
-
+                    $response['msg'] = $dbException->getMessage();
                 }
             }
         } else {

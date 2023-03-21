@@ -115,10 +115,10 @@ class User extends ApiController
 
             $where = [$this->userType . '_id' => $user->id];
             $user->yesterday_duration = Expense::where($where)
-                ->whereRaw("date_format(date_sub(now(), interval 1 day), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')")
+                ->whereRaw("date_format(date_sub(now(), interval 1 day), '%Y-%m-%d') = from_unixtime(create_time, '%Y-%m-%d')")
                 ->sum('duration');
             $user->today_duration = Expense::where($where)
-                ->whereRaw("date_format(now(), '%Y-%m-%d') = from_unixtime(createtime, '%Y-%m-%d')")
+                ->whereRaw("date_format(now(), '%Y-%m-%d') = from_unixtime(create_time, '%Y-%m-%d')")
                 ->sum('duration');
 
             Session::set('api_' . $this->userType, $user->toArray());

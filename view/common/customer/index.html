@@ -3,9 +3,10 @@
 {include file="public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container-fluid">
-    <div class="row mb-3 shadow-sm bg-white rounded">
-        <div class="col pt-3">
+
+<div class="container-fluid bg-white rounded-3 py-3">
+    <div class="row">
+        <div class="col">
             <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
                     {if ($module === 'admin')}
@@ -25,19 +26,6 @@
                         </div>
                     </div>
                     {/if}
-                    {if ($module === 'company')}
-                    <div class="layui-inline">
-                        <label class="layui-form-label">筛选</label>
-                        <div class="layui-input-inline">
-                            <select name="user_id" lay-filter="filterUser">
-                                <option value="0">全部</option>
-                                {foreach $user.user as $val}
-                                <option value="{$val.id}">{$val.username}</option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    {/if}
                     {if ($module !== 'home')}
                     <div class="layui-inline">
                         <label class="layui-form-label">分配状态</label>
@@ -50,19 +38,6 @@
                         </div>
                     </div>
                     {/if}
-                    <div class="layui-inline">
-                        <label class="layui-form-label">客户名称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">联系电话</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="phone" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
 
                     <div class="layui-inline" id="datetime">
                         <label class="layui-form-label">时间筛选</label>
@@ -72,6 +47,20 @@
                         <div class="layui-form-mid">-</div>
                         <div class="layui-input-inline">
                             <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">搜索</label>
+                        <div class="layui-input-inline">
+                            <select name="operate" lay-filter="filterOperate">
+                                <option value="title">客户名称</option>
+                                <option value="phone">联系电话</option>
+                                <option value="comment">备 注</option>
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="keyword" class="layui-input" value="" placeholder="关键词">
                         </div>
                     </div>
 
@@ -86,14 +75,11 @@
             </form>
         </div>
     </div>
-</div>
-
-<div class="container-fluid bg-white rounded-3 py-2">
     <div class="row justify-content-center">
         <div class="col-lg-2 pt-2">
-            <div class="card">
+            <div class="card mb-3">
                 <div class="card-header fw-bold">
-                    分类
+                    分 类
                 </div>
                 <div class="list-group list-group-flush">
                     {foreach $cateList as $key => $val}
@@ -103,6 +89,23 @@
                     {/foreach}
                 </div>
             </div>
+            {if ($module === 'company')}
+            <div class="card mb-3" style="max-height: 500px;">
+                <div class="card-header fw-bold">
+                    员 工
+                </div>
+                <div class="list-group list-group-flush overflow-auto pb-3">
+                    <button type="button" class="list-group-item list-group-item-action user-list active" data-name="user_id" data-key="0" title="全部">
+                        全部
+                    </button>
+                    {foreach $user.user as $key => $val}
+                    <button type="button" class="list-group-item list-group-item-action user-list" data-name="user_id" data-key="{$val.id}" title="{$val.username}">
+                        {$val.username}
+                    </button>
+                    {/foreach}
+                </div>
+            </div>
+            {/if}
         </div>
         <div class="col-lg-10">
             <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">
@@ -124,7 +127,7 @@
                     <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center', width: 100}"></th>
                     <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', width: 100, event: 'showRecord', style: 'cursor: pointer;', templet: '#record'}"></th>
                     <th lay-data="{field: 'last_calltime', title: '最近呼叫', align: 'center', width: 180}"></th>
-                    <th lay-data="{field: 'createtime', title: '创建时间', align: 'center', width: 180}"></th>
+                    <th lay-data="{field: 'create_time', title: '创建时间', align: 'center', width: 180}"></th>
                     {if ($module !== 'admin')}
                     <th lay-data="{fixed: 'right', title: '操作', toolbar: '#barDemo', align: 'center', width: 150}"></th>
                     {/if}
@@ -133,10 +136,7 @@
             </table>
 
             <script type="text/html" id="phone">
-                {{#
-                    let hidePhone = d.phone.replace(d.phone.substring(3, 7), '****')
-                }}
-                <span class="hide-phone d-inline">{{hidePhone}}</span><span class="show-phone d-none">{{d.phone}}</span> <i class="fa-regular fa-eye phone-icon" title="点击查看"></i>
+                <span class="hide-phone d-inline" data-value="{{d.phone}}" data-show="false">{{d.phone}}</span> <i class="fa-regular fa-eye phone-icon" title="点击查看"></i>
             </script>
 
             <script type="text/html" id="record">
@@ -210,7 +210,7 @@
                                 el = $(e.currentTarget).find('[name="' + name + '"]');
 
                             if (nodeName === 'SELECT') {
-                                let v = Object.keys(res.cateList).find(key => res.cateList[key] === res.data[name])
+                                let v = Object.keys(res.cateList).find(key => parseInt(key) === res.data[name])
                                 el.val(v)
                             } else {
                                 el.val(res.data[name])
@@ -302,15 +302,18 @@
                     });
                     break;
                 case 'showPhone':
-                    let hide = $(this).find('.hide-phone'), show = $(this).find('.show-phone'), icon = $(this).find('.phone-icon');
-                    if (hide.hasClass('d-inline')) {
-                        hide.removeClass('d-inline').addClass('d-none')
-                        show.removeClass('d-none').addClass('d-inline')
-                        icon.removeClass('fa-eye').addClass('fa-eye-slash')
-                    } else {
-                        hide.removeClass('d-none').addClass('d-inline')
-                        show.removeClass('d-inline').addClass('d-none')
+                    let hide = $(this).find('.hide-phone'), icon = $(this).find('.phone-icon');
+
+                    if (hide.data('show')) {
+                        hide.text(hide.data('value')).data('show', false)
                         icon.removeClass('fa-eye-slash').addClass('fa-eye')
+                    } else {
+                        $.get('{:url("/customer/getCustomerPhone")}', { id: editId }, function (res) {
+                            if (res.code === 1 && res.data) {
+                                hide.text(res.data).data('show', true)
+                                icon.removeClass('fa-eye').addClass('fa-eye-slash')
+                            }
+                        })
                     }
                     break;
                 case 'makeCall':
@@ -481,10 +484,6 @@
         let makeCall = function (params = { phone: '', customerId: 0 }, obj = null) {
             $.post('{:url("/hbcall/makeCall")}', { mobile: params.phone, customerId: params.customerId }, function (res) {
                 if ((res.code == '1000' || res.code == '0000' || res.code == '1003') && res.code !== 0) {
-                    // 更新客户拨号记录
-                    $.post('{:url("/Customer/updateCustomerCalledCount")}', { phone: params.phone, customerId: params.customerId }, function (r) {
-                    })
-
                     obj.update({
                         last_calltime: utils.getDateTime(),
                         called_count: obj.data.called_count + 1
@@ -574,28 +573,39 @@
                 }
             })
 
-            reloadTable(Object.assign({}, form.val('searchForm'), { company_id: data.value }))
+            reloadTable(Object.assign({}, form.val('searchForm'), { company_id: data.value, user_id: 0 }))
         })
 
         form.on('select(filterUser)', function (data) {
-            reloadTable(Object.assign({}, form.val('searchForm'), { user_id: data.value }))
+            let params = [], cate = $('.cate-list.active'), user = $('.user-list.active');
+            params[data.elem.name] = data.value
+            params[cate.data('name')] = cate.data('key')
+            params[user.data('name')] = user.data('key')
+
+            reloadTable(Object.assign({}, form.val('searchForm'), params))
         })
         form.on('select(distributionFilter)', function (data) {
-            let params = [];
+            let params = [], cate = $('.cate-list.active'), user = $('.user-list.active');
             params[data.elem.name] = data.value
-            params = Object.assign({}, form.val('searchForm'), params)
-            reloadTable(params);
-        })
-        form.on('select(cateFilter)', function (data) {
-            let params = [];
-            params[data.elem.name] = data.value
+            params[cate.data('name')] = cate.data('key')
+            params[user.data('name')] = user.data('key')
             params = Object.assign({}, form.val('searchForm'), params)
             reloadTable(params);
         })
 
         $('.cate-list').on('click', function (e) {
-            let key = $(this).data('key'), name = $(this).data('name'), params = [];
+            let key = $(this).data('key'), name = $(this).data('name'), user = $('.user-list.active'), params = [];
             params[name] = key
+            params[user.data('name')] = user.data('key')
+            params = Object.assign({}, form.val('searchForm'), params)
+            reloadTable(params);
+            $(this).addClass('active').siblings().removeClass('active')
+        })
+
+        $('.user-list').on('click', function (e) {
+            let key = $(this).data('key'), name = $(this).data('name'), cate = $('.cate-list.active'), params = [];
+            params[name] = key
+            params[cate.data('name')] = cate.data('key')
             params = Object.assign({}, form.val('searchForm'), params)
             reloadTable(params);
             $(this).addClass('active').siblings().removeClass('active')

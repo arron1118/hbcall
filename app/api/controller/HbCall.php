@@ -42,7 +42,7 @@ class HbCall extends \app\common\controller\ApiController
         $start = strtotime($date);
         if ($start) {
             $end = $start + 86400 - 1;
-            $map[] = ['createtime', 'between', [$start, $end]];
+            $map[] = ['create_time', 'between', [$start, $end]];
         }
 
         if ($page <= 0) {
@@ -54,9 +54,9 @@ class HbCall extends \app\common\controller\ApiController
         }
 
         $total = CallHistory::where($map)->count();
-        $historyList = CallHistory::field('id, called_number, createtime, username, call_duration')
+        $historyList = CallHistory::field('id, called_number, create_time, username, call_duration')
             ->where($map)
-            ->order('createtime DESC')
+            ->order('create_time DESC')
             ->limit(($page - 1) * $limit, $limit)
             ->select();
         foreach ($historyList as $key => &$item) {

@@ -8,11 +8,6 @@ use \think\Model;
 class Payment extends Model
 {
 
-    public function getCreateTimeAttr($value)
-    {
-        return getDateFormatInfo($value);
-    }
-
     public function getPayTimeAttr($value)
     {
         return getDateFormatInfo($value);

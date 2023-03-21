@@ -6,14 +6,14 @@ use \think\Model;
 
 class Customer extends Model
 {
-    public function getCreatetimeAttr($value)
+    public function getLastCalltimeAttr($value)
     {
         return getDateFormatInfo($value);
     }
 
-    public function getLastCalltimeAttr($value)
+    public function getPhoneAttr($value)
     {
-        return getDateFormatInfo($value);
+        return substr_replace($value, '****', 3, 4);
     }
 
     public function getCateAttr($value)
@@ -57,5 +57,10 @@ class Customer extends Model
     public function record()
     {
         return $this->hasMany(CustomerRecord::class);
+    }
+
+    public function customerPhoneRecord()
+    {
+        return $this->hasMany(CustomerPhoneRecord::class);
     }
 }

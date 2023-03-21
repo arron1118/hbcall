@@ -57,7 +57,7 @@ class CallHistory
         $callList = $HistoryModel->where($map);
             // id 为5183后开启
         if (!$uid) {
-            $callList->whereBetweenTime('createtime', $time, $endTime);
+            $callList->whereBetweenTime('create_time', $time, $endTime);
         }
 
         $callList = $callList->order('id asc')->limit($limit)->select();
@@ -75,11 +75,11 @@ class CallHistory
             $date = date('Ymd', $time);
 
             foreach ($callList as $val) {
-                if (!$val->createtime) {
+                if (!$val->create_time) {
                     continue;
                 }
 
-//                $date = date('Ymd', $val->getData('createtime'));
+//                $date = date('Ymd', $val->getData('create_time'));
                 try {
                     if ($val->call_type === 3) {
                         $curl->get(Config::get('hbcall.dx_record_api'), [
@@ -110,8 +110,8 @@ class CallHistory
                                 $val->call_duration = $data['duration'];
                                 $val->record_url = $data['preRecordUrl'];
 
-                                if (!$val->getData('createtime')) {
-                                    $val->createtime = strtotime($data['startTime']);
+                                if (!$val->getData('create_time')) {
+                                    $val->create_time = strtotime($data['startTime']);
                                 }
 
                                 if (!$val->axb_number) {
@@ -132,7 +132,6 @@ class CallHistory
                                         $ExpenseModel->user_id = $val->user_id;
                                         $ExpenseModel->company_id = $val->company_id;
                                         $ExpenseModel->call_history_id = $val->id;
-                                        $ExpenseModel->createtime = strtotime($data['startTime']) + 300;
                                         $ExpenseModel->save();
 
                                         // 扣费
@@ -178,8 +177,8 @@ class CallHistory
                                 $val->call_duration = $data['callDuration'];
                                 $val->record_url = $data['recordUrl'];
 
-                                if (!$val->getData('createtime')) {
-                                    $val->createtime = strtotime($data['starttime']);
+                                if (!$val->getData('create_time')) {
+                                    $val->create_time = strtotime($data['starttime']);
                                 }
 
                                 if (!$val->axb_number) {
@@ -200,7 +199,6 @@ class CallHistory
                                         $ExpenseModel->user_id = $val->user_id;
                                         $ExpenseModel->company_id = $val->company_id;
                                         $ExpenseModel->call_history_id = $val->id;
-                                        $ExpenseModel->createtime = strtotime($data['starttime']) + 300;
                                         $ExpenseModel->save();
 
                                         // 扣费

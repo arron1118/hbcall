@@ -106,7 +106,6 @@ trait PaymentTrait
             'title' => $title,
             'amount' => $amount,
             'pay_type' => $payType,
-            'create_time' => time(),
             'device' => $this->agent->device(),
             'platform' => $this->agent->platform(),
             'platform_version' => $this->agent->version($this->agent->platform()),

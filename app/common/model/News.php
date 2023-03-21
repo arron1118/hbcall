@@ -29,16 +29,6 @@ class News extends Model
         return $value === 1 ? '是' : '否';
     }
 
-    public function getCreateTimeAttr($value)
-    {
-        return getDateFormatInfo($value);
-    }
-
-    public function getUpdateTimeAttr($value)
-    {
-        return getDateFormatInfo($value);
-    }
-
     public function author()
     {
         return $this->belongsTo(Admin::class, 'author_id');

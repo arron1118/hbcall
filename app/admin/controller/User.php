@@ -71,7 +71,7 @@ class User extends \app\common\controller\AdminController
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
-            return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+            return json(['rows' => $userList->hidden(['salt', 'password', 'token', 'token_expire_time']), 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
         }
 
         return json($this->returnData);

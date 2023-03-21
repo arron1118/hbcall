@@ -3,9 +3,9 @@
     {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container-fluid">
-    <div class="row bg-white mb-3 rounded-3 shadow-sm">
-        <div class="col pt-3">
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row">
+        <div class="col pt-2">
             <form class="layui-form layui-form-pane" action="">
                 <div class="layui-form-item">
 
@@ -32,34 +32,33 @@
             </form>
         </div>
     </div>
-</div>
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <script type="text/html" id="toolbarDemo">
-            <div class="layui-btn-container">
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加</button>
-            </div>
-        </script>
+    <div class="row">
+        <div class="col">
+            <script type="text/html" id="toolbarDemo">
+                <div class="layui-btn-container">
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="fa fa-plus"></i> 添加</button>
+                </div>
+            </script>
 
-        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
-            <thead>
-            <tr>
-                <th lay-data="{field: 'id', title: 'ID'}"></th>
-                <th lay-data="{field: 'username', title: '账号'}"></th>
-                <th lay-data="{field: 'phone', title: '手机号', align: 'center'}"></th>
-                <th lay-data="{field: 'number', title: '小号', align: 'center',}"></th>
-                <th lay-data="{field: 'call_history_count', title: '呼叫总数', align: 'center', sort: true }"></th>
-                <th lay-data="{field: 'expense_sum', title: '总消费', align: 'center', sort: true }"></th>
-                <th lay-data="{field: 'logintime', title: '登录时间', align: 'center'}"></th>
-            </tr>
-            </thead>
-        </table>
+            <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
+                <thead>
+                <tr>
+                    <th lay-data="{field: 'id', title: 'ID'}"></th>
+                    <th lay-data="{field: 'username', title: '账号'}"></th>
+                    <th lay-data="{field: 'phone', title: '手机号', align: 'center'}"></th>
+                    <th lay-data="{field: 'number', title: '小号', align: 'center',}"></th>
+                    <th lay-data="{field: 'call_history_count', title: '呼叫总数', align: 'center', sort: true }"></th>
+                    <th lay-data="{field: 'expense_sum', title: '总消费', align: 'center', sort: true }"></th>
+                    <th lay-data="{field: 'logintime', title: '登录时间', align: 'center'}"></th>
+                </tr>
+                </thead>
+            </table>
 
-        <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i> </a>
-        </script>
-
+            <script type="text/html" id="currentTableBar">
+                <a class="layui-btn layui-btn-xs data-count-edit" lay-event="edit" title="编辑"><i class="fa fa-user-edit"></i></a>
+                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i> </a>
+            </script>
+        </div>
     </div>
 </div>
 {/block}

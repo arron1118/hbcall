@@ -3,9 +3,9 @@
 {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container-fluid">
-    <div class="row mb-3 shadow-sm bg-white rounded">
-        <div class="col pt-3">
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row">
+        <div class="col pt-2">
             <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
                     <label class="layui-form-label">筛选</label>
@@ -64,73 +64,73 @@
             </form>
         </div>
     </div>
-</div>
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <script type="text/html" id="toolbarDemo">
-            <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i
-                    class="fa fa-plus"></i> 开通账号
-            </button>
-            <span class="ms-3 text-secondary">注：点击'已开通用户'列可查看用户列表内容</span>
-        </script>
-        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
-            <thead>
-            <tr>
-                <th lay-data="{field: 'id', title: '编号', width: 100, fixed: 'left'}"></th>
-                <th lay-data="{field: 'username', title: '账号', fixed: 'left', width: 200,}"></th>
-                <th lay-data="{field: 'ration', title: '座席', align: 'center', edit: 'text', width: 80}"></th>
-                <th lay-data="{field: 'limit_user', title: '限制用户数量', align: 'center', edit: 'text', sort: true, width: 130}"></th>
-                <th lay-data="{field: 'user_count', title: '已开通用户', align: 'center', sort: true, event: 'checkUserList', width: 130, style: 'cursor: pointer;', templet: '#hasUser'}"></th>
-                <th lay-data="{field: 'call_type', title: '呼叫线路', align: 'center', templet: '#callType', width: 150,}"></th>
-                <th lay-data="{field: 'rate', title: '费率(￥/元)', align: 'center', edit: 'text', sort: true, width: 120}"></th>
-                <th lay-data="{field: 'balance', title: '余额(￥/元)', align: 'center', sort: true, templet: '#balance', width: 120}"></th>
-                <th lay-data="{field: 'payment_sum', title: '充值', align: 'center', sort: true, width: 150}"></th>
-                <th lay-data="{field: 'expense', title: '总消费', align: 'center', sort: true, width: 150}"></th>
-                <th lay-data="{field: 'logintime', title: '最后登录', align: 'center', width: 180}"></th>
-                <th lay-data="{field: 'is_test', title: '试用', align: 'center', width: 120}"></th>
-                <th lay-data="{field: 'test_endtime', title: '到期日期', align: 'center', width: 180}"></th>
-                <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#status', width: 100}"></th>
-                <th lay-data="{title: '操作', width: 150, toolbar: '#currentTableBar', align: 'center', fixed: 'right'}"></th>
-            </tr>
-            </thead>
-        </table>
-        <script type="text/html" id="balance">
-            {{# if (d.balance < 0) { }}
+    <div class="row">
+        <div class="col">
+            <script type="text/html" id="toolbarDemo">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i
+                        class="fa fa-plus"></i> 开通账号
+                </button>
+                <span class="ms-3 text-secondary">注：点击'已开通用户'列可查看用户列表内容</span>
+            </script>
+            <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
+                <thead>
+                <tr>
+                    <th lay-data="{field: 'id', title: '编号', width: 100, fixed: 'left'}"></th>
+                    <th lay-data="{field: 'username', title: '账号', fixed: 'left', width: 200,}"></th>
+                    <th lay-data="{field: 'ration', title: '座席', align: 'center', edit: 'text', width: 80}"></th>
+                    <th lay-data="{field: 'limit_user', title: '限制用户数量', align: 'center', edit: 'text', sort: true, width: 130}"></th>
+                    <th lay-data="{field: 'user_count', title: '已开通用户', align: 'center', sort: true, event: 'checkUserList', width: 130, style: 'cursor: pointer;', templet: '#hasUser'}"></th>
+                    <th lay-data="{field: 'call_type', title: '呼叫线路', align: 'center', templet: '#callType', width: 150,}"></th>
+                    <th lay-data="{field: 'rate', title: '费率(￥/元)', align: 'center', edit: 'text', sort: true, width: 120}"></th>
+                    <th lay-data="{field: 'balance', title: '余额(￥/元)', align: 'center', sort: true, templet: '#balance', width: 120}"></th>
+                    <th lay-data="{field: 'payment_sum', title: '充值', align: 'center', sort: true, width: 150}"></th>
+                    <th lay-data="{field: 'expense', title: '总消费', align: 'center', sort: true, width: 150}"></th>
+                    <th lay-data="{field: 'logintime', title: '最后登录', align: 'center', width: 180}"></th>
+                    <th lay-data="{field: 'is_test', title: '试用', align: 'center', width: 120}"></th>
+                    <th lay-data="{field: 'test_endtime', title: '到期日期', align: 'center', width: 180}"></th>
+                    <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#status', width: 100}"></th>
+                    <th lay-data="{title: '操作', width: 150, toolbar: '#currentTableBar', align: 'center', fixed: 'right'}"></th>
+                </tr>
+                </thead>
+            </table>
+            <script type="text/html" id="balance">
+                {{# if (d.balance < 0) { }}
                 <div class="layui-bg-red">{{d.balance}}</div>
-            {{# } else { }}
-            {{d.balance}}
-            {{# } }}
-        </script>
-        <script type="text/html" id="hasUser">
-            <span class="text-primary" title="点击查看用户列表">{{d.user_count}}</span>
-        </script>
-        <script type="text/html" id="callType">
-            {{# if(d.call_type === 'axb') { }}
-            AXB线路
-            {{# } else if (d.call_type === 'callback') { }}
-            三网通回拨
-            {{# } else if (d.call_type === 'DxCallBack') { }}
-            电信回拨
-            {{# } else if (d.call_type === 'YDCallBack') { }}
-            移动回拨
-            {{# } }}
-        </script>
-        <script type="text/html" id="status">
-            {{# if(d.status === '正常') { }}
-            <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" checked>
-            {{# } else { }}
-            <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter">
-            {{# } }}
-        </script>
-        <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-xs data-count-edit" data-id="{{ d.id }}" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" title="编辑">
-                <i class="fa fa-user-edit"></i>
-            </a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除">
-                <i class="fa fa-trash-can"></i>
-            </a>
-        </script>
+                {{# } else { }}
+                {{d.balance}}
+                {{# } }}
+            </script>
+            <script type="text/html" id="hasUser">
+                <span class="text-primary" title="点击查看用户列表">{{d.user_count}}</span>
+            </script>
+            <script type="text/html" id="callType">
+                {{# if(d.call_type === 'axb') { }}
+                AXB线路
+                {{# } else if (d.call_type === 'callback') { }}
+                三网通回拨
+                {{# } else if (d.call_type === 'DxCallBack') { }}
+                电信回拨
+                {{# } else if (d.call_type === 'YDCallBack') { }}
+                移动回拨
+                {{# } }}
+            </script>
+            <script type="text/html" id="status">
+                {{# if(d.status === '正常') { }}
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" checked>
+                {{# } else { }}
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter">
+                {{# } }}
+            </script>
+            <script type="text/html" id="currentTableBar">
+                <a class="layui-btn layui-btn-xs data-count-edit" data-id="{{ d.id }}" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" title="编辑">
+                    <i class="fa fa-user-edit"></i>
+                </a>
+                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除">
+                    <i class="fa fa-trash-can"></i>
+                </a>
+            </script>
 
+        </div>
     </div>
 </div>
 {include file="user/edit" /}

@@ -75,13 +75,13 @@ function getCosts($company_id = 0, $user_id = 0)
 
     $expenseModel = \app\common\model\Expense::class;
     // 当日消费
-    $current_day_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$today_start, $today_end]);
+    $current_day_cost = $expenseModel::where('cost', '>', '0')->whereBetween('create_time', [$today_start, $today_end]);
     // 昨日消费
-    $yesterday_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$yesterdayStart, $yesterdayEnd]);
+    $yesterday_cost = $expenseModel::where('cost', '>', '0')->whereBetween('create_time', [$yesterdayStart, $yesterdayEnd]);
     // 本月消费
-    $current_month_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$current_month_start, $current_month_end]);
+    $current_month_cost = $expenseModel::where('cost', '>', '0')->whereBetween('create_time', [$current_month_start, $current_month_end]);
     // 当年消费
-    $current_year_cost = $expenseModel::where('cost', '>', '0')->whereBetween('createtime', [$current_year_start, $current_year_end]);
+    $current_year_cost = $expenseModel::where('cost', '>', '0')->whereBetween('create_time', [$current_year_start, $current_year_end]);
     // 总消费
     $total_cost = $expenseModel::where('cost', '>', '0');
     if ($company_id > 0) {

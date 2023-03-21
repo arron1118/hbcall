@@ -6,9 +6,6 @@ use think\Model;
 
 class CallHistory extends Model
 {
-    protected $autoWriteTimestamp = true;
-
-    protected $createTime = 'createtime';
 
     public function getCallDurationAttr($value)
     {
@@ -31,11 +28,6 @@ class CallHistory extends Model
     }
 
     public function getReleasetimeAttr($value)
-    {
-        return getDateFormatInfo($value);
-    }
-
-    public function getCreatetimeAttr($value)
     {
         return getDateFormatInfo($value);
     }

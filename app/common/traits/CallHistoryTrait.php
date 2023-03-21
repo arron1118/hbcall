@@ -53,7 +53,7 @@ trait CallHistoryTrait
             }
 
             if ($startDate && $endDate) {
-                $map[] = ['createtime', 'between', [strtotime($startDate), strtotime($endDate)]];
+                $map[] = ['create_time', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             if ($duration !== '' && $operate !== '') {
@@ -72,7 +72,7 @@ trait CallHistoryTrait
 
             $historyList = CallHistory::with(['expense', 'customer'])
                 ->where($map)
-                ->order('createtime DESC, id DESC')
+                ->order('create_time DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
 

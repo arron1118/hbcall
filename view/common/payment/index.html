@@ -3,9 +3,9 @@
 {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container-fluid">
-    <div class="row rounded mb-3 shadow-sm bg-white">
-        <div class="col pt-3">
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row">
+        <div class="col pt-2">
             <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
                     {if ($module === 'admin')}
@@ -101,49 +101,49 @@
         </div>
     </div>
     {/if}
-</div>
-
-<div class="layuimini-container">
-    <div class="layuimini-main">
-        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
-        <thead>
-            <tr>
-                <th lay-data="{field: 'id', title: 'ID', align: 'center', width: 100, fixed: 'left'}"></th>
-                <th lay-data="{field: 'payno', title: '订单号', align: 'center', width: 250}"></th>
-                <th lay-data="{field: 'title', title: '类型', align: 'center'}"></th>
-                <th lay-data="{field: 'corporation', title: '充值方', align: 'center'}"></th>
-                <th lay-data="{field: 'amount', title: '金额(￥)', align: 'center'}"></th>
-                <th lay-data="{field: 'create_time', title: '充值时间', align: 'center'}"></th>
-                <th lay-data="{field: 'pay_time', title: '支付时间', align: 'center'}"></th>
-                <th lay-data="{field: 'pay_type', title: '充值方式', align: 'center', templet: '#paymentType'}"></th>
-                <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#paymentStatus'}"></th>
-            </tr>
-        </thead>
-        </table>
-        <script type="text/html" id="paymentType">
-            {{# if (d.pay_type === '微信') { }}
+    <div class="row">
+        <div class="col">
+            <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
+                <thead>
+                <tr>
+                    <th lay-data="{field: 'id', title: 'ID', align: 'center', width: 100, fixed: 'left'}"></th>
+                    <th lay-data="{field: 'payno', title: '订单号', align: 'center', width: 250}"></th>
+                    <th lay-data="{field: 'title', title: '类型', align: 'center'}"></th>
+                    <th lay-data="{field: 'corporation', title: '充值方', align: 'center'}"></th>
+                    <th lay-data="{field: 'amount', title: '金额(￥)', align: 'center'}"></th>
+                    <th lay-data="{field: 'create_time', title: '充值时间', align: 'center'}"></th>
+                    <th lay-data="{field: 'pay_time', title: '支付时间', align: 'center'}"></th>
+                    <th lay-data="{field: 'pay_type', title: '充值方式', align: 'center', templet: '#paymentType'}"></th>
+                    <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#paymentStatus'}"></th>
+                </tr>
+                </thead>
+            </table>
+            <script type="text/html" id="paymentType">
+                {{# if (d.pay_type === '微信') { }}
                 <img width="20" src="__STATIC__/images/wepay-logo.png" title="{{d.pay_type}}" alt="{{d.pay_type}}" />
-            {{# } }}
-            {{# if (d.pay_type === '支付宝') { }}
+                {{# } }}
+                {{# if (d.pay_type === '支付宝') { }}
                 <i class="fa-brands fa-alipay fs-4 text-primary" title="{{d.pay_type}}"></i>
-            {{# } }}
-        </script>
+                {{# } }}
+            </script>
 
-        <script type="text/html" id="paymentStatus">
-            {{# if (d.status === '未支付') { }}
+            <script type="text/html" id="paymentStatus">
+                {{# if (d.status === '未支付') { }}
                 {if ($module === 'admin')}
                 <span class="text-warning">{{d.status}}</span>
                 {elseif ($module === 'company') /}
                 <span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>
                 {/if}
-            {{# } else if (d.status === '已关闭') { }}
-            <span class="text-danger">{{d.status}}</span>
-            {{# } else { }}
-            <span class="text-info">{{d.status}}</span>
-            {{# } }}
-        </script>
+                {{# } else if (d.status === '已关闭') { }}
+                <span class="text-danger">{{d.status}}</span>
+                {{# } else { }}
+                <span class="text-info">{{d.status}}</span>
+                {{# } }}
+            </script>
+        </div>
     </div>
 </div>
+
 {/block}
 
 {block name="js"}
