@@ -24,7 +24,7 @@ class CallHistory
         $year = trim($request::param('year', date('Y')));
         $month = trim($request::param('month', date('m')));
         $day = trim($request::param('day', date('d')));
-        $limit = trim($request::param('limit/d', 1));
+        $limit = trim($request::param('limit/d', 100));
         strlen($month) === 1 && $month = '0' . $month;
         strlen($day) === 1 && $day = '0' . $day;
 
