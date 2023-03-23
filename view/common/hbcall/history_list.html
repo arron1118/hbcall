@@ -3,42 +3,11 @@
     {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container-fluid bg-white rounded-3 py-2">
+<div class="container-fluid bg-white rounded-3 py-3">
     <div class="row">
-        <div class="col pt-2">
+        <div class="col">
             <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
-                    {if ($module === 'admin')}
-                    <div class="layui-inline">
-                        <label class="layui-form-label">筛选</label>
-                        <div class="layui-input-inline">
-                            <select name="company_id" lay-filter="filterCompany">
-                                <option value="0">全部公司</option>
-                                {foreach $company as $val}
-                                <option value="{$val.id}">{$val.corporation}</option>
-                                {/foreach}
-                            </select>
-                        </div>
-                        <div class="layui-input-inline">
-                            <select name="user_id" lay-filter="filterUser">
-                            </select>
-                        </div>
-                    </div>
-                    {/if}
-                    {if ($module === 'company')}
-                    <div class="layui-inline">
-                        <label class="layui-form-label">筛选</label>
-                        <div class="layui-input-inline">
-                            <select name="user_id" lay-filter="filterUser">
-                                <option value="0">全部</option>
-                                {foreach $user.user as $val}
-                                <option value="{$val.id}">{$val.username}</option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    {/if}
-
                     <div class="layui-inline" id="datetime">
                         <label class="layui-form-label">时间筛选</label>
                         <div class="layui-input-inline">
@@ -87,13 +56,59 @@
                         <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置</button>
                     </div>
                 </div>
-
             </form>
         </div>
     </div>
 
     <div class="row">
+        {if $module !== 'home'}
+        <div class="col-lg-2 col-md-3 col-sm-12">
+            <div class="layui-card border border-light-subtle mt-2">
+                <div class="layui-card-header">筛选</div>
+                <div class="layui-card-body overflow-y-auto overflow-x-hidden" style="max-height: 680px;">
+                    <ul class="layui-menu p-0" id="filterUser">
+                        {if $module === 'admin'}
+                        <li class="layui-menu-item-checked" lay-options="{user_id: 0, company_id: 0}">
+                            <div class="layui-menu-body-title">全部</div>
+                        </li>
+                        {foreach $company as $key => $val}
+                        <li class="layui-menu-item-group layui-menu-item-up" lay-options="{type: 'group'}">
+                            <div class="layui-menu-body-title">
+                                {$val.corporation} <i class="layui-icon layui-icon-up"></i>
+                            </div>
+                            {if !empty($val.user)}
+                            <ul class="p-0">
+                                <li class="" lay-options="{user_id: 0, company_id: {$company[$key]['user'][0]['company_id']}}">
+                                    <div class="layui-menu-body-title">全部</div>
+                                </li>
+                                {foreach $val.user as $k => $v}
+                                <li lay-options="{user_id: {$v.id}, company_id: {$v.company_id}}">
+                                    <div class="layui-menu-body-title">{$v.username}</div>
+                                </li>
+                                {/foreach}
+                            </ul>
+                            {/if}
+                        </li>
+                        {/foreach}
+                        {elseif $module === 'company'}
+                        <li class="layui-menu-item-checked" lay-options="{user_id: 0, company_id: 0}">
+                            <div class="layui-menu-body-title">全部</div>
+                        </li>
+                        {foreach $users as $key => $val}
+                        <li class="" lay-options="{user_id: {$val.id}, company_id: {$val.company_id}}">
+                            <div class="layui-menu-body-title">{$val.username}</div>
+                        </li>
+                        {/foreach}
+                        {/if}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-10 col-md-9 col-sm-12">
+        {else /}
         <div class="col">
+        {/if}
             <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">
                 <thead>
                 <tr>
@@ -109,7 +124,7 @@
                     <th lay-data="{field: 'called_number', title: '被叫号码', align: 'center', width: 150}"></th>
                     <th lay-data="{field: 'create_time', title: '呼叫时间', align: 'center', sort: true, width: 180}"></th>
                     <th lay-data="{field: 'call_duration', title: '通话时长（分）', sort: true, align: 'center', width: 150}"></th>
-                    <th lay-data="{field: 'cost', title: '消费金额（￥/元）', align: 'center'}"></th>
+                    <th lay-data="{field: 'cost', title: '消费金额（￥/元）', align: 'center', width: 150}"></th>
                     <th lay-data="{title: '录音', minWidth: 150, align: 'center', templet: '#record'}"></th>
                 </tr>
                 </thead>
@@ -137,11 +152,17 @@
 
 {block name="js"}
 <script>
-    layui.use(['form', 'table', 'laydate'], function () {
+    layui.use(['form', 'table', 'laydate', 'dropdown'], function () {
         let $ = layui.jquery,
             form = layui.form,
             laydate = layui.laydate,
-            table = layui.table;
+            table = layui.table,
+            dropdown = layui.dropdown;
+
+        //菜单点击事件
+        dropdown.on('click(filterUser)', function(options){
+            search(Object.assign({}, form.val('searchForm'), options))
+        });
 
         laydate.render({
             elem: '#datetime',
@@ -193,22 +214,6 @@
             search();
         })
 
-        form.on('select(filterCompany)', function (data) {
-            $.post('{:url("/HbCall/getUserList")}', { company_id: data.value }, function (res) {
-                if (res.code === 1) {
-                    let html = `<option value='0'>全部职员</option>`
-                    $.each(res.data, (index, item) => {
-                        html += `<option value='${item.id}'>${item.username}</option>`
-                    })
-                    $('select[lay-filter="filterUser"]').html(html)
-
-                    form.render('select')
-                }
-            })
-
-            search(Object.assign({}, form.val('searchForm'), { company_id: data.value }))
-        })
-
         form.on('select(filterUser)', function (data) {
             search(Object.assign({}, form.val('searchForm'), { user_id: data.value }))
         })
@@ -222,20 +227,35 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
-            // if (data.field.datetime === "" && data.field.duration === "") {
-            //     layer.msg('搜索内容不能为空', { icon: 0 })
-            //     return false
-            // }
-            //
-            // if (data.field.duration !== "" && data.field.operate === "") {
-            //     layer.msg('请选择操作符', { icon: 0 })
-            //     return false
-            // }
             search(data.field);
 
             return false;
         });
 
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            switch (obj.event) {
+                case 'syncCallHistory':
+                    let load = layer.load();
+                    $.post("{:url('/HbCall/updateCallHistory')}", function (res) {
+                        layer.close(load)
+                        let errorHtml = '';
+                        if (res.data.error > 0) {
+                            errorHtml += '<h5>失败</h5>'
+                            $.each(res.data.errList, function (index, item) {
+                                errorHtml += '<p>' + index + '：' + item + '</p>'
+                            })
+                            errorHtml += '<br />'
+                        }
+
+                        new Swal({
+                            html: '总共：' + res.data.total + ' 成功：' + res.data.success + ' 失败：' + res.data.error + '<br /><br />' + errorHtml,
+                            icon: 'success',
+                            confirmButtonText: '确定'
+                        });
+                    })
+                    break;
+            }
+        })
     });
 </script>
 {/block}

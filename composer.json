@@ -33,9 +33,7 @@
     "phpoffice/phpspreadsheet": "^1.22",
     "yansongda/pay": "2.10",
     "jenssegers/agent": "^2.6",
-    "lcobucci/jwt": "^4.0",
-    "ext-openssl": "*",
-    "ext-mcrypt": "*"
+    "lcobucci/jwt": "^4.0"
   },
   "require-dev": {
     "symfony/var-dumper": "v4.4.37",

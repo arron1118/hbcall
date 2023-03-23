@@ -76,38 +76,64 @@
         </div>
     </div>
     <div class="row justify-content-center">
-        <div class="col-lg-2 pt-2">
-            <div class="card mb-3">
-                <div class="card-header fw-bold">
-                    分 类
-                </div>
-                <div class="list-group list-group-flush">
-                    {foreach $cateList as $key => $val}
-                    <button type="button" class="list-group-item list-group-item-action cate-list {if $key === -1}active{/if}" data-name="cate" data-key="{$key}" title="{$val}">
-                        {$val}
-                    </button>
-                    {/foreach}
+        <div class="col-lg-2 col-md-3 col-sm-12">
+            <div class="layui-card border border-light-subtle mt-2">
+                <div class="layui-card-header">分类</div>
+                <div class="layui-card-body">
+                    <ul class="layui-menu p-0" id="filterCate">
+                        {foreach $cateList as $key => $val}
+                        <li class="{if ($key == '-1')}layui-menu-item-checked{/if}" lay-options="{cate: {$key}}">
+                            <div class="layui-menu-body-title">{$val}</div>
+                        </li>
+                        {/foreach}
+                    </ul>
                 </div>
             </div>
-            {if ($module === 'company')}
-            <div class="card mb-3" style="max-height: 500px;">
-                <div class="card-header fw-bold">
-                    员 工
-                </div>
-                <div class="list-group list-group-flush overflow-auto pb-3">
-                    <button type="button" class="list-group-item list-group-item-action user-list active" data-name="user_id" data-key="0" title="全部">
-                        全部
-                    </button>
-                    {foreach $user.user as $key => $val}
-                    <button type="button" class="list-group-item list-group-item-action user-list" data-name="user_id" data-key="{$val.id}" title="{$val.username}">
-                        {$val.username}
-                    </button>
-                    {/foreach}
+            {if $module !== 'home'}
+            <div class="layui-card border border-light-subtle">
+                <div class="layui-card-header">筛选</div>
+                <div class="layui-card-body overflow-y-auto overflow-x-hidden" style="max-height: 380px;">
+                    <ul class="layui-menu p-0" id="filterUser">
+                        {if $module === 'admin'}
+                        <li class="layui-menu-item-checked" lay-options="{user_id: 0, company_id: 0}">
+                            <div class="layui-menu-body-title">全部</div>
+                        </li>
+                        {foreach $company as $key => $val}
+                        <li class="layui-menu-item-group layui-menu-item-up" lay-options="{type: 'group'}">
+                            <div class="layui-menu-body-title">
+                                {$val.corporation} <i class="layui-icon layui-icon-up"></i>
+                            </div>
+                            {if !empty($val.user)}
+                            <ul class="p-0">
+                                <li class="" lay-options="{user_id: 0, company_id: {$company[$key]['user'][0]['company_id']}}">
+                                    <div class="layui-menu-body-title">全部</div>
+                                </li>
+                                {foreach $val.user as $k => $v}
+                                <li lay-options="{user_id: {$v.id}, company_id: {$v.company_id}}">
+                                    <div class="layui-menu-body-title">{$v.username}</div>
+                                </li>
+                                {/foreach}
+                            </ul>
+                            {/if}
+                        </li>
+                        {/foreach}
+                        {elseif $module === 'company'}
+                        <li class="layui-menu-item-checked" lay-options="{user_id: 0, company_id: 0}">
+                            <div class="layui-menu-body-title">全部</div>
+                        </li>
+                        {foreach $users as $key => $val}
+                        <li class="" lay-options="{user_id: {$val.id}, company_id: {$val.company_id}}">
+                            <div class="layui-menu-body-title">{$val.username}</div>
+                        </li>
+                        {/foreach}
+                        {/if}
+                    </ul>
                 </div>
             </div>
             {/if}
         </div>
-        <div class="col-lg-10">
+
+        <div class="col-lg-10 col-md-9 col-sm-12">
             <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">
                 <thead>
                 <tr>
@@ -174,7 +200,7 @@
 {block name="js"}
 <script src="__STATIC__/lib/layui_exts/excel.js"></script>
 <script>
-    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'laydate'], function () {
+    layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'laydate', 'dropdown'], function () {
         let $ = layui.jquery,
             layer = layui.layer,
             miniTab = layui.miniTab,
@@ -182,17 +208,31 @@
             excel = layui.excel,
             table = layui.table,
             upload = layui.upload,
+            dropdown = layui.dropdown,
             laydate = layui.laydate,
             form = layui.form;
+
+        //菜单点击事件
+        dropdown.on('click(filterUser)', function(options){
+            reloadTable(Object.assign({}, form.val('searchForm'), options), true)
+        });
+        dropdown.on('click(filterCate)', function(options){
+            reloadTable(Object.assign({}, form.val('searchForm'), options), true)
+        });
 
         laydate.render({
             elem: '#datetime',
             range: ['#startDate', '#endDate'],
             type: 'datetime',
             done: function (value) {
-                let d = value.split(' - ')
-                let data = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] })
-                reloadTable(data)
+                let d = value.split(' - '),
+                    params = [],
+                    user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
+                    cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
+                params = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] })
+                Object.assign(params, user)
+                Object.assign(params, cate)
+                reloadTable(params)
             }
         });
 
@@ -551,68 +591,31 @@
             }
         });
 
-        let reloadTable = function (params = {}) {
+        let reloadTable = function (params = {}, deep = false) {
             table.reload('customerTable', {
                 where: params,
                 page: {
                     curr: 1
                 }
-            })
+            }, deep)
         }
-
-        form.on('select(filterCompany)', function (data) {
-            $.post('{:url("/HbCall/getUserList")}', { company_id: data.value }, function (res) {
-                if (res.code === 1) {
-                    let html = `<option value='0'>全部职员</option>`
-                    $.each(res.data, (index, item) => {
-                        html += `<option value='${item.id}'>${item.username}</option>`
-                    })
-                    $('select[lay-filter="filterUser"]').html(html)
-
-                    form.render('select')
-                }
-            })
-
-            reloadTable(Object.assign({}, form.val('searchForm'), { company_id: data.value, user_id: 0 }))
-        })
-
-        form.on('select(filterUser)', function (data) {
-            let params = [], cate = $('.cate-list.active'), user = $('.user-list.active');
-            params[data.elem.name] = data.value
-            params[cate.data('name')] = cate.data('key')
-            params[user.data('name')] = user.data('key')
-
-            reloadTable(Object.assign({}, form.val('searchForm'), params))
-        })
         form.on('select(distributionFilter)', function (data) {
-            let params = [], cate = $('.cate-list.active'), user = $('.user-list.active');
+            let params = [],
+                user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
+                cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
             params[data.elem.name] = data.value
-            params[cate.data('name')] = cate.data('key')
-            params[user.data('name')] = user.data('key')
             params = Object.assign({}, form.val('searchForm'), params)
+            Object.assign(params, user)
+            Object.assign(params, cate)
             reloadTable(params);
-        })
-
-        $('.cate-list').on('click', function (e) {
-            let key = $(this).data('key'), name = $(this).data('name'), user = $('.user-list.active'), params = [];
-            params[name] = key
-            params[user.data('name')] = user.data('key')
-            params = Object.assign({}, form.val('searchForm'), params)
-            reloadTable(params);
-            $(this).addClass('active').siblings().removeClass('active')
-        })
-
-        $('.user-list').on('click', function (e) {
-            let key = $(this).data('key'), name = $(this).data('name'), cate = $('.cate-list.active'), params = [];
-            params[name] = key
-            params[cate.data('name')] = cate.data('key')
-            params = Object.assign({}, form.val('searchForm'), params)
-            reloadTable(params);
-            $(this).addClass('active').siblings().removeClass('active')
         })
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
+            let user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
+                cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
+            Object.assign(data.field, user)
+            Object.assign(data.field, cate)
             //执行搜索重载
             reloadTable(data.field)
 
@@ -620,7 +623,12 @@
         });
 
         $('button[type="reset"]').on('click', function () {
-            reloadTable()
+            let params = [],
+                user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
+                cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
+            Object.assign(params, user)
+            Object.assign(params, cate)
+            reloadTable(params)
         })
     });
 </script>

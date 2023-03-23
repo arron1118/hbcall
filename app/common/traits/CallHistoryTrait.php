@@ -4,6 +4,7 @@ namespace app\common\traits;
 
 use app\common\model\CallHistory;
 use app\common\model\Company;
+use think\db\Query;
 
 trait CallHistoryTrait
 {

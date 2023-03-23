@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\common\model\User;
 use app\common\traits\CallHistoryTrait;
+use think\facade\Event;
 
 class HbCall extends \app\common\controller\AdminController
 {
@@ -24,5 +25,19 @@ class HbCall extends \app\common\controller\AdminController
         }
 
         return json($this->returnData);
+    }
+
+    /**
+     * 更新通话记录
+     */
+    public function updateCallHistory()
+    {
+        if ($this->request->isAjax() && $this->request->isPost()) {
+            $event = Event::trigger('CallHistory');
+            $this->returnData['code'] = 1;
+            $this->returnData['data'] = $event[0];
+            $this->returnData['msg'] = '同步成功';
+            return json($this->returnData);
+        }
     }
 }

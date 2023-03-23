@@ -24,14 +24,14 @@ class CallHistory
         $year = trim($request::param('year', date('Y')));
         $month = trim($request::param('month', date('m')));
         $day = trim($request::param('day', date('d')));
-        $limit = trim($request::param('limit/d', 100));
+        $limit = trim($request::param('limit/d', 1));
         strlen($month) === 1 && $month = '0' . $month;
         strlen($day) === 1 && $day = '0' . $day;
 
         $date = $year . '-' . $month . '-' . $day;
         $uid = $request::param('uid', 0);
-        dump('请求时间：' . date('Y-m-d H:i:s'));
-        dump('日期：' . $date);
+//        dump('请求时间：' . date('Y-m-d H:i:s'));
+//        dump('日期：' . $date);
 
 //        $module = app('http')->getName();
         $time = strtotime($date);
@@ -62,10 +62,12 @@ class CallHistory
 
         $callList = $callList->order('id asc')->limit($limit)->select();
         $returnData = [
+            'datetime' => date('Y-m-d H:i:s'),
+            'date' => $date,
             'total' => count($callList),
             'success' => 0,
             'error' => 0,
-            'response' => [],
+            'successList' => [],
             'errList' => []
         ];
         if (!empty($callList)) {
@@ -87,8 +89,8 @@ class CallHistory
                         ]);
                         $response = json_decode($curl->response, true);
 
-                        $returnData['response'][] = [
-                            $val->subid => $response['statusCode'],
+                        $returnData['successList'][] = [
+                            $val->subid,
                         ];
                         if (!is_null($response) && $response['statusCode'] === 200) {
                             ++$returnData['success'];
@@ -153,8 +155,8 @@ class CallHistory
                         ]);
                         $response = json_decode($curl->response, true);
 
-                        $returnData['response'][] = [
-                            $val->subid => $response['code'],
+                        $returnData['successList'][] = [
+                            $val->subid,
                         ];
                         if (!is_null($response) && (isset($response['code']) && $response['code'] === 1000)) {
                             ++$returnData['success'];
@@ -222,8 +224,7 @@ class CallHistory
                 }
             }
 
-            dump('总共：' . $returnData['total'] . ' 成功：' . $returnData['success'] . ' 失败：' . $returnData['error']);
-            dump($returnData['response']);
+//            var_dump('总共：' . $returnData['total'] . ' 成功：' . $returnData['success'] . ' 失败：' . $returnData['error']);
             return $returnData;
 
             if (!empty($news)) {

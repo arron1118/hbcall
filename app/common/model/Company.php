@@ -2,6 +2,7 @@
 
 namespace app\common\model;
 
+use think\db\Query;
 use \think\Model;
 
 class Company extends Model
@@ -69,7 +70,13 @@ class Company extends Model
 
     public function getCompanyList()
     {
-        return $this->field('id, corporation')->where('status', 1)->order('id desc, logintime desc')->select()->toArray();
+        return $this->with(['user' => function (Query $query) {
+            $query->field('id, company_id, username');
+        }])->field('id, username, corporation')
+//            ->where('status', 1)
+            ->order('id desc, logintime desc')
+            ->select()
+            ->toArray();
     }
 
     public function payment()
