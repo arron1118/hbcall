@@ -71,8 +71,7 @@ trait CallHistoryTrait
 
             $total = CallHistory::where($map)->count();
 
-            $historyList = CallHistory::with(['expense', 'customer'])
-                ->where($map)
+            $historyList = CallHistory::where($map)
                 ->order('create_time DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();

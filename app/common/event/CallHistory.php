@@ -81,7 +81,6 @@ class CallHistory
                     continue;
                 }
 
-//                $date = date('Ymd', $val->getData('create_time'));
                 try {
                     if ($val->call_type === 3) {
                         $curl->get(Config::get('hbcall.dx_record_api'), [
@@ -135,6 +134,8 @@ class CallHistory
                                         $ExpenseModel->company_id = $val->company_id;
                                         $ExpenseModel->call_history_id = $val->id;
                                         $ExpenseModel->save();
+
+                                        $val->cost = $ExpenseModel->cost;
 
                                         // 扣费
                                         $company->balance -= $ExpenseModel->cost;

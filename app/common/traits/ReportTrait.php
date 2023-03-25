@@ -5,15 +5,32 @@ namespace app\common\traits;
 use app\common\model\CallHistory;
 use app\common\model\Company;
 use app\common\model\Expense;
+use app\common\model\Payment;
 use think\facade\Db;
 
 trait ReportTrait
 {
+
+    protected $lang = [];
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->lang = [
+            'totalCallHistory' => '总记录',
+            'totalGtZero' => '接听数',
+            'totalGtSixty' => '大于1分钟',
+            'totalBetweenZeroAndSixty' => '1分钟内',
+            'totalBetweenOneToThree' => '1-3分钟',
+            'totalBetweenThreeToFive' => '3-5分钟内',
+            'totalGtFive' => '大于5分钟',
+            'totalEqZero' => '未接听',
+        ];
+    }
+
     public function index()
     {
-//        dump(strtotime('2022-05-09 00:00:00'));
-//        dump(strtotime('2022-05-16 23:59:59'));
-
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
             $this->view->assign('companies', $company);
@@ -24,6 +41,50 @@ trait ReportTrait
         }
 
         return $this->view->fetch('common@report/index');
+    }
+
+    public function dashboard()
+    {
+        $cost = [];
+        if ($this->module === 'admin') {
+            $cost = getCosts();
+            $cost['total_payment'] = Payment::where('status', 1)->sum('amount');
+        } elseif ($this->module === 'company') {
+            $cost = getCosts($this->userInfo->id);
+        }
+
+        $this->view->assign($cost);
+        return $this->view->fetch('common@index/dashboard');
+    }
+
+    public function getTopList()
+    {
+        if ($this->request->isAjax() && $this->request->isPost()) {
+            $where = [];
+            $field = 'count(ch.id) as total, sum(e.duration) as duration_total, sum(e.cost) as cost_total';
+            $group = 'ch.company_id';
+            $order = 'total';
+            if ($this->module === 'company') {
+                $where['ch.company_id'] = $this->userInfo->id;
+                $group = 'ch.user_id';
+                $field .= ',ch.user_id, ch.username';
+            } elseif ($this->module === 'admin') {
+                $field .= ',ch.company_id, ch.company as username';
+            }
+
+            $this->returnData['data'] = CallHistory::where($where)
+                ->alias('ch')
+                ->field($field)
+                ->leftJoin('expense e', 'ch.id = e.call_history_id')
+                ->group($group)
+                ->order($order, 'desc')
+                ->limit(5)
+                ->select()->toArray();
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '获取成功';
+        }
+
+        return json($this->returnData);
     }
 
     public function getReport()
@@ -79,7 +140,7 @@ SQL;
 
     public function getDashboardReport()
     {
-        if ($this->request->isPost()) {
+        if ($this->request->isAjax() && $this->request->isPost()) {
             $whereCompany = [];
             if ($this->module === 'company') {
                 $whereCompany[] = ['company_id', '=', $this->userInfo->id];
@@ -107,10 +168,10 @@ SQL;
                     'value' => CallHistory::where($whereCompany)->where('call_duration', '>', 300)->count()
                 ]
             ];
+
             $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '获取成功';
             $this->returnData['data'] = $result;
-            $this->returnData['msg'] = 'success';
-            return json($this->returnData);
         }
 
         return json($this->returnData);
@@ -158,7 +219,7 @@ SQL;
             $this->returnData['data'] = $res;
             $this->returnData['msg'] = 'success';
             $this->returnData['code'] = 1;
-            return json($this->returnData);
+//            return json($this->returnData);
         }
 
         return json($this->returnData);

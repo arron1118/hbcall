@@ -8,17 +8,86 @@
 </style>
 {/block}
 {block name="body"}
-
+{if $module === 'company'}
+<div class="layuimini-container" style="margin-bottom: .75rem; ">
+    <div class="layuimini-main">
+        <div class="container-fluid p-4">
+            <div class="row mb-2">
+                <div class="col-md-5 col-sm-12 pb-4">
+                    <div class="card border-0 p-0 border-end">
+                        <div class="card-body py-0">
+                            <p class="card-title mb-4 fw-bold"> Hi，您好<span class="text-primary">{$user.username}</span>！</p>
+                            <div class="row">
+                                <div class="col-3">
+                                    <img src="__STATIC__/images/dashuser.png" style="max-height: 80px;">
+                                </div>
+                                <div class="col-4">
+                                    <div class="mb-4">账号：<span class="fw-bold">{$user.username}</span></div>
+                                    <div> 手机：<span class="fw-bold">{$user.phone}</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-12 text-center my-auto">
+                    <div class="card border-0 p-0 border-end">
+                        <div class="card-body py-0">
+                            <p class="card-title">当前余额/元</p>
+                            <h5 class="card-text my-3 text-success"><i class="fa fa-yen-sign me-2"></i>{$user.balance}</h5>
+                            <a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理"
+                               class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill">
+                                <i class="fa fa-wallet me-2"></i>
+                                充值
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="card border-0">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-flex flex-row align-items-end">
+                                        <img src="__STATIC__/images/22.png" style="max-height: 78px;">
+                                        <div class="ms-3">
+                                            <p class="mb-0">客服咨询</p>
+                                            <p class="fw-bold mb-0">13622850769</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="text-center d-flex flex-row align-items-center">
+                                        <img src="__STATIC__/images/xiaoqiang.png" style="max-height: 78px;">
+                                        <p class="mb-0 ms-3">微信咨询</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
 <div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
     <div class="row mb-3 py-3 ">
+        {if $module === 'admin'}
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总收入</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
-                    <span class="l-number fs-2">{$totalPayment}</span></h5>
+                    <span class="l-number fs-2">{$total_payment}</span></h5>
             </div>
         </div>
+        {elseif $module === 'company'}
+        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-center justify-content-center">
+            <div>
+                <h4>网站概况</h4>
+            </div>
+        </div>
+        {/if}
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总消费</p>
@@ -30,7 +99,7 @@
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div class="">
                 <p class="text-black-50">
-                    今日收入
+                    今日{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}
                     [<span class="text-warning fs-6">
                     {php}
                         if ($current_day_cost > 0) {
@@ -53,7 +122,7 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">昨日收入</p>
+                <p class="text-black-50">昨日{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
                     <span class="l-number fs-2">{$yesterday_cost}</span></h5>
@@ -61,7 +130,7 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">本月收入</p>
+                <p class="text-black-50">本月{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
                     <span class="l-number fs-2">{$current_month_cost}</span></h5>
@@ -69,7 +138,7 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">今年收入</p>
+                <p class="text-black-50">今年{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}</p>
                 <h5 class="">
                     <i class="fa fa-yen-sign fs-6"></i>
                     <span class="l-number fs-2">{$current_year_cost}</span></h5>
@@ -83,7 +152,7 @@
         <div class="col-xl-7 col-lg-12 mb-sm-3 bg-white rounded-3 shadow-sm">
             <div class="row p-3">
                 <div class="col-lg-6 col-12 mb-sm-3 h-100">
-                    <div id="historyChart" class="h-100" style="height: 270px;"></div>
+                    <div id="historyChart" class="h-100" style="height: 270px;" data-chart-list=""></div>
                 </div>
                 <div class="col-lg-6 col-12 mb-3">
                     <div class="row h-50 rounded gap-3 mb-3">
@@ -118,9 +187,8 @@
                         <div class="card-body">
                             <table class="table table-hover toplist-table">
                                 <tr>
-                                    <th>公司名称</th>
-                                    <th>未接听</th>
-                                    <th>已接听</th>
+                                    <th>名称</th>
+                                    <th>总呼叫</th>
                                     <th>时间(分)</th>
                                     <th>消费金额</th>
                                 </tr>
@@ -204,11 +272,10 @@
                 })
             })
         };
-
         getChartData();
 
         // 近几小时的记录
-        let h = 12
+        let h = 8
         let getCallChartData = function () {
             $.post('{:url("/Index/getHoursData")}', { hours: h }, function (res) {
                 let day = h + '小时'
@@ -295,21 +362,21 @@
             $.post('{:url("/Index/getTopList")}', {}, function (res) {
                 $.each(res.data, function (index, item) {
                     $('.toplist-table').append($('<tr />')
-                        .append($('<td />', { text: item.corporation }))
-                        .append($('<td />', { text: item.callHistory_count }))
-                        .append($('<td />', { text: item.callHistory_pickup_count }))
-                        .append($('<td />', { text: item.duration_sum }))
-                        .append($('<td />', { text: item.expense }))
+                        .append($('<td />', { text: item.username }))
+                        .append($('<td />', { text: item.total }))
+                        .append($('<td />', { text: item.duration_total }))
+                        .append($('<td />', { text: item.cost_total }))
                     )
                 })
             })
         }
-
         getTopData();
 
-        // setInterval(function () {
-        //     getData()
-        // }, 1000 * 300);
+        setInterval(function () {
+            getChartData()
+            getCallChartData()
+            getTopData()
+        }, 1000 * 300);
     });
 </script>
 
