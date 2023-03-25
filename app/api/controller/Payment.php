@@ -132,6 +132,7 @@ class Payment extends \app\common\controller\ApiController
     protected function updateUserAmount(PaymentModel $paymentModel)
     {
         $userInfo = Company::find($paymentModel->company_id);
+        $userInfo->deposit = (float)$userInfo->deposit + (float)$paymentModel->amount;
         $userInfo->balance = (float)$userInfo->balance + (float)$paymentModel->amount;
         $userInfo->save();
     }

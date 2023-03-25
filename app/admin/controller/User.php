@@ -62,11 +62,7 @@ class User extends \app\common\controller\AdminController
 
             $total = CompanyModel::where($map)->count();
             $userList = CompanyModel::withCount('user')
-                ->withSum(['payment' => function ($query) {
-                    $query->where('status', 1);
-                }], 'amount')
                 ->with(['companyXnumber' => ['numberStore']])
-                ->hidden(['salt'])
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
