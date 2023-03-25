@@ -33,6 +33,16 @@ class CallHistory extends Model
         return getDateFormatInfo($value);
     }
 
+    public function getStatusAttr($value)
+    {
+        return $this->getStatusList()[$value];
+    }
+
+    public function getStatusList()
+    {
+        return ['未同步', '已同步'];
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class)->bind(['user_username' => 'username', 'loginip']);
