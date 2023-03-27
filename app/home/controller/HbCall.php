@@ -190,6 +190,14 @@ class HbCall extends \app\common\controller\HomeController
                     }
 
                     $CallHistory->save();
+
+                    // 企业呼叫总数
+                    ++$this->userInfo->company->call_sum;
+                    $this->userInfo->company->save();
+
+                    // 用户呼叫总数
+                    ++$this->userInfo->call_sum;
+                    $this->userInfo->save();
                 } catch (DbException $dbException) {
                     $response['msg'] = $dbException->getMessage();
                 }

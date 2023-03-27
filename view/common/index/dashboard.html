@@ -179,19 +179,23 @@
             </div>
         </div>
 
-        <div class="col-xl-5 col-lg-6">
+        <div class="col-xl-5 col-lg-6 mb-sm-3">
             <div class="row">
                 <div class="col">
-                    <div class="card">
-                        <div class="card-header">排行榜</div>
+                    <div class="card border border-light-subtle shadow-sm">
+                        <div class="card-header border-light-subtle">排行榜</div>
                         <div class="card-body">
                             <table class="table table-hover toplist-table">
+                                <thead>
                                 <tr>
                                     <th>名称</th>
                                     <th>总呼叫</th>
+                                    <th>已接听</th>
                                     <th>时间(分)</th>
                                     <th>消费金额</th>
                                 </tr>
+                                </thead>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -360,14 +364,18 @@
 
         let getTopData = function () {
             $.post('{:url("/Index/getTopList")}', {}, function (res) {
-                $.each(res.data, function (index, item) {
-                    $('.toplist-table').append($('<tr />')
-                        .append($('<td />', { text: item.username }))
-                        .append($('<td />', { text: item.total }))
-                        .append($('<td />', { text: item.duration_total }))
-                        .append($('<td />', { text: item.cost_total }))
-                    )
-                })
+                if (res.code === 1) {
+                    $('.toplist-table > tbody').html('')
+                    $.each(res.data, function (index, item) {
+                        $('.toplist-table > tbody').append($('<tr />')
+                            .append($('<td />', { text: item.username }))
+                            .append($('<td />', { text: item.call_sum }))
+                            .append($('<td />', { text: item.call_success_sum }))
+                            .append($('<td />', { text: item.call_duration_sum }))
+                            .append($('<td />', { text: item.expense }))
+                        )
+                    })
+                }
             })
         }
         getTopData();

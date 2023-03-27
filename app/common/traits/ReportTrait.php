@@ -5,29 +5,22 @@ namespace app\common\traits;
 use app\common\model\CallHistory;
 use app\common\model\Company;
 use app\common\model\Expense;
-use app\common\model\Payment;
+use app\common\model\User;
 use think\facade\Db;
 
 trait ReportTrait
 {
 
-    protected $lang = [];
-
-    public function initialize()
-    {
-        parent::initialize();
-
-        $this->lang = [
-            'totalCallHistory' => '总记录',
-            'totalGtZero' => '接听数',
-            'totalGtSixty' => '大于1分钟',
-            'totalBetweenZeroAndSixty' => '1分钟内',
-            'totalBetweenOneToThree' => '1-3分钟',
-            'totalBetweenThreeToFive' => '3-5分钟内',
-            'totalGtFive' => '大于5分钟',
-            'totalEqZero' => '未接听',
-        ];
-    }
+    protected $lang = [
+        'totalCallHistory' => '总记录',
+        'totalGtZero' => '接听数',
+        'totalGtSixty' => '大于1分钟',
+        'totalBetweenZeroAndSixty' => '1分钟内',
+        'totalBetweenOneToThree' => '1-3分钟',
+        'totalBetweenThreeToFive' => '3-5分钟内',
+        'totalGtFive' => '大于5分钟',
+        'totalEqZero' => '未接听',
+    ];
 
     public function index()
     {
@@ -48,9 +41,13 @@ trait ReportTrait
         $cost = [];
         if ($this->module === 'admin') {
             $cost = getCosts();
-            $cost['total_payment'] = Payment::where('status', 1)->sum('amount');
+            $cost['total_payment'] = Company::sum('deposit');
+            // 总消费
+            $cost['total_cost'] = Company::sum('expense');
         } elseif ($this->module === 'company') {
             $cost = getCosts($this->userInfo->id);
+            // 总消费
+            $cost['total_cost'] = User::sum('expense');
         }
 
         $this->view->assign($cost);
@@ -60,24 +57,18 @@ trait ReportTrait
     public function getTopList()
     {
         if ($this->request->isAjax() && $this->request->isPost()) {
-            $where = [];
-            $field = 'count(ch.id) as total, sum(e.duration) as duration_total, sum(e.cost) as cost_total';
-            $group = 'ch.company_id';
-            $order = 'total';
+            $field = 'id, expense, call_sum, call_success_sum, call_duration_sum';
+            $model = null;
             if ($this->module === 'company') {
-                $where['ch.company_id'] = $this->userInfo->id;
-                $group = 'ch.user_id';
-                $field .= ',ch.user_id, ch.username';
+                $model = User::class;
+                $field .= ', username';
             } elseif ($this->module === 'admin') {
-                $field .= ',ch.company_id, ch.company as username';
+                $model = Company::class;
+                $field .= ', corporation as username';
             }
 
-            $this->returnData['data'] = CallHistory::where($where)
-                ->alias('ch')
-                ->field($field)
-                ->leftJoin('expense e', 'ch.id = e.call_history_id')
-                ->group($group)
-                ->order($order, 'desc')
+            $this->returnData['data'] = $model::field($field)
+                ->order('call_sum desc')
                 ->limit(5)
                 ->select()->toArray();
             $this->returnData['code'] = 1;
@@ -142,14 +133,18 @@ SQL;
     {
         if ($this->request->isAjax() && $this->request->isPost()) {
             $whereCompany = [];
+            $model = null;
             if ($this->module === 'company') {
                 $whereCompany[] = ['company_id', '=', $this->userInfo->id];
+                $model = User::class;
+            } elseif ($this->module === 'admin') {
+                $model = Company::class;
             }
 
-            $result['totalCallHistory'] = CallHistory::where($whereCompany)->count();
-            $result['totalCallAndPickUp'] = CallHistory::where($whereCompany)->where('call_duration', '>', 0)->count();
-            $result['totalCallAndNoPickUp'] = CallHistory::where($whereCompany)->where('call_duration', '=', 0)->count();
-            $result['totalCallDuration'] = Expense::where($whereCompany)->sum('duration');
+            $result['totalCallHistory'] = $model::where($whereCompany)->sum('call_sum');
+            $result['totalCallAndPickUp'] = $model::where($whereCompany)->sum('call_success_sum');
+            $result['totalCallAndNoPickUp'] = $result['totalCallHistory'] - $result['totalCallAndPickUp'];
+            $result['totalCallDuration'] = $model::where($whereCompany)->sum('call_duration_sum');
             $result['chartData'] = [
                 [
                     'name' => $this->lang['totalBetweenZeroAndSixty'],

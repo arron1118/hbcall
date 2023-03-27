@@ -80,8 +80,6 @@ function getCosts($company_id = 0, $user_id = 0)
             ->whereBetweenTime('create_time',
                 mktime(0, 0, 0, 1, 1, date('Y')),
                 mktime(0, 0, 0, 1, 1, date('Y') + 1))->sum('cost'),
-        // 总消费
-        'total_cost' => $callHistoryModel::where($where)->sum('cost'),
     ];
 }
 

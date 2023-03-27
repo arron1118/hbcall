@@ -146,6 +146,14 @@ trait HbCallTrait
 
                 $CallHistory->save();
 
+                // 企业呼叫总数
+                ++$this->userInfo->company->call_sum;
+                $this->userInfo->company->save();
+
+                // 用户呼叫总数
+                ++$this->userInfo->call_sum;
+                $this->userInfo->save();
+
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '拨号成功';
             } else {

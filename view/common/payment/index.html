@@ -3,9 +3,9 @@
 {include file="../common/public/bootstrap" /}
 {/block}
 {block name="body"}
-<div class="container-fluid bg-white rounded-3 py-2">
+<div class="container-fluid bg-white  pt-3">
     <div class="row">
-        <div class="col pt-2">
+        <div class="col">
             <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
                 <div class="layui-form-item">
                     {if ($module === 'admin')}
@@ -73,8 +73,8 @@
         </div>
     </div>
     {if ($module === 'company')}
-    <div class="row rounded mb-3 shadow-sm bg-white">
-        <div class="col pt-3">
+    <div class="row">
+        <div class="col">
             <form class="layui-form layui-form-pane" lay-filter="paymentForm" action="">
                 <div class="layui-form-item">
                     <div class="layui-inline">

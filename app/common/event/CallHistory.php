@@ -5,6 +5,7 @@ namespace app\common\event;
 
 
 use app\common\model\Company;
+use app\common\model\User;
 use Curl\Curl;
 use think\facade\Config;
 use think\facade\Request;
@@ -136,11 +137,19 @@ class CallHistory
                                         $ExpenseModel->save();
 
                                         $val->cost = $ExpenseModel->cost;
+                                        $val->call_duration_min = $ExpenseModel->duration;
 
                                         // 扣费
                                         $company->balance -= $ExpenseModel->cost;
                                         $company->expense += $ExpenseModel->cost;
+                                        ++$company->call_success_sum;
+                                        $company->call_duration_sum += $ExpenseModel->duration;
                                         $company->save();
+
+                                        // 用户呼叫统计
+                                        ++$val->user->call_success_sum;
+                                        $val->user->call_duration_sum += $ExpenseModel->duration;
+                                        $val->user->save();
                                     }
                                 }
                             }
@@ -204,10 +213,20 @@ class CallHistory
                                         $ExpenseModel->call_history_id = $val->id;
                                         $ExpenseModel->save();
 
+                                        $val->cost = $ExpenseModel->cost;
+                                        $val->call_duration_min = $ExpenseModel->duration;
+
                                         // 扣费
                                         $company->balance -= $ExpenseModel->cost;
                                         $company->expense += $ExpenseModel->cost;
+                                        ++$company->call_success_sum;
+                                        $company->call_duration_sum += $ExpenseModel->duration;
                                         $company->save();
+
+                                        // 用户呼叫统计
+                                        ++$val->user->call_success_sum;
+                                        $val->user->call_duration_sum += $ExpenseModel->duration;
+                                        $val->user->save();
                                     }
                                 }
                             }
