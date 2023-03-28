@@ -49,7 +49,21 @@
             <div class="p-3 bg-white rounded-3">
                 <div id="chart" style="height: 350px; margin-bottom: .75rem; "></div>
 
-                <table class="layui-table" id="currentTableId">
+                <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter">
+                    <thead>
+                    <tr>
+                        <th lay-data="{field: 'id', title: '用户编号', align: 'center', totalRowText: '合计'}"></th>
+                        <th lay-data="{field: 'realname', title: '用户名称', align: 'center'}"></th>
+                        {if $module === 'admin'}
+                        <th lay-data="{field: 'corporation', title: '所属公司', align: 'center', width: 250}"></th>
+                        {/if}
+                        <th lay-data="{field: 'total', title: '拨号次数', sort: true, align: 'center', totalRow: true}"></th>
+                        <th lay-data="{field: 'total1', title: '接通次数(>0秒)', align: 'center', totalRow: true, sort: true}"></th>
+                        <th lay-data="{field: 'total2', title: '有效呼叫(>30秒)', align: 'center', totalRow: true, sort: true}"></th>
+                        <th lay-data="{field: 'duration', title: '时间(分)', align: 'center', totalRow: true, sort: true}"></th>
+                        <th lay-data="{field: 'cost', title: '消费金额(元)', align: 'center', totalRow: true, sort: true}"></th>
+                    </tr>
+                    </thead>
                 </table>
             </div>
         </div>
@@ -85,8 +99,7 @@
             }
         });
 
-        table.render({
-            elem: '#currentTableId',
+        table.init('currentTableFilter', {
             url: '{:url("/Report/getReport")}',
             method: 'post',
             totalRow: true,
@@ -134,7 +147,7 @@
                             name: '拨号次数',
                             type: 'line',
                             encode: {
-                                x: 'username',
+                                x: 'realname',
                                 y: 'total'
                             },
                             areaStyle: {
@@ -144,7 +157,7 @@
                             name: '接通次数',
                             type: 'line',
                             encode: {
-                                x: 'username',
+                                x: 'realname',
                                 y: 'total1'
                             },
                             areaStyle: {
@@ -154,7 +167,7 @@
                             name: '有效呼叫',
                             type: 'line',
                             encode: {
-                                x: 'username',
+                                x: 'realname',
                                 y: 'total2'
                             },
                             areaStyle: {
@@ -164,7 +177,7 @@
                             name: '时间(分)',
                             type: 'line',
                             encode: {
-                                x: 'username',
+                                x: 'realname',
                                 y: 'duration'
                             },
                             areaStyle: {
@@ -174,7 +187,7 @@
                             name: '消费金额(元)',
                             type: 'line',
                             encode: {
-                                x: 'username',
+                                x: 'realname',
                                 y: 'cost'
                             },
                             areaStyle: {
@@ -182,6 +195,7 @@
                         }
                     ]
                 })
+
                 return {
                     'code': 0,
                     'msg': '',
@@ -189,15 +203,6 @@
                     'count': res.total
                 }
             },
-            cols: [[
-                {field: 'id', title: '用户编号', align: "center", totalRowText: '合计'},
-                {field: 'username', title: '用户名称', align: "center"},
-                {field: 'total', title: '拨号次数', sort: true, align: "center", totalRow: true},
-                {field: 'total1', title: '接通次数(>0秒)', align: "center", totalRow: true, sort: true},
-                {field: 'total2', title: '有效呼叫(>30秒)', align: "center", totalRow: true, sort: true},
-                {field: 'duration', title: '时间(分)', align: "center", totalRow: true, sort: true},
-                {field: 'cost', title: '消费金额(元)', align: "center", totalRow: true, sort: true}
-            ]],
             even: true,
             skin: 'line'
         });

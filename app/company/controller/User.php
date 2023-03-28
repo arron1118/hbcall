@@ -43,9 +43,7 @@ class User extends \app\common\controller\CompanyController
             $total = UserModel::where($map)->count();
             $userList = UserModel::with(['userXnumber' => ['numberStore']])
                 ->hidden(['password', 'salt'])
-                ->withCount('callHistory')
                 ->withCount('customer')
-                ->withSum('expense', 'cost')
                 ->where($map)
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)

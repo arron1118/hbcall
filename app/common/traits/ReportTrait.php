@@ -117,7 +117,7 @@ trait ReportTrait
         $callHistoryTable = $prefix . 'call_history';
         $expenseTable = $prefix . 'expense';
         $sql = <<<SQL
-select u.id, u.username, c.corporation, total, total1, total2, duration, cost
+select u.id, u.realname, c.corporation, total, total1, total2, duration, cost
 from {$userTable} u
          left join {$companyTable} c on u.company_id=c.id
          left join (select count(id) as total, user_id

@@ -110,7 +110,7 @@
                                 </li>
                                 {foreach $val.user as $k => $v}
                                 <li lay-options="{user_id: {$v.id}, company_id: {$v.company_id}}">
-                                    <div class="layui-menu-body-title">{$v.username}</div>
+                                    <div class="layui-menu-body-title">{$v.realname}</div>
                                 </li>
                                 {/foreach}
                             </ul>
@@ -123,7 +123,7 @@
                         </li>
                         {foreach $users as $key => $val}
                         <li class="" lay-options="{user_id: {$val.id}, company_id: {$val.company_id}}">
-                            <div class="layui-menu-body-title">{$val.username}</div>
+                            <div class="layui-menu-body-title">{$val.realname}</div>
                         </li>
                         {/foreach}
                         {/if}
@@ -148,7 +148,7 @@
                     <th lay-data="{field: 'corporation', title: '所属公司', align: 'center', width: 300}"></th>
                     {/if}
                     {if ($module !== 'home')}
-                    <th lay-data="{field: 'username', title: '跟进人', align: 'center', width: 150}"></th>
+                    <th lay-data="{field: 'realname', title: '跟进人', align: 'center', width: 150}"></th>
                     {/if}
                     <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center', width: 100}"></th>
                     <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', width: 100, event: 'showRecord', style: 'cursor: pointer;', templet: '#record'}"></th>
@@ -413,7 +413,7 @@
                                         <ul class="list-group">
                                             {if ($module === 'company')}
                                             {foreach $user.user as $key => $val}
-                                            <li class="list-group-item select-user" data-id="{$val.id}">{$val.username}</li>
+                                            <li class="list-group-item select-user" data-id="{$val.id}">{$val.realname}</li>
                                             {/foreach}
                                             {/if}
                                         </ul>

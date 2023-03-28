@@ -149,6 +149,7 @@ class CallHistory
                                         // 用户呼叫统计
                                         ++$val->user->call_success_sum;
                                         $val->user->call_duration_sum += $ExpenseModel->duration;
+                                        $val->user->expense += $ExpenseModel->cost;
                                         $val->user->save();
                                     }
                                 }
@@ -226,6 +227,7 @@ class CallHistory
                                         // 用户呼叫统计
                                         ++$val->user->call_success_sum;
                                         $val->user->call_duration_sum += $ExpenseModel->duration;
+                                        $val->user->expense += $ExpenseModel->cost;
                                         $val->user->save();
                                     }
                                 }
