@@ -83,7 +83,7 @@
                                 </li>
                                 {foreach $val.user as $k => $v}
                                 <li lay-options="{user_id: {$v.id}, company_id: {$v.company_id}}">
-                                    <div class="layui-menu-body-title">{$v.username}</div>
+                                    <div class="layui-menu-body-title">{$v.realname}</div>
                                 </li>
                                 {/foreach}
                             </ul>
@@ -96,7 +96,7 @@
                         </li>
                         {foreach $users as $key => $val}
                         <li class="" lay-options="{user_id: {$val.id}, company_id: {$val.company_id}}">
-                            <div class="layui-menu-body-title">{$val.username}</div>
+                            <div class="layui-menu-body-title">{$val.realname}</div>
                         </li>
                         {/foreach}
                         {/if}

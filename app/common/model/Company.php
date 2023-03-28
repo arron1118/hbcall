@@ -71,7 +71,7 @@ class Company extends Model
     public function getCompanyList()
     {
         return $this->with(['user' => function (Query $query) {
-            $query->field('id, company_id, username');
+            $query->field('id, company_id, realname');
         }])->field('id, username, corporation')
 //            ->where('status', 1)
             ->order('id desc, logintime desc')

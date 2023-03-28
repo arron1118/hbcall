@@ -6,6 +6,8 @@ use app\common\model\CallHistory;
 use app\common\model\Company;
 use app\common\model\Expense;
 use app\common\model\User;
+use Grpc\Call;
+use think\db\Query;
 use think\facade\Db;
 
 trait ReportTrait
@@ -50,6 +52,10 @@ trait ReportTrait
             $cost['total_cost'] = User::sum('expense');
         }
 
+//        $list = CallHistory::with(['expense', 'company'])->where('id', 258264)->order('id desc')->find();
+//        dump($list);
+//        dump($list->toArray());
+
         $this->view->assign($cost);
         return $this->view->fetch('common@index/dashboard');
     }
@@ -59,15 +65,18 @@ trait ReportTrait
         if ($this->request->isAjax() && $this->request->isPost()) {
             $field = 'id, expense, call_sum, call_success_sum, call_duration_sum';
             $model = null;
+            $where = [];
             if ($this->module === 'company') {
                 $model = User::class;
                 $field .= ', username';
+                $where[] = ['company_id', '=', $this->userInfo->id];
             } elseif ($this->module === 'admin') {
                 $model = Company::class;
                 $field .= ', corporation as username';
             }
 
             $this->returnData['data'] = $model::field($field)
+                ->where($where)
                 ->order('call_sum desc')
                 ->limit(5)
                 ->select()->toArray();

@@ -172,6 +172,7 @@ class User extends \app\common\controller\CompanyController
             }
 
             $userInfo->username = $params['username'];
+            $userInfo->realname = $params['realname'];
             $userInfo->phone = $params['phone'];
             $userInfo->callback_number = $params['callback_number'];
             $userInfo->limit_call_number = $params['limit_call_number'];

@@ -193,6 +193,10 @@
                 layer.msg('账号不能为空');
                 return false;
             }
+            if (params.realname === '') {
+                layer.msg('真实姓名不能为空');
+                return false;
+            }
             if (params.password === '') {
                 layer.msg('密码不能为空');
                 return false;
