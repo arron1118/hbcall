@@ -41,7 +41,7 @@ class Customer extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class)->bind(['username']);
+        return $this->belongsTo(User::class)->bind(['realname']);
     }
 
     public function company()
