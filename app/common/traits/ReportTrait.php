@@ -206,7 +206,7 @@ from (
                                sum(duration)            as duration,
                                sum(cost)                                   as expense
                         from (select ch.id, ch.create_time, e.duration, e.cost from hbcall_call_history ch
-                                 inner join
+                                 left join
                              hbcall_expense e on e.call_history_id = ch.id
                         where {$where} and from_unixtime(ch.create_time, '%Y-%m-%d %H') between date_add(
                                 date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
