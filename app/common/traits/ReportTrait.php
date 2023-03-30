@@ -93,7 +93,7 @@ trait ReportTrait
         $endDate = $this->request->param('endDate', '');
         $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
         $whereCompany = ' 1 = 1 ';
-        $where = ' ';
+        $where = ' 1 = 1 ';
 
         if ($companyId > 0) {
             $whereCompany = ' company_id = ' . $companyId;
@@ -121,13 +121,12 @@ select u.id, u.realname, c.corporation, total, total1, total2, duration, cost
 from {$userTable} u
          left join {$companyTable} c on u.company_id=c.id
          left join (select count(id) as total, user_id
-                    from {$callHistoryTable} h where 1 = 1  {$where}
+                    from {$callHistoryTable} h where {$whereCompany} and {$where}
                     group by user_id) ch on u.id = ch.user_id
-left join (select count(id) as total1, user_id from {$callHistoryTable} where call_duration > 0 {$where} group by user_id) lch on lch.user_id=u.id
-left join (select count(id) as total2, user_id from {$callHistoryTable} where call_duration > 30 {$where} group by user_id) gch on gch.user_id=u.id
-left join (select sum(duration) as duration, user_id from {$expenseTable} where 1=1 {$where} group by user_id) dr on dr.user_id=u.id
-left join (select sum(cost) as cost, user_id from {$expenseTable} where 1=1 {$where} group by user_id) expense on expense.user_id=u.id
-where {$whereCompany} and total > 0
+left join (select count(id) as total1, user_id from {$callHistoryTable} where {$whereCompany} and {$where} and call_duration > 0 group by user_id) lch on lch.user_id=u.id
+left join (select count(id) as total2, user_id from {$callHistoryTable} where {$whereCompany} and {$where} and call_duration > 30 group by user_id) gch on gch.user_id=u.id
+left join (select sum(duration) as duration, sum(cost) as cost, user_id from {$expenseTable} where {$whereCompany} and {$where} group by user_id) dr on dr.user_id=u.id
+where {$whereCompany}
 # order by total desc
 SQL;
 

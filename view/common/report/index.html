@@ -105,13 +105,14 @@
             totalRow: true,
             //异步请求，格式化数据
             parseData: function (res) {
+                let data = res.data.filter(item => item.total > 0)
                 chart.setOption({
                     title: {
                         text: '拨号统计',
                     },
                     dataset: [
                         {
-                            source: res.data
+                            source: data
                         }
                     ],
                     legend: {},
