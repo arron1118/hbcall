@@ -52,10 +52,6 @@ trait ReportTrait
             $cost['total_cost'] = User::sum('expense');
         }
 
-//        $list = CallHistory::with(['expense', 'company'])->where('id', 258264)->order('id desc')->find();
-//        dump($list);
-//        dump($list->toArray());
-
         $this->view->assign($cost);
         return $this->view->fetch('common@index/dashboard');
     }
@@ -184,45 +180,44 @@ SQL;
     {
         if ($this->request->isPost()) {
             $hours = $this->request->param('hours', 7);
+            $minute = 10; // 每 10 分钟统计数据
             $where = ' 1 = 1';
             if ($this->module === 'company') {
-                $where = ' ch.company_id = ' . $this->userInfo->id;
+                $where = ' company_id = ' . $this->userInfo->id;
             }
+            $second = 3600 * $hours;
+            $limit = 60 * $hours / $minute;
 
             $sql = <<<SQL
-select date_format(t3.datetime, '%m-%d %H:%i') as datetime, max(t3.sum) as sum, max(t3.duration) as duration, max(t3.expense) as expense
-from (
-         SELECT date_format(@cdate := date_add(@cdate, interval -1 hour), '%Y-%m-%d %H') datetime,
-                0 as                                                                     sum,
-                0 as                                                                     duration,
-                0 as expense
-         from (SELECT @cdate := DATE_ADD(date_format(current_timestamp(), '%Y-%m-%d %H'), INTERVAL 1 hour)
-               from hbcall_call_history limit {$hours}
-              ) t1
-         UNION ALL
-         select * from (select from_unixtime(temp.create_time, '%Y-%m-%d %H') as datetime,
-                               count(*)                                    as sum,
-                               sum(duration)            as duration,
-                               sum(cost)                                   as expense
-                        from (select ch.id, ch.create_time, e.duration, e.cost from hbcall_call_history ch
-                                 left join
-                             hbcall_expense e on e.call_history_id = ch.id
-                        where {$where} and from_unixtime(ch.create_time, '%Y-%m-%d %H') between date_add(
-                                date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
-                                hour) and date_format(current_timestamp(), '%Y-%m-%d %H')) as temp
-                        GROUP BY datetime) temp
-     ) t3
-where t3.datetime between date_add(date_format(current_timestamp(), '%Y-%m-%d %H'), interval -{$hours}
-                                   hour) and date_format(current_timestamp(), '%Y-%m-%d %H')
-GROUP BY t3.datetime
-order by t3.datetime ;
+select date_format(datetime, '%m-%d %H:%i') as datetime,
+       max(sum)                             as sum,
+       max(duration)                        as duration,
+       max(expense)                         as expense
+from (SELECT date_format(@date := date_add(@date, interval -{$minute} minute), '%Y-%m-%d %H:%i') datetime,
+             0 as                                                                         sum,
+             0 as                                                                         duration,
+             0 as                                                                         expense
+      from (select @date :=
+                           date_add(from_unixtime(unix_timestamp() - unix_timestamp() % (60 * {$minute}), '%Y-%m-%d %H:%i'), interval
+                                    {$minute} minute)
+            from hbcall_call_history ch
+            limit {$limit}) temp
+      union all
+      select from_unixtime(create_time - create_time % (60 * {$minute}), '%Y-%m-%d %H:%i') as datetime,
+             count(1)                                                                      as sum,
+             sum(call_duration_min)                                                        as duration,
+             sum(cost)                                                                     as expense
+      from hbcall_call_history
+      WHERE {$where} and create_time BETWEEN (unix_timestamp() - {$second}) and unix_timestamp()
+      group by datetime) t
+group by datetime
+order by datetime;
 SQL;
 
             $res = Db::query($sql);
             $this->returnData['data'] = $res;
             $this->returnData['msg'] = 'success';
             $this->returnData['code'] = 1;
-//            return json($this->returnData);
         }
 
         return json($this->returnData);
