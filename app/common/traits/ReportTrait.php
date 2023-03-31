@@ -189,7 +189,7 @@ SQL;
             $limit = 60 * $hours / $minute;
 
             $sql = <<<SQL
-select date_format(datetime, '%m-%d %H:%i') as datetime,
+select date_format(datetime, '%H:%i') as datetime,
        max(sum)                             as sum,
        max(duration)                        as duration,
        max(expense)                         as expense
