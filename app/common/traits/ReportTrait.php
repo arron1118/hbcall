@@ -52,7 +52,23 @@ trait ReportTrait
             $cost['total_cost'] = User::sum('expense');
         }
 
-        $this->view->assign($cost);
+        $result = array_map(function ($item) {
+            $number = number_format($item, 3);
+            $numbers = explode('.', $number);
+            $numbers[1] = '<span class="fs-6 text-muted important">' . $numbers[1] . '</span>';
+            return $numbers[0] . '.' . $numbers[1];
+        }, $cost);
+
+        $result['percentage'] = '0%';
+        if ($cost['current_day_cost'] > 0) {
+            if ($cost['yesterday_cost'] > 0) {
+                $result['percentage'] = number_format(($cost['current_day_cost'] - $cost['yesterday_cost']) / $cost['yesterday_cost'] * 100, 2) . '%';
+            } else {
+                $result['percentage'] = '100%';
+            }
+        }
+
+        $this->view->assign($result);
         return $this->view->fetch('common@index/dashboard');
     }
 

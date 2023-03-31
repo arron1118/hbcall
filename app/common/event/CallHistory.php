@@ -61,7 +61,7 @@ class CallHistory
             $callList->whereBetweenTime('create_time', $time, $endTime);
         }
 
-        $callList = $callList->order('id asc')->limit($limit)->select();
+        $callList = $callList->limit($limit)->select();
         $returnData = [
             'datetime' => date('Y-m-d H:i:s'),
             'date' => $date,
