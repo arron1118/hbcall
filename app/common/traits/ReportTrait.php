@@ -152,19 +152,25 @@ SQL;
             $result['chartData'] = [
                 [
                     'name' => $this->lang['totalBetweenZeroAndSixty'],
-                    'value' => CallHistory::where($whereCompany)->whereBetween('call_duration', [1, 60])->count()
+                    'value' => CallHistory::where($whereCompany)->where('call_duration_min', 1)->count()
                 ],
                 [
                     'name' => $this->lang['totalBetweenOneToThree'],
-                    'value' => CallHistory::where($whereCompany)->whereBetween('call_duration', [61, 180])->count()
+                    'value' => CallHistory::where($whereCompany)->where([
+                        ['call_duration_min', '>', 1],
+                        ['call_duration_min', '<=', 3]
+                    ])->count()
                 ],
                 [
                     'name' => $this->lang['totalBetweenThreeToFive'],
-                    'value' => CallHistory::where($whereCompany)->whereBetween('call_duration', [181, 300])->count()
+                    'value' => CallHistory::where($whereCompany)->where([
+                        ['call_duration_min', '>', 3],
+                        ['call_duration_min', '<=', 5]
+                    ])->count()
                 ],
                 [
                     'name' => $this->lang['totalGtFive'],
-                    'value' => CallHistory::where($whereCompany)->where('call_duration', '>', 300)->count()
+                    'value' => CallHistory::where($whereCompany)->where('call_duration_min', '>', 5)->count()
                 ]
             ];
 
