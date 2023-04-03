@@ -8,77 +8,64 @@
 </style>
 {/block}
 {block name="body"}
-{if $module === 'company'}
-<div class="layuimini-container" style="margin-bottom: .75rem; ">
-    <div class="layuimini-main">
-        <div class="container-fluid p-4">
-            <div class="row mb-2">
-                <div class="col-md-5 col-sm-12 pb-4">
-                    <div class="card border-0 p-0 border-end">
-                        <div class="card-body py-0">
-                            <p class="card-title mb-4 fw-bold"> Hi，您好<span class="text-primary">{$user.username}</span>！</p>
-                            <div class="row">
-                                <div class="col-3">
-                                    <img src="__STATIC__/images/dashuser.png" style="max-height: 80px;">
-                                </div>
-                                <div class="col-4">
-                                    <div class="mb-4">账号：<span class="fw-bold">{$user.username}</span></div>
-                                    <div> 手机：<span class="fw-bold">{$user.phone}</span></div>
-                                </div>
-                            </div>
+<div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
+    {if $module === 'company'}
+    <div class="row mb-3 py-5">
+        <div class="col-12 col-md-4 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
+            <div class="me-3">
+                <img src="__STATIC__/images/dashuser.png" style="max-height: 80px;">
+            </div>
+            <div class=" align-self-end">
+                <h6>账号：<span class="fs-bold important">{$user.username}</span></h6>
+                <h6>手机：{$user.phone}</h6>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 mb-3 mb-sm-12 mb-md-0 d-flex align-items-end justify-content-center">
+            <div class="">
+                <p class="mb-2 text-muted">当前余额/元</p>
+                <h5 class="text-success fs-2">
+                    {php}
+                    $number = number_format($user['balance'], 3);
+                    $numbers = explode('.', $number);
+                    $numbers[0] = '<span class="mx-1">' . $numbers[0] . '</span>';
+                    $numbers[1] = '<span class="fs-6 text-muted">.' . $numbers[1] . '</span>';
+                    echo '<i class="fa fa-yen-sign fs-6 text-muted"></i>' . implode('', $numbers);
+                    {/php}
+                    <a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理"
+                       class="layui-btn layui-btn-sm layui-btn-normal text-decoration-none shadow rounded-pill ms-3 px-3">
+                        <i class="fa fa-wallet me-1"></i>
+                        充值
+                    </a>
+                </h5>
+            </div>
+        </div>
+        <div class="col-12 col-md-4 mb-3 mb-sm-12 mb-md-0 d-flex align-items-end justify-content-center">
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex flex-row align-items-end">
+                        <img src="__STATIC__/images/22.png" style="max-height: 78px;">
+                        <div class="ms-3">
+                            <p class="mb-0">客服咨询</p>
+                            <p class="fw-bold mb-0">13622850769</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 col-sm-12 text-center my-auto">
-                    <div class="card border-0 p-0 border-end">
-                        <div class="card-body py-0">
-                            <p class="card-title">当前余额/元</p>
-                            <h5 class="card-text my-3 text-success"><i class="fa fa-yen-sign me-2"></i>{$user.balance}</h5>
-                            <a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理"
-                               class="layui-btn layui-btn-normal text-decoration-none shadow rounded-pill">
-                                <i class="fa fa-wallet me-2"></i>
-                                充值
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 col-sm-12">
-                    <div class="card border-0">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <div class="d-flex flex-row align-items-end">
-                                        <img src="__STATIC__/images/22.png" style="max-height: 78px;">
-                                        <div class="ms-3">
-                                            <p class="mb-0">客服咨询</p>
-                                            <p class="fw-bold mb-0">13622850769</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="text-center d-flex flex-row align-items-center">
-                                        <img src="__STATIC__/images/xiaoqiang.png" style="max-height: 78px;">
-                                        <p class="mb-0 ms-3">微信咨询</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="col">
+                    <div class="text-center d-flex flex-row align-items-center">
+                        <img src="__STATIC__/images/xiaoqiang.png" style="max-height: 78px;">
+                        <p class="mb-0 ms-3">微信咨询</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{/if}
-<div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
+    {/if}
     <div class="row mb-3 py-3 ">
         {if $module === 'admin'}
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总收入</p>
-                <h5 class="">
-                    <i class="fa fa-yen-sign fs-6 text-muted"></i>
-                    <span class="l-number fs-2">{:htmlspecialchars_decode($total_payment)}</span></h5>
+                <h5 class="fs-2">{:htmlspecialchars_decode($total_payment)}</h5>
             </div>
         </div>
         {elseif $module === 'company'}
@@ -91,45 +78,34 @@
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总消费</p>
-                <h5 class="">
-                    <i class="fa fa-yen-sign fs-6 text-muted"></i>
-                    <span class="l-number fs-2">{:htmlspecialchars_decode($total_cost)}</span></h5>
+                <h5 class="fs-2">{:htmlspecialchars_decode($total_cost)}</h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div class="">
                 <p class="text-black-50">
-                    今日{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}
+                    今日{$module === 'admin' ? '收入' : '支出'}
                     [<span class="text-warning fs-6">{:htmlspecialchars_decode($percentage)}</span>]
                 </p>
-                <h5 class="">
-                    <i class="fa fa-yen-sign fs-6 text-muted"></i>
-                    <span class="l-number fs-2">{:htmlspecialchars_decode($current_day_cost)}</span>
-                </h5>
+                <h5 class="fs-2">{:htmlspecialchars_decode($current_day_cost)}</h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">昨日{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}</p>
-                <h5 class="">
-                    <i class="fa fa-yen-sign fs-6 text-muted"></i>
-                    <span class="l-number fs-2">{:htmlspecialchars_decode($yesterday_cost)}</span></h5>
+                <p class="text-black-50">昨日{$module === 'admin' ? '收入' : '支出'}</p>
+                <h5 class="fs-2">{:htmlspecialchars_decode($yesterday_cost)}</h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">本月{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}</p>
-                <h5 class="">
-                    <i class="fa fa-yen-sign fs-6 text-muted"></i>
-                    <span class="l-number fs-2">{:htmlspecialchars_decode($current_month_cost)}</span></h5>
+                <p class="text-black-50">本月{$module === 'admin' ? '收入' : '支出'}</p>
+                <h5 class="fs-2">{:htmlspecialchars_decode($current_month_cost)}</h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">今年{if $module === 'admin'}收入{elseif $module === 'company'}支出{/if}</p>
-                <h5 class="">
-                    <i class="fa fa-yen-sign fs-6 text-muted"></i>
-                    <span class="l-number fs-2">{:htmlspecialchars_decode($current_year_cost)}</span></h5>
+                <p class="text-black-50">今年{$module === 'admin' ? '收入' : '支出'}</p>
+                <h5 class="fs-2">{:htmlspecialchars_decode($current_year_cost)}</h5>
             </div>
         </div>
     </div>

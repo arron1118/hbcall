@@ -55,8 +55,9 @@ trait ReportTrait
         $result = array_map(function ($item) {
             $number = number_format($item, 3);
             $numbers = explode('.', $number);
-            $numbers[1] = '<span class="fs-6 text-muted important">' . $numbers[1] . '</span>';
-            return $numbers[0] . '.' . $numbers[1];
+            $numbers[0] = '<span class="mx-1">' . $numbers[0] . '</span>';
+            $numbers[1] = '<span class="fs-6 text-muted">.' . $numbers[1] . '</span>';
+            return '<i class="fa fa-yen-sign fs-6 text-muted"></i>' . implode('', $numbers);
         }, $cost);
 
         $result['percentage'] = '0%';
@@ -139,7 +140,6 @@ left join (select count(id) as total1, user_id from {$callHistoryTable} where {$
 left join (select count(id) as total2, user_id from {$callHistoryTable} where {$whereCompany} and {$where} and call_duration > 30 group by user_id) gch on gch.user_id=u.id
 left join (select sum(duration) as duration, sum(cost) as cost, user_id from {$expenseTable} where {$whereCompany} and {$where} group by user_id) dr on dr.user_id=u.id
 where {$whereCompany}
-# order by total desc
 SQL;
 
         $this->returnData['code'] = 1;
@@ -203,12 +203,15 @@ SQL;
         if ($this->request->isPost()) {
             $hours = $this->request->param('hours', 7);
             $minute = 10; // 每 10 分钟统计数据
+            $time = time();
             $where = ' 1 = 1';
             if ($this->module === 'company') {
                 $where = ' company_id = ' . $this->userInfo->id;
             }
-            $second = 3600 * $hours;
+            $seconds = 60 * $minute;
             $limit = 60 * $hours / $minute;
+            $perTime = date('Y-m-d H:i', $time - $time % $seconds);
+            $between = 'create_time between ' . ($time - 3600 * $hours) . ' and ' . $time;
 
             $sql = <<<SQL
 select date_format(datetime, '%H:%i') as datetime,
@@ -219,18 +222,15 @@ from (SELECT date_format(@date := date_add(@date, interval -{$minute} minute), '
              0 as                                                                         sum,
              0 as                                                                         duration,
              0 as                                                                         expense
-      from (select @date :=
-                           date_add(from_unixtime(unix_timestamp() - unix_timestamp() % (60 * {$minute}), '%Y-%m-%d %H:%i'), interval
-                                    {$minute} minute)
-            from hbcall_call_history ch
-            limit {$limit}) temp
+      from (select @date := date_add('{$perTime}', interval {$minute} minute)
+            from hbcall_call_history ch limit {$limit}) temp
       union all
-      select from_unixtime(create_time - create_time % (60 * {$minute}), '%Y-%m-%d %H:%i') as datetime,
+      select from_unixtime(create_time - create_time % {$seconds}, '%Y-%m-%d %H:%i') as datetime,
              count(1)                                                                      as sum,
              sum(call_duration_min)                                                        as duration,
              sum(cost)                                                                     as expense
       from hbcall_call_history
-      WHERE {$where} and create_time BETWEEN (unix_timestamp() - {$second}) and unix_timestamp()
+      WHERE {$where} and {$between}
       group by datetime) t
 group by datetime
 order by datetime;

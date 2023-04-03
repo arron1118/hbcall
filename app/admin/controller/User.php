@@ -66,6 +66,7 @@ class User extends \app\common\controller\AdminController
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
+                ->append(['call_type_text'])
                 ->select();
             return json(['rows' => $userList->hidden(['salt', 'password', 'token', 'token_expire_time']), 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
         }
@@ -321,6 +322,7 @@ class User extends \app\common\controller\AdminController
             'userInfo' => $userInfo,
             'callTypeList' => (new CompanyModel())->getCalltypeList(),
         ];
+
         return json($this->returnData);
     }
 
@@ -336,8 +338,6 @@ class User extends \app\common\controller\AdminController
                     $this->returnData['code'] = 1;
                 }
             }
-
-            return json($this->returnData);
         }
 
         return json($this->returnData);
@@ -359,7 +359,6 @@ class User extends \app\common\controller\AdminController
             return json($this->returnData);
         }
 
-        $this->view->assign('userProfile', $this->userInfo);
         return $this->view->fetch();
     }
 

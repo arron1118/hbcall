@@ -48,6 +48,11 @@ class Company extends Model
         return $this->getCallTypeList()[$value];
     }
 
+    public function getCallTypeTextAttr($value, $data)
+    {
+        return $this->callTypeList()[$data['call_type']];
+    }
+
     public function getStatusList()
     {
         return ['-1' => '全部', '禁止', '正常'];

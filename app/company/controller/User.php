@@ -271,6 +271,7 @@ class User extends \app\common\controller\CompanyController
 
             return json(['msg' => '操作成功', 'code' => 1]);
         }
+
         return $this->view->fetch();
     }
 }

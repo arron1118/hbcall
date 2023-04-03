@@ -10,53 +10,29 @@
                 <div class="col-md-8 col-sm-12">
                     <form class="layui-form layuimini-form">
                         <div class="layui-form-item">
-                            <label class="layui-form-label required">昵称</label>
+                            <label class="layui-form-label">昵称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="username" lay-verify="required" placeholder="请输入昵称"  value="{$userProfile.username}" class="layui-input" readonly>
+                                <input type="text" name="username" placeholder="请输入昵称"  value="{$user.username}" class="layui-input border-0 text-muted" readonly>
                                 <tip>此昵称作为登录账号使用，暂不支持更改</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">真实姓名</label>
                             <div class="layui-input-block">
-                                <input type="text" name="realname" placeholder="请输入真实姓名"  value="{$userProfile.realname}" class="layui-input">
+                                <input type="text" name="realname" placeholder="请输入真实姓名"  value="{$user.realname}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label required">手机号</label>
                             <div class="layui-input-block">
-                                <input type="text" name="phone" lay-verify="required|phone" placeholder="请输入手机号"  value="{$userProfile.phone}" class="layui-input">
+                                <input type="text" name="phone" lay-verify="required|phone" placeholder="请输入手机号"  value="{$user.phone}" class="layui-input">
                                 <tip>手机号用于拨号，请认真填写</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">呼叫线路</label>
                             <div class="layui-input-block">
-                                {php}
-                                $call_type = '';
-                                switch ($user['company']['call_type']) {
-                                    case 'axb':
-                                        $call_type = 'AXB线路';
-                                        break;
-
-                                    case 'callback':
-                                        $call_type = '三网通回拨';
-                                        break;
-
-                                    case 'DxCallBack':
-                                        $call_type = '电信回拨';
-                                        break;
-
-                                    case 'YDCallBack':
-                                        $call_type = '移动回拨';
-                                        break;
-
-                                    case 'WxCallback':
-                                        $call_type = '新三网回拨线路';
-                                        break;
-                                }
-                                {/php}
-                                <input type="text" name="" value="{$call_type}" class="layui-input" disabled>
+                                <input type="text" name="" value="{$user.company.call_type_text}" class="layui-input text-muted border-0" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item {if !in_array($user->company->getData('call_type'), [3, 4])}d-none{/if}">
@@ -70,19 +46,19 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">登陆IP</label>
                             <div class="layui-input-block">
-                                <input type="text" name="ip" value="{$userProfile.loginip}" class="layui-input" disabled>
+                                <input type="text" name="ip" value="{$user.loginip}" class="layui-input border-0 text-muted" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">最后登陆</label>
                             <div class="layui-input-block">
-                                <input type="text" name="time"  value="{$userProfile.logintime}" class="layui-input" disabled>
+                                <input type="text" name="time"  value="{$user.logintime}" class="layui-input border-0 text-muted" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">上次登陆</label>
                             <div class="layui-input-block">
-                                <input type="text" name="lasttime" value="{$userProfile.prevtime}" class="layui-input" disabled>
+                                <input type="text" name="time"  value="{$user.prevtime}" class="layui-input border-0 text-muted" disabled>
                             </div>
                         </div>
 

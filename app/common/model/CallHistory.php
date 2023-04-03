@@ -28,6 +28,11 @@ class CallHistory extends Model
         return getDateFormatInfo($value);
     }
 
+    public function getCallTypeAttr($value)
+    {
+        return (new Company())->callTypeList()[$value];
+    }
+
     public function getReleasetimeAttr($value)
     {
         return getDateFormatInfo($value);

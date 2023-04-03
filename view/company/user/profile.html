@@ -10,9 +10,9 @@
                 <div class="col-md-8 col-sm-12">
                     <form class="layui-form layuimini-form">
                         <div class="layui-form-item">
-                            <label class="layui-form-label required">昵称</label>
+                            <label class="layui-form-label">昵称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="username" lay-verify="required" placeholder="请输入昵称"  value="{$user.username}" class="layui-input" readonly>
+                                <input type="text" name="username" placeholder="请输入昵称"  value="{$user.username}" class="layui-input text-muted border-0" readonly>
                                 <tip>此昵称作为登录账号使用，暂不支持更改！</tip>
                             </div>
                         </div>
@@ -25,77 +25,53 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">余额(￥/元)</label>
                             <div class="layui-input-block">
-                                <input type="text" name="balance" value="{$user.balance}" class="layui-input" disabled>
+                                <input type="text" name="balance" value="{$user.balance}" class="layui-input text-muted border-0" disabled>
                                 <tip><a href="javascript:;" layuimini-content-href="payment/index.html" data-title="充值管理">前往充值>></a></tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">呼叫线路</label>
                             <div class="layui-input-block">
-                                {php}
-                                    $call_type = '';
-                                    switch ($user['call_type']) {
-                                        case 'axb':
-                                            $call_type = 'AXB线路';
-                                            break;
-
-                                        case 'callback':
-                                            $call_type = '三网通回拨';
-                                            break;
-
-                                        case 'DxCallBack':
-                                            $call_type = '电信回拨';
-                                            break;
-
-                                        case 'YDCallBack':
-                                            $call_type = '移动回拨';
-                                            break;
-
-                                        case 'WxCallback':
-                                            $call_type = '新三网回拨线路';
-                                            break;
-                                    }
-                                {/php}
-                                <input type="text" name="" value="{$call_type}" class="layui-input" disabled>
+                                <input type="text" name="" value="{$user.call_type_text}" class="layui-input text-muted border-0" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">配额</label>
                             <div class="layui-input-block">
-                                <input type="text" name="ration" value="{$user.ration}" class="layui-input" disabled>
+                                <input type="text" name="ration" value="{$user.ration}" class="layui-input text-muted border-0" disabled>
                                 <tip>提示：1个小号为1个座席</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">限制用户数</label>
                             <div class="layui-input-block">
-                                <input type="text" name="limit_user" value="{$user.limit_user}" class="layui-input" disabled>
+                                <input type="text" name="limit_user" value="{$user.limit_user}" class="layui-input text-muted border-0" disabled>
                                 <tip>提示：0 为无限制开通拨号用户</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">费率</label>
                             <div class="layui-input-block">
-                                <input type="text" name="rate" value="{$user.rate}" class="layui-input" disabled>
+                                <input type="text" name="rate" value="{$user.rate}" class="layui-input text-muted border-0" disabled>
                                 <tip>提示：用于计算话费</tip>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">登陆IP</label>
                             <div class="layui-input-block">
-                                <input type="text" name="ip" value="{$user.loginip}" class="layui-input" disabled>
+                                <input type="text" name="ip" value="{$user.loginip}" class="layui-input text-muted border-0" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">最后登陆</label>
                             <div class="layui-input-block">
-                                <input type="text" name="time"  value="{$user.logintime}" class="layui-input" disabled>
+                                <input type="text" name="time"  value="{$user.logintime}" class="layui-input text-muted border-0" disabled>
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">上次登陆</label>
                             <div class="layui-input-block">
-                                <input type="text" name="lasttime" value="{$user.prevtime}" class="layui-input" disabled>
+                                <input type="text" name="lasttime" value="{$user.prevtime}" class="layui-input text-muted border-0" disabled>
                             </div>
                         </div>
 
