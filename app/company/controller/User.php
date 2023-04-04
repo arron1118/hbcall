@@ -174,6 +174,7 @@ class User extends \app\common\controller\CompanyController
             $userInfo->phone = $params['phone'];
             $userInfo->callback_number = $params['callback_number'];
             $userInfo->limit_call_number = $params['limit_call_number'];
+            $userInfo->customer_view_num = $params['customer_view_num'];
 
             if ($userInfo->save()) {
                 // 保存小号关联数据
@@ -269,7 +270,7 @@ class User extends \app\common\controller\CompanyController
             $this->userInfo->realname = $realname;
             $this->userInfo->save();
 
-            return json(['msg' => '操作成功', 'code' => 1]);
+            return json(['msg' => lang('The operation succeeded'), 'code' => 1]);
         }
 
         return $this->view->fetch();

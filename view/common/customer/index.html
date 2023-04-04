@@ -143,7 +143,7 @@
                     <th lay-data="{field: 'phone', title: '联系电话', align: 'center', style: 'cursor: pointer;', templet: '#phone', event: 'showPhone', width: 150}"></th>
                     <th lay-data="{field: 'province', title: '所在地', align: 'center', width: 100}"></th>
                     <th lay-data="{field: 'comment', title: '备注', align: 'center', width: 240}"></th>
-                    <th lay-data="{field: 'cate', title: '类型', align: 'center', width: 100}"></th>
+                    <th lay-data="{field: 'cate_text', title: '类型', align: 'center', width: 100}"></th>
                     {if ($module === 'admin')}
                     <th lay-data="{field: 'corporation', title: '所属公司', align: 'center', width: 300}"></th>
                     {/if}
@@ -256,11 +256,15 @@
                                 el.val(res.data[name])
                             }
 
+                            if (name === 'phone') {
+                                el.attr('disabled', true)
+                            }
                         }
                     }
                 })
             } else {
                 title = '添加'
+                $(e.currentTarget).find('[name="phone"]').attr('disabled', false)
                 f.reset()
             }
 
@@ -352,6 +356,10 @@
                             if (res.code === 1 && res.data) {
                                 hide.text(res.data).data('show', true)
                                 icon.removeClass('fa-eye').addClass('fa-eye-slash')
+                            } else {
+                                Toast.fire({
+                                    title: res.msg,
+                                })
                             }
                         })
                     }

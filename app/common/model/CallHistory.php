@@ -28,6 +28,11 @@ class CallHistory extends Model
         return getDateFormatInfo($value);
     }
 
+    public function getCalledNumberAttr($value)
+    {
+        return substr_replace($value, '****', 3, 4);
+    }
+
     public function getCallTypeAttr($value)
     {
         return (new Company())->callTypeList()[$value];

@@ -49,7 +49,7 @@ trait ReportTrait
         } elseif ($this->module === 'company') {
             $cost = getCosts($this->userInfo->id);
             // 总消费
-            $cost['total_cost'] = User::sum('expense');
+            $cost['total_cost'] = $this->userInfo->expense;
         }
 
         $result = array_map(function ($item) {

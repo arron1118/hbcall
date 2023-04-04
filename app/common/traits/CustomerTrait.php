@@ -77,7 +77,7 @@ trait CustomerTrait
                 $res = $res->with(['company', 'user']);
             }
 
-            $res = $res->select();
+            $res = $res->append(['cate_text'])->select();
 
             $this->returnData['data'] = $res->hidden(['company', 'user']);
             $this->returnData['code'] = 1;
@@ -210,7 +210,7 @@ trait CustomerTrait
 
     public function edit()
     {
-        $customerId = (int) $this->request->param('id', 0);
+        $params = $this->request->param();
         $customerModel = new CustomerModel();
         if ($this->module === 'home') {
             $customerModel = $customerModel->where([
@@ -222,7 +222,7 @@ trait CustomerTrait
             ]);
         }
 
-        $customer = $customerModel->find($customerId);
+        $customer = $customerModel->find($params['id']);
 
         if (!$customer) {
             $this->returnData['msg'] = '未找到相关数据';
@@ -231,14 +231,15 @@ trait CustomerTrait
 
         if ($this->request->isPost()) {
             $this->returnData['msg'] = '保存失败';
-            if ($customer->save($this->request->param())) {
+            unset($params['phone']);
+            if ($customer->save($params)) {
                 $this->returnData['msg'] = '保存成功';
                 $this->returnData['code'] = 1;
             }
             return json($this->returnData);
         }
 
-        $this->returnData['data'] = $customer->getOrigin();
+        $this->returnData['data'] = $customer;
         $this->returnData['code'] = 1;
         $this->returnData['msg'] = '获取成功';
         $this->returnData['cateList'] = (new CustomerModel())->getCateList();
@@ -285,6 +286,15 @@ trait CustomerTrait
             $customerModel = new CustomerModel();
             $customerPhoneRecord = new CustomerPhoneRecord();
             if ($this->module === 'home') {
+                $viewNum = CustomerPhoneRecord::where([
+                    'customer_id' => $id,
+                    'user_id' => $this->userInfo->id,
+                ])->count();
+                if ($this->userInfo->customer_view_num !== 0 && ($viewNum >= $this->userInfo->customer_view_num)) {
+                    $this->returnData['msg'] = '查看次数已达到上限';
+                    return json($this->returnData);
+                }
+
                 $customerPhoneRecord->company_id = $this->userInfo->company_id;
                 $customerPhoneRecord->company_name = $this->userInfo->company->username;
                 $customerPhoneRecord->user_id = $this->userInfo->id;

@@ -16,9 +16,9 @@ class Customer extends Model
         return substr_replace($value, '****', 3, 4);
     }
 
-    public function getCateAttr($value)
+    public function getCateTextAttr($value, $data)
     {
-        return $this->getCateList()[$value];
+        return $this->getCateList()[$data['cate']];
     }
 
     public function getCateList()

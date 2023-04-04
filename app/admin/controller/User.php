@@ -5,8 +5,6 @@ namespace app\admin\controller;
 use app\common\model\Company as CompanyModel;
 use app\common\model\User as UserModel;
 use app\common\model\NumberStore;
-use chillerlan\QRCode\Data\Number;
-use think\facade\Session;
 use app\common\traits\UserTrait;
 
 class User extends \app\common\controller\AdminController
@@ -279,12 +277,13 @@ class User extends \app\common\controller\AdminController
             $userInfo->rate = $data['rate'];
             $userInfo->limit_user = $data['limit_user'];
             $userInfo->call_type = $data['call_type'];
-            $userInfo->status = isset($data['status']) && $data['status'];
+            $userInfo->status = $data['status'] ?? 0;
             $userInfo->phone = $data['phone'];
             $userInfo->address = $data['address'];
             $userInfo->contract_attachment = $data['contract_attachment'];
             $userInfo->contract_start_datetime = strtotime($data['contract_start_datetime']);
             $userInfo->contract_end_datetime = strtotime($data['contract_end_datetime']);
+            $userInfo->talent_on = $data['talent_on'] ?? 0;
             if ($userInfo->save()) {
                 // 更新企业小号关联表
                 if ($userInfo->companyXnumber) {
@@ -350,8 +349,6 @@ class User extends \app\common\controller\AdminController
 
             $this->userInfo->realname = $realname;
             if ($this->userInfo->save()) {
-                Session::set('admin.realname', $realname);
-
                 $this->returnData['msg'] = lang('The operation succeeded');
                 $this->returnData['code'] = 1;
             }
