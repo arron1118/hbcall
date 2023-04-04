@@ -9,8 +9,29 @@ use think\db\exception\DbException;
 
 trait CustomerTrait
 {
+    protected $type = 1;
 
+    /**
+     * 客户管理
+     * @return mixed
+     */
     public function index()
+    {
+        $this->type = 1;
+        return $this->init();
+    }
+
+    /**
+     * 人才管理
+     * @return mixed
+     */
+    public function talent()
+    {
+        $this->type = 2;
+        return $this->init();
+    }
+
+    public function init()
     {
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
@@ -20,6 +41,13 @@ trait CustomerTrait
         if ($this->module === 'company') {
             $this->view->assign('users', $this->userInfo->user);
         }
+
+        $CustmoerModel = new CustomerModel();
+        $this->view->assign([
+            'type' => $this->type,
+            'cateList' => $CustmoerModel->getCateList($this->type),
+            'typeText' => $CustmoerModel->getTypeList()[$this->type],
+        ]);
 
         return $this->view->fetch('common@customer/index');
     }
@@ -37,6 +65,7 @@ trait CustomerTrait
             $userId = (int) $this->request->param('user_id', $this->module === 'home' ? $this->userInfo->id : 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
+            $type = $this->request->param('type', 0);
 
             $where = [];
 
@@ -50,6 +79,10 @@ trait CustomerTrait
 
             if ($cate !== -1) {
                 $where[] = ['cate', '=', $cate];
+            }
+
+            if ($type > 0) {
+                $where[] = ['type', '=', $type];
             }
 
             if ($keyword) {
@@ -68,14 +101,14 @@ trait CustomerTrait
 
             $total = CustomerModel::where($where)->count();
 
-            $res = CustomerModel::withCount(['record'])
+            $res = CustomerModel::with(['company', 'user'])->withCount(['record'])
                 ->where($where)
                 ->order('id', 'desc')
                 ->limit(($page - 1) * $limit, $limit);
 
-            if ($this->module !== 'home') {
-                $res = $res->with(['company', 'user']);
-            }
+//            if ($this->module !== 'home') {
+//                $res = $res->with(['company', 'user']);
+//            }
 
             $res = $res->append(['cate_text'])->select();
 
@@ -147,6 +180,10 @@ trait CustomerTrait
         }
     }
 
+    /**
+     * 移动分类
+     * @return \think\response\Json
+     */
     public function changeCate()
     {
         if ($this->request->isPost()) {
@@ -166,17 +203,13 @@ trait CustomerTrait
     public function importExcel()
     {
         if ($this->request->isPost()) {
-            $file = request()->file('file');
-            // 1 允许导入重复客户 0 不允许导入重复客户
-            $is_repeat_customer = $this->request->param('is_repeat_customer/d', 0);
-            $data = $this->readExcel($file, $is_repeat_customer);
             try {
+                $data = $this->readExcel();
                 $res = (new CustomerModel())->saveAll($data);
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = lang('The import was successful');
                 $this->returnData['data'] = $res;
-                $this->returnData['is_repeat_customer'] = $is_repeat_customer;
 
                 return json($this->returnData);
             } catch (DbException $dbException) {
@@ -191,21 +224,25 @@ trait CustomerTrait
         return json($this->returnData);
     }
 
-    protected function readExcel($file, $is_repeat_customer = 0)
+    protected function readExcel()
     {
+        $file = request()->file('file');
+        // 1 允许导入重复客户 0 不允许导入重复客户
+        $is_repeat_customer = $this->request->param('is_repeat_customer/d', 0);
         $field = [
             'create_time' => time(),
+            'type' => $this->request->param('type/d'),
         ];
 
         if ($this->module === 'home') {
             $field['company_id'] = $this->userInfo->company_id;
             $field['user_id'] = $this->userInfo->id;
-        } else if ($this->module === 'company') {
+        } elseif ($this->module === 'company') {
             $field['company_id'] = $this->userInfo->id;
             $field['user_id'] = 0;
         }
 
-        return readExcel($file, $field, $is_repeat_customer, $field['company_id']);
+        return readExcel($file, $field, $is_repeat_customer);
     }
 
     public function edit()
@@ -276,6 +313,14 @@ trait CustomerTrait
         return json($this->returnData);
     }
 
+    /**
+     * 获取客户电话
+     * @param $id
+     * @return \think\response\Json
+     * @throws DbException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function getCustomerPhone($id)
     {
         if ($this->request->isAjax()) {
@@ -331,6 +376,26 @@ trait CustomerTrait
                 $customer->check_phone_num += 1;
                 $customer->save();
             }
+            return json($this->returnData);
+        }
+
+        return json($this->returnData);
+    }
+
+    /**
+     * 分配人才
+     * @return \think\response\Json
+     */
+    public function distribution()
+    {
+        if ($this->request->isPost()) {
+            $ids = trim($this->request->param('ids', ''), ',');
+            $userId = $this->request->param('user_id', 0);
+            $customers = CustomerModel::whereIn('id', $ids)->update(['user_id' => $userId]);
+            $this->returnData['data'] = $customers;
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '操作成功';
+
             return json($this->returnData);
         }
 

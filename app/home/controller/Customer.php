@@ -9,11 +9,4 @@ class Customer extends \app\common\controller\HomeController
 {
     use CustomerTrait;
 
-    public function initialize()
-    {
-        parent::initialize();
-
-        $this->view->assign('cateList', (new CustomerModel())->getCateList());
-    }
-
 }

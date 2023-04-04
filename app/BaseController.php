@@ -129,6 +129,24 @@ abstract class BaseController
      */
     public function getMenu()
     {
-        return config('menu.' . $this->module);
+        $menu = config('menu.' . $this->module);
+
+        $talent_on = true;
+        if ($this->module === 'company') {
+            $talent_on = $this->userInfo->talent_on;
+        } elseif ($this->module === 'home') {
+            $talent_on = $this->userInfo->company->talent_on;
+        }
+
+        if ($talent_on) {
+            $menu['menuInfo'][0]['child'][] = [
+                "title" => "人才管理",
+                "href" => (string) url('/customer/talent'),
+                "icon" => "fa fa-people-group",
+                "target" => "_self"
+            ];
+        }
+
+        return json($menu);
     }
 }

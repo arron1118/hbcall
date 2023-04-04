@@ -2,10 +2,17 @@
 
 namespace app\common\model;
 
+use think\facade\Log;
 use \think\Model;
 
 class Customer extends Model
 {
+    protected $typeList = [
+        '全部',
+        '客户',
+        '人才',
+    ];
+
     public function getLastCalltimeAttr($value)
     {
         return getDateFormatInfo($value);
@@ -18,18 +25,29 @@ class Customer extends Model
 
     public function getCateTextAttr($value, $data)
     {
-        return $this->getCateList()[$data['cate']];
+        return $this->getCateList($data['type'])[$data['cate']];
     }
 
-    public function getCateList()
+    public function getTypeTextAttr($value, $data)
     {
+        return $this->typeList[$data['type']];
+    }
+
+    public function getCateList($type = 1)
+    {
+        $type = $this->typeList[$type];
         return [
             '-1' => '全部',
-            '意向客户',
-            '重点客户',
-            '成交客户',
-            '无效客户',
+            '意向' . $type,
+            '重点' . $type,
+            '成交' . $type,
+            '无效' . $type,
         ];
+    }
+
+    public function getTypeList()
+    {
+        return $this->typeList;
     }
 
     public static function onAfterDelete($customer)

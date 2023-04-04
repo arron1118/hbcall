@@ -7,6 +7,7 @@
     <div class="offcanvas-body">
         <form class="" action="" id="formEditor" name="formEditor">
             <input type="hidden" name="id" value="" />
+            <input type="hidden" name="type" value="{$type}" />
             <div class="mb-3">
                 <label class="form-label">类型</label>
                 <select class="form-select" name="cate">
@@ -19,8 +20,8 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label" for="account">客户名称</label>
-                <input type="text" name="title" id="account" placeholder="客户名称"
+                <label class="form-label" for="account">{$typeText}名称</label>
+                <input type="text" name="title" id="account" placeholder="{$typeText}名称"
                        autocomplete="off" class="form-control" value="" required>
             </div>
 
