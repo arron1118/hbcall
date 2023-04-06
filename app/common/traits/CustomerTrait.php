@@ -104,13 +104,8 @@ trait CustomerTrait
             $res = CustomerModel::with(['company', 'user'])->withCount(['record'])
                 ->where($where)
                 ->order('id', 'desc')
-                ->limit(($page - 1) * $limit, $limit);
-
-//            if ($this->module !== 'home') {
-//                $res = $res->with(['company', 'user']);
-//            }
-
-            $res = $res->append(['cate_text'])->select();
+                ->limit(($page - 1) * $limit, $limit)
+                ->append(['cate_text'])->select();
 
             $this->returnData['data'] = $res->hidden(['company', 'user']);
             $this->returnData['code'] = 1;
@@ -376,26 +371,6 @@ trait CustomerTrait
                 $customer->check_phone_num += 1;
                 $customer->save();
             }
-            return json($this->returnData);
-        }
-
-        return json($this->returnData);
-    }
-
-    /**
-     * 分配人才
-     * @return \think\response\Json
-     */
-    public function distribution()
-    {
-        if ($this->request->isPost()) {
-            $ids = trim($this->request->param('ids', ''), ',');
-            $userId = $this->request->param('user_id', 0);
-            $customers = CustomerModel::whereIn('id', $ids)->update(['user_id' => $userId]);
-            $this->returnData['data'] = $customers;
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '操作成功';
-
             return json($this->returnData);
         }
 
