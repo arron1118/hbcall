@@ -83,7 +83,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                             class: cssClass,
                             click: function (e) {
                                 if (callinginput.val().length < 11 || !arronUtil.isPhone(callinginput.val())) {
-                                    Toast.fire('请输入正确的号码');
+                                    arronUtil.Toast.fire('请输入正确的号码');
                                     return false;
                                 }
 
@@ -355,13 +355,13 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                         })
                     }
 
-                    Toast.fire(op)
+                    arronUtil.Toast.fire(op)
                     flag = false
                 },
                 error: function () {
                     flag = false
                     setTimeout(function () {
-                        Toast.fire("上传失败！");
+                        arronUtil.Toast.fire("上传失败！");
                         //关闭所有弹出层
                         layer.closeAll(); //疯狂模式，关闭所有层
                     }, 1000);
@@ -391,7 +391,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                         recordModal.hide()
                     }
 
-                    Toast.fire(op)
+                    arronUtil.Toast.fire(op)
                 })
 
                 return false
@@ -425,7 +425,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                     }
                 } else if (e.keyCode === 13) {
                     if ($(this).val().length < 11 || !arronUtil.isPhone($(this).val())) {
-                        Toast.fire('请输入正确的号码');
+                        arronUtil.Toast.fire('请输入正确的号码');
                         return false;
                     }
 

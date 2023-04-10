@@ -137,10 +137,12 @@
         if (['company', 'home'].includes(APP_MODULE)) {
             let time = 300 * 1000, tips = function () {
                 if (parseFloat(arronUtil.cookie('balance')) <= 0) {
-                    new Swal({
+                    arronUtil.Toast.fire({
+                        toast: false,
+                        timer: false,
                         title: '温馨提示',
                         html: '<div class="text-warning">您的余额已经不足，请联系管理员及时充值！</div>',
-                        icon: 'warning',
+                        showConfirmButton: true,
                         confirmButtonText: '我知道了',
                     })
                 }

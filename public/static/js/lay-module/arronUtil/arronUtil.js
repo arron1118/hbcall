@@ -108,9 +108,9 @@ layui.define(['jquery', 'layer'], function (exports) {
                 toast: false,
                 timer: false,
                 title: '导入说明',
-                width: '42rem',
+                width: '45rem',
                 html: `<div class="p-3">
-                               <p>只能上传Excel表格，格式为:</p> <p class="fw-bold">['名称', '电话号码', '所在地', '邮箱', '备注']</p>
+                               <p>只能上传Excel表格，格式为:</p> <p class="fw-bold">['名称', '电话号码', '所在地', '邮箱', '备注', '专业']</p>
                                <img src="/static/images/customer-example-import.png" class="pt-3" />
                             </div>`
             })
