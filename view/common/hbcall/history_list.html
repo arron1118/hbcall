@@ -91,7 +91,7 @@
                         </li>
                         {/foreach}
                         {elseif $module === 'company'}
-                        <li class="layui-menu-item-checked" lay-options="{user_id: 0, company_id: 0}">
+                        <li class="layui-menu-item-checked" lay-options="{user_id: 0, company_id: {$user.id}}">
                             <div class="layui-menu-body-title">全部</div>
                         </li>
                         {foreach $users as $key => $val}
@@ -157,11 +157,12 @@
 
 {block name="js"}
 <script>
-    layui.use(['form', 'table', 'laydate', 'dropdown'], function () {
+    layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
         let $ = layui.jquery,
             form = layui.form,
             laydate = layui.laydate,
             table = layui.table,
+            arronUtil = layui.arronUtil,
             dropdown = layui.dropdown;
 
         //菜单点击事件
@@ -181,7 +182,7 @@
         });
 
         table.init('currentTableFilter', {
-            url: '{:url("/HbCall/getHistoryList")}',
+            url: arronUtil.url("/HbCall/getHistoryList"),
             method: 'post',
             toolbar: '#syncCallHistory',
             defaultToolbar: ['filter', 'exports', 'print', {
@@ -216,7 +217,10 @@
         }
 
         $('button[type="reset"]').on('click', function () {
-            search();
+            let params = [],
+                user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')')
+            Object.assign(params, user)
+            search(params);
         })
 
         form.on('select(filterUser)', function (data) {
@@ -232,6 +236,8 @@
 
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
+            let user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')')
+            Object.assign(data.field, user)
             search(data.field);
 
             return false;
@@ -241,7 +247,7 @@
             switch (obj.event) {
                 case 'syncCallHistory':
                     let load = layer.load();
-                    $.post("{:url('/HbCall/updateCallHistory')}", function (res) {
+                    $.post(arronUtil.url('/HbCall/updateCallHistory'), function (res) {
                         layer.close(load)
                         let errorHtml = '';
                         if (res.data.error > 0) {

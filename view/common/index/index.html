@@ -118,10 +118,9 @@
 
 {block name="js"}
 <script>
-    layui.use(['jquery', 'layer', 'miniAdmin'], function () {
-        const $ = layui.jquery,
-            layer = layui.layer,
-            miniAdmin = layui.miniAdmin;
+    layui.use(['jquery', 'miniAdmin', 'arronUtil'], function () {
+        let miniAdmin = layui.miniAdmin,
+            arronUtil = layui.arronUtil;
         // 初始化接口
         miniAdmin.render({
             iniUrl: "{:url('/index/getMenu')}",
@@ -135,11 +134,20 @@
             maxTabNum: 20,              // 最大的tab打开数量
         });
 
-        $('.app-download').hover(function () {
-            $('.app-download-content').show();
-        }, function () {
-            $('.app-download-content').hide();
-        })
+        if (['company', 'home'].includes(APP_MODULE)) {
+            let time = 300 * 1000, tips = function () {
+                if (parseFloat(arronUtil.cookie('balance')) <= 0) {
+                    new Swal({
+                        title: '温馨提示',
+                        html: '<div class="text-warning">您的余额已经不足，请联系管理员及时充值！</div>',
+                        icon: 'warning',
+                        confirmButtonText: '我知道了',
+                    })
+                }
+            }
+            tips();
+            setInterval(tips, time);
+        }
     });
 </script>
 {/block}

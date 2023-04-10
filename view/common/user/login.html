@@ -159,8 +159,7 @@
 <script>
     layui.use(['jquery', 'form'], function () {
         let form = layui.form,
-            $ = layui.jquery,
-            layer = layui.layer;
+            $ = layui.jquery;
 
         // 登录过期的时候，跳出ifram框架
         if (top.location !== self.location) top.location = self.location;
@@ -177,27 +176,35 @@
         form.on('submit(login)', function (data) {
             let params = data.field;
             if (params.username === '') {
-                layer.msg('用户名不能为空');
+                Toast.fire({
+                    text: '用户名不能为空'
+                });
                 return false;
             }
             if (params.password === '') {
-                layer.msg('密码不能为空');
+                Toast.fire({
+                    text: '密码不能为空'
+                });
                 return false;
             }
 
             if (params.captcha === '') {
-                layer.msg('验证码不能为空');
+                Toast.fire({
+                    text: '验证码不能为空'
+                });
                 return false;
             }
 
             $.post('{:url("/user/login")}', params, function (res) {
                 if (res.code) {
-                    layer.msg(res.msg, {icon: 6, time: 1500}, function () {
+                    Toast.fire({icon: 'success', text: res.msg}).then(function () {
                         window.location = res.url;
                     });
                 } else {
                     $('input[name="__token__"]').val(res.data.token);
-                    layer.msg(res.msg);
+                    Toast.fire({
+                        text: res.msg
+                    });
                 }
             });
 

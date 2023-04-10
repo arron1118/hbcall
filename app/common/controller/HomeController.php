@@ -36,9 +36,12 @@ class HomeController extends \app\BaseController
     protected function initialize()
     {
         $this->returnData['msg'] = lang('Unknown error');
-        $this->token = $this->request->cookie('hbcall_user_token');
+        $this->token = $this->request->cookie('hbcall_' . $this->module . '_token');
         if ($this->token) {
-            $this->userInfo = User::with(['company', 'userXnumber'])->where('token', $this->token)->find();
+            $this->userInfo = User::with(['company', 'userXnumber'])
+                ->where('token', $this->token)
+                ->find();
+            $this->userInfo && cookie('balance', $this->userInfo->company->balance);
         }
 
         $this->view->assign('user', $this->userInfo);

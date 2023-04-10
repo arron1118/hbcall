@@ -9,6 +9,7 @@
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
+    {php} $total_title = $module === 'admin' ? '收入' : '支出'; {/php}
     {if $module === 'company'}
     <div class="row mb-3 py-5">
         <div class="col-12 col-md-4 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
@@ -60,7 +61,7 @@
         </div>
     </div>
     {/if}
-    <div class="row mb-3 py-3 ">
+    <div class="row mb-3 py-3">
         {if $module === 'admin'}
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
@@ -84,7 +85,7 @@
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div class="">
                 <p class="text-black-50">
-                    今日{$module === 'admin' ? '收入' : '支出'}
+                    今日{$total_title}
                     [<span class="text-warning fs-6">{:htmlspecialchars_decode($percentage)}</span>]
                 </p>
                 <h5 class="fs-2">{:htmlspecialchars_decode($current_day_cost)}</h5>
@@ -92,19 +93,19 @@
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">昨日{$module === 'admin' ? '收入' : '支出'}</p>
+                <p class="text-black-50">昨日{$total_title}</p>
                 <h5 class="fs-2">{:htmlspecialchars_decode($yesterday_cost)}</h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">本月{$module === 'admin' ? '收入' : '支出'}</p>
+                <p class="text-black-50">本月{$total_title}</p>
                 <h5 class="fs-2">{:htmlspecialchars_decode($current_month_cost)}</h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">今年{$module === 'admin' ? '收入' : '支出'}</p>
+                <p class="text-black-50">今年{$total_title}</p>
                 <h5 class="fs-2">{:htmlspecialchars_decode($current_year_cost)}</h5>
             </div>
         </div>
@@ -112,8 +113,8 @@
 </div>
 
 <div class="container-fluid">
-    <div class="row mb-sm-3 mb-xl-0">
-        <div class="col-xl-7 col-lg-12 mb-sm-3 bg-white rounded-3 shadow-sm">
+    <div class="row mb-xl-0">
+        <div class="col-xl-7 col-lg-12 mb-3 bg-white rounded-3 shadow-sm">
             <div class="row p-3">
                 <div class="col-lg-6 col-12 mb-sm-3 h-100">
                     <div id="historyChart" class="h-100" style="height: 270px;" data-chart-list=""></div>
@@ -143,7 +144,7 @@
             </div>
         </div>
 
-        <div class="col-xl-5 col-lg-6 mb-sm-3">
+        <div class="col-xl-5 col-lg-12 mb-3">
             <div class="row">
                 <div class="col">
                     <div class="card border border-light-subtle shadow-sm">
@@ -180,176 +181,6 @@
 {/block}
 {block name="js"}
 <script src="__STATIC__/lib/echarts/echarts.min.js"></script>
-<script>
-    layui.use(['layer', 'miniTab'], function () {
-        let $ = layui.jquery,
-            layer = layui.layer,
-            miniTab = layui.miniTab;
-
-        // 在新的Tab窗口打开页面
-        miniTab.listen();
-
-        let chart = echarts.init($('#historyChart')[0])
-        let callChart = echarts.init($('#callChart')[0])
-        window.onresize = function (e) {
-            chart.resize();
-            callChart.resize();
-        }
-
-        let d = new Date();
-        let hours = 3,  // 小时数据
-            minutes = 60,   // 每小时60分
-            per = 5,    // 时间间隔 5 分
-            perSecond = per * 60 * 1000,    // 时间间隔 毫秒数
-            t = Math.ceil(hours * minutes / per);   // 总共多少条数据
-        let datetime = [];
-        let minutesAgo = d.getTime();  // 获取毫秒
-        let nowTime = 0;
-        for (let i = 0; i < t; i ++) {
-            nowTime = minutesAgo;
-            minutesAgo = minutesAgo - perSecond;
-            datetime.push({ startTime: utils.getDateTime(minutesAgo), endTime: utils.getDateTime(nowTime) })
-        }
-
-        let getChartData = function () {
-            $.post('{:url("/Index/getDashboardReport")}', {}, function (res) {
-                $('.totalCallHistory').text(res.data.totalCallHistory)
-                $('.totalCallAndPickUp').text(res.data.totalCallAndPickUp)
-                $('.totalCallAndNoPickUp').text(res.data.totalCallAndNoPickUp)
-                $('.totalCallDuration').text(res.data.totalCallDuration)
-                chart.setOption({
-                    title: {
-                        text: '呼叫统计',
-                    },
-                    dataset: [
-                        {
-                            source: res.data.chartData
-                        }
-                    ],
-                    tooltip: {
-                        trigger: 'item',
-                    },
-                    series: [
-                        {
-                            name: '拨号次数',
-                            type: 'pie',
-                            radius: ['35%', '75%'],
-                            datasetIndex: 0
-                        }
-                    ]
-                })
-            })
-        };
-        getChartData();
-
-        // 近几小时的记录
-        let h = 8
-        let getCallChartData = function () {
-            $.post('{:url("/Index/getHoursData")}', { hours: h }, function (res) {
-                let day = h + '小时'
-                if (h % 24 === 0) {
-                    h = h / 24 + '天'
-                }
-                if (res.code === 1) {
-                    callChart.setOption({
-                        title: {
-                            text: `近${h}拨号统计`,
-                        },
-                        dataset: [
-                            {
-                                source: res.data
-                            }
-                        ],
-                        legend: {},
-                        tooltip: {
-                            trigger: 'axis',
-                        },
-                        toolbox: {
-                            feature: {
-                                restore: { title: '还原' },
-                                saveAsImage: { title: '保存图片' },
-                            }
-                        },
-                        xAxis: {
-                            type: 'category',
-                            boundaryGap: false,
-                            axisLabel: {
-                                // rotate: 45
-                            }
-                        },
-                        yAxis: {
-                            type: 'value',
-                            boundaryGap: [0, '100%'],
-                            // max: 'dataMax'
-                        },
-                        grid: {
-                            bottom: 10,
-                            left: 20,
-                            right: 20,
-                            containLabel: true
-                        },
-                        series: [
-                            {
-                                name: '拨号次数',
-                                type: 'line',
-                                encode: {
-                                    x: 'datetime',
-                                    y: 'sum'
-                                },
-                                areaStyle: {
-                                }
-                            },
-                            {
-                                name: '时间(分)',
-                                type: 'line',
-                                encode: {
-                                    x: 'datetime',
-                                    y: 'duration'
-                                },
-                                areaStyle: {
-                                }
-                            },
-                            {
-                                name: '消费(￥)',
-                                type: 'line',
-                                encode: {
-                                    x: 'datetime',
-                                    y: 'expense'
-                                },
-                                areaStyle: {
-                                }
-                            }
-                        ]
-                    })
-                }
-            })
-        }
-        getCallChartData();
-
-        let getTopData = function () {
-            $.post('{:url("/Index/getTopList")}', {}, function (res) {
-                if (res.code === 1) {
-                    $('.toplist-table > tbody').html('')
-                    $.each(res.data, function (index, item) {
-                        $('.toplist-table > tbody').append($('<tr />')
-                            .append($('<td />', { text: item.username }))
-                            .append($('<td />', { text: item.call_sum }))
-                            .append($('<td />', { text: item.call_success_sum }))
-                            .append($('<td />', { text: item.call_duration_sum }))
-                            .append($('<td />', { text: item.expense }))
-                        )
-                    })
-                }
-            })
-        }
-        getTopData();
-
-        setInterval(function () {
-            getChartData()
-            getCallChartData()
-            getTopData()
-        }, 1000 * 300);
-    });
-</script>
+<script src="__STATIC__/js/common/dashboard.js"></script>
 
 {/block}

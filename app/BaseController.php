@@ -63,6 +63,12 @@ abstract class BaseController
     protected $token_expire_time = 3600 * 24 * 7;
 
     /**
+     * baseFile
+     * @var string
+     */
+    protected $baseFile = '';
+
+    /**
      * 构造方法
      * @access public
      * @param  App  $app  应用对象
@@ -73,10 +79,14 @@ abstract class BaseController
         $this->request = $this->app->request;
         $this->view = View::instance();
         $this->agent = new Agent();
-
+        $this->baseFile = $this->request->baseFile();
         $this->module = app('http')->getName();
-        $this->view->assign('module', $this->module);
-        $this->view->assign('app_name', config('app.app_name'));
+
+        $this->view->assign([
+            'module' => $this->module,
+            'app_name' => config('app.app_name'),
+            'baseFile' => $this->baseFile,
+        ]);
 
         // 控制器初始化
         $this->initialize();

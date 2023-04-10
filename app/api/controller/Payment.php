@@ -135,6 +135,8 @@ class Payment extends \app\common\controller\ApiController
         $userInfo->deposit = (float)$userInfo->deposit + (float)$paymentModel->amount;
         $userInfo->balance = (float)$userInfo->balance + (float)$paymentModel->amount;
         $userInfo->save();
+
+        cookie('balance', $userInfo->balance);
     }
 
     public function alipayReturn()
@@ -170,7 +172,7 @@ class Payment extends \app\common\controller\ApiController
         if ($payType === 1) {
             $res = Pay::wechat(Config::get('payment.wxpay'))->app($data);
             $this->returnData['data'] = json_decode($res->getContent());
-        } else if ($payType === 2) {
+        } elseif ($payType === 2) {
             $res = Pay::alipay(Config::get('payment.alipay.app'))->app($data);
             $this->returnData['data']['alipay'] = $res->getContent();
         }

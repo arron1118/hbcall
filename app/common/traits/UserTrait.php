@@ -20,16 +20,10 @@ trait UserTrait
         if ($this->request->isPost()) {
             $param = $this->request->param();
             $model = User::class;
-            $token_name = 'user';
-            switch ($this->module) {
-                case 'admin':
-                    $model = Admin::class;
-                    $token_name = 'admin';
-                    break;
-                case 'company':
-                    $model = Company::class;
-                    $token_name = 'company';
-                    break;
+            if ($this->module === 'admin') {
+                $model = Admin::class;
+            } elseif ($this->module === 'company') {
+                $model = Company::class;
             }
             $user = $model::getByUsername($param['username']);
             if (!$user) {
@@ -49,7 +43,7 @@ trait UserTrait
             if ($this->module === 'home' && $user->getData('is_test')) {
                 $user->token_expire_time = $user->getData('test_endtime');
 
-                if ($user->getData('test_endtime') < time()) {
+                if ($user->getData('test_endtime') < $now) {
                     $this->returnData['msg'] = '测试时间结束，' . lang('Account is locked');
                     return json($this->returnData);
                 }
@@ -77,13 +71,10 @@ trait UserTrait
             $user->browser_version = $this->agent->version($this->agent->browser());
             $user->save();
 
-            Cookie::set('hbcall_' . $token_name . '_token', $user->token, $this->token_expire_time);
-            Session::set($token_name, $user->toArray());
+            Cookie::set('hbcall_' . $this->module . '_token', $user->token, $this->token_expire_time);
 
-            if ($this->module === 'home') {
-                $balance = Company::where('id', '=', $user->company_id)->value('balance');
-                Cookie::set('balance', $balance);
-                Cookie::set('balance_tips', '');
+            if (in_array($this->module, ['company', 'home'])) {
+                Cookie::set('balance', $this->module === 'company' ? $user->balance : $user->company->balance);
             }
 
             $this->returnData['msg'] = lang('Logined');
@@ -117,6 +108,10 @@ trait UserTrait
                 $this->returnData['msg'] = lang('The old password entered is incorrect');
                 return json($this->returnData);
             }
+            if ($old_password === $new_password) {
+                $this->returnData['msg'] = lang('The new password is the same as the old password');
+                return json($this->returnData);
+            }
             if ($new_password !== $confirm_password) {
                 $this->returnData['msg'] = lang('The confirmation password entered is incorrect');
                 return json($this->returnData);
@@ -135,22 +130,9 @@ trait UserTrait
 
     public function logout()
     {
-        switch ($this->module) {
-            case 'admin':
-                Session::delete('admin');
-                Cookie::delete('hbcall_admin_token');
-                break;
-            case 'company':
-                Session::delete('company');
-                Cookie::delete('hbcall_company_token');
-                break;
-            case 'home':
-                Session::delete('user');
-                Cookie::delete('hbcall_user_token');
-                Cookie::delete('balance_tips');
-                Cookie::delete('balance');
-                break;
-        }
+        Cookie::delete('hbcall_' . $this->module . '_token');
+        Cookie::delete('balance_tips');
+        Cookie::delete('balance');
 
         $this->userInfo->token = '';
         $this->userInfo->token_expire_time = 0;

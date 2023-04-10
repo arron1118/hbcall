@@ -35,9 +35,10 @@
 {block name="js"}
 
 <script>
-    layui.use(['jquery', 'form', 'table'], function () {
+    layui.use(['jquery', 'form', 'table', 'arronUtil'], function () {
         let $ = layui.jquery,
             form = layui.form,
+            arronUtil = layui.arronUtil,
             table = layui.table;
 
         table.init('currentTableFilter', {
@@ -72,7 +73,7 @@
             switch (obj.event) {  // 监听添加操作
                 case 'add':
                     layer.prompt({title: '输入号码'}, function (input, index) {
-                        if (input.length !== 11 || !utils.isPhone(input)) {
+                        if (input.length !== 11 || !arronUtil.isPhone(input)) {
                             layer.msg('请输入正确的号码', { icon: 2 });
                             return false;
                         }
@@ -97,7 +98,7 @@
 
         // 单元格编辑
         table.on('edit(currentTableFilter)', function (obj) {
-            if (obj.value.length !== 11 || !utils.isPhone(obj.value)) {
+            if (obj.value.length !== 11 || !arronUtil.isPhone(obj.value)) {
                 layer.msg('请输入正确的号码', { icon: 2 });
                 return false;
             }

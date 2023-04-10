@@ -128,7 +128,14 @@ class User extends \app\common\controller\CompanyController
     public function edit()
     {
         $userId = $this->request->param('id');
-        $userInfo = UserModel::find($userId);
+        $userInfo = UserModel::where([
+            'company_id' => $this->userInfo->id,
+        ])->find($userId);
+
+        if (!$userInfo) {
+            $this->returnData['msg'] = '参数错误';
+            return json($this->returnData);
+        }
 
         if ($this->request->isPost()) {
             $params = $this->request->param();

@@ -19,25 +19,16 @@ class Check
     public function handle($request, \Closure $next)
     {
         $this->module = app('http')->getName();
+        $this->token = $request->cookie('hbcall_' . $this->module . '_token');
 
-        switch ($this->module) {
-            case 'admin':
-                $this->model = Admin::class;
-                $this->token = $request->cookie('hbcall_admin_token');
-                break;
-
-            case 'company':
-                $this->model = Company::class;
-                $this->token = $request->cookie('hbcall_company_token');
-                break;
-
-            case 'home':
-                $this->model = User::class;
-                $this->token = $request->cookie('hbcall_user_token');
-                break;
+        $this->model = User::class;
+        if ($this->module === 'admin') {
+            $this->model = Admin::class;
+        } elseif ($this->module === 'company') {
+            $this->model = Company::class;
         }
 
-        if (!in_array($request->action(), $this->noNeedLogin) && !$this->checkToken()) {
+        if (!in_array($request->action(), $this->noNeedLogin, true) && !$this->checkToken()) {
             if ($request->isAjax()) {
                 return json(['url' => (string) url('/user/login', [], true, true), 'code' => 5003]);
             }
@@ -53,7 +44,8 @@ class Check
         if ($this->token) {
             $userInfo = $this->model::getByToken($this->token);
 
-            if ($this->module === 'home' && $userInfo && $userInfo->getData('is_test') && $userInfo->getData('test_endtime') < time()) {
+            if ($this->module === 'home' && $userInfo && $userInfo->getData('is_test')
+                && $userInfo->getData('test_endtime') < time()) {
                 $userInfo->status = 0;
                 $userInfo->save();
             }

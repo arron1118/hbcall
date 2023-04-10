@@ -27,5 +27,6 @@ return [
     'Please enter a confirmation password' => '请输入确认密码',
     'The old password entered is incorrect' => '输入的旧密码有误',
     'The confirmation password entered is incorrect' => '输入的确认密码有误',
-    'Password modification successful, please log in again' => '密码修改成功，请重新登录'
+    'Password modification successful, please log in again' => '密码修改成功，请重新登录',
+    'The new password is the same as the old password' => '新密码与旧密码相同',
 ];

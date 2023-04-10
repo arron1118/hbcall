@@ -26,7 +26,7 @@ class PortalController extends \app\BaseController
         $this->returnData['msg'] = lang('Unknown error');
 
         // 用户登录状态
-        $this->token = $this->request->cookie('hbcall_user_token');
+        $this->token = $this->request->cookie('hbcall_home_token');
         if ($this->token) {
             $this->userInfo = User::with(['company', 'userXnumber'])->where([
                 ['token', '=', $this->token],
