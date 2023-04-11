@@ -102,16 +102,23 @@ layui.define(['jquery', 'layer'], function (exports) {
             icon: 'warning',
         }),
 
-        showImportInfo: function () {
+        showImportInfo: function (type = 1) {
+            let label = ''
+            if (type === 1) {
+                label = "['客户名称', '电话号码', '所在地', '邮箱', '备注']"
+            } else if (type === 2) {
+                label = "['人才名称', '电话号码', '所在地', '邮箱', '备注', '专业', '证书类型']"
+            }
+
             arronUtil.Toast.fire({
                 icon: false,
                 toast: false,
                 timer: false,
                 title: '导入说明',
-                width: '45rem',
+                width: '54rem',
                 html: `<div class="p-3">
-                               <p>只能上传Excel表格，格式为:</p> <p class="fw-bold">['名称', '电话号码', '所在地', '邮箱', '备注', '专业']</p>
-                               <img src="/static/images/customer-example-import.png" class="pt-3" />
+                               <p>只能上传Excel表格，格式为:</p> <p class="fw-bold">${label}</p>
+                               <img src="/static/images/customer-example-import-${type}.png" class="pt-3" />
                             </div>`
             })
         },

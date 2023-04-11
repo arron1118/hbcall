@@ -180,10 +180,11 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入{$typeText}</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
                 {if ($module === 'company')}
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 分配{$typeText}</button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="migrate"><i class="fa fa-share-from-square"></i> 迁移{$typeText}</button>
                 {/if}
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
                 <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
             </script>
             {/if}

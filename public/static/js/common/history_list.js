@@ -39,6 +39,7 @@ layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
                 url: arronUtil.url("/HbCall/getHistoryList"),
                 method: 'post',
                 toolbar: '#syncCallHistory',
+                height: 725,
                 defaultToolbar: ['filter', 'exports', 'print', {
                     title: '提示',
                     layEvent: 'LAYTABLE_TIPS',

@@ -149,6 +149,17 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
             })
         },
 
+        getFilterParams: function () {
+            let params = [],
+                user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
+                cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
+            params = Object.assign({}, form.val('searchForm'), params)
+            Object.assign(params, user)
+            Object.assign(params, cate)
+
+            return params
+        },
+
         listener: function () {
             controller.upload()
 
@@ -166,12 +177,9 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                 type: 'datetime',
                 done: function (value) {
                     let d = value.split(' - '),
-                        params = [],
-                        user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
-                        cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
-                    params = Object.assign({}, form.val('searchForm'), {startDate: d[0], endDate: d[1]})
-                    Object.assign(params, user)
-                    Object.assign(params, cate)
+                        params = controller.getFilterParams()
+                    Object.assign(params, { startDate: d[0], endDate: d[1] })
+
                     controller.reloadTable(params)
                 }
             });
@@ -247,6 +255,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                 where: {
                     type: type,
                 },
+                height: 725,
                 method: 'post',
                 toolbar: '#currentTableBar',
                 defaultToolbar: ['filter', 'exports', 'print', {
@@ -324,7 +333,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                 let checkStatus = table.checkStatus('customerTable').data;
                 let ids = '';
 
-                if (['distribution', 'changeCate', 'delete'].includes(obj.event)) {
+                if (['distribution', 'changeCate', 'delete', 'migrate'].includes(obj.event)) {
                     let temp = [];
                     if (checkStatus.length <= 0) {
                         Toast.fire({ title: '请选择' + typeText, timer: 1500 });
@@ -410,7 +419,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                         break;
 
                     case 'info':
-                        arronUtil.showImportInfo()
+                        arronUtil.showImportInfo(type)
                         break;
 
                     case 'importExcel':
@@ -420,40 +429,57 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                     case 'delete':
                         controller.delete(ids)
                         break;
+
+                    case 'migrate':
+                        let t = type === 1 ? '人才' : '客户'
+                        arronUtil.Toast.fire({
+                            timer: false,
+                            icon: 'question',
+                            toast: false,
+                            text: '确定迁移所选的' + typeText + '到' + t + '库吗？',
+                            showConfirmButton: true,
+                            confirmButtonText: '执行迁移',
+                            showDenyButton: true,
+                            denyButtonText: '取消',
+                        }).then(val => {
+                            if (val.isConfirmed) {
+                                $.post(arronUtil.url('/Customer/migrate'), { ids: ids, type: type }, (res) => {
+                                    let option = {
+                                        title: res.msg,
+                                        toast: false,
+                                        timer: false,
+                                        showConfirmButton: true,
+                                        confirmButtonText: '确定',
+                                    }
+
+                                    if (res.code) {
+                                        option.icon = 'success'
+                                        option.text = '成功迁移 ' + res.data + ' 条数据'
+
+                                        controller.reloadTable(controller.getFilterParams())
+                                    }
+
+                                    arronUtil.Toast.fire(option)
+                                })
+                            }
+                        })
+                        break;
                 }
             });
 
             form.on('select(distributionFilter)', function (data) {
-                console.log(data)
-                let params = [],
-                    user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
-                    cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
-                params[data.elem.name] = data.value
-                params = Object.assign({}, form.val('searchForm'), params)
-                Object.assign(params, user)
-                Object.assign(params, cate)
-                controller.reloadTable(params);
+                controller.reloadTable(controller.getFilterParams());
             })
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                let user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
-                    cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
-                Object.assign(data.field, user)
-                Object.assign(data.field, cate)
-                //执行搜索重载
-                controller.reloadTable(data.field)
+                controller.reloadTable(controller.getFilterParams())
 
                 return false
             });
 
             $('button[type="reset"]').on('click', function () {
-                let params = [],
-                    user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
-                    cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
-                Object.assign(params, user)
-                Object.assign(params, cate)
-                controller.reloadTable(params)
+                controller.reloadTable(controller.getFilterParams())
             })
         }
     }

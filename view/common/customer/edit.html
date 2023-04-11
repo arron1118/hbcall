@@ -30,13 +30,19 @@
                 <input type="text" name="phone" id="phone" placeholder="手机号"
                        autocomplete="off" class="form-control" value="" required>
             </div>
+            {if $type === 2}
+            <div class="mb-3">
+                <label class="form-label" for="certificate">证书类型</label>
+                <input type="text" name="certificate" id="certificate" placeholder="证书类型"
+                       autocomplete="off" class="form-control" value="">
+            </div>
 
             <div class="mb-3">
                 <label class="form-label" for="professional">专业</label>
                 <input type="text" name="professional" id="professional" placeholder="专业"
                        autocomplete="off" class="form-control" value="">
             </div>
-
+            {/if}
             <div class="mb-3">
                 <label class="form-label" for="province">所在地</label>
                 <input type="text" name="province" placeholder="所在地"
