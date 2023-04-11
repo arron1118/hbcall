@@ -37,7 +37,22 @@ layui.use(['jquery', 'form', 'table', 'arronUtil'], function () {
             table.on('toolbar(currentTableFilter)', function (obj) {
                 switch (obj.event) {  // 监听添加操作
                     case 'add':
-                        layer.prompt({title: '输入号码'}, function (input, index) {
+                        arronUtil.Toast.fire({
+                            toast: false,
+                            timer: false,
+                            input: 'text',
+                            inputLabel: '号码',
+                            inputPlaceholder: '请输入号码',
+                            showConfirmButton: true,
+                            confirmButtonText: '确定',
+                            icon: '',
+                            customClass: {
+                                input: 'form'
+                            }
+                        }).then(res => {
+                            console.log(res)
+                        })
+                        /*layer.prompt({title: '输入号码'}, function (input, index) {
                             if (input.length !== 11 || !arronUtil.isPhone(input)) {
                                 arronUtil.Toast.fire({ title: '请输入正确的号码' })
                                 return false;
@@ -57,7 +72,7 @@ layui.use(['jquery', 'form', 'table', 'arronUtil'], function () {
 
                                 arronUtil.Toast.fire(option)
                             })
-                        });
+                        });*/
                         break;
                 }
             })
