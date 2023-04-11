@@ -144,6 +144,10 @@
                     <th lay-data="{field: 'province', title: '所在地', align: 'center', width: 100}"></th>
                     <th lay-data="{field: 'comment', title: '备注', align: 'center', width: 240}"></th>
                     <th lay-data="{field: 'cate_text', title: '类型', align: 'center', width: 100}"></th>
+                    {if $type === 2}
+                    <th lay-data="{field: 'professional', title: '专业', align: 'center', width: 150}"></th>
+                    <th lay-data="{field: 'certificate', title: '证书类型', align: 'center', width: 100}"></th>
+                    {/if}
                     {if ($module === 'admin')}
                     <th lay-data="{field: 'corporation', title: '所属公司', align: 'center', width: 300}"></th>
                     {/if}

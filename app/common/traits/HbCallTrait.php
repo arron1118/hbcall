@@ -27,6 +27,10 @@ trait HbCallTrait
         $customerId = $this->request->param('customerId', 0);
         $customer = Customer::find($customerId);
 
+        if ($customer) {
+            $mobile = $customer->getData('phone');
+        }
+
         // 试用账号到期后无法拨号
         if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
             $this->returnData['msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
@@ -50,11 +54,6 @@ trait HbCallTrait
                 $this->returnData['msg'] = lang('测试时间结束，请联系管理员开通正式账号后再拨打');
                 $this->returnApiData();
             }
-        }
-
-        if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
-            $this->returnData['msg'] = lang('Please enter the correct mobile phone number');
-            $this->returnApiData();
         }
 
         if ($this->userInfo->phone === '') {

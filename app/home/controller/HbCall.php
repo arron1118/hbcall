@@ -54,6 +54,10 @@ class HbCall extends \app\common\controller\HomeController
         $customerId = $this->request->param('customerId', 0);
         $customer = Customer::find($customerId);
 
+        if ($customer) {
+            $mobile = $customer->getData('phone');
+        }
+
         // 不是试用账号且欠费无法拨号
         if (!$this->userInfo->company->getData('is_test') && $this->userInfo->company->getData('balance') <= 0) {
             $this->returnData['msg'] = lang('您的余额已经不足，为了不影响呼叫，请联系管理员及时充值！');
@@ -80,10 +84,6 @@ class HbCall extends \app\common\controller\HomeController
             }
         }
 
-        if ($customer) {
-            $mobile = $customer->getData('phone');
-        }
-
         if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
             $this->returnData['msg'] = lang('Please enter the correct mobile phone number');
             $this->returnData['info'] = lang('Tips');
@@ -92,7 +92,7 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         if ($this->userInfo->phone === '') {
-            $this->returnData['msg'] = '请前往个人资料中填写手机号</a>';
+            $this->returnData['msg'] = '请前往个人资料中填写手机号';
             $this->returnData['info'] = lang('Tips');
             $this->returnData['status'] = 0;
             return json($this->returnData);

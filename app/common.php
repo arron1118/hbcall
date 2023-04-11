@@ -153,6 +153,8 @@ if (!function_exists('readExcel')) {
             $province = $sheet->getCellByColumnAndRow(3, $i)->getValue();
             $email = $sheet->getCellByColumnAndRow(4, $i)->getValue();
             $comment = $sheet->getCellByColumnAndRow(5, $i)->getValue();
+            $professional = $sheet->getCellByColumnAndRow(6, $i)->getValue();
+            $certificate = $sheet->getCellByColumnAndRow(7, $i)->getValue();
             if ($title && $phone) {
                 if (!$is_repeat_customer) {
                     $customer = \app\common\model\Customer::where([
@@ -168,6 +170,8 @@ if (!function_exists('readExcel')) {
                             'province' => trim($province ?? ''),
                             'email' => trim($email ?? ''),
                             'comment' => trim($comment ?? ''),
+                            'professional' => trim($professional ?? ''),
+                            'certificate' => trim($certificate ?? ''),
                         ]);
                         array_push($log, $a);
                     }
@@ -178,6 +182,8 @@ if (!function_exists('readExcel')) {
                         'province' => trim($province ?? ''),
                         'email' => trim($email ?? ''),
                         'comment' => trim($comment ?? ''),
+                        'professional' => trim($professional ?? ''),
+                        'certificate' => trim($certificate ?? ''),
                     ]);
                     array_push($log, $a);
                 }
