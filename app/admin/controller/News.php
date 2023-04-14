@@ -19,8 +19,8 @@ class News extends \app\common\controller\AdminController
             $map = [
                 ['status', '<>', '-1']
             ];
-            $page = $this->request->param('page', 1);
-            $limit = $this->request->param('limit', 10);
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
             $search_title = $this->request->param('title', '');
             $search_time = $this->request->param('time', '');
 
@@ -35,7 +35,10 @@ class News extends \app\common\controller\AdminController
 
             $count = $this->model::where($map)->count();
 
-            $newsList = $this->model::where($map)->limit(($page - 1) * $limit, $limit)->order('update_time DESC')->select();
+            $newsList = $this->model::where($map)
+                ->limit(($page - 1) * $limit, $limit)
+                ->order('id DESC')
+                ->select();
 
             $this->returnData['code'] = 1;
             $this->returnData['data'] = $newsList;

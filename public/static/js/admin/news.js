@@ -71,7 +71,7 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                                 option.icon = 'success'
 
                                 //表格导入成功后，重载表格
-                                table.reload('newsTable');
+                                controller.reloadTable()
                             }
 
                             arronUtil.Toast.fire(option)
@@ -88,6 +88,26 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                     title: '请联系管理员!!!'
                 })
             }
+        },
+
+        delete: function (ids) {
+            $.post(arronUtil.url('/news/delete'), {ids: ids}, function (res) {
+                arronUtil.Toast.fire({
+                    title: res.msg,
+                    icon: 'success'
+                })
+
+                table.reload('newsTable');
+            });
+        },
+
+        reloadTable: function (params = {}) {
+            table.reload('newsTable', {
+                page: {
+                    curr: 1
+                },
+                where: params
+            });
         },
 
         listener: function () {
@@ -156,15 +176,8 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                let params = JSON.stringify(data.field);
-                //todo
                 //执行搜索重载
-                table.reload('newsTable', {
-                    page: {
-                        curr: 1
-                    },
-                    where: data.field
-                });
+                controller.reloadTable(data.field)
 
                 return false;
             });
@@ -209,16 +222,10 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                             ids.push(data[i].id);
                         });
 
-                        layer.confirm('删除 ' + data.length + ' 条数据？确定么', function (index) {
-                            $.post(arronUtil.url('/news/delete'), {ids: ids}, function (res) {
-                                arronUtil.Toast.fire({
-                                    title: res.msg,
-                                    icon: 'success'
-                                })
-                                layer.close(index);
-
-                                table.reload('newsTable');
-                            });
+                        arronUtil.Toast.fire( { title: '删除 ' + data.length + ' 条数据？确定么' }).then(function (val) {
+                            if (val.isConfirmed) {
+                                controller.delete(ids)
+                            }
                         });
                         break;
                 }
@@ -242,16 +249,17 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                         });
                         break;
                     case 'del':
-                        layer.confirm('真的删除这条数据么', function (index) {
-                            $.post(arronUtil.url('/news/delete'), {ids: obj.data.id}, function (res) {
-                                arronUtil.Toast.fire({
-                                    title: res.msg,
-                                    icon: 'success'
-                                })
-
-                                obj.del();
-                                layer.close(index);
-                            })
+                        arronUtil.Toast.fire({
+                            title: '真的删除这条数据么',
+                            showConfirmButton: true,
+                            confirmButtonText: '确定',
+                            toast: false,
+                            icon: 'question',
+                            timer: false,
+                        }).then(function (val) {
+                            if (val.isConfirmed) {
+                                controller.delete(obj.data.id)
+                            }
                         });
                         break;
                 }

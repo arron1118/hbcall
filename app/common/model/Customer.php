@@ -50,6 +50,22 @@ class Customer extends Model
         return $this->typeList;
     }
 
+    public function getSearchItem($type = 1)
+    {
+        $searchItem = [
+            'title' => '名称',
+            'phone' => '联系电话',
+            'comment' => '备注',
+        ];
+
+        if ($type === 2) {
+            $searchItem['professional'] = '专业';
+            $searchItem['certificate'] = '证书类型';
+        }
+
+        return $searchItem;
+    }
+
     public static function onAfterDelete($customer)
     {
         CustomerRecord::destroy(function ($query) use ($customer) {

@@ -7,25 +7,8 @@
 <div class="container-fluid bg-white rounded-3 py-3">
     <div class="row">
         <div class="col">
-            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" name="searchForm">
                 <div class="layui-form-item">
-                    {if ($module === 'admin')}
-                    <div class="layui-inline">
-                        <label class="layui-form-label">筛选</label>
-                        <div class="layui-input-inline">
-                            <select name="company_id" lay-filter="filterCompany">
-                                <option value="0">全部公司</option>
-                                {foreach $company as $val}
-                                <option value="{$val.id}">{$val.corporation}</option>
-                                {/foreach}
-                            </select>
-                        </div>
-                        <div class="layui-input-inline">
-                            <select name="user_id" lay-filter="filterUser">
-                            </select>
-                        </div>
-                    </div>
-                    {/if}
                     {if ($module !== 'home')}
                     <div class="layui-inline">
                         <label class="layui-form-label">分配状态</label>
@@ -54,9 +37,9 @@
                         <label class="layui-form-label">搜索</label>
                         <div class="layui-input-inline">
                             <select name="operate" lay-filter="filterOperate">
-                                <option value="title">{$typeText}名称</option>
-                                <option value="phone">联系电话</option>
-                                <option value="comment">备 注</option>
+                                {foreach ($searchItem as $key => $item)}
+                                <option value="{$key}">{$item}</option>
+                                {/foreach}
                             </select>
                         </div>
                         <div class="layui-input-inline">

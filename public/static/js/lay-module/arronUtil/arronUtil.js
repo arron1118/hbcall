@@ -3,6 +3,11 @@ layui.define(['jquery', 'layer'], function (exports) {
         layer = layui.layer;
 
     let arronUtil = {
+        /**
+         * 生成 URL 链接
+         * @param url
+         * @returns {string}
+         */
         url: function (url) {
             return BASE_FILE + url
         },
@@ -89,11 +94,19 @@ layui.define(['jquery', 'layer'], function (exports) {
             }
         },
 
+        /**
+         * 检测手机号码
+         * @param phone
+         * @returns {boolean}
+         */
         isPhone: function (phone) {
             let pattern = /^1[3456789]\d{9}$/;
             return pattern.test(phone);
         },
 
+        /**
+         * 弹窗提示
+         */
         Toast: window.Swal.mixin({
             toast: true,
             position: 'center',
@@ -102,6 +115,10 @@ layui.define(['jquery', 'layer'], function (exports) {
             icon: 'warning',
         }),
 
+        /**
+         * 展示客户导入提示信息
+         * @param type
+         */
         showImportInfo: function (type = 1) {
             let label = ''
             if (type === 1) {
@@ -124,89 +141,134 @@ layui.define(['jquery', 'layer'], function (exports) {
         },
 
         /**
+         * 支付接口
+         * @param page
+         * @param payType
+         * @param amount
+         * @param payNo
+         */
+        pay: function (page, payType, amount, payNo = '') {
+            if (payType === 1) {
+                $.post(arronUtil.url("/payment/pay"), { payType: payType, amount: amount, payno: payNo }, function (res) {
+                    if (res.code === 1) {
+                        let timerInterval, trade_state, trade_state_desc
+                        arronUtil.Toast.fire({
+                            toast: false,
+                            timer: false,
+                            icon: false,
+                            allowOutsideClick: false,
+                            showCloseButton: true,
+                            html: `
+                            <div class="text-center py-3">
+                                <h6>请使用微信扫码支付</h6>
+                                <img src="${res.data.qr}" />
+                                <h6 class="fs-3"><span class="fs-6">金额：￥</span>${res.data.amount}</h6>
+                            </div>
+                            `,
+                            didOpen: () => {
+                                timerInterval = setInterval(function(){
+                                    $.post(arronUtil.url("/payment/checkOrder"), { payno: res.data.payno }, function (r) {
+                                        if (r.code === 1) {
+                                            trade_state = r.data.trade_state
+                                            trade_state_desc = r.data.trade_state_desc
+                                            if (r.data.trade_state === 'SUCCESS') {
+                                                arronUtil.Toast.fire({
+                                                    title: r.data.trade_state_desc,
+                                                    icon: 'success',
+                                                })
+                                            }
+                                        }
+                                    });
+                                }, 3000);
+                            },
+                            didDestroy: () => {
+                                clearInterval(timerInterval)
+                            }
+                        }).then((val) => {
+                            page.reloadTable()
+                            if (trade_state === 'NOTPAY') {
+                                arronUtil.Toast.fire({
+                                    title: trade_state_desc
+                                })
+                            }
+                        })
+                    } else {
+                        arronUtil.Toast.fire({
+                            title: res.msg,
+                        })
+                    }
+                })
+            } else if (payType === 2) {
+                layer.open({
+                    title: '支付',
+                    type: 2,
+                    area: ['100%', '100%'],
+                    content: arronUtil.url("/payment/pay") + '?payType=' + payType + '&amount=' + amount + '&payno=' + payNo,
+                    btn: false,
+                    cancel: function (index, layero) {
+                        layer.close(index);
+                        page.reloadTable();
+                    }
+                });
+            }
+        },
+
+        /**
          * 呼叫提示信息
          */
         caller: {
             success: function (param) {
-                let option = {
-                    type: 1,
-                    title: param.info ? param.info : '拨号成功！',
-                    closeBtn: 2,
-                    area: '400px;',
-                    shade: 0.8,
-                    id: 'LAY_layuipro',
-                    btnAlign: 'c',
-                    moveType: 1,
-                    skin: 'layer-ext-blue',
-                }
-                switch (param.call_type) {
+                let op = {
+                    toast: false,
+                    titleText: '拨号成功',
+                    icon: 'success',
+                    allowOutsideClick: false,
+                }, timerInterval
+
+                switch (param.data.call_type) {
                     case 1:
-                        option.content = `
-                            <div style="padding: 50px; line-height: 30px; font-weight: 300;">
-                                <p>请在<span class="fs-3 clock px-2">10</span>秒内用手机拨打号码：<h3>${param.data.xNumber}</h3> 进行通话。</p>
+                        op.timer = 11000
+                        op.timerProgressBar = true
+                        op.didOpen = () => {
+                            const t = Swal.getHtmlContainer().querySelector('.clock')
+                            timerInterval = setInterval(() => {
+                                t.textContent = Math.ceil(Swal.getTimerLeft() / 1000)
+                            }, 1000)
+                        }
+                        op.willClose = () => {
+                            clearInterval(timerInterval)
+                        }
+                        op.html = `
+                            <div>
+                                <p>请在<span class="fs-3 clock px-2 text-warning">10</span>秒内用手机拨打号码：<h3>${param.data.xNumber}</h3> 进行通话。</p>
                             </div>
                         `
-                        option.success = function (layero, index) {
-                            // 10秒倒计时
-                            let t = 10;
-
-                            let inter = setInterval(function () {
-                                t--;
-                                $('.clock').text(t);
-                                if (t < 0) {
-                                    clearInterval(inter);
-                                    // 关闭当前窗
-                                    layer.close(index);
-                                }
-                            }, 1000);
-                        }
                         break;
 
                     case 2:
                     case 5:
-                        option.content = `
-                            <div style="padding: 50px; line-height: 30px; font-weight: 300;">
+                    case 3:
+                    case 4:
+                        op.html = `
+                            <div>
                                 <p>${param.msg}</p>
                             </div>
                         `
-                        option.time = 3000
-                        break;
-
-                    case 3:
-                    case 4:
-                        option.content = `
-                            <div style="padding: 50px; line-height: 30px; font-weight: 300;">
-                                <p>${param.message}</p>
-                            </div>
-                        `
-                        option.time = 3000
                         break;
                 }
-
-                layer.config({
-                    extend: 'skin/blue.css',
-                }).open(option);
+                arronUtil.Toast.fire(op)
             },
             fail: function (param) {
-                let msg = param.msg
-
-                layer.config({
-                    extend: 'skin/red.css',
-                }).open({
-                    title: param.info ? param.info : '温馨提示',
-                    type: 1,
-                    area: '400px',
-                    shade: 0.8,
-                    id: 'LAY_layuipro',
-                    btnAlign: 'c',
-                    closeBtn: 2,
-                    moveType: 1,
-                    skin: 'layer-ext-red',
-                    content: `
-                        <div style="padding: 50px; line-height: 30px; font-weight: 300;">
-                            <p>${msg}</p>
+                arronUtil.Toast.fire({
+                    toast: false,
+                    timer: false,
+                    icon: 'error',
+                    titleText: '温馨提示',
+                    html: `
+                        <div class="">
+                            <p>${param.msg}</p>
                         </div>
-                    `
+                    `,
                 })
             }
         }

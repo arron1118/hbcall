@@ -155,6 +155,7 @@ if (!function_exists('readExcel')) {
             $comment = $sheet->getCellByColumnAndRow(5, $i)->getValue();
             $professional = $sheet->getCellByColumnAndRow(6, $i)->getValue();
             $certificate = $sheet->getCellByColumnAndRow(7, $i)->getValue();
+            $customer = null;
             if ($title && $phone) {
                 if (!$is_repeat_customer) {
                     $customer = \app\common\model\Customer::where([
@@ -162,21 +163,10 @@ if (!function_exists('readExcel')) {
                         'company_id' => $appendColumns['company_id'],
                         'type' => $appendColumns['type'],
                     ])->findOrEmpty();
+                }
 
-                    if ($customer->isEmpty()) {
-                        $a = array_merge($appendColumns, [
-                            'title' => trim($title),
-                            'phone' => trim($phone),
-                            'province' => trim($province ?? ''),
-                            'email' => trim($email ?? ''),
-                            'comment' => trim($comment ?? ''),
-                            'professional' => trim($professional ?? ''),
-                            'certificate' => trim($certificate ?? ''),
-                        ]);
-                        array_push($log, $a);
-                    }
-                } else {
-                    $a = array_merge($appendColumns, [
+                if (($customer && $customer->isEmpty()) || $is_repeat_customer) {
+                    $log[] = array_merge($appendColumns, [
                         'title' => trim($title),
                         'phone' => trim($phone),
                         'province' => trim($province ?? ''),
@@ -185,12 +175,11 @@ if (!function_exists('readExcel')) {
                         'professional' => trim($professional ?? ''),
                         'certificate' => trim($certificate ?? ''),
                     ]);
-                    array_push($log, $a);
                 }
             }
         }
 
-        return $log;
+        return $is_repeat_customer ? $log : array_intersect_key($log, array_unique(array_column($log, 'phone')));
     }
 }
 

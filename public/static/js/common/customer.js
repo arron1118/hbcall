@@ -25,7 +25,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
     let controller = {
         makeCall: function (params = {phone: '', customerId: 0}, obj = null) {
             $.post(REQUEST_CONFIG.MAKE_CALL_URL, {mobile: params.phone, customerId: params.customerId}, function (res) {
-                if ((res.code == '1000' || res.code == '0000' || res.code == '1003') && res.code !== 0) {
+                if (res.code === 1) {
                     obj.update({
                         last_calltime: arronUtil.getDateTime(),
                         called_count: obj.data.called_count + 1
@@ -39,8 +39,8 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
         },
 
         reloadTable: function (params = {}, deep = false) {
-            let defaultParams = { type: type }
-            let finalParams = Object.assign({}, defaultParams, params)
+            let finalParams = controller.getFilterParams()
+            Object.assign(finalParams, params)
             table.reload('customerTable', {
                 where: finalParams,
                 page: {
@@ -100,11 +100,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                     if (res.code === 1) {
                         op.icon = 'success';
                         op.timer = 1500
-                        table.reload('customerTable', {
-                            page: {
-                                curr: 1
-                            }
-                        })
+                        controller.reloadTable()
                     }
 
                     flag = false
@@ -150,14 +146,11 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
         },
 
         getFilterParams: function () {
-            let params = [],
+            let params = { type: type },
                 user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')'),
                 cate = eval('(' + $('#filterCate li.layui-menu-item-checked').attr('lay-options') + ')');
-            params = Object.assign({}, form.val('searchForm'), params)
-            Object.assign(params, user)
-            Object.assign(params, cate)
 
-            return params
+            return Object.assign({}, params, user, cate, form.val('searchForm'))
         },
 
         listener: function () {
@@ -165,10 +158,10 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
 
             //菜单点击事件
             dropdown.on('click(filterUser)', function (options) {
-                controller.reloadTable(Object.assign({}, form.val('searchForm'), options), true)
+                controller.reloadTable()
             });
             dropdown.on('click(filterCate)', function (options) {
-                controller.reloadTable(Object.assign({}, form.val('searchForm'), options), true)
+                controller.reloadTable()
             });
 
             laydate.render({
@@ -176,11 +169,8 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                 range: ['#startDate', '#endDate'],
                 type: 'datetime',
                 done: function (value) {
-                    let d = value.split(' - '),
-                        params = controller.getFilterParams()
-                    Object.assign(params, { startDate: d[0], endDate: d[1] })
-
-                    controller.reloadTable(params)
+                    let d = value.split(' - ')
+                    controller.reloadTable({ startDate: d[0], endDate: d[1] })
                 }
             });
 
@@ -224,24 +214,26 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                     id = $('[name="id"]').val(),
                     url = id ? REQUEST_CONFIG.EDIT_URL : REQUEST_CONFIG.ADD_URL
 
+                console.log(id)
                 $.post(url, formData, function (res) {
                     let option = {title: res.msg}
                     if (res.code === 1) {
                         option.icon = 'success'
                         option.timer = 1500
-                        Toast.fire(option).then(function () {
-                            let params = [],
-                                cate_item = $('.cate-list.active')
-                            params[cate_item.data('name')] = cate_item.data('key')
-                            table.reload('customerTable', {
-                                where: Object.assign({}, form.val('searchForm'), params)
-                            })
+                        option.didDestroy = function () {
+                            if (id) {
+                                table.reload('customerTable', {
+                                    where: controller.getFilterParams()
+                                })
+                            } else {
+                                controller.reloadTable()
+                            }
+
                             $('[data-bs-dismiss="offcanvas"]').click()
-                        })
-                    } else {
-                        Toast.fire(option)
+                        }
                     }
 
+                    Toast.fire(option)
                 })
 
                 return false
@@ -272,7 +264,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                     }
                 },
                 page: {
-                    limits: [15, 30, 45, 60, 90, 150, 300, 600, 900, 1500],
+                    limits: [15, 30, 45, 60, 90, 150, 300, 600],
                     limit: 15,
                 },
                 even: true,
@@ -382,17 +374,17 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                             skin: 'layui-layer-rim',
                             area: ['420px', '500px'],
                             content: `
-                                <div class="row justify-content-center">
-                                    <div class="col-12">
-                                        <ul class="list-group">
-                                            ${html}
-                                        </ul>
-                                    </div>
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                    <ul class="list-group">
+                                        ${html}
+                                    </ul>
                                 </div>
-                                `,
+                            </div>
+                            `,
                             success: function (layero, index) {
                                 layero.find('.' + selector).on('click', function () {
-                                    id = $(this).data('id')
+                                    let id = $(this).data('id')
                                     obj.event === 'distribution' ? params.user_id = id : params.cate = id
 
                                     $.post(url, params, function (res) {
@@ -401,16 +393,12 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                                             layer.close(index)
                                             op.icon = 'success'
                                             op.timer = 1500
-                                            Toast.fire(op).then(() => {
-                                                table.reload('customerTable', {
-                                                    page: {
-                                                        curr: 1
-                                                    }
-                                                })
-                                            })
-                                        } else {
-                                            Toast.fire(op)
+                                            op.didDestroy = () => {
+                                                controller.reloadTable()
+                                            }
                                         }
+
+                                        Toast.fire(op)
                                     })
                                 })
                             }
@@ -436,7 +424,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                             timer: false,
                             icon: 'question',
                             toast: false,
-                            text: '确定迁移所选的' + typeText + '到' + t + '库吗？',
+                            text: '确定迁移所选的[' + typeText + ']到[' + t + '库]吗？',
                             showConfirmButton: true,
                             confirmButtonText: '执行迁移',
                             showDenyButton: true,
@@ -452,11 +440,11 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                                         confirmButtonText: '确定',
                                     }
 
-                                    if (res.code) {
+                                    if (res.code === 1) {
                                         option.icon = 'success'
                                         option.text = '成功迁移 ' + res.data + ' 条数据'
 
-                                        controller.reloadTable(controller.getFilterParams())
+                                        controller.reloadTable()
                                     }
 
                                     arronUtil.Toast.fire(option)
@@ -468,18 +456,19 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
             });
 
             form.on('select(distributionFilter)', function (data) {
-                controller.reloadTable(controller.getFilterParams());
+                controller.reloadTable();
             })
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                controller.reloadTable(controller.getFilterParams())
+                controller.reloadTable()
 
                 return false
             });
 
             $('button[type="reset"]').on('click', function () {
-                controller.reloadTable(controller.getFilterParams())
+                document.searchForm.reset()
+                controller.reloadTable()
             })
         }
     }

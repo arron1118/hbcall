@@ -50,12 +50,14 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
         },
 
         reloadTable: function (params = {}) {
+            let defaultParams = {},
+                finalParams = Object.assign({}, defaultParams, form.val('searchForm'), params)
             //执行搜索重载
             table.reload('userTable', {
                 page: {
                     curr: 1
                 },
-                where: params
+                where: finalParams
             }, false);
         },
 
@@ -184,19 +186,20 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                     if (res.code === 1) {
                         option.icon = 'success'
                         option.timer = 2000
-                        arronUtil.Toast.fire(option).then(function () {
-                            let params = [],
-                                cate_item = $('.cate-list.active')
-                            params[cate_item.data('name')] = cate_item.data('key')
-                            table.reload('userTable', {
-                                where: Object.assign({}, form.val('searchForm'), params)
-                            })
+                        option.didDestroy = function () {
+                            if (id) {
+                                table.reload('userTable', {
+                                    where: form.val('searchForm')
+                                })
+                            } else {
+                                controller.reloadTable()
+                            }
+
                             $('[data-bs-dismiss="offcanvas"]').click()
-                        })
-                    } else {
-                        arronUtil.Toast.fire(option)
+                        }
                     }
 
+                    arronUtil.Toast.fire(option)
                 })
 
                 return false

@@ -144,15 +144,13 @@ layui.use(['form', 'table', 'laydate', 'jquery', 'arronUtil'], function () {
             });
 
             form.on('submit(searchSubmit)', function (data) {
-                controller.reloadTable(data.field)
+                controller.reloadTable()
 
                 return false;
             });
 
             form.on('select(companyFilter)', function (data) {
-                let d = [];
-                d[data.elem.name] = data.value
-                controller.reloadTable(d)
+                controller.reloadTable()
             })
 
             setInterval(controller.reloadTable, 300000)

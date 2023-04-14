@@ -13,7 +13,7 @@ trait CallHistoryTrait
     {
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
-            $this->view->assign('company', $company);
+            $this->view->assign('company', $company->toArray());
         }
 
         if ($this->module === 'company') {

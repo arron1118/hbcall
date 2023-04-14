@@ -126,7 +126,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
 
         makeCall: function (params = { phone: '', customerId: 0 }, addList = null, customerCalled = null) {
             $.post(REQUEST_CONFIG.MAKE_CALL_URL, { mobile: params.phone, customerId: params.customerId }, function (res) {
-                if ((res.code == '1000' || res.code == '0000' || res.code == '1003') && res.code !== 0) {
+                if (res.code === 1) {
                     if (customerCalled) {
                         $(customerCalled).addClass('text-black-50')
 

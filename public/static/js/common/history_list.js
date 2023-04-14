@@ -8,12 +8,15 @@ layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
 
     let controller = {
         reloadTable: function (params = {}) {
+            let defaultParams = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')')
+            let p = Object.assign({}, form.val('searchForm'), defaultParams)
+            Object.assign(p, params)
             //执行搜索重载
             table.reload('currentTableId', {
                 page: {
                     curr: 1
                 },
-                where: params
+                where: p
             });
         },
 
@@ -21,7 +24,7 @@ layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
 
             //菜单点击事件
             dropdown.on('click(filterUser)', function(options){
-                controller.reloadTable(Object.assign({}, form.val('searchForm'), options))
+                controller.reloadTable()
             });
 
             laydate.render({
@@ -30,8 +33,10 @@ layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
                 type: 'datetime',
                 done: function (value) {
                     let d = value.split(' - ')
-                    let data = Object.assign({}, form.val('searchForm'), { startDate: d[0], endDate: d[1] })
-                    controller.reloadTable(data)
+                    controller.reloadTable({
+                        startDate: d[0],
+                        endDate: d[1]
+                    })
                 }
             });
 
@@ -62,57 +67,44 @@ layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
             })
 
             $('button[type="reset"]').on('click', function () {
-                let params = [],
-                    user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')')
-                Object.assign(params, user)
-                controller.reloadTable(params);
-            })
-
-            form.on('select(filterUser)', function (data) {
-                controller.reloadTable(Object.assign({}, form.val('searchForm'), { user_id: data.value }))
+                document.searchForm.reset()
+                controller.reloadTable();
             })
 
             form.on('select(filterOperate)', function (data) {
-                let val = form.val('searchForm')
-                if (val.duration !== '' && val.operate !== '') {
-                    controller.reloadTable(val)
-                }
+                controller.reloadTable()
             })
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
-                let user = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')')
-                Object.assign(data.field, user)
-                controller.reloadTable(data.field);
+                controller.reloadTable();
 
                 return false;
             });
 
             table.on('toolbar(currentTableFilter)', function (obj) {
-                switch (obj.event) {
-                    case 'syncCallHistory':
-                        let load = layer.load();
-                        $.post(arronUtil.url('/HbCall/updateCallHistory'), function (res) {
-                            layer.close(load)
-                            let errorHtml = '';
-                            if (res.data.error > 0) {
-                                errorHtml += '<h5>失败</h5>'
-                                $.each(res.data.errList, function (index, item) {
-                                    errorHtml += '<p>' + index + '：' + item + '</p>'
-                                })
-                                errorHtml += '<br />'
-                            }
+                if (obj.event === 'syncCallHistory') {
+                    let load = layer.load();
+                    $.post(arronUtil.url('/HbCall/updateCallHistory'), function (res) {
+                        layer.close(load)
+                        let errorHtml = '';
+                        if (res.data.error > 0) {
+                            errorHtml += '<h5>失败</h5>'
+                            $.each(res.data.errList, function (index, item) {
+                                errorHtml += '<p>' + index + '：' + item + '</p>'
+                            })
+                            errorHtml += '<br />'
+                        }
 
-                            arronUtil.Toast.fire({
-                                toast: false,
-                                timer: false,
-                                html: '总共：' + res.data.total + ' 成功：' + res.data.success + ' 失败：' + res.data.error + '<br /><br />' + errorHtml,
-                                icon: 'success',
-                                showConfirmButton: true,
-                                confirmButtonText: '确定'
-                            });
-                        })
-                        break;
+                        arronUtil.Toast.fire({
+                            toast: false,
+                            timer: false,
+                            html: '总共：' + res.data.total + ' 成功：' + res.data.success + ' 失败：' + res.data.error + '<br /><br />' + errorHtml,
+                            icon: 'success',
+                            showConfirmButton: true,
+                            confirmButtonText: '确定'
+                        });
+                    })
                 }
             })
         },

@@ -12,15 +12,6 @@ class Payment extends \app\common\controller\CompanyController
 {
     use PaymentTrait;
 
-    public function initialize()
-    {
-        parent::initialize();
-
-        $this->model = new \app\common\model\Payment();
-        $this->view->assign('statusList', $this->model->getStatusList());
-        $this->view->assign('payTypeList', $this->model->getPayTypeList());
-    }
-
     /**
      * 检测订单
      * @return \think\response\Json
@@ -30,29 +21,38 @@ class Payment extends \app\common\controller\CompanyController
      */
     public function checkOrder()
     {
-        $payno = $this->request->param('payno');
-        $res = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno]);
-        return json($res);
+        if ($this->request->isPost()) {
+            $payno = $this->request->param('payno');
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = 'success';
+            $this->returnData['data'] = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno]);
+            return json($this->returnData);
+        }
     }
 
     public function pay()
     {
         $amount = (float) $this->request->param('amount', 0);
-        $payType = (int) $this->request->param('payType', 1);
+        $payType = (int) $this->request->param('payType/d', 1);
         $orderNo = $this->request->param('payno', '');
 
         if ($amount <= 0) {
-            return json(['code' => 0, 'msg' => '请输入正确的金额']);
+            $this->returnData['msg'] = '请输入正确的金额';
+            return json($this->returnData);
         }
 
         $data = $this->createOrder($this->userInfo, $amount, $payType, $orderNo);
         if ($payType === 1) {
             $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($data);
-            $qr = (new QRCode())->render($pay->code_url);
-            $this->view->assign('payno', $data['out_trade_no']);
-            $this->view->assign('qr', $qr);
-            return $this->view->fetch('common@payment/wxpay');
-        } else if ($payType === 2) {
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '订单创建成功';
+            $this->returnData['data'] = [
+                'qr' => (new QRCode())->render($pay->code_url),
+                'payno' => $data['out_trade_no'],
+                'amount' => $amount,
+            ];
+            return json($this->returnData);
+        } elseif ($payType === 2) {
             return Pay::alipay(Config::get('payment.alipay.web'))->web($data)->send();
         }
     }

@@ -68,7 +68,7 @@ class Payment extends \app\common\controller\ApiController
     {
         $pay = Pay::wechat(Config::get('payment.wxpay'));
 
-        try{
+        try {
             $data = $pay->verify(); // 是的，验签就这么简单！
 
             if ($data->result_code === 'SUCCESS') {
@@ -95,7 +95,7 @@ class Payment extends \app\common\controller\ApiController
             // $e->getMessage();
         }
 
-        return $pay->success()->send();// laravel 框架中请直接 `return $pay->success()`
+        return $pay->success()->send(); // laravel 框架中请直接 `return $pay->success()`
     }
 
     public function alipayNotify()
@@ -203,12 +203,11 @@ class Payment extends \app\common\controller\ApiController
         $payment = \app\common\model\Payment::where('payno', $payno)->find();
 
         if ($payment) {
-            $payType = $payment->getData('pay_type');
             $data = [];
-            if ($payType === 1) {
+            if ($payment->pay_type === 1) {
                 // 检查微信订单是否已支付
                 $data = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payment->payno]);
-            } elseif ($payType === 2) {
+            } elseif ($payment->pay_type === 2) {
                 // 检查支付宝订单是否已支付
                 try {
                     $data = Pay::alipay(Config::get('payment.alipay.web'))->find(['out_trade_no' => $payment->payno]);

@@ -114,7 +114,7 @@ class HbCall extends \app\common\controller\HomeController
             case 3:
             case 4:
                 if ($this->userInfo->callback_number === '') {
-                    $this->returnData['msg'] = '请提供正确的回拨号码后，再重新拨号';
+                    $this->returnData['msg'] = '请前行个人资料中填写正确的回拨号码后，再重新拨号';
                     $this->returnData['info'] = lang('Tips');
                     $this->returnData['status'] = 0;
                     return json($this->returnData);
@@ -146,68 +146,78 @@ class HbCall extends \app\common\controller\HomeController
 
         if ($response) {
             if ($response['code'] == '1000' || $response['code'] == '0000' || $response['code'] == '1003') {
+                $this->returnData['code'] = 1;
                 try {
-                    $CallHistory = new CallHistory();
-                    $CallHistory->user_id = $this->userInfo->id;
-                    $CallHistory->username = $this->userInfo->username;
-                    $CallHistory->company_id = $this->userInfo->company_id;
-                    $CallHistory->company = $this->userInfo->company->corporation;
-                    $CallHistory->call_type = $this->userInfo->company->getData('call_type');
-                    $CallHistory->rate = $this->userInfo->company->rate;
-                    $CallHistory->caller_number = $this->userInfo->phone;
-                    $CallHistory->called_number = $mobile;
-                    $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
-                    $CallHistory->customer_id = $customerId;
-                    $CallHistory->device = $this->agent->device();
-                    $CallHistory->platform = $this->agent->platform();
-                    $CallHistory->platform_version = $this->agent->version($this->agent->platform());
-                    $CallHistory->browser = $this->agent->browser();
-                    $CallHistory->browser_version = $this->agent->version($this->agent->browser());
-                    switch ($call_type) {
-                        case 2:
-                        case 5:
-                            $CallHistory->subid = $response['data']['callid'];
-                            break;
+                    if ($response['data']) {
+                        $CallHistory = new CallHistory();
+                        $CallHistory->user_id = $this->userInfo->id;
+                        $CallHistory->username = $this->userInfo->username;
+                        $CallHistory->company_id = $this->userInfo->company_id;
+                        $CallHistory->company = $this->userInfo->company->corporation;
+                        $CallHistory->call_type = $this->userInfo->company->getData('call_type');
+                        $CallHistory->rate = $this->userInfo->company->rate;
+                        $CallHistory->caller_number = $this->userInfo->phone;
+                        $CallHistory->called_number = $mobile;
+                        $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
+                        $CallHistory->customer_id = $customerId;
+                        $CallHistory->device = $this->agent->device();
+                        $CallHistory->platform = $this->agent->platform();
+                        $CallHistory->platform_version = $this->agent->version($this->agent->platform());
+                        $CallHistory->browser = $this->agent->browser();
+                        $CallHistory->browser_version = $this->agent->version($this->agent->browser());
+                        switch ($call_type) {
+                            case 2:
+                            case 5:
+                                $CallHistory->subid = $response['data']['callid'];
+                                break;
 
-                        case 3:
-                        case 4:
-                            $CallHistory->subid = $response['data']['bindId'];
-                            $CallHistory->axb_number = $this->userInfo->callback_number;
-                            break;
+                            case 3:
+                            case 4:
+                                $CallHistory->subid = $response['data']['bindId'];
+                                $CallHistory->axb_number = $this->userInfo->callback_number;
+                                break;
 
-                        default:
-                            $CallHistory->subid = $response['data']['subid'];
-                            break;
+                            default:
+                                $CallHistory->subid = $response['data']['subid'];
+                                break;
+                        }
+
+                        if ($customer) {
+                            $CallHistory->customer = $customer->title;
+
+                            CustomerModel::where([
+                                'user_id' => $this->userInfo->id,
+                                'id' => $customerId,
+                            ])->inc('called_count')->update(['last_calltime' => time()]);
+                        }
+
+                        $CallHistory->save();
+
+                        // 企业呼叫总数
+                        ++$this->userInfo->company->call_sum;
+                        $this->userInfo->company->save();
+
+                        // 用户呼叫总数
+                        ++$this->userInfo->call_sum;
+                        $this->userInfo->save();
                     }
-
-                    if ($customer) {
-                        $CallHistory->customer = $customer->title;
-
-                        CustomerModel::where([
-                            'user_id' => $this->userInfo->id,
-                            'id' => $customerId,
-                        ])->inc('called_count')->update(['last_calltime' => time()]);
-                    }
-
-                    $CallHistory->save();
-
-                    // 企业呼叫总数
-                    ++$this->userInfo->company->call_sum;
-                    $this->userInfo->company->save();
-
-                    // 用户呼叫总数
-                    ++$this->userInfo->call_sum;
-                    $this->userInfo->save();
                 } catch (DbException $dbException) {
-                    $response['msg'] = $dbException->getMessage();
+                    $this->returnData['msg'] = $dbException->getMessage();
                 }
             }
+
+            (isset($response['msg']) && $this->returnData['msg'] = $response['msg']) || (isset($response['message']) && $this->returnData['msg'] = $response['message']);
         } else {
-            $response['msg'] = '暂时无法呼叫';
+            $this->returnData['msg'] = '暂时无法呼叫';
         }
 
-        $response['call_type'] = $call_type;
-        return json($response);
+        if (isset($response['data'])) {
+            $this->returnData['data'] = array_merge($this->returnData['data'], $response['data']);
+        }
+
+        $this->returnData['response'] = $response;
+        $this->returnData['data']['call_type'] = $call_type;
+        return json($this->returnData);
     }
 
     public function downloadTemplate()

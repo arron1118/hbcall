@@ -13,9 +13,9 @@ class Payment extends Model
         return getDateFormatInfo($value);
     }
 
-    public function getPayTypeAttr($value)
+    public function getPayTypeTextAttr($value, $data)
     {
-        return $this->getPayTypeList()[$value];
+        return $this->getPayTypeList()[$data['pay_type']];
     }
 
     public function getPayTypeList()
@@ -23,9 +23,9 @@ class Payment extends Model
         return ['全部', '微信', '支付宝', '手动充值'];
     }
 
-    public function getStatusAttr($value)
+    public function getStatusTextAttr($value, $data)
     {
-        return $this->getStatusList()[$value];
+        return $this->getStatusList()[$data['status']];
     }
 
     public function getStatusList()

@@ -9,12 +9,23 @@ use think\facade\Event;
 trait PaymentTrait
 {
 
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $this->model = new \app\common\model\Payment();
+        $this->view->assign([
+            'statusList' => $this->model->getStatusList(),
+            'payTypeList' => $this->model->getPayTypeList(),
+        ]);
+    }
+
     public function index()
     {
         Event::trigger('Payment');
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
-            $this->view->assign('company', $company);
+            $this->view->assign('company', $company->hidden(['user'])->toArray());
         }
         return $this->view->fetch('common@payment/index');
     }
@@ -26,14 +37,14 @@ trait PaymentTrait
     public function getOrderList()
     {
         if ($this->request->isPost()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
             $payno = trim($this->request->param('payno', ''));
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
-            $payType = (int) $this->request->param('pay_type', 0);
-            $status = (int) $this->request->param('status', -1);
-            $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
+            $payType = $this->request->param('pay_type/d', 0);
+            $status = $this->request->param('status/d', -1);
+            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
 
             $where = [];
 
@@ -62,6 +73,7 @@ trait PaymentTrait
             $historyList = $this->model::where($where)
                 ->order('id DESC')
                 ->limit(($page - 1) * $limit, $limit)
+                ->append(['pay_type_text', 'status_text'])
                 ->select();
             return json(['rows' => $historyList, 'total' => $total, 'msg' => 'success', 'code' => 1]);
         }
@@ -85,7 +97,7 @@ trait PaymentTrait
                 'total_fee' => $amount * 100, // **单位：分**
                 'body' => $title,
             ];
-        } else if ($payType === 2) {
+        } elseif ($payType === 2) {
             $return = [
                 'out_trade_no' => $orderNo,
                 'total_amount' => $amount, // **单位：分**

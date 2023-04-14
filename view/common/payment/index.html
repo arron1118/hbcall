@@ -6,21 +6,8 @@
 <div class="container-fluid bg-white  pt-3">
     <div class="row">
         <div class="col">
-            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" name="searchForm">
                 <div class="layui-form-item">
-                    {if ($module === 'admin')}
-                    <div class="layui-inline">
-                        <label class="layui-form-label">充值方</label>
-                        <div class="layui-input-inline">
-                            <select name="company_id" lay-filter="corporationFilter">
-                                <option value="0">全部</option>
-                                {foreach $company as $key => $val}
-                                <option value="{$val.id}">{$val.corporation}</option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    {/if}
                     <div class="layui-inline">
                         <label class="layui-form-label">充值方式</label>
                         <div class="layui-input-inline">
@@ -102,14 +89,42 @@
     </div>
     {/if}
     <div class="row">
+        {if $module === 'admin'}
+        <div class="col-lg-2 col-md-3 col-sm-12">
+            <div class="layui-card border border-light-subtle mt-2">
+                <div class="layui-card-header">筛选</div>
+                <div class="layui-card-body overflow-y-auto overflow-x-hidden" style="max-height: 680px;">
+                    <ul class="layui-menu p-0" id="filterUser">
+                        {if $module === 'admin'}
+                        <li class="layui-menu-item-checked" lay-options="{company_id: 0}">
+                            <div class="layui-menu-body-title">全部</div>
+                        </li>
+                        {foreach $company as $key => $val}
+                        <li class="" lay-options="{company_id: {$val.id}}">
+                            <div class="layui-menu-body-title">
+                                {$val.corporation}
+                            </div>
+                        </li>
+                        {/foreach}
+                        {/if}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-10 col-md-9 col-sm-12">
+        {else /}
         <div class="col">
+        {/if}
             <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
                 <thead>
                 <tr>
                     <th lay-data="{field: 'id', title: 'ID', align: 'center', width: 100, fixed: 'left'}"></th>
                     <th lay-data="{field: 'payno', title: '订单号', align: 'center', width: 250}"></th>
                     <th lay-data="{field: 'title', title: '类型', align: 'center'}"></th>
+                    {if $module === 'admin'}
                     <th lay-data="{field: 'corporation', title: '充值方', align: 'center'}"></th>
+                    {/if}
                     <th lay-data="{field: 'amount', title: '金额(￥)', align: 'center'}"></th>
                     <th lay-data="{field: 'create_time', title: '充值时间', align: 'center'}"></th>
                     <th lay-data="{field: 'pay_time', title: '支付时间', align: 'center'}"></th>
@@ -119,25 +134,24 @@
                 </thead>
             </table>
             <script type="text/html" id="paymentType">
-                {{# if (d.pay_type === '微信') { }}
-                <img width="20" src="__STATIC__/images/wepay-logo.png" title="{{d.pay_type}}" alt="{{d.pay_type}}" />
-                {{# } }}
-                {{# if (d.pay_type === '支付宝') { }}
-                <i class="fa-brands fa-alipay fs-4 text-primary" title="{{d.pay_type}}"></i>
+                {{# if (d.pay_type === 1) { }}
+                <img width="20" src="__STATIC__/images/wepay-logo.png" title="{{d.pay_type_text}}" alt="{{d.pay_type_text}}" />
+                {{# } else if (d.pay_type === 2) { }}
+                <i class="fa-brands fa-alipay fs-4 text-primary" title="{{d.pay_type_text}}"></i>
                 {{# } }}
             </script>
 
             <script type="text/html" id="paymentStatus">
-                {{# if (d.status === '未支付') { }}
-                {if ($module === 'admin')}
-                <span class="text-warning">{{d.status}}</span>
-                {elseif ($module === 'company') /}
-                <span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>
-                {/if}
-                {{# } else if (d.status === '已关闭') { }}
-                <span class="text-danger">{{d.status}}</span>
+                {{# if (d.status === 0) { }}
+                    {if ($module === 'admin')}
+                        <span class="text-warning">{{d.status_text}}</span>
+                    {elseif ($module === 'company') /}
+                        <span class="layui-btn layui-btn-xs layui-btn-danger" lay-event="gopay">去支付</span>
+                    {/if}
+                {{# } else if (d.status === 2) { }}
+                    <span class="text-danger">{{d.status_text}}</span>
                 {{# } else { }}
-                <span class="text-info">{{d.status}}</span>
+                    <span class="text-info">{{d.status_text}}</span>
                 {{# } }}
             </script>
         </div>

@@ -1,6 +1,5 @@
-layui.use(['jquery', 'form', 'table', 'arronUtil'], function () {
+layui.use(['jquery', 'table', 'arronUtil'], function () {
     let $ = layui.jquery,
-        form = layui.form,
         arronUtil = layui.arronUtil,
         table = layui.table;
 
@@ -35,34 +34,30 @@ layui.use(['jquery', 'form', 'table', 'arronUtil'], function () {
              * toolbar监听事件
              */
             table.on('toolbar(currentTableFilter)', function (obj) {
-                switch (obj.event) {  // 监听添加操作
-                    case 'add':
-                        arronUtil.Toast.fire({
-                            toast: false,
-                            timer: false,
-                            input: 'text',
-                            inputLabel: '号码',
-                            inputPlaceholder: '请输入号码',
-                            showConfirmButton: true,
-                            confirmButtonText: '确定',
-                            icon: '',
-                            customClass: {
-                                input: 'form'
-                            }
-                        }).then(res => {
-                            console.log(res)
-                        })
-                        /*layer.prompt({title: '输入号码'}, function (input, index) {
-                            if (input.length !== 11 || !arronUtil.isPhone(input)) {
+                if (obj.event === 'add') {  // 监听添加操作
+                    arronUtil.Toast.fire({
+                        toast: false,
+                        timer: false,
+                        input: 'text',
+                        inputLabel: '号码',
+                        inputPlaceholder: '请输入号码',
+                        showConfirmButton: true,
+                        confirmButtonText: '确定',
+                        icon: '',
+                        customClass: {
+                            input: 'form'
+                        }
+                    }).then(res => {
+                        if (res.isConfirmed) {
+                            if (res.value.length !== 11 || !arronUtil.isPhone(res.value)) {
                                 arronUtil.Toast.fire({ title: '请输入正确的号码' })
                                 return false;
                             }
 
-                            $.post(arronUtil.url("/XnumberStore/add"), { number: input }, function (res) {
-                                let option = { title: res.msg }
-                                if (res.code === 1) {
+                            $.post(arronUtil.url("/XnumberStore/add"), { number: res.value }, function (r) {
+                                let option = { title: r.msg }
+                                if (r.code === 1) {
                                     option.icon = 'success'
-                                    layer.close(index)
                                     table.reload('XnumberStoreTable', {
                                         page: {
                                             curr: 1
@@ -72,8 +67,8 @@ layui.use(['jquery', 'form', 'table', 'arronUtil'], function () {
 
                                 arronUtil.Toast.fire(option)
                             })
-                        });*/
-                        break;
+                        }
+                    })
                 }
             })
 

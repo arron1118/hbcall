@@ -11,13 +11,26 @@ trait CustomerTrait
 {
     protected $type = 1;
 
+    protected $searchItem = [
+        'title' => '名称',
+        'phone' => '联系电话',
+        'comment' => '备注',
+    ];
+
+    protected function initialize()
+    {
+        parent::initialize();
+
+        $this->type = $this->request->param('type/d', 1);
+        $this->searchItem = (new CustomerModel)->getSearchItem($this->type);
+    }
+
     /**
      * 客户管理
      * @return mixed
      */
     public function index()
     {
-        $this->type = 1;
         return $this->init();
     }
 
@@ -35,7 +48,7 @@ trait CustomerTrait
     {
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
-            $this->view->assign('company', $company);
+            $this->view->assign('company', $company->toArray());
         }
 
         if ($this->module === 'company') {
@@ -47,6 +60,7 @@ trait CustomerTrait
             'type' => $this->type,
             'cateList' => $CustmoerModel->getCateList($this->type),
             'typeText' => $CustmoerModel->getTypeList()[$this->type],
+            'searchItem' => $CustmoerModel->getSearchItem($this->type),
         ]);
 
         return $this->view->fetch('common@customer/index');
@@ -55,17 +69,16 @@ trait CustomerTrait
     public function getCustomerList()
     {
         if ($this->request->isPost()) {
-            $page = (int)$this->request->param('page', 1);
-            $limit = (int)$this->request->param('limit', 10);
-            $operate = trim($this->request->param('operate', ''));
-            $keyword = trim($this->request->param('keyword', ''));
-            $status = (int) $this->request->param('status', -1);
-            $cate = (int) $this->request->param('cate', -1);
-            $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
-            $userId = (int) $this->request->param('user_id', $this->module === 'home' ? $this->userInfo->id : 0);
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
+            $operate = trim($this->request->param('operate/s', ''));
+            $keyword = trim($this->request->param('keyword/s', ''));
+            $status = $this->request->param('status/d', -1);
+            $cate = $this->request->param('cate/d', -1);
+            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
+            $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
-            $type = $this->request->param('type', 0);
 
             $where = [];
 
@@ -81,8 +94,8 @@ trait CustomerTrait
                 $where[] = ['cate', '=', $cate];
             }
 
-            if ($type > 0) {
-                $where[] = ['type', '=', $type];
+            if ($this->type > 0) {
+                $where[] = ['type', '=', $this->type];
             }
 
             if ($keyword) {
@@ -107,12 +120,10 @@ trait CustomerTrait
                 ->limit(($page - 1) * $limit, $limit)
                 ->append(['cate_text'])->select();
 
-            $this->returnData['data'] = $res->hidden(['company', 'user']);
+            $this->returnData['data'] = $res->hidden(['company', 'user'])->toArray();
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = 'success';
             $this->returnData['total'] = $total;
-
-            return json($this->returnData);
         }
 
         return json($this->returnData);
@@ -204,7 +215,7 @@ trait CustomerTrait
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = lang('The import was successful');
-                $this->returnData['data'] = $res;
+                $this->returnData['data'] = [];
 
                 return json($this->returnData);
             } catch (DbException $dbException) {
@@ -282,7 +293,7 @@ trait CustomerTrait
     {
         if ($this->request->isPost()) {
             $this->returnData['msg'] = '删除失败';
-            if ($id > 0) {
+            if ($id) {
                 $module = $this->module;
                 $user = $this->userInfo;
 
@@ -301,8 +312,6 @@ trait CustomerTrait
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '删除成功';
             }
-
-            return json($this->returnData);
         }
 
         return json($this->returnData);
