@@ -115,7 +115,7 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                                 if (nodeName === 'SELECT') {
                                     let v = ''
                                     if (name === 'call_type') {
-                                        v = Object.keys(res.data['callTypeList']).find(key => res.data['callTypeList'][key] === res.data['userInfo'][name]);
+                                        v = Object.keys(res.data['callTypeList']).find(key => parseInt(key) === res.data['userInfo'][name]);
                                     } else if (name === 'number_store_id') {
                                         v = res.data['userInfo']['companyXnumber']['number_store_id']
                                     }
@@ -234,23 +234,18 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
                 //执行搜索重载
-                controller.reloadTable(data.field)
+                controller.reloadTable()
 
                 return false
             });
             form.on('select(tryUserFilter)', function (data) {
-                let params = [];
-                params[data.elem.name] = data.value
-                params = Object.assign({}, form.val('searchForm'), params)
-                controller.reloadTable(params)
+                controller.reloadTable()
             })
             form.on('select(userStatusFilter)', function (data) {
-                let params = [];
-                params[data.elem.name] = data.value
-                params = Object.assign({}, form.val('searchForm'), params)
-                controller.reloadTable(params);
+                controller.reloadTable();
             })
             $('button[type="reset"]').on('click', function () {
+                document.searchForm.reset()
                 controller.reloadTable()
             })
 
@@ -320,7 +315,7 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                                     let option = { title: res.msg };
                                     if (res.code === 1) {
                                         option.icon = 'success'
-                                        obj.del();
+                                        controller.reloadTable()
                                     }
 
                                     arronUtil.Toast.fire(option)

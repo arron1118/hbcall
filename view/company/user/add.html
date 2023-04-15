@@ -72,7 +72,7 @@
                                autocomplete="off" class="layui-input" value="">
                     </div>
                 </div>
-                <div class="layui-form-item {if $user->getData('call_type') !== 1}d-none{/if}">
+                <div class="layui-form-item {if $user->call_type !== 1}d-none{/if}">
                     <label class="layui-form-label">小号</label>
                     <div class="layui-input-block">
                         <select name="number_store_id">
@@ -97,7 +97,7 @@
                     </div>
                 </div>
 
-                <div class="layui-form-item {if !in_array($user->getData('call_type'), [3, 4])}d-none{/if}">
+                <div class="layui-form-item {if !in_array($user->call_type, [3, 4])}d-none{/if}">
                     <label class="layui-form-label" for="callback_number">回拨号码<span class="text-danger" style="margin: 0 5px;">*</span></label>
                     <div class="layui-input-block" id="callback_number">
                         <input type="text" name="callback_number" placeholder="回拨号码"
@@ -152,8 +152,9 @@
 
 {block name="js"}
 <script>
-    layui.use(['form','laydate'], function () {
+    layui.use(['form','laydate', 'arronUtil'], function () {
         let $ = layui.jquery,
+            arronUtil = layui.arronUtil,
             laydate = layui.laydate,
             form = layui.form;
         let frameIndex = parent.layer.getFrameIndex(window.name);
@@ -174,34 +175,36 @@
             let params = data.field;
 
             if (params.phone === '') {
-                layer.msg('请输入手机号');
+                arronUtil.Toast.fire({ title: '请输入手机号' });
                 return false;
             }
             if (params.username === '') {
-                layer.msg('账号不能为空');
+                arronUtil.Toast.fire({ title: '账号不能为空' });
                 return false;
             }
             if (params.realname === '') {
-                layer.msg('真实姓名不能为空');
+                arronUtil.Toast.fire({ title: '真实姓名不能为空' });
                 return false;
             }
             if (params.password === '') {
-                layer.msg('密码不能为空');
+                arronUtil.Toast.fire({ title: '密码不能为空' });
                 return false;
             }
             if (params.is_test === '1' && params.test_endtime === '') {
-                layer.msg('结束时间不能为空', { icon: 5 })
+                arronUtil.Toast.fire({ title: '结束时间不能为空' })
                 return false
             }
-            $.post("{:url('/user/add')}", params, function (res) {
+            $.post(arronUtil.url('/user/add'), params, function (res) {
+                let option = { title: res.msg }
                 if (res.code === 1) {
-                    layer.msg(res.msg, {icon: 6, time: 2500}, function () {
-                        parent.layer.close(frameIndex);
-                        parent.layui.table.reload('userTable');
-                    });
-                } else {
-                    layer.msg(res.msg, {icon: 5});
+                    option.icon = 'success'
+                    option.didDestroy = function () {
+                        parent.layer.close(frameIndex)
+                        parent.layui.table.reload('userTable')
+                    }
                 }
+
+                arronUtil.Toast.fire(option)
             });
 
             return false;

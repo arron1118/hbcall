@@ -13,7 +13,7 @@ trait UserTrait
 
     public function login()
     {
-        if ($this->userInfo && $this->userInfo->token_expire_time > time() && $this->userInfo->getData('status')) {
+        if ($this->userInfo && $this->userInfo->token_expire_time > time() && $this->userInfo->status) {
             return redirect(url('/index'));
         }
 
@@ -34,13 +34,13 @@ trait UserTrait
             $now = time();
             $user->token_expire_time = $now + $this->token_expire_time;
 
-            if (!$user->getData('status')) {
+            if (!$user->status) {
                 $this->returnData['msg'] = lang('Account is locked');
                 return json($this->returnData);
             }
 
             // 试用用户试用期结束后禁止登录
-            if ($this->module === 'home' && $user->getData('is_test')) {
+            if ($this->module === 'home' && $user->is_test) {
                 $user->token_expire_time = $user->getData('test_endtime');
 
                 if ($user->getData('test_endtime') < $now) {

@@ -5,9 +5,12 @@ namespace app\common\model;
 
 use \think\Model;
 use app\admin\model\Admin;
+use think\model\concern\SoftDelete;
 
 class News extends Model
 {
+
+    use SoftDelete;
 
     public function getStatusAttr($value)
     {

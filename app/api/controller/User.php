@@ -78,7 +78,7 @@ class User extends ApiController
                 $this->returnApiData();
             }
 
-            if (!$user->getData('status')) {
+            if (!$user->status) {
                 $this->returnData['msg'] = lang('Account is locked');
                 $this->returnApiData();
             }
@@ -87,7 +87,7 @@ class User extends ApiController
             $user->token_expire_time = $now + $this->token_expire_time;
 
             // 试用用户试用期结束后禁止登录
-            if ($this->userType === 'user' && $user->getData('is_test')) {
+            if ($this->userType === 'user' && $user->is_test) {
                 $user->token_expire_time = $user->token_expire_time;
 
                 if ($user->getData('test_endtime') < time()) {
@@ -123,13 +123,11 @@ class User extends ApiController
 
             Session::set('api_' . $this->userType, $user->toArray());
 
-            $user->call_type = $user->company->getData('call_type');
+            $user->call_type = $user->company->call_type;
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('logined');
             $this->returnData['data'] = $user->hidden(['password', 'salt', 'company'])->toArray();
-
-            $this->returnApiData();
         }
 
         $this->returnApiData();

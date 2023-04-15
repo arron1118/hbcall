@@ -4,9 +4,12 @@ namespace app\common\model;
 
 use think\db\Query;
 use \think\Model;
+use think\model\concern\SoftDelete;
 
 class Company extends Model
 {
+
+    use SoftDelete;
 
     public function getPrevtimeAttr($value)
     {
@@ -33,19 +36,14 @@ class Company extends Model
         return $value ? date($this->getDateFormat(), $value) : '';
     }
 
-    public function getStatusAttr($value)
+    public function getStatusTextAttr($value, $data)
     {
-        return $this->getStatusList()[$value];
+        return $this->getStatusList()[$data['status']];
     }
 
-    public function getIsTestAttr($value)
+    public function getIsTestTextAttr($value, $data)
     {
-        return $this->getTestList()[$value];
-    }
-
-    public function getCallTypeAttr($value)
-    {
-        return $this->getCallTypeList()[$value];
+        return $this->getTestList()[$data['is_test']];
     }
 
     public function getCallTypeTextAttr($value, $data)

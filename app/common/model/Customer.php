@@ -4,9 +4,12 @@ namespace app\common\model;
 
 use think\facade\Log;
 use \think\Model;
+use think\model\concern\SoftDelete;
 
 class Customer extends Model
 {
+    use SoftDelete;
+
     protected $typeList = [
         '全部',
         '客户',

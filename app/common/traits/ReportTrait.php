@@ -138,7 +138,7 @@ from {$userTable} u
                     group by user_id) ch on u.id = ch.user_id
 left join (select count(id) as total1, user_id from {$callHistoryTable} where {$whereCompany} and {$where} and call_duration > 0 group by user_id) lch on lch.user_id=u.id
 left join (select count(id) as total2, user_id from {$callHistoryTable} where {$whereCompany} and {$where} and call_duration > 30 group by user_id) gch on gch.user_id=u.id
-left join (select sum(duration) as duration, sum(cost) as cost, user_id from {$expenseTable} where {$whereCompany} and {$where} group by user_id) dr on dr.user_id=u.id
+left join (select sum(call_duration_min) as duration, sum(cost) as cost, user_id from {$callHistoryTable} where {$whereCompany} and {$where} group by user_id) dr on dr.user_id=u.id
 where {$whereCompany}
 SQL;
 

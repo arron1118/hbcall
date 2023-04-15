@@ -4,9 +4,13 @@
 namespace app\common\model;
 
 use \think\Model;
+use think\model\concern\SoftDelete;
 
 class User extends Model
 {
+
+    use SoftDelete;
+
     public function getPrevtimeAttr($value)
     {
         return getDateFormatInfo($value);
@@ -17,9 +21,9 @@ class User extends Model
         return getDateFormatInfo($value);
     }
 
-    public function getStatusAttr($value)
+    public function getStatusTextAttr($value, $data)
     {
-        return $this->getStatusList()[$value];
+        return $this->getStatusList()[$data['status']];
     }
 
     public function getTestEndtimeAttr($value)
@@ -32,9 +36,9 @@ class User extends Model
         return ['-1' => '全部', '禁止', '正常'];
     }
 
-    public function getIsTestAttr($value)
+    public function getIsTestTextAttr($value, $data)
     {
-        return $this->getTestList()[$value];
+        return $this->getTestList()[$data['is_test']];
     }
 
     public function getTestList()

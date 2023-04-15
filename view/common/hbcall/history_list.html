@@ -34,18 +34,18 @@
                         </div>
                     </div>
 
-                    {if ($module === 'company' || $module === 'admin')}
                     <div class="layui-inline">
-                        <label class="layui-form-label">主叫号码</label>
+                        <label class="layui-form-label">号码筛选</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="caller_number" class="layui-input" value="" placeholder="主叫号码">
+                            <select name="caller" lay-filter="filterCaller">
+                                {if $module !== 'home'}
+                                <option value="caller_number">主叫号码</option>
+                                {/if}
+                                <option value="called_number">被叫号码</option>
+                            </select>
                         </div>
-                    </div>
-                    {/if}
-                    <div class="layui-inline">
-                        <label class="layui-form-label">被叫号码</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="called_number" class="layui-input" value="" placeholder="被叫号码">
+                            <input type="text" name="phone" class="layui-input" value="" placeholder="电话号码">
                         </div>
                     </div>
 

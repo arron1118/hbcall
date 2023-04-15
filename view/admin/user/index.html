@@ -6,29 +6,19 @@
 <div class="container-fluid bg-white rounded-3 py-2">
     <div class="row">
         <div class="col pt-2">
-            <form class="layui-form layui-form-pane" lay-filter="searchForm" action="">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">筛选</label>
-                    <div class="layui-input-block m-0">
-                        <input type="radio" name="like" value="all" title="全部" checked="">
-                        <input type="radio" name="like" value="probation" title="试用期">
-                        <input type="radio" name="like" value="using" title="使用中">
-                        <input type="radio" name="like" value="spot" title="即将到期">
-                        <input type="radio" name="like" value="expire" title="已无效">
-                    </div>
-                </div>
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" name="searchForm">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">账号</label>
+                        <label class="layui-form-label">关键词</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="username" autocomplete="off" class="layui-input">
+                            <select name="operate" lay-filter="filterOperate">
+                                <option value="username">账号</option>
+                                <option value="corporation">公司名称</option>
+                                <option value="phone">手机号</option>
+                            </select>
                         </div>
-                    </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">公司名称</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="corporation" autocomplete="off" class="layui-input">
+                            <input type="text" name="keyword" class="layui-input" value="" placeholder="关键词">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -87,9 +77,9 @@
                     <th lay-data="{field: 'deposit', title: '充值', align: 'center', sort: true, width: 150}"></th>
                     <th lay-data="{field: 'expense', title: '总消费', align: 'center', sort: true, width: 150}"></th>
                     <th lay-data="{field: 'logintime', title: '最后登录', align: 'center', width: 180}"></th>
-                    <th lay-data="{field: 'is_test', title: '试用', align: 'center', width: 120}"></th>
+                    <th lay-data="{field: 'is_test_text', title: '试用', align: 'center', width: 120}"></th>
                     <th lay-data="{field: 'test_endtime', title: '到期日期', align: 'center', width: 180}"></th>
-                    <th lay-data="{field: 'status', title: '状态', align: 'center', templet: '#status', width: 100}"></th>
+                    <th lay-data="{field: 'status_text', title: '状态', align: 'center', templet: '#status', width: 100}"></th>
                     <th lay-data="{title: '操作', width: 150, toolbar: '#currentTableBar', align: 'center', fixed: 'right'}"></th>
                 </tr>
                 </thead>
@@ -105,7 +95,7 @@
                 <span class="text-primary" title="点击查看用户列表">{{d.user_count}}</span>
             </script>
             <script type="text/html" id="status">
-                {{# if(d.status === '正常') { }}
+                {{# if(d.status === 1) { }}
                 <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" checked>
                 {{# } else { }}
                 <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter">

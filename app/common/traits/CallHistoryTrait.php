@@ -34,8 +34,8 @@ trait CallHistoryTrait
             $endDate = $this->request->param('endDate', '');
             $operate = $this->request->param('operate', '');
             $duration = $this->request->param('duration', '');
-            $caller_number = $this->request->param('caller_number', '');
-            $called_number = $this->request->param('called_number', '');
+            $caller = $this->request->param('caller', '');
+            $phone = $this->request->param('phone', '');
             $op = [
                 'eq' => '=',
                 'gt' => '>',
@@ -61,12 +61,8 @@ trait CallHistoryTrait
                 $map[] = ['call_duration', $op[$operate], $duration];
             }
 
-            if ($caller_number !== '') {
-                $map[] = ['caller_number', '=', $caller_number];
-            }
-
-            if ($called_number !== '') {
-                $map[] = ['called_number', '=', $called_number];
+            if ($caller !== '') {
+                $map[] = [$caller, 'like', '%' . $phone . '%'];
             }
 
             $total = CallHistory::where($map)->count();

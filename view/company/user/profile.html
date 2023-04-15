@@ -89,9 +89,9 @@
 {/block}
 {block name="js"}
 <script>
-    layui.use(['form', 'miniTab', 'jquery'], function () {
+    layui.use(['form', 'miniTab', 'jquery', 'arronUtil'], function () {
         let form = layui.form,
-            layer = layui.layer,
+            arronUtil = layui.arronUtil,
             $ = layui.jquery,
             miniTab = layui.miniTab;
 
@@ -99,12 +99,13 @@
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            $.post('{:url("/user/profile")}', data.field, function (res) {
+            $.post(arronUtil.url("/user/profile"), data.field, function (res) {
+                let option = { title: res.msg }
                 if (res.code) {
-                    layer.msg(res.msg, {icon: 6});
-                } else {
-                    layer.msg(res.msg, {icon: 5});
+                    option.icon = 'success'
                 }
+
+                arronUtil.Toast.fire(option)
             })
 
             return false;

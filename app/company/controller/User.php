@@ -12,19 +12,22 @@ class User extends \app\common\controller\CompanyController
 
     public function index()
     {
-        $this->view->assign('isTestList', (new UserModel())->getTestList());
-        $this->view->assign('statusList', (new UserModel())->getStatusList());
+        $userModel = new UserModel();
+        $this->view->assign([
+            'isTestList' => $userModel->getTestList(),
+            'statusList' => $userModel->getStatusList(),
+        ]);
         return $this->view->fetch();
     }
 
     public function getUserList()
     {
         if ($this->request->isAjax()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
-            $username = $this->request->param('username', '');
-            $phone = $this->request->param('phone', '');
-            $is_test = (int) $this->request->param('is_test', -1);
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
+            $operate = $this->request->param('operate', '');
+            $keyword = $this->request->param('keyword', '');
+            $is_test = $this->request->param('is_test/d', -1);
             $map = [
                 ['company_id', '=', $this->userInfo->id]
             ];
@@ -33,13 +36,10 @@ class User extends \app\common\controller\CompanyController
                 $map[] = ['is_test', '=', $is_test];
             }
 
-            if ($username) {
-                $map[] = ['username', 'like', '%' . $username . '%'];
+            if ($operate) {
+                $map[] = [$operate, 'like', '%' . $keyword . '%'];
             }
 
-            if ($phone) {
-                $map[] = ['phone', 'like', '%' . $phone . '%'];
-            }
             $total = UserModel::where($map)->count();
             $userList = UserModel::with(['userXnumber' => ['numberStore']])
                 ->hidden(['password', 'salt'])
@@ -47,9 +47,13 @@ class User extends \app\common\controller\CompanyController
                 ->where($map)
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
+                ->append(['is_test_text', 'status_text'])
                 ->select();
 
-            return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+            $this->returnData['total'] = $total;
+            $this->returnData['code'] = 1;
+            $this->returnData['rows'] = $userList;
+            $this->returnData['msg'] = '操作成功';
         }
 
         return json($this->returnData);
@@ -57,12 +61,12 @@ class User extends \app\common\controller\CompanyController
 
     public function checkLimitUser()
     {
-        if ($this->userInfo->limit_user > 0 && $this->userInfo->user_count === $this->userInfo->limit_user) {
+        if ($this->userInfo->limit_user > 0 && $this->userInfo->user_count >= $this->userInfo->limit_user) {
             $this->returnData['msg'] = '已经达到限制开通用户数量';
-            return json($this->returnData);
+        } else {
+            $this->returnData['code'] = 1;
         }
 
-        $this->returnData['code'] = 1;
         return json($this->returnData);
     }
 
@@ -182,6 +186,7 @@ class User extends \app\common\controller\CompanyController
             $userInfo->callback_number = $params['callback_number'];
             $userInfo->limit_call_number = $params['limit_call_number'];
             $userInfo->customer_view_num = $params['customer_view_num'];
+            $this->returnData['msg'] = '保存失败';
 
             if ($userInfo->save()) {
                 // 保存小号关联数据
@@ -196,8 +201,6 @@ class User extends \app\common\controller\CompanyController
 
                 $this->returnData['msg'] = '保存成功';
                 $this->returnData['code'] = 1;
-            } else {
-                $this->returnData['msg'] = '保存失败';
             }
 
             return json($this->returnData);
@@ -216,9 +219,11 @@ class User extends \app\common\controller\CompanyController
                 return json($this->returnData);
             }
 
-            $userInfo = UserModel::with('userXnumber')->find($userId);
-            if ($userInfo->userXnumber()->delete()) {
-                $userInfo->delete();
+            $userInfo = UserModel::where([
+                'company_id' => $this->userInfo->id,
+            ])->find($userId);
+            if ($userInfo->delete()) {
+                $userInfo->userXnumber()->delete();
             }
 
             $this->returnData['code'] = 1;

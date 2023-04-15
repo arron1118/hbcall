@@ -74,7 +74,7 @@
                     </div>
                 </div>
 
-                <div class="layui-form-item {if $user->getData('call_type') !== 1}d-none{/if}">
+                <div class="layui-form-item {if $user->call_type !== 1}d-none{/if}">
                     <label class="layui-form-label">小号</label>
                     <div class="layui-input-block">
                         <select name="number_store_id">
@@ -99,7 +99,7 @@
                     </div>
                 </div>
 
-                <div class="layui-form-item {if !in_array($user->getData('call_type'), [3, 4])}d-none{/if}">
+                <div class="layui-form-item {if !in_array($user->call_type, [3, 4])}d-none{/if}">
                     <label class="layui-form-label" for="callback_number">回拨号码<span class="text-danger" style="margin: 0 5px;">*</span></label>
                     <div class="layui-input-block" id="callback_number">
                         <input type="text" name="callback_number" placeholder="回拨号码"
@@ -118,10 +118,10 @@
                 <div class="layui-form-item {if $user.id !== 1} d-none {/if}">
                     <label class="layui-form-label" for="isTest">测试账号</label>
                     <div class="layui-input-block" id="isTest">
-                        <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo->getData('is_test') === 1}checked{/if}>
+                        <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo->is_test === 1}checked{/if}>
                     </div>
                 </div>
-                <div class="layui-form-item {if !$userInfo->getData('is_test')}d-none{/if} test-endtime">
+                <div class="layui-form-item {if !$userInfo->is_test}d-none{/if} test-endtime">
                     <label class="layui-form-label" for="test_endtime">结束时间</label>
                     <div class="layui-input-block" id="test_endtime">
                         <input type="text" name="test_endtime" placeholder="1970-01-01 00:00:00"
@@ -131,7 +131,7 @@
                         <tip>超过测试时间将禁止拨号，空为无限制。</tip>
                     </div>
                 </div>
-                <div class="layui-form-item {if !$userInfo->getData('is_test')}d-none{/if} test-endtime">
+                <div class="layui-form-item {if !$userInfo->is_test}d-none{/if} test-endtime">
                     <label class="layui-form-label" for="limit_user">限制拨打数量</label>
                     <div class="layui-input-block" id="limit_user">
                         <input type="number" name="limit_call_number" min="0" placeholder="0"
@@ -154,56 +154,16 @@
 
 {block name="js"}
 <script>
-    layui.use(['form','laydate'], function () {
+    layui.use(['form','laydate', 'arronUtil'], function () {
         let $ = layui.jquery,
+            arronUtil = layui.arronUtil,
             laydate = layui.laydate,
             form = layui.form;
 
         let frameIndex = parent.layer.getFrameIndex(window.name);
 
-        let getDateTime = function (param = {}) {
-            let defaultParam = {
-                year: 0,
-                month: 0,
-                day: 0,
-                hour: 0,
-                minute: 0,
-                second: 0
-            };
-            param = Object.assign(defaultParam, param)
-            let d = new Date();
-            let year = d.getFullYear() + param.year,
-                month = d.getMonth() + 1 + param.month,
-                day = d.getDate() + param.day,
-                hour = d.getHours() + param.hour,
-                minute = d.getMinutes() + param.minute,
-                second = d.getSeconds() + param.second;
-
-            if (month < 10) {
-                month = '0' + month;
-            }
-
-            if (day < 10) {
-                day = '0' + day;
-            }
-
-            if (hour < 10) {
-                hour = '0' + hour;
-            }
-
-            if (minute < 10) {
-                minute = '0' + minute;
-            }
-
-            if (second < 10) {
-                second = '0' + second;
-            }
-
-            return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
-        }
-
         // 时间限制为现在
-        let minDate = getDateTime();
+        let minDate = arronUtil.getDateTime();
         laydate.render({
             elem: '#testEndTime',
             type: 'datetime',
@@ -215,34 +175,36 @@
         })
         // 进行登录操作
         form.on('submit(edit)', function (data) {
-            let params = data.field, option = { icon: 5 };
+            let params = data.field
 
             if (params.phone === '') {
-                layer.msg('手机号不能为空');
+                arronUtil.Toast.fire({ title: '手机号不能为空' });
                 return false;
             }
             if (params.realname === '') {
-                layer.msg('真实姓名不能为空');
+                arronUtil.Toast.fire({ title: '真实姓名不能为空' });
                 return false;
             }
             if (params.password === '') {
-                layer.msg('密码不能为空');
+                arronUtil.Toast.fire({ title: '密码不能为空' });
                 return false;
             }
             if (params.is_test === '1' && params.test_endtime === '') {
-                layer.msg('结束时间不能为空', option)
+                arronUtil.Toast.fire({ title: '结束时间不能为空' })
                 return false
             }
 
-            $.post("{:url('/user/edit')}", params, function (res) {
+            $.post(arronUtil.url('/user/edit'), params, function (res) {
+                let option = { title: res.msg }
                 if (res.code === 1) {
-                    layer.msg(res.msg, {icon: 6, time: 2500}, function () {
+                    option.icon = 'success'
+                    option.didDestroy = function () {
                         parent.layer.close(frameIndex);
                         parent.layui.table.reload('userTable');
-                    });
-                } else {
-                    layer.msg(res.msg, {icon: 5});
+                    }
                 }
+
+                arronUtil.Toast.fire(option)
             });
 
             return false;

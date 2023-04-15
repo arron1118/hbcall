@@ -17,9 +17,9 @@ class Admin extends \think\Model
         return date($this->getDateFormat(), $value);
     }
 
-    public function getStatusAttr($value)
+    public function getStatusTextAttr($value, $data)
     {
-        return $this->getStatusList()[$value];
+        return $this->getStatusList()[$data['status']];
     }
 
     protected function getStatusList()

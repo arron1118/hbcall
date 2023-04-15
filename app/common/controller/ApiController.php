@@ -64,7 +64,7 @@ class ApiController extends \app\BaseController
             if ($this->userType === 'user') {
                 $this->userInfo = UserModel::where('token', $this->token)->find();
 
-                if ($this->userInfo && $this->userInfo->getData('is_test') && $this->userInfo->getData('test_endtime') < time()) {
+                if ($this->userInfo && $this->userInfo->is_test && $this->userInfo->getData('test_endtime') < time()) {
                     $this->userInfo->status = 0;
                     $this->userInfo->save();
                 }
@@ -78,7 +78,7 @@ class ApiController extends \app\BaseController
                 $this->returnApiData();
             }
 
-            if (!$this->userInfo->getData('status')) {
+            if (!$this->userInfo->status) {
                 $this->returnData['code'] = 5003;
                 $this->returnData['msg'] = lang('Account is locked');
                 $this->returnApiData();

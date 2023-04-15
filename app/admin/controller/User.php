@@ -36,8 +36,8 @@ class User extends \app\common\controller\AdminController
         if ($this->request->isAjax()) {
             $page = (int) $this->request->param('page', 1);
             $limit = (int) $this->request->param('limit', 10);
-            $username = $this->request->param('username', '');
-            $corporation = $this->request->param('corporation', '');
+            $operate = $this->request->param('operate', '');
+            $keyword = $this->request->param('keyword', '');
             $is_test = (int) $this->request->param('is_test', -1);
             $status = (int) $this->request->param('status', -1);
             $map = [];
@@ -50,12 +50,8 @@ class User extends \app\common\controller\AdminController
                 $map[] = ['status', '=', $status];
             }
 
-            if ($username) {
-                $map[] = ['username', 'like', '%' . $username . '%'];
-            }
-
-            if ($corporation) {
-                $map[] = ['corporation', 'like', '%' . $corporation . '%'];
+            if ($operate) {
+                $map[] = [$operate, 'like', '%' . $keyword . '%'];
             }
 
             $total = CompanyModel::where($map)->count();
@@ -64,7 +60,7 @@ class User extends \app\common\controller\AdminController
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
-                ->append(['call_type_text'])
+                ->append(['call_type_text', 'is_test_text', 'status_text'])
                 ->select();
             return json(['rows' => $userList->hidden(['salt', 'password', 'token', 'token_expire_time']), 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
         }
@@ -81,21 +77,17 @@ class User extends \app\common\controller\AdminController
     public function getSubUserList()
     {
         if ($this->request->isAjax()) {
-            $company_id = (int) $this->request->param('company_id');
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
-            $username = $this->request->param('username', '');
-            $phone = $this->request->param('phone', '');
+            $company_id = $this->request->param('company_id/d');
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
+            $operate = $this->request->param('operate', '');
+            $keyword = $this->request->param('keyword', '');
             $map = [
                 ['company_id', '=', $company_id]
             ];
 
-            if ($username) {
-                $map[] = ['username', 'like', '%' . $username . '%'];
-            }
-
-            if ($phone) {
-                $map[] = ['phone', 'like', '%' . $phone . '%'];
+            if ($operate) {
+                $map[] = [$operate, 'like', '%' . $keyword . '%'];
             }
             $total = UserModel::where($map)->count();
             $userList = UserModel::with(['userXnumber' => ['numberStore']])
@@ -199,13 +191,7 @@ class User extends \app\common\controller\AdminController
         }
         $userInfo = CompanyModel::withCount('user')
             ->with(['companyXnumber'])
-            ->find($userId)
-            ->withAttr('status', function ($value) {
-                return $value;
-            })
-            ->withAttr('is_test', function ($value) {
-                return $value;
-            });
+            ->find($userId);
         if (!$userInfo) {
             $this->returnData['msg'] = '未找到数据';
             return json($this->returnData);
@@ -368,15 +354,15 @@ class User extends \app\common\controller\AdminController
                 return json($this->returnData);
             }
 
-            $company = CompanyModel::with(['companyXnumber'])->find($id);
-            $users = UserModel::with(['userXnumber'])->where('company_id', $id)->select();
-            foreach ($users as $key => $value) {
-                if ($value->userXnumber()->delete()) {
-                    $value->delete();
+            $company = CompanyModel::find($id);
+            $users = UserModel::where('company_id', $id)->select();
+            foreach ($users as $value) {
+                if ($value->delete()) {
+                    $value->userXnumber()->delete();
                 }
             }
-            if ($company->companyXnumber()->delete()) {
-                $company->delete();
+            if ($company->delete()) {
+                $company->companyXnumber()->delete();
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '删除成功';
             } else {

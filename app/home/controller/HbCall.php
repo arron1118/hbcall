@@ -59,7 +59,7 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         // 不是试用账号且欠费无法拨号
-        if (!$this->userInfo->company->getData('is_test') && $this->userInfo->company->getData('balance') <= 0) {
+        if (!$this->userInfo->company->is_test && $this->userInfo->company->getData('balance') <= 0) {
             $this->returnData['msg'] = lang('您的余额已经不足，为了不影响呼叫，请联系管理员及时充值！');
             $this->returnData['info'] = lang('Tips');
             $this->returnData['status'] = 0;
@@ -67,7 +67,7 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         // 企业试用账号到期后无法拨号
-        if ($this->userInfo->company->getData('is_test') && time() > $this->userInfo->company->getData('test_endtime')) {
+        if ($this->userInfo->company->is_test && time() > $this->userInfo->company->getData('test_endtime')) {
             $this->returnData['msg'] = lang('At the end of the test time, please contact the administrator to recharge and try again');
             $this->returnData['info'] = lang('Tips');
             $this->returnData['status'] = 0;
@@ -75,7 +75,7 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         // 用户试用账号到期后无法拨号
-        if ($this->userInfo->getData('is_test')) {
+        if ($this->userInfo->is_test) {
             if (time() > $this->userInfo->getData('test_endtime') || CallHistory::where('user_id', $this->userInfo->id)->count() >= $this->userInfo->limit_call_number) {
                 $this->returnData['msg'] = lang('测试时间结束，请联系管理员开通正式账号后再拨打');
                 $this->returnData['info'] = lang('Tips');
@@ -103,7 +103,7 @@ class HbCall extends \app\common\controller\HomeController
             'CallType' => $this->userInfo->company->call_type
         ];
 
-        $call_type = $this->userInfo->company->getData('call_type');
+        $call_type = $this->userInfo->company->call_type;
         switch ($call_type) {
             case 2:
             case 5:
@@ -154,7 +154,7 @@ class HbCall extends \app\common\controller\HomeController
                         $CallHistory->username = $this->userInfo->username;
                         $CallHistory->company_id = $this->userInfo->company_id;
                         $CallHistory->company = $this->userInfo->company->corporation;
-                        $CallHistory->call_type = $this->userInfo->company->getData('call_type');
+                        $CallHistory->call_type = $this->userInfo->company->call_type;
                         $CallHistory->rate = $this->userInfo->company->rate;
                         $CallHistory->caller_number = $this->userInfo->phone;
                         $CallHistory->called_number = $mobile;

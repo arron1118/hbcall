@@ -104,12 +104,12 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                     }
 
                     flag = false
-                    Toast.fire(op)
+                    arronUtil.Toast.fire(op)
                 },
                 error: function () {
                     flag = false
                     setTimeout(function () {
-                        Toast.fire("上传失败！");
+                        arronUtil.Toast.fire("上传失败！");
                         //关闭所有弹出层
                         layer.close(loading); //疯狂模式，关闭所有层
                     }, 1000);
@@ -134,11 +134,11 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                         if (res.code === 1) {
                             op.icon = 'success';
                             op.timer = 1500
-                            Toast.fire(op).then(() => {
+                            arronUtil.Toast.fire(op).then(() => {
                                 controller.reloadTable()
                             })
                         } else {
-                            Toast.fire(op);
+                            arronUtil.Toast.fire(op);
                         }
                     })
                 }
@@ -233,7 +233,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                         }
                     }
 
-                    Toast.fire(option)
+                    arronUtil.Toast.fire(option)
                 })
 
                 return false
@@ -303,7 +303,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                                     hide.text(res.data).data('show', true)
                                     icon.removeClass('fa-eye').addClass('fa-eye-slash')
                                 } else {
-                                    Toast.fire({
+                                    arronUtil.Toast.fire({
                                         title: res.msg,
                                     })
                                 }
@@ -328,7 +328,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                 if (['distribution', 'changeCate', 'delete', 'migrate'].includes(obj.event)) {
                     let temp = [];
                     if (checkStatus.length <= 0) {
-                        Toast.fire({ title: '请选择' + typeText, timer: 1500 });
+                        arronUtil.Toast.fire({ title: '请选择' + typeText, timer: 1500 });
                         return false;
                     }
 
@@ -398,7 +398,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                                             }
                                         }
 
-                                        Toast.fire(op)
+                                        arronUtil.Toast.fire(op)
                                     })
                                 })
                             }
