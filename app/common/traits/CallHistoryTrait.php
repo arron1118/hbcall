@@ -26,8 +26,8 @@ trait CallHistoryTrait
     public function getHistoryList()
     {
         if ($this->request->isPost()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
             $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
             $userId = (int) $this->request->param('user_id', $this->module === 'home' ? $this->userInfo->id : 0);
             $startDate = $this->request->param('startDate', '');

@@ -32,7 +32,7 @@ class User extends \app\common\controller\HomeController
             $this->userInfo->save();
 
             $this->returnData['code'] = 1;
-            $this->returnData['msg'] = lang('The operation succeeded');
+            $this->returnData['msg'] = lang('Operation successful');
             return json($this->returnData);
         }
 

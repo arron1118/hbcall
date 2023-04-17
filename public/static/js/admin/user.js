@@ -214,15 +214,6 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                     layEvent: 'LAYTABLE_TIPS',
                     icon: 'layui-icon-tips'
                 }],
-                //异步请求，格式化数据
-                parseData: function (res) {
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.rows,
-                        'count': res.total
-                    }
-                },
                 page: {
                     limits: [15, 30, 45, 60],
                     limit: 15,

@@ -5,6 +5,7 @@ namespace app\company\controller;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
 use app\common\model\User as UserModel;
+use think\db\exception\DbException;
 
 class User extends \app\common\controller\CompanyController
 {
@@ -40,8 +41,8 @@ class User extends \app\common\controller\CompanyController
                 $map[] = [$operate, 'like', '%' . $keyword . '%'];
             }
 
-            $total = UserModel::where($map)->count();
-            $userList = UserModel::with(['userXnumber' => ['numberStore']])
+            $this->returnData['count'] = UserModel::where($map)->count();
+            $this->returnData['data'] = UserModel::with(['userXnumber' => ['numberStore']])
                 ->hidden(['password', 'salt'])
                 ->withCount('customer')
                 ->where($map)
@@ -50,9 +51,6 @@ class User extends \app\common\controller\CompanyController
                 ->append(['is_test_text', 'status_text'])
                 ->select();
 
-            $this->returnData['total'] = $total;
-            $this->returnData['code'] = 1;
-            $this->returnData['rows'] = $userList;
             $this->returnData['msg'] = '操作成功';
         }
 
@@ -219,16 +217,18 @@ class User extends \app\common\controller\CompanyController
                 return json($this->returnData);
             }
 
-            $userInfo = UserModel::where([
-                'company_id' => $this->userInfo->id,
-            ])->find($userId);
-            if ($userInfo->delete()) {
-                $userInfo->userXnumber()->delete();
-            }
+            try {
+                $userInfo = UserModel::where([
+                    'company_id' => $this->userInfo->id,
+                ])->find($userId);
 
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '删除成功';
-            return json($this->returnData);
+                $userInfo->together(['userXnumber'])->delete();
+
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '删除成功';
+            } catch (DbException $exception) {
+                $this->returnData['msg'] = $exception->getMessage();
+            }
         }
 
         return json($this->returnData);
@@ -282,7 +282,7 @@ class User extends \app\common\controller\CompanyController
             $this->userInfo->realname = $realname;
             $this->userInfo->save();
 
-            return json(['msg' => lang('The operation succeeded'), 'code' => 1]);
+            return json(['msg' => lang('Operation successful'), 'code' => 1]);
         }
 
         return $this->view->fetch();

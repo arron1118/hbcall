@@ -20,7 +20,7 @@ return [
     'At the end of the test time, please contact the administrator to recharge and try again' => '测试时间结束，请联系管理员充值后再试',
     'The import was successful' => '导入成功',
     'No data was found' => '未找到相关数据',
-    'The operation succeeded' => '操作成功',
+    'Operation successful' => '操作成功',
     'Please enter a nickname' => '请输入昵称',
     'Please enter your old password' => '请输入旧密码',
     'Please enter a new password' => '请输入新密码',

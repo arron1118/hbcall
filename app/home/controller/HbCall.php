@@ -3,6 +3,7 @@
 namespace app\home\controller;
 
 use app\common\model\CallHistory;
+use app\common\model\Company;
 use app\common\model\Customer;
 use app\common\model\Customer as CustomerModel;
 use Curl\Curl;
@@ -98,12 +99,12 @@ class HbCall extends \app\common\controller\HomeController
             return json($this->returnData);
         }
 
+        $callTypeList = (new Company())->getCallTypeList();
         $curl = new Curl();
-        $params = [
-            'CallType' => $this->userInfo->company->call_type
-        ];
-
         $call_type = $this->userInfo->company->call_type;
+        $params = [
+            'CallType' => $callTypeList[$call_type],
+        ];
         switch ($call_type) {
             case 2:
             case 5:
@@ -125,7 +126,6 @@ class HbCall extends \app\common\controller\HomeController
                 $params['callerX'] = $this->userInfo->callback_number;
                 break;
 
-
             default:
                 if (!$this->userInfo->userXnumber) {
                     $this->returnData['msg'] = lang('If a small number is not assigned, contact your administrator to assign a small number and try again');
@@ -141,6 +141,7 @@ class HbCall extends \app\common\controller\HomeController
         }
 
         $curl->post(Config::get('hbcall.call_api'), $params);
+        Log::info(json_encode($params));
         Log::info($curl->response);
         $response = json_decode($curl->response, true);
 
@@ -154,7 +155,7 @@ class HbCall extends \app\common\controller\HomeController
                         $CallHistory->username = $this->userInfo->username;
                         $CallHistory->company_id = $this->userInfo->company_id;
                         $CallHistory->company = $this->userInfo->company->corporation;
-                        $CallHistory->call_type = $this->userInfo->company->call_type;
+                        $CallHistory->call_type = $call_type;
                         $CallHistory->rate = $this->userInfo->company->rate;
                         $CallHistory->caller_number = $this->userInfo->phone;
                         $CallHistory->called_number = $mobile;

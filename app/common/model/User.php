@@ -75,4 +75,11 @@ class User extends Model
     {
         return $this->hasMany(CustomerPhoneRecord::class);
     }
+
+    public static function onAfterDelete($user): void
+    {
+        UserXnumber::destroy(function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        });
+    }
 }

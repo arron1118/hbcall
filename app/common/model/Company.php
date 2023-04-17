@@ -114,4 +114,11 @@ class Company extends Model
     {
         return $this->hasMany(CustomerPhoneRecord::class);
     }
+
+    public static function onAfterDelete($company)
+    {
+        CompanyXnumber::destroy(function ($query) use ($company) {
+            $query->where('company_id', $company->id);
+        });
+    }
 }

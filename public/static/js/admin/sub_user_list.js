@@ -19,15 +19,6 @@ layui.use(['form', 'table', 'arronUtil'], function () {
             table.init('currentTableFilter', {
                 url: arronUtil.url("/user/getSubUserList") + '?company_id=' + company_id,
                 id: 'userTable',
-                //异步请求，格式化数据
-                parseData: function (res) {
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.rows,
-                        'count': res.total
-                    }
-                },
                 page: {
                     limits: [10, 20, 30, 40],
                     limit: 10,

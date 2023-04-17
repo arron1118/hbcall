@@ -19,8 +19,8 @@ class XnumberStore extends \app\common\controller\AdminController
     public function getNumberList()
     {
         if ($this->request->isAjax()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
             $total = NumberStore::count();
             $numberList = NumberStore::withCount(['userXnumber', 'companyXnumber'])
                 ->order('id', 'desc')

@@ -3,6 +3,7 @@
 namespace app\common\traits;
 
 use app\common\model\CallHistory;
+use app\common\model\Company;
 use app\common\model\Customer;
 use Curl\Curl;
 use think\facade\Config;
@@ -60,12 +61,13 @@ trait HbCallTrait
             $this->returnData['msg'] = '请先在个人资料中填写手机号';
             $this->returnApiData();
         }
-        $curl = new Curl();
-        $params = [
-            'CallType' => $this->userInfo->company->call_type
-        ];
 
+        $callTypeList = (new Company())->getCallTypeList();
+        $curl = new Curl();
         $call_type = $this->userInfo->company->call_type;
+        $params = [
+            'CallType' => $callTypeList[$call_type],
+        ];
         switch ($call_type) {
             case 2:
             case 5:
@@ -106,7 +108,7 @@ trait HbCallTrait
                 $CallHistory->username = $this->userInfo->username;
                 $CallHistory->company_id = $this->userInfo->company_id;
                 $CallHistory->company = $this->userInfo->company->corporation;
-                $CallHistory->call_type = $this->userInfo->company->call_type;
+                $CallHistory->call_type = $call_type;
                 $CallHistory->rate = $this->userInfo->company->rate;
                 $CallHistory->caller_number = $this->userInfo->phone;
                 $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;

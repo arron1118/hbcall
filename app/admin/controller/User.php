@@ -34,12 +34,12 @@ class User extends \app\common\controller\AdminController
     public function getUserList()
     {
         if ($this->request->isAjax()) {
-            $page = (int) $this->request->param('page', 1);
-            $limit = (int) $this->request->param('limit', 10);
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
             $operate = $this->request->param('operate', '');
             $keyword = $this->request->param('keyword', '');
-            $is_test = (int) $this->request->param('is_test', -1);
-            $status = (int) $this->request->param('status', -1);
+            $is_test = $this->request->param('is_test/d', -1);
+            $status = $this->request->param('status/d', -1);
             $map = [];
 
             if ($is_test !== -1) {
@@ -54,15 +54,16 @@ class User extends \app\common\controller\AdminController
                 $map[] = [$operate, 'like', '%' . $keyword . '%'];
             }
 
-            $total = CompanyModel::where($map)->count();
-            $userList = CompanyModel::withCount('user')
+            $this->returnData['count'] = CompanyModel::where($map)->count();
+            $this->returnData['data'] = CompanyModel::withCount('user')
                 ->with(['companyXnumber' => ['numberStore']])
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->append(['call_type_text', 'is_test_text', 'status_text'])
+                ->hidden(['salt', 'password', 'token', 'token_expire_time'])
                 ->select();
-            return json(['rows' => $userList->hidden(['salt', 'password', 'token', 'token_expire_time']), 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+            $this->returnData['msg'] = lang('Operation successful');
         }
 
         return json($this->returnData);
@@ -89,8 +90,8 @@ class User extends \app\common\controller\AdminController
             if ($operate) {
                 $map[] = [$operate, 'like', '%' . $keyword . '%'];
             }
-            $total = UserModel::where($map)->count();
-            $userList = UserModel::with(['userXnumber' => ['numberStore']])
+            $this->returnData['count'] = UserModel::where($map)->count();
+            $this->returnData['data'] = UserModel::with(['userXnumber' => ['numberStore']])
                 ->hidden(['password', 'salt'])
                 ->withCount('callHistory')
                 ->withSum('expense', 'cost')
@@ -98,8 +99,7 @@ class User extends \app\common\controller\AdminController
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
-
-            return json(['rows' => $userList, 'total' => $total, 'msg' => '操作成功', 'code' => 1]);
+            $this->returnData['msg'] = lang('Operation successful');
         }
 
         return json($this->returnData);
@@ -335,7 +335,7 @@ class User extends \app\common\controller\AdminController
 
             $this->userInfo->realname = $realname;
             if ($this->userInfo->save()) {
-                $this->returnData['msg'] = lang('The operation succeeded');
+                $this->returnData['msg'] = lang('Operation successful');
                 $this->returnData['code'] = 1;
             }
 
@@ -354,15 +354,8 @@ class User extends \app\common\controller\AdminController
                 return json($this->returnData);
             }
 
-            $company = CompanyModel::find($id);
-            $users = UserModel::where('company_id', $id)->select();
-            foreach ($users as $value) {
-                if ($value->delete()) {
-                    $value->userXnumber()->delete();
-                }
-            }
-            if ($company->delete()) {
-                $company->companyXnumber()->delete();
+            $company = CompanyModel::with(['user'])->find($id);
+            if ($company->together(['user'])->delete()) {
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '删除成功';
             } else {
