@@ -131,13 +131,6 @@ layui.use(['form', 'table', 'laydate', 'jquery', 'arronUtil'], function () {
                             }
                         ]
                     })
-
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.data,
-                        'count': res.total
-                    }
                 },
                 even: true,
                 skin: 'line'

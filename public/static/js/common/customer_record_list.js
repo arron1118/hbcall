@@ -25,15 +25,6 @@ layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'arronUtil'], funct
                     layEvent: 'LAYTABLE_TIPS',
                     icon: 'layui-icon-tips'
                 }],
-                //异步请求，格式化数据
-                parseData: function (res) {
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.data,
-                        'count': res.total
-                    }
-                },
                 page: {
                     limits: [15, 30, 45, 60],
                     limit: 15,

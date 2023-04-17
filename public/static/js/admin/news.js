@@ -111,7 +111,6 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
         },
 
         listener: function () {
-
             laydate.render({
                 elem: '#newsDate'
             });
@@ -125,15 +124,6 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                     layEvent: 'LAYTABLE_TIPS',
                     icon: 'layui-icon-tips'
                 }],
-                //异步请求，格式化数据
-                parseData: function (res) {
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.data,
-                        'count': res.count
-                    }
-                },
                 page: {
                     limits: [15, 30, 45, 60],
                     limit: 15,

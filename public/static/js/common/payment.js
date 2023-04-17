@@ -43,14 +43,6 @@ layui.use(['form', 'table', 'jquery', 'laydate', 'arronUtil', 'dropdown'], funct
                 id: 'paymentTable',
                 url: arronUtil.url("/payment/getOrderList"),
                 method: 'post',
-                parseData: function (res) {
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.rows,
-                        'count': res.total
-                    }
-                },
                 page: {
                     limits: [15, 20, 25, 30],
                     limit: 15

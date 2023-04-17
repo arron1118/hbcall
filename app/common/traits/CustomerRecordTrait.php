@@ -19,18 +19,12 @@ trait CustomerRecordTrait
                 'customer_id' => $this->request->param('customer_id', 0)
             ];
 
-            $total = RecordModel::where($where)->count();
-
-            $res = RecordModel::where($where)
+            $this->returnData['count'] = RecordModel::where($where)->count();
+            $this->returnData['data'] = RecordModel::where($where)
                 ->order('id', 'desc')
                 ->select();
 
-            $this->returnData['data'] = $res;
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = 'success';
-            $this->returnData['total'] = $total;
-
-            return json($this->returnData);
+            $this->returnData['msg'] = lang('Operation successful');
         }
 
         return json($this->returnData);

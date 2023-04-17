@@ -50,14 +50,6 @@ layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
                     layEvent: 'LAYTABLE_TIPS',
                     icon: 'layui-icon-tips'
                 }],
-                parseData: function (res) {
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.rows,
-                        'count': res.total
-                    }
-                },
                 page: {
                     limits: [15, 30, 45, 60, 90, 450, 600],
                     limit: 15,

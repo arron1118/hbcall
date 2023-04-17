@@ -16,14 +16,14 @@ class News extends \app\common\controller\AdminController
     public function index()
     {
         if ($this->request->isAjax()) {
-            $map = [
-                ['status', '<>', '-1']
-            ];
             $page = $this->request->param('page/d', 1);
             $limit = $this->request->param('limit/d', 10);
             $search_title = $this->request->param('title', '');
             $search_time = $this->request->param('time', '');
 
+            $map = [
+                ['status', '<>', '-1']
+            ];
             if ($search_title) {
                 $map[] = ['title', 'like', '%' . $search_title . '%'];
             }
@@ -33,17 +33,12 @@ class News extends \app\common\controller\AdminController
                 $map[] = ['update_time', 'between', [$daytime, $daytime + 86400 - 1]];
             }
 
-            $count = $this->model::where($map)->count();
-
-            $newsList = $this->model::where($map)
+            $this->returnData['count'] = $this->model::where($map)->count();
+            $this->returnData['data'] = $this->model::where($map)
                 ->limit(($page - 1) * $limit, $limit)
                 ->order('id DESC')
                 ->select();
-
-            $this->returnData['code'] = 1;
-            $this->returnData['data'] = $newsList;
-            $this->returnData['msg'] = 'Success';
-            $this->returnData['count'] = $count;
+            $this->returnData['msg'] = lang('Operation successful');
 
             return json($this->returnData);
         }
@@ -57,7 +52,7 @@ class News extends \app\common\controller\AdminController
             $title = trim($this->request->param('title'));
             $content = $this->request->param('content');
             $cover_img = $this->request->param('cover_img');
-            $is_top = $this->request->param('is_top', 0);
+            $is_top = $this->request->param('is_top/d', 0);
 
             if ($title === '') {
                 $this->returnData['msg'] = '请输入标题';
@@ -99,7 +94,6 @@ class News extends \app\common\controller\AdminController
         }
 
         $news = $this->model::find($id);
-
         if (!$news) {
             $this->returnData['msg'] = '未找到相关数据';
             return json($this->returnData);
@@ -146,14 +140,11 @@ class News extends \app\common\controller\AdminController
             return json($this->returnData);
         }
 
-        $list = [];
-        foreach($data as $key => &$val) {
+        foreach ($data as &$val) {
             $val['create_time'] = time();
             $val['update_time'] = time();
             $val['status'] = 1;
             $val['author_id'] = $this->userInfo['id'];
-
-            $list[$key] = $val;
         }
 
         try {

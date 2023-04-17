@@ -361,8 +361,8 @@ class User extends \app\common\controller\AdminController
             } else {
                 $this->returnData['msg'] = '删除失败';
             }
-
-            return json($this->returnData);
         }
+
+        return json($this->returnData);
     }
 }

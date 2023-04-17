@@ -4,11 +4,12 @@
  * version:2.0
  * description:layuimini 主体框架扩展
  */
-layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function (exports) {
+layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme", "arronUtil"], function (exports) {
     var $ = layui.$,
         layer = layui.layer,
         miniMenu = layui.miniMenu,
         miniTheme = layui.miniTheme,
+        arronUtil = layui.arronUtil,
         element = layui.element ,
         miniTab = layui.miniTab;
 
@@ -208,7 +209,12 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
          * @returns {*}
          */
         success: function (title) {
-            return layer.msg(title, {icon: 1, shade: this.shade, scrollbar: false, time: 2000, shadeClose: true});
+            return arronUtil.Toast.fire({
+                title: title,
+                icon: 'success',
+                timer: 2000,
+                position: 'top-end',
+            })
         },
 
         /**
@@ -217,7 +223,11 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
          * @returns {*}
          */
         error: function (title) {
-            return layer.msg(title, {icon: 2, shade: this.shade, scrollbar: false, time: 3000, shadeClose: true});
+            return arronUtil.Toast.fire({
+                title: title,
+                icon: 'error',
+                position: 'top-end',
+            })
         },
 
         /**
@@ -232,11 +242,7 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme"], function 
             var isIOS = (/iPhone|iPod|iPad/i).test(ua) && !isAndroid;
             var isWinPhone = (/Windows Phone|ZuneWP7/i).test(ua);
             var clientWidth = document.documentElement.clientWidth;
-            if (!isAndroid && !isIOS && !isWinPhone && clientWidth > 1024) {
-                return false;
-            } else {
-                return true;
-            }
+            return !(!isAndroid && !isIOS && !isWinPhone && clientWidth > 1024);
         },
 
         /**

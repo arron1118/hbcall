@@ -66,7 +66,7 @@
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总收入</p>
-                <h5 class="fs-2">{:htmlspecialchars_decode($total_payment)}</h5>
+                <h5 class="fs-2 total-payment"></h5>
             </div>
         </div>
         {elseif $module === 'company'}
@@ -79,34 +79,34 @@
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总消费</p>
-                <h5 class="fs-2">{:htmlspecialchars_decode($total_cost)}</h5>
+                <h5 class="fs-2 total-cost"></h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div class="">
                 <p class="text-black-50">
                     今日{$total_title}
-                    [<span class="text-warning fs-6">{:htmlspecialchars_decode($percentage)}</span>]
+                    [<span class="text-warning fs-6 percentage"></span>]
                 </p>
-                <h5 class="fs-2">{:htmlspecialchars_decode($current_day_cost)}</h5>
+                <h5 class="fs-2 current-day-cost"></h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">昨日{$total_title}</p>
-                <h5 class="fs-2">{:htmlspecialchars_decode($yesterday_cost)}</h5>
+                <h5 class="fs-2 yesterday-cost"></h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">本月{$total_title}</p>
-                <h5 class="fs-2">{:htmlspecialchars_decode($current_month_cost)}</h5>
+                <h5 class="fs-2 current-month-cost"></h5>
             </div>
         </div>
         <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">今年{$total_title}</p>
-                <h5 class="fs-2">{:htmlspecialchars_decode($current_year_cost)}</h5>
+                <h5 class="fs-2 current-year-cost"></h5>
             </div>
         </div>
     </div>
@@ -120,9 +120,9 @@
                     <div id="historyChart" class="h-100" style="height: 270px;" data-chart-list=""></div>
                 </div>
                 <div class="col-lg-6 col-12 mb-3">
-                    <div class="row h-50 rounded gap-3 mb-3">
+                    <div class="row h-50 gap-3 mb-3">
                         <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
-                            <div class="mb-3 text-black-50">总呼出</div>
+                            <div class="mb-3 text-black-50">总呼出(个)</div>
                             <h2 class="totalCallHistory "></h2>
                         </div>
                         <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
@@ -130,13 +130,13 @@
                             <h2 class="totalCallDuration "></h2>
                         </div>
                     </div>
-                    <div class="row h-50 rounded gap-3">
+                    <div class="row h-50 gap-3">
                         <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
-                            <div class="mb-3 text-black-50">已接听</div>
+                            <div class="mb-3 text-black-50">已接听(个)</div>
                             <h2 class="totalCallAndPickUp"></h2>
                         </div>
                         <div class="col p-3 rounded-3" style="background-color: #f7f7f7;">
-                            <div class="mb-3 text-black-50">未接听</div>
+                            <div class="mb-3 text-black-50">未接听(个)</div>
                             <h2 class="totalCallAndNoPickUp"></h2>
                         </div>
                     </div>
@@ -148,7 +148,7 @@
             <div class="row">
                 <div class="col">
                     <div class="card border border-light-subtle shadow-sm">
-                        <div class="card-header border-light-subtle">排行榜</div>
+                        <div class="card-header border-light-subtle"><i class="fa fa-chart-simple text-warning-emphasis me-1"></i>排行榜</div>
                         <div class="card-body">
                             <table class="table table-hover toplist-table">
                                 <thead>
@@ -157,7 +157,7 @@
                                     <th>总呼叫</th>
                                     <th>已接听</th>
                                     <th>时间(分)</th>
-                                    <th>消费金额</th>
+                                    <th>消费金额(￥)</th>
                                 </tr>
                                 </thead>
                                 <tbody></tbody>

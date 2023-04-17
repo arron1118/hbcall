@@ -6,7 +6,6 @@ use app\common\model\CallHistory;
 use app\common\model\Company;
 use app\common\model\Expense;
 use app\common\model\User;
-use Grpc\Call;
 use think\db\Query;
 use think\facade\Db;
 
@@ -40,6 +39,11 @@ trait ReportTrait
 
     public function dashboard()
     {
+        return $this->view->fetch('common@index/dashboard');
+    }
+
+    public function getCostData()
+    {
         $cost = [];
         if ($this->module === 'admin') {
             $cost = getCosts();
@@ -69,8 +73,8 @@ trait ReportTrait
             }
         }
 
-        $this->view->assign($result);
-        return $this->view->fetch('common@index/dashboard');
+        $this->returnData['data'] = $result;
+        return json($this->returnData);
     }
 
     public function getTopList()
@@ -142,9 +146,8 @@ left join (select sum(call_duration_min) as duration, sum(cost) as cost, user_id
 where {$whereCompany}
 SQL;
 
-        $this->returnData['code'] = 1;
         $this->returnData['data'] = Db::query($sql);
-        $this->returnData['msg'] = 'success';
+        $this->returnData['msg'] = lang('Operation successful');
 
         return json($this->returnData);
     }

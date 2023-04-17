@@ -79,7 +79,6 @@ trait CustomerTrait
             $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
-
             $where = [];
 
             if ($userId > 0) {
@@ -112,18 +111,15 @@ trait CustomerTrait
                 $where[] = ['create_time', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
-            $total = CustomerModel::where($where)->count();
-
-            $res = CustomerModel::with(['company', 'user'])->withCount(['record'])
+            $this->returnData['count'] = CustomerModel::where($where)->count();
+            $this->returnData['data'] = CustomerModel::with(['company', 'user'])->withCount(['record'])
                 ->where($where)
                 ->order('id', 'desc')
                 ->limit(($page - 1) * $limit, $limit)
-                ->append(['cate_text'])->select();
-
-            $this->returnData['data'] = $res->hidden(['company', 'user'])->toArray();
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = 'success';
-            $this->returnData['total'] = $total;
+                ->append(['cate_text'])
+                ->hidden(['company', 'user'])
+                ->select();
+            $this->returnData['msg'] = lang('Operation successful');
         }
 
         return json($this->returnData);
@@ -139,19 +135,15 @@ trait CustomerTrait
             if ($lastData->toArray()) {
                 $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->create_time))));
                 $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->create_time))) + 3600 * 24 - 1);
-                $res = CustomerModel::field('id, title, phone, called_count, last_calltime')
+                $this->returnData['data'] = CustomerModel::field('id, title, phone, called_count, last_calltime')
                     ->where($where)
                     ->whereBetweenTime('create_time', $lastDateStart, $lastDateEnd)
                     ->order('called_count')
                     ->order('id', 'desc')
                     ->select();
-                $this->returnData['data'] = $res;
                 $this->returnData['code'] = 1;
-                $this->returnData['msg'] = 'success';
-                return json($this->returnData);
+                $this->returnData['msg'] = lang('Operation successful');
             }
-
-            return json($this->returnData);
         }
 
         return json($this->returnData);
@@ -380,7 +372,6 @@ trait CustomerTrait
                 $customer->check_phone_num += 1;
                 $customer->save();
             }
-            return json($this->returnData);
         }
 
         return json($this->returnData);

@@ -11,6 +11,19 @@ layui.use(['layer', 'miniTab', 'arronUtil'], function () {
         h = 8
 
     let controller = {
+        getCostData: function () {
+            $.post(arronUtil.url("/Index/getCostData"), function (res) {
+                if (APP_MODULE === 'admin') {
+                    $('.total-payment').html(res.data.total_payment)
+                }
+                $('.total-cost').html(res.data.total_cost)
+                $('.percentage').html(res.data.percentage)
+                $('.current-day-cost').html(res.data.current_day_cost)
+                $('.yesterday-cost').html(res.data.yesterday_cost)
+                $('.current-month-cost').html(res.data.current_month_cost)
+                $('.current-year-cost').html(res.data.current_year_cost)
+            })
+        },
         getChartData: function () {
             $.post(arronUtil.url("/Index/getDashboardReport"), function (res) {
                 $('.totalCallHistory').text(res.data.totalCallHistory)
@@ -139,12 +152,14 @@ layui.use(['layer', 'miniTab', 'arronUtil'], function () {
             })
         },
         listener: function () {
+            controller.getCostData()
             controller.getChartData();
             controller.getCallChartData();
             controller.getTopData();
 
             // 定时任务
             setInterval(function () {
+                controller.getCostData()
                 controller.getChartData()
                 controller.getCallChartData()
                 controller.getTopData()

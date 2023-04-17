@@ -15,14 +15,6 @@ layui.use(['jquery', 'table', 'arronUtil'], function () {
                     layEvent: 'LAYTABLE_TIPS',
                     icon: 'layui-icon-tips'
                 }],
-                parseData: function (res) {
-                    return {
-                        'code': 0,
-                        'msg': '',
-                        'data': res.rows,
-                        'count': res.total
-                    }
-                },
                 page: {
                     limits: [15, 30, 45, 60],
                     limit: 15,

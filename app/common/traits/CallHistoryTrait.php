@@ -28,8 +28,8 @@ trait CallHistoryTrait
         if ($this->request->isPost()) {
             $page = $this->request->param('page/d', 1);
             $limit = $this->request->param('limit/d', 10);
-            $companyId = (int) $this->request->param('company_id', $this->module === 'company' ? $this->userInfo->id : 0);
-            $userId = (int) $this->request->param('user_id', $this->module === 'home' ? $this->userInfo->id : 0);
+            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
+            $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
             $operate = $this->request->param('operate', '');
@@ -65,14 +65,12 @@ trait CallHistoryTrait
                 $map[] = [$caller, 'like', '%' . $phone . '%'];
             }
 
-            $total = CallHistory::where($map)->count();
-
-            $historyList = CallHistory::where($map)
+            $this->returnData['count'] = CallHistory::where($map)->count();
+            $this->returnData['data'] = CallHistory::where($map)
                 ->order('create_time DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
-
-            return json(['rows' => $historyList, 'total' => $total, 'msg' => '', 'code' => 1]);
+            $this->returnData['msg'] = lang('Operation successful');
         }
 
         return json($this->returnData);

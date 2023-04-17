@@ -68,14 +68,13 @@ trait PaymentTrait
                 $where[] = ['pay_type', '=', $payType];
             }
 
-            $total = $this->model::where($where)->count();
-
-            $historyList = $this->model::where($where)
+            $this->returnData['count'] = $this->model::where($where)->count();
+            $this->returnData['msg'] = lang('Operation successful');
+            $this->returnData['data'] = $this->model::where($where)
                 ->order('id DESC')
                 ->limit(($page - 1) * $limit, $limit)
                 ->append(['pay_type_text', 'status_text'])
                 ->select();
-            return json(['rows' => $historyList, 'total' => $total, 'msg' => 'success', 'code' => 1]);
         }
 
         return json($this->returnData);
@@ -90,7 +89,6 @@ trait PaymentTrait
         }
 
         $return = [];
-
         if ($payType === 1) {
             $return = [
                 'out_trade_no' => $orderNo,
