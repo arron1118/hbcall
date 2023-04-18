@@ -6,6 +6,7 @@ use app\common\model\CallHistory;
 use app\common\model\Company;
 use app\common\model\Expense;
 use app\common\model\User;
+use tauthz\facade\Enforcer;
 use think\db\Query;
 use think\facade\Db;
 
@@ -39,6 +40,21 @@ trait ReportTrait
 
     public function dashboard()
     {
+        Enforcer::addPermissionForUser('admin', 'call_history', 'read');
+        Enforcer::addRoleForUser('arron', 'editor');
+        Enforcer::addPolicy('writer', 'call_history', 'edit');
+        Enforcer::addPolicy('editor', 'call_history', 'edit');
+        $allRoles = Enforcer::getAllRoles();
+        dump($allRoles);
+        $policy = Enforcer::getPolicy();
+        dump($policy);
+        $rolesForUser = Enforcer::getRolesForUser('arron');
+        dump($rolesForUser);
+        $usersForRole = Enforcer::getUsersForRole('writer');
+        dump($usersForRole);
+        $hasRoleForUser = Enforcer::hasRoleForUser('arron', 'editor');
+        dump($hasRoleForUser);
+
         return $this->view->fetch('common@index/dashboard');
     }
 
@@ -56,7 +72,7 @@ trait ReportTrait
             $cost['total_cost'] = $this->userInfo->expense;
         }
 
-        $result = array_map(function ($item) {
+        $this->returnData['data'] = array_map(function ($item) {
             $number = number_format($item, 3);
             $numbers = explode('.', $number);
             $numbers[0] = '<span class="mx-1">' . $numbers[0] . '</span>';
@@ -64,16 +80,13 @@ trait ReportTrait
             return '<i class="fa fa-yen-sign fs-6 text-muted"></i>' . implode('', $numbers);
         }, $cost);
 
-        $result['percentage'] = '0%';
+        $this->returnData['data']['percentage'] = '0%';
         if ($cost['current_day_cost'] > 0) {
-            if ($cost['yesterday_cost'] > 0) {
-                $result['percentage'] = number_format(($cost['current_day_cost'] - $cost['yesterday_cost']) / $cost['yesterday_cost'] * 100, 2) . '%';
-            } else {
-                $result['percentage'] = '100%';
-            }
+            $this->returnData['data']['percentage'] = $cost['yesterday_cost'] > 0 ?
+                number_format(($cost['current_day_cost'] - $cost['yesterday_cost']) / $cost['yesterday_cost'] * 100, 2) . '%'
+                : '100%';
         }
 
-        $this->returnData['data'] = $result;
         return json($this->returnData);
     }
 

@@ -8,8 +8,8 @@ use app\common\model\Company;
 use app\common\model\User;
 use Curl\Curl;
 use think\facade\Config;
+use think\facade\Log;
 use think\facade\Request;
-use think\facade\Session;
 use app\common\model\Expense;
 
 /**
@@ -87,13 +87,14 @@ class CallHistory
                         $curl->get(Config::get('hbcall.dx_record_api'), [
                             'bindId' => $val['subid'],
                         ]);
+                        Log::info($curl->response);
                         $response = json_decode($curl->response, true);
 
-                        $returnData['successList'][] = [
-                            $val->subid,
-                        ];
                         if (!is_null($response) && $response['statusCode'] === 200) {
                             ++$returnData['success'];
+                            $returnData['successList'][] = [
+                                $val->subid,
+                            ];
                             $data = $response['data'];
                             if (!is_null($data) && !empty($data)) {
                                 if (!is_array($data)) {
@@ -164,13 +165,14 @@ class CallHistory
                             'subid' => $val['subid'],
                             'date' => $date
                         ]);
+                        Log::info($curl->response);
                         $response = json_decode($curl->response, true);
 
-                        $returnData['successList'][] = [
-                            $val->subid,
-                        ];
                         if (!is_null($response) && (isset($response['code']) && $response['code'] === 1000)) {
                             ++$returnData['success'];
+                            $returnData['successList'][] = [
+                                $val->subid,
+                            ];
                             $data = $response['data'];
                             if (!is_null($data) && !empty($data)) {
                                 if (!is_array($data)) {
