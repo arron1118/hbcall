@@ -40,26 +40,34 @@ trait ReportTrait
 
     public function dashboard()
     {
-        Enforcer::addPermissionForUser('admin', 'call_history', 'read');
-        Enforcer::addRoleForUser('arron', 'editor');
-        Enforcer::addPolicy('writer', 'call_history', 'edit');
-        Enforcer::addPolicy('editor', 'call_history', 'edit');
-        $allRoles = Enforcer::getAllRoles();
-        dump($allRoles);
-        $policy = Enforcer::getPolicy();
-        dump($policy);
-        $rolesForUser = Enforcer::getRolesForUser('arron');
-        dump($rolesForUser);
-        $usersForRole = Enforcer::getUsersForRole('writer');
-        dump($usersForRole);
-        $hasRoleForUser = Enforcer::hasRoleForUser('arron', 'editor');
-        dump($hasRoleForUser);
+//        Enforcer::addPermissionForUser('admin', 'call_history', 'read');
+//        Enforcer::addRoleForUser('arron', 'editor');
+//        Enforcer::addPolicy('writer', 'call_history', 'edit');
+//        Enforcer::addPolicy('editor', 'call_history', 'edit');
+//        $allRoles = Enforcer::getAllRoles();
+//        dump($allRoles);
+//        $policy = Enforcer::getPolicy();
+//        dump($policy);
+//        $rolesForUser = Enforcer::getRolesForUser('arron');
+//        dump($rolesForUser);
+//        $usersForRole = Enforcer::getUsersForRole('writer');
+//        dump($usersForRole);
+//        $hasRoleForUser = Enforcer::hasRoleForUser('arron', 'editor');
+//        dump($hasRoleForUser);
+//        $permissionsForUser = Enforcer::getPermissionsForUser('editor');
+//        dump($permissionsForUser);
+//        $hasPermissionForUser = Enforcer::hasPermissionForUser('editor', 'call_history', 'read');
+//        dump($hasPermissionForUser);
+//        $hasPolicy = Enforcer::hasPolicy('writer', 'call_history', 'edit');
+//        dump($hasPolicy);
+//        dump(Enforcer::getPermissionsForUser('arron'));
 
         return $this->view->fetch('common@index/dashboard');
     }
 
     public function getCostData()
     {
+        $this->returnData['msg'] = lang('Operation successful');
         $cost = [];
         if ($this->module === 'admin') {
             $cost = getCosts();

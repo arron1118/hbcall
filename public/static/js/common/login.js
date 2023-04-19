@@ -19,38 +19,37 @@ layui.use(['jquery', 'form', 'arronUtil'], function () {
 
             // 进行登录操作
             form.on('submit(login)', function (data) {
-                let params = data.field;
+                let params = data.field, option = { position: 'top' };
                 if (params.username === '') {
-                    arronUtil.Toast.fire({
-                        text: '用户名不能为空'
-                    });
-                    return false;
+                    option.title = '用户名不能为空'
+                    arronUtil.Toast.fire(option)
+                    return false
                 }
                 if (params.password === '') {
-                    arronUtil.Toast.fire({
-                        text: '密码不能为空'
-                    });
-                    return false;
+                    option.title = '密码不能为空'
+                    arronUtil.Toast.fire(option)
+                    return false
                 }
 
                 if (params.captcha === '') {
-                    arronUtil.Toast.fire({
-                        text: '验证码不能为空'
-                    });
-                    return false;
+                    option.title = '验证码不能为空'
+                    arronUtil.Toast.fire(option)
+                    return false
                 }
 
                 $.post(arronUtil.url("/user/login"), params, function (res) {
+                    option.title = res.msg
                     if (res.code) {
-                        arronUtil.Toast.fire({icon: 'success', text: res.msg}).then(function () {
-                            window.location = res.url;
-                        });
+                        option.icon = 'success'
+                        option.timer = 1500
+                        option.didDestroy = function () {
+                            window.location = res.url
+                        }
                     } else {
-                        $('input[name="__token__"]').val(res.data.token);
-                        arronUtil.Toast.fire({
-                            text: res.msg
-                        });
+                        $('.captcha-img img').click()
                     }
+
+                    arronUtil.Toast.fire(option)
                 });
 
                 return false;

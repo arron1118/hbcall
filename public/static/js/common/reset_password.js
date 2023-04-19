@@ -6,18 +6,16 @@ layui.use(['form', 'jquery', 'arronUtil'], function () {
     //监听提交
     form.on('submit(saveBtn)', function (data) {
         $.post(arronUtil.url("/user/resetPassword"), data.field, function (res) {
+            let option = { title: res.msg, position: 'top' }
             if (res.code) {
-                arronUtil.Toast.fire({
-                    icon: 'success',
-                    text: res.msg
-                }).then((val) => {
+                option.icon = 'success'
+                option.timer = 1500
+                option.didDestroy = () => {
                     location.href = arronUtil.url("/user/logout")
-                })
-            } else {
-                arronUtil.Toast.fire({
-                    text: res.msg
-                });
+                }
             }
+
+            arronUtil.Toast.fire(option)
         })
 
         return false;

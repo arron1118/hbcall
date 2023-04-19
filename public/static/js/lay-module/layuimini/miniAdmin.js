@@ -213,7 +213,7 @@ layui.define(["jquery", "miniMenu", "element","miniTab", "miniTheme", "arronUtil
                 title: title,
                 icon: 'success',
                 timer: 2000,
-                position: 'top-end',
+                position: 'top',
             })
         },
 
