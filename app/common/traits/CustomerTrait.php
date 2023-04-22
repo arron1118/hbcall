@@ -132,9 +132,10 @@ trait CustomerTrait
                 'user_id' => $this->userInfo->id
             ];
             $lastData = CustomerModel::where($where)->order('id', 'desc')->findOrEmpty();
-            if ($lastData->toArray()) {
-                $lastDateStart = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->create_time))));
-                $lastDateEnd = date('Y-m-d H:i:s', strtotime(date('Y-m-d', strtotime($lastData->create_time))) + 3600 * 24 - 1);
+            if (!$lastData->isEmpty()) {
+                $lastDate = strtotime(date('Y-m-d', strtotime($lastData->create_time)));
+                $lastDateStart = date('Y-m-d H:i:s', $lastDate);
+                $lastDateEnd = date('Y-m-d H:i:s', $lastDate + 3600 * 24 - 1);
                 $this->returnData['data'] = CustomerModel::field('id, title, phone, called_count, last_calltime')
                     ->where($where)
                     ->whereBetweenTime('create_time', $lastDateStart, $lastDateEnd)
@@ -207,7 +208,7 @@ trait CustomerTrait
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = lang('The import was successful');
-                $this->returnData['data'] = [];
+                $this->returnData['data'] = $res;
 
                 return json($this->returnData);
             } catch (DbException $dbException) {

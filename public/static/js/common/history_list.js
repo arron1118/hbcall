@@ -75,10 +75,13 @@ layui.use(['form', 'table', 'laydate', 'dropdown', 'arronUtil'], function () {
             });
 
             table.on('toolbar(currentTableFilter)', function (obj) {
-                if (obj.event === 'syncCallHistory') {
-                    let load = layer.load();
+                if (obj.event === 'syncCallHistory' && APP_MODULE === 'admin') {
+                    arronUtil.Toast.fire({
+                        title: '正在同步...',
+                        timer: false,
+                        didOpen: () => window.Swal.showLoading()
+                    })
                     $.post(arronUtil.url('/HbCall/updateCallHistory'), function (res) {
-                        layer.close(load)
                         let errorHtml = '';
                         if (res.data.error > 0) {
                             errorHtml += '<h5>失败</h5>'

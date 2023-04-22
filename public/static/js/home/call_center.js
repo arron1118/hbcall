@@ -1,19 +1,15 @@
-layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate', 'arronUtil'], function () {
+layui.use(['miniTab', 'element', 'laydate', 'arronUtil'], function () {
     let $ = layui.jquery,
-        layer = layui.layer,
         miniTab = layui.miniTab,
         element = layui.element,
         arronUtil = layui.arronUtil,
-        table = layui.table,
-        laydate = layui.laydate,
-        upload = layui.upload;
+        laydate = layui.laydate;
 
     miniTab.listen();
 
     const REQUEST_CONFIG = {
         RECORD_ADD_URL: arronUtil.url('/CustomerRecord/add'),
         CUSTOMER_PHONE_URL: arronUtil.url('/customer/getCustomerPhone'),
-        MAKE_CALL_URL: arronUtil.url('/hbcall/makeCall'),
     }
 
     let callinginput = $('.callinginput');
@@ -36,41 +32,42 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                 };
 
             for (let i = 1; i < 14; i++) {
-                let spanParams;
+                let spanParams = {
+                        class: cssClass + ' fw-bold',
+                        click: function (e) {
+                            let v = callinginput.val()
+                            if (v.length < 11) {
+                                callinginput.val(v + $(this).data('value'));    //输入框值,val()里面
+                            }
+                        },
+                        html: i
+                    }
 
                 switch (i) {
                     case 10:
                         // * 键
-                        spanParams = {
-                            class: cssClass,
-                            html: `<i class="fa fa-asterisk"></i>`
-                        };
+                        spanParams.html = `<i class="fa fa-asterisk"></i>`
+                        spanParams['data-value'] = '*'
                         break;
 
                     case 11:
-                        spanParams = {
-                            class: cssClass + ' fw-bold',
-                            'data-value': 0,
-                            click: function (e) {
-                                if (callinginput.val().length < 11) {
-                                    callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
-                                }
-                            },
-                            html: 0
-                        };
+                        spanParams['data-value'] = 0
+                        spanParams.click = function (e) {
+                            if (callinginput.val().length < 11) {
+                                callinginput.val(callinginput.val() + $(this).data('value'));//输入框值,val()里面
+                            }
+                        }
+                        spanParams.html = 0
                         break;
 
                     case 12:
                         // 删除键
-                        spanParams = {
-                            class: cssClass,
-                            click: function (e) {
-                                let v = callinginput.val()
-                                callinginput.val(v.slice(0, v.length - 1));
-                                controller.inputFocus();
-                            },
-                            html: `<i class="fa fa-backspace text-sm-center small"></i>`,
-                        };
+                        spanParams.click = function (e) {
+                            let v = callinginput.val()
+                            callinginput.val(v.slice(0, v.length - 1));
+                            controller.inputFocus();
+                        }
+                        spanParams.html = `<i class="fa fa-backspace text-sm-center small"></i>`
                         break;
 
                     case 13:
@@ -79,33 +76,20 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                             backgroundColor: 'rgb(8, 86, 246)',
                             color: '#fff',
                         })
-                        spanParams = {
-                            class: cssClass,
-                            click: function (e) {
-                                if (callinginput.val().length < 11 || !arronUtil.isPhone(callinginput.val())) {
-                                    arronUtil.Toast.fire('请输入正确的号码');
-                                    return false;
-                                }
+                        spanParams.click = function (e) {
+                            if (callinginput.val().length < 11 || !arronUtil.isPhone(callinginput.val())) {
+                                arronUtil.Toast.fire('请输入正确的号码');
+                                return false;
+                            }
 
-                                controller.makeCall({ phone: callinginput.val() },
-                                    controller.createItem({called_number: callinginput.val()}));
-                            },
-                            html: `<i class="fa fa-phone"></i>`,
-                        };
+                            controller.makeCall({ phone: callinginput.val() },
+                            controller.createItem({called_number: callinginput.val()}));
+                        }
+                        spanParams.html = `<i class="fa fa-phone"></i>`
                         break;
 
                     default:
-                        spanParams = {
-                            class: cssClass + ' fw-bold',
-                            'data-value': i,
-                            click: function (e) {
-                                let v = callinginput.val()
-                                if (v.length < 11) {
-                                    callinginput.val(v + $(this).data('value'));    //输入框值,val()里面
-                                }
-                            },
-                            html: i
-                        }
+                        spanParams['data-value'] = i
                 }
 
                 phoneNumbersDiv.append($('<div />', {
@@ -125,37 +109,36 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
         },
 
         makeCall: function (params = { phone: '', customerId: 0 }, addList = null, customerCalled = null) {
-            $.post(REQUEST_CONFIG.MAKE_CALL_URL, { mobile: params.phone, customerId: params.customerId }, function (res) {
-                if (res.code === 1) {
-                    if (customerCalled) {
-                        $(customerCalled).addClass('text-black-50')
+            arronUtil.caller.makeCall({ mobile: params.phone, customerId: params.customerId }, (res) => {
+                if (customerCalled) {
+                    $(customerCalled).addClass('text-black-50')
 
-                        let callTime = arronUtil.getDateTime()
-                        if ($(customerCalled).find('.called-customer').length === 0) {
-                            $(customerCalled).find('.click-call').before($('<div />', {
-                                class: 'called-customer text-end col-3 ',
-                                text: callTime
-                            }))
-                        } else {
-                            $(customerCalled).find('.called-customer').text(callTime)
-                        }
-                        customerContainer.append(customerCalled)
+                    let callTime = arronUtil.getDateTime()
+                    if ($(customerCalled).find('.called-customer').length === 0) {
+                        $(customerCalled).find('.click-call').before($('<div />', {
+                            class: 'called-customer text-end col-3 ',
+                            text: callTime
+                        }))
+                    } else {
+                        $(customerCalled).find('.called-customer').text(callTime)
                     }
-                    // 添加历史列表
-                    if (addList) {
-                        let hl = $('.call-history-list .list-group');
-                        hl.prepend($(addList));
-                        hl.children().last().remove();
-                    }
-
-                    arronUtil.caller.success(res)
-                } else {
-                    arronUtil.caller.fail(res)
+                    customerContainer.append(customerCalled)
                 }
-            });
+                // 添加历史列表
+                if (addList) {
+                    let hl = $('.call-history-list .list-group');
+                    hl.prepend($(addList));
+                    hl.children().last().remove();
+                }
+            })
         },
 
-        // 创建历史列表
+        /**
+         * 创建历史列表
+         *
+         * @param item
+         * @returns {*|jQuery}
+         */
         createItem: function (item) {
             return $('<div />', {
                 class: 'row p-2 mx-1 border-bottom call-history-item',
@@ -207,10 +190,12 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                         }), this)
                 },
                 mouseover: function () {
+                    $(this).addClass('bg-light-subtle')
                     $(this).children('.click-call').removeClass('d-none')
                     $(this).children('.called-customer').addClass('d-none')
                 },
                 mouseout: function () {
+                    $(this).removeClass('bg-light-subtle')
                     $(this).children('.click-call').addClass('d-none')
                     $(this).children('.called-customer').removeClass('d-none')
                 },
@@ -220,72 +205,83 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                     e.preventDefault()
 
                     let parent = this,
-                        ts = $('<div />', {
-                            class: 'shadow-sm text-primary position-absolute',
-                            css: { left: e.clientX + 'px', top: e.clientY + 'px', width: '150px' },
-                            id: 'right-contextmenu'
-                        }).append($('<div />', {
-                            class: 'list-group customer-context-menu'
-                        }).append($('<div />', {
-                            type: 'button',
-                            class: 'list-group-item list-group-item-action',
-                            text: '立即拨号',
-                            click: function () {
-                                controller.makeCall({ phone: item.phone, customerId: item.id },
-                                    controller.createItem({ called_number: item.phone }), parent)
+                        menus = [
+                            {
+                                icon: 'fa-phone',
+                                text: '立即拨号',
+                                option: {
+                                    click: function () {
+                                        controller.makeCall({ phone: item.phone, customerId: item.id },
+                                            controller.createItem({ called_number: item.phone }), parent)
 
-                                controller.removeContextmenu()
-                            }
-                        }).append($('<i />', {
-                            class: 'fa fa-phone float-end small lh-base',
-                            css: { lineHeight: 'inhert' }
-                        }))).append($('<div />', {
-                            type: 'button',
-                            class: 'list-group-item list-group-item-action',
-                            'data-bs-toggle': 'modal',
-                            'data-bs-target': '#recordModal',
-                            text: '添加回访记录',
-                            click: function (e) {
-                                recordForm.find('input[name=customer_id]').val(item.id)
+                                        controller.removeContextmenu()
+                                    }
+                                }
+                            },
+                            {
+                                icon: 'fa-book-bookmark',
+                                text: '添加回访记录',
+                                option: {
+                                    'data-bs-toggle': 'modal',
+                                    'data-bs-target': '#recordModal',
+                                    click: function (e) {
+                                        recordForm.find('input[name=customer_id]').val(item.id)
 
-                                controller.removeContextmenu()
-                            }
-                        }).append($('<i />', {
-                            class: 'fa fa-book-bookmark float-end small lh-base',
-                            css: { lineHeight: 'inhert' }
-                        }))).append($('<button />', {
-                            type: 'button',
-                            class: 'list-group-item list-group-item-action',
-                            text: '从列表中删除',
-                            click: function () {
-                                $(parent).remove();
+                                        controller.removeContextmenu()
+                                    }
+                                }
+                            },
+                            {
+                                icon: 'fa-trash-alt',
+                                text: '从列表中删除',
+                                option: {
+                                    click: function () {
+                                        $(parent).remove();
 
-                                controller.removeContextmenu()
-                            }
-                        }).append($('<i />', {
-                            class: 'fa fa-trash-alt float-end text-sm lh-base'
-                        }))).append($('<button />', {
-                            type: 'button',
-                            class: 'list-group-item list-group-item-action',
-                            text: '查看电话',
-                            click: function () {
-                                controller.removeContextmenu()
-                                let p = $(parent).find('.phone')
-                                if (!p.data('show')) {
-                                    $.get(REQUEST_CONFIG.CUSTOMER_PHONE_URL, { id: item.id }, function (res) {
-                                        if (res.code === 1 && res.data) {
-                                            $(parent).find('.phone').text(res.data).data('show', true)
+                                        controller.removeContextmenu()
+                                    }
+                                }
+                            },
+                            {
+                                icon: 'fa-search',
+                                text: '查看电话',
+                                option: {
+                                    click: function () {
+                                        controller.removeContextmenu()
+                                        let p = $(parent).find('.phone')
+                                        if (!p.data('show')) {
+                                            $.get(REQUEST_CONFIG.CUSTOMER_PHONE_URL, { id: item.id }, function (res) {
+                                                if (res.code === 1 && res.data) {
+                                                    $(parent).find('.phone').text(res.data).data('show', true)
+                                                }
+                                            })
                                         }
-                                    })
+                                    }
                                 }
                             }
-                        }).append($('<i />', {
-                            class: 'fa fa-search float-end text-sm lh-base'
-                        }))));
+                        ],
+                        listGroup = $('<div />', { class: 'list-group customer-context-menu' })
+
+                    menus.forEach((val, index) => {
+                        let op = {
+                            type: 'button',
+                            text: val.text,
+                            class: 'list-group-item list-group-item-action',
+                        }
+                        Object.assign(op, val.option)
+
+                        listGroup.append($('<button />', op).append($('<i />', {
+                            class: 'fa float-end small lh-base ' + val.icon
+                        })))
+                    })
 
                     controller.removeContextmenu()
 
-                    $('html body').append(ts)
+                    $('html body').append($('<div />', {
+                        class: 'shadow-sm text-primary position-absolute',
+                        css: { left: e.clientX + 'px', top: e.clientY + 'px', width: '150px' },
+                        id: 'right-contextmenu'
+                    }).append(listGroup))
                 }
             }).append($('<div />', {
                 class: 'customer-id',
@@ -314,66 +310,16 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
 
             return listItem
         },
-        upload: function () {
-            let loading = null, flag = false;
-            let uploadIns = upload.render({
-                elem: '#importExcel',
-                url: arronUtil.url('/Customer/importExcel'),
-                accept: 'file', //普通文件
-                exts: 'xls|excel|xlsx', //导入表格
-                auto: true,  //选择文件后不自动上传
-                before: function (obj) {
-                    if (!flag) {
-                        layer.confirm('是否允许上传重复的客户，注：重复的客户以客户电话为准',
-                            { icon: 3, title: '温馨提示', btn: ['允许', '不允许'] }, function (index) {
-                                uploadIns.config.data.is_repeat_customer = 1
-                                layer.close(index)
-                                flag = true
-                                uploadIns.upload()
-                            }, function (index) {
-                                uploadIns.config.data.is_repeat_customer = 0
-                                flag = true
-                                uploadIns.upload()
-                            })
-                    } else {
-                        loading = layer.load(); //上传loading
-                    }
-
-                    return flag
-                },
-                // 选择文件回调
-                choose: function (obj) {
-                },
-                done: function (res) {
-                    layer.close(loading);
-                    let op = { title: res.msg };
-                    if (res.code === 1) {
-                        op.icon = 'success';
-                        customerContainer.html('')
-                        $.each(res.data, (index, item) => {
-                            customerContainer.prepend(controller.createCustomerItem(item))
-                        })
-                    }
-
-                    arronUtil.Toast.fire(op)
-                    flag = false
-                },
-                error: function () {
-                    flag = false
-                    setTimeout(function () {
-                        arronUtil.Toast.fire("上传失败！");
-                        //关闭所有弹出层
-                        layer.closeAll(); //疯狂模式，关闭所有层
-                    }, 1000);
-                }
-            });
-        },
         listener: function () {
+            controller.buildPhoneNumber()
             controller.inputFocus()
 
-            controller.buildPhoneNumber()
-
-            controller.upload()
+            arronUtil.importCustomer('#importExcel', 1, '客户', res => {
+                customerContainer.html('')
+                $.each(res.data, (index, item) => {
+                    customerContainer.prepend(controller.createCustomerItem(item))
+                })
+            })
 
             $('#recordModal').on('show.bs.modal', function (e) {
                 // 重置表单
@@ -416,7 +362,6 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                 arronUtil.cookie('showCallInfoTimes', 1)
             }
 
-
             callinginput.on('keydown', function (e) {
                 // 大键盘||小键盘
                 if ((e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode >= 96 && e.keyCode <= 106)) {
@@ -438,14 +383,11 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                 arronUtil.showImportInfo()
             })
 
-
-            let customerList = [];
-            let importCount = 0;
             // 导入最后一次导入的客户数据
             $('#lastImport').on('click', function () {
                 $.post(arronUtil.url('/Customer/getLastImportCustomerList'), (res) => {
                     if (res.code === 1 && res.data.length > 0) {
-                        customerList = res.data
+                        customerContainer.html('')
                         let isCalled = false
                         $.each(res.data, (index, item) => {
                             if (item.called_count > 0) {
@@ -457,7 +399,6 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'laydate',
                 })
             })
             $('.clear-customer').on('click', function () {
-                customerList = []
                 customerContainer.html('')
             })
         }

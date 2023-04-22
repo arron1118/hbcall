@@ -111,6 +111,71 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
         },
 
         listener: function () {
+            let offcanvas = $('#offcanvas')
+            offcanvas.on('show.bs.offcanvas', e => {
+                let id = $(e.relatedTarget).data('id')
+                let f = document.formEditor, title = ''
+                if (id) {
+                    title = '编辑'
+                    $.get(REQUEST_CONFIG.EDIT_URL, {id: id}, res => {
+                        if (res.code === 1) {
+                            for (const element of f.elements) {
+                                let name = element.name,
+                                    nodeName = element.nodeName,
+                                    el = $(e.currentTarget).find('[name="' + name + '"]');
+
+                                if (nodeName === 'SELECT') {
+                                    let v = Object.keys(res.cateList).find(key => parseInt(key) === res.data[name])
+                                    el.val(v)
+                                } else {
+                                    el.val(res.data[name])
+                                }
+
+                                if (name === 'phone') {
+                                    el.attr('disabled', true)
+                                }
+                            }
+                        }
+                    })
+                } else {
+                    title = '添加'
+                    $(e.currentTarget).find('[name="phone"]').attr('disabled', false)
+                    f.reset()
+                }
+
+                $('.offcanvas-title').text(title)
+            })
+
+            $('form[name="formEditor"]').submit(function () {
+                let formData = $(this).serialize(),
+                    id = $('[name="id"]').val(),
+                    url = id ? REQUEST_CONFIG.EDIT_URL : REQUEST_CONFIG.ADD_URL
+
+                console.log(id)
+                $.post(url, formData, function (res) {
+                    let option = {title: res.msg}
+                    if (res.code === 1) {
+                        option.icon = 'success'
+                        option.timer = 1500
+                        option.didDestroy = function () {
+                            if (id) {
+                                table.reload('customerTable', {
+                                    where: controller.getFilterParams()
+                                })
+                            } else {
+                                controller.reloadTable()
+                            }
+
+                            $('[data-bs-dismiss="offcanvas"]').click()
+                        }
+                    }
+
+                    arronUtil.Toast.fire(option)
+                })
+
+                return false
+            })
+
             laydate.render({
                 elem: '#newsDate'
             });

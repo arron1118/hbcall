@@ -53,7 +53,6 @@
 <script>
     layui.use(['form', 'miniTab', 'jquery', 'arronUtil'], function () {
         let form = layui.form,
-            layer = layui.layer,
             $ = layui.jquery,
             arronUtil = layui.arronUtil,
             miniTab = layui.miniTab;
@@ -61,7 +60,7 @@
         //监听提交
         form.on('submit(saveBtn)', function (data) {
             $.post(arronUtil.url("/user/profile"), data.field, function (res) {
-                let option = { title: res.msg }
+                let option = { title: res.msg, position: 'top' }
                 if (res.code) {
                     option.icon = 'success'
                 }

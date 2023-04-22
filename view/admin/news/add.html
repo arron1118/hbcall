@@ -70,8 +70,9 @@
 {block name="js"}
 <script src="__STATIC__/lib/summernote-0.8.18-dist/summernote-bs4.min.js"></script>
 <script>
-    layui.use(['form', 'laydate', 'upload', 'jquery'], function () {
+    layui.use(['form', 'laydate', 'upload', 'jquery', 'arronUtil'], function () {
         let $ = layui.jquery,
+            arronUtil = layui.arronUtil,
             form = layui.form,
             upload = layui.upload;
 
@@ -99,7 +100,7 @@
         //上传图片
         let uploadInst = upload.render({
             elem: '#newsImg',
-            url: '{:url("/news/upload")}' ,
+            url: arronUtil.url("/news/upload"),
             before: function (obj) {
                 //预读本地文件示例，不支持ie8
                 obj.preview(function (index, file, result) {
@@ -134,15 +135,18 @@
                 return false;
             }
 
-            $.post('{:url("/news/add")}', params, function (res) {
+            $.post(arronUtil.url("/news/add"), params, function (res) {
+                let o = { title: res.msg }
                 if (res.code === 1) {
-                    layer.msg(res.msg, {icon: 6, time: 2500}, function () {
-                        parent.layer.close(frameIndex);
-                        parent.layui.table.reload('newsTable');
-                    });
-                } else {
-                    layer.msg(res.msg, {icon: 5});
+                    o.icon = 'success'
+                    o.timer = 1500
+                    o.didDestroy = () => {
+                        parent.layer.close(frameIndex)
+                        parent.layui.table.reload('newsTable')
+                    }
                 }
+
+                arronUtil.Toast.fire(o)
             });
 
             return false;

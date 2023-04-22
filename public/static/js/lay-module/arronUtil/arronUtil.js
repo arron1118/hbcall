@@ -1,10 +1,12 @@
-layui.define(['jquery', 'layer'], function (exports) {
+layui.define(['jquery', 'layer', 'upload'], function (exports) {
     let $ = layui.jquery,
+        upload = layui.upload,
         layer = layui.layer;
 
     let arronUtil = {
         /**
          * 生成 URL 链接
+         *
          * @param url
          * @returns {string}
          */
@@ -13,6 +15,7 @@ layui.define(['jquery', 'layer'], function (exports) {
         },
         /**
          * 获取格式化时间
+         *
          * @param param
          * @returns {string}
          */
@@ -59,6 +62,7 @@ layui.define(['jquery', 'layer'], function (exports) {
 
         /**
          * 设置 和 获取 cookie
+         *
          * @param key
          * @param val
          * @param obj
@@ -96,6 +100,7 @@ layui.define(['jquery', 'layer'], function (exports) {
 
         /**
          * 检测手机号码
+         *
          * @param phone
          * @returns {boolean}
          */
@@ -105,7 +110,7 @@ layui.define(['jquery', 'layer'], function (exports) {
         },
 
         /**
-         * 弹窗提示
+         * sweetAlert 弹窗提示
          */
         Toast: window.Swal.mixin({
             toast: true,
@@ -134,14 +139,15 @@ layui.define(['jquery', 'layer'], function (exports) {
                 title: '导入说明',
                 width: '54rem',
                 html: `<div class="p-3">
-                               <p>只能上传Excel表格，格式为:</p> <p class="fw-bold">${label}</p>
-                               <img src="/static/images/customer-example-import-${type}.png" class="pt-3" />
-                            </div>`
+                   <p>只能上传Excel表格，格式为:</p> <p class="fw-bold">${label}</p>
+                   <img src="/static/images/customer-example-import-${type}.png" class="pt-3" />
+                </div>`
             })
         },
 
         /**
          * 支付接口
+         *
          * @param page
          * @param payType
          * @param amount
@@ -149,6 +155,12 @@ layui.define(['jquery', 'layer'], function (exports) {
          */
         pay: function (page, payType, amount, payNo = '') {
             if (payType === 1) {
+                arronUtil.Toast.fire({
+                    timer: false,
+                    icon: 'info',
+                    title: '正在提交订单...',
+                    didOpen: () => window.Swal.showLoading()
+                })
                 $.post(arronUtil.url("/payment/pay"), { payType: payType, amount: amount, payno: payNo }, function (res) {
                     if (res.code === 1) {
                         let timerInterval, trade_state, trade_state_desc
@@ -214,9 +226,131 @@ layui.define(['jquery', 'layer'], function (exports) {
         },
 
         /**
-         * 呼叫提示信息
+         * 导入客户
+         *
+         * @param target
+         * @param type
+         * @param typeText
+         * @param ok
+         * @param fail
+         */
+        importCustomer: function (target, type, typeText, ok, fail) {
+            // 导入客户
+            let flag = false;
+            type = type || 1
+            typeText = typeText || '客户'
+            ok = ok || function (res) {}
+            fail = fail || function () {}
+
+            let uploadIns = upload.render({
+                elem: target,
+                url: arronUtil.url('/customer/importExcel'),
+                accept: 'file', //普通文件
+                exts: 'xls|excel|xlsx', //导入表格
+                auto: true,  //选择文件后不自动上传
+                data: {
+                    type: type,
+                },
+                before: function (obj) {
+                    if (!flag) {
+                        arronUtil.Toast.fire({
+                            icon: 'question',
+                            title: `是否允许上传重复的${typeText}`,
+                            html: `重复的${typeText}以${typeText}电话为准`,
+                            toast: false,
+                            showConfirmButton: true,
+                            confirmButtonText: '允许',
+                            showDenyButton: true,
+                            denyButtonText: '不允许',
+                            timer: false,
+                            showCloseButton: true,
+                        }).then((r) => {
+                            if (r.isConfirmed) {
+                                uploadIns.config.data.is_repeat_customer = 1
+                                flag = true
+                                uploadIns.upload()
+                            } else if (r.isDenied) {
+                                uploadIns.config.data.is_repeat_customer = 0
+                                flag = true
+                                uploadIns.upload()
+                            } else {
+                                $('.layui-upload-file').val('')
+                            }
+                        })
+                    } else {
+                        arronUtil.Toast.fire({
+                            timer: false,
+                            title: '正在导入...',
+                            didOpen: () => window.Swal.showLoading()
+                        })
+                    }
+
+                    return flag
+                },
+                // 选择文件回调
+                choose: function (obj) {
+                },
+                done: function (res) {
+                    let op = {title: res.msg}
+                    if (res.code === 1) {
+                        op.icon = 'success';
+                        op.timer = 1500
+
+                        ok(res)
+                    }
+
+                    flag = false
+                    arronUtil.Toast.fire(op)
+                },
+                error: function () {
+                    flag = false
+                    setTimeout(function () {
+                        arronUtil.Toast.fire("上传失败！");
+                    }, 1000);
+
+                    fail()
+                }
+            });
+        },
+
+        /**
+         * 呼叫中心
          */
         caller: {
+            /**
+             * 拨号
+             *
+             * @param params
+             * @param ok
+             * @param fail
+             */
+            makeCall: function (params, ok, fail) {
+                params = params || {}
+                ok = ok || function (res) {}
+                fail = fail || function (res) {}
+                arronUtil.Toast.fire({
+                    timer: false,
+                    icon: 'info',
+                    title: '正在拨号...',
+                    didOpen: () => window.Swal.showLoading()
+                })
+                $.post(arronUtil.url('/hbcall/makeCall'), params, function (res) {
+                    if (res.code === 1) {
+                        ok(res)
+
+                        arronUtil.caller.success(res)
+                    } else {
+                        fail(res)
+
+                        arronUtil.caller.fail(res)
+                    }
+                });
+            },
+            /**
+             * 拨号成功提示信息
+             *
+             * @param param
+             */
             success: function (param) {
                 let op = {
                     toast: false,
@@ -230,7 +364,7 @@ layui.define(['jquery', 'layer'], function (exports) {
                         op.timer = 11000
                         op.timerProgressBar = true
                         op.didOpen = () => {
-                            const t = Swal.getHtmlContainer().querySelector('.clock')
+                            const t = window.Swal.getHtmlContainer().querySelector('.clock')
                             timerInterval = setInterval(() => {
                                 t.textContent = Math.ceil(Swal.getTimerLeft() / 1000)
                             }, 1000)
@@ -258,6 +392,11 @@ layui.define(['jquery', 'layer'], function (exports) {
                 }
                 arronUtil.Toast.fire(op)
             },
+            /**
+             * 拨号失败提示信息
+             *
+             * @param param
+             */
             fail: function (param) {
                 arronUtil.Toast.fire({
                     toast: false,

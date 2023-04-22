@@ -33,9 +33,9 @@ class CallHistory extends Model
         return substr_replace($value, '****', 3, 4);
     }
 
-    public function getCallTypeAttr($value)
+    public function getCallTypeTextAttr($value, $data)
     {
-        return (new Company())->callTypeList()[$value];
+        return (new Company())->callTypeList()[$data['call_type']];
     }
 
     public function getReleasetimeAttr($value)

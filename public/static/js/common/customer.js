@@ -1,9 +1,8 @@
-layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'laydate', 'dropdown', 'arronUtil'], function () {
+layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown', 'arronUtil'], function () {
     let $ = layui.jquery,
         layer = layui.layer,
         miniTab = layui.miniTab,
         table = layui.table,
-        upload = layui.upload,
         dropdown = layui.dropdown,
         laydate = layui.laydate,
         form = layui.form,
@@ -18,26 +17,9 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
         CUSTOMER_PHONE_URL: arronUtil.url('/customer/getCustomerPhone'),
         DISTRIBUTION_URL: arronUtil.url('/customer/distribution'),
         CHANGE_CATE_URL: arronUtil.url('/customer/changeCate'),
-        MAKE_CALL_URL: arronUtil.url('/hbcall/makeCall'),
-        IMPORT_EXCEL_URL: arronUtil.url('/customer/importExcel'),
     }
 
     let controller = {
-        makeCall: function (params = {phone: '', customerId: 0}, obj = null) {
-            $.post(REQUEST_CONFIG.MAKE_CALL_URL, {mobile: params.phone, customerId: params.customerId}, function (res) {
-                if (res.code === 1) {
-                    obj.update({
-                        last_calltime: arronUtil.getDateTime(),
-                        called_count: obj.data.called_count + 1
-                    })
-
-                    arronUtil.caller.success(res)
-                } else {
-                    arronUtil.caller.fail(res)
-                }
-            });
-        },
-
         reloadTable: function (params = {}, deep = false) {
             let finalParams = controller.getFilterParams()
             Object.assign(finalParams, params)
@@ -47,74 +29,6 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                     curr: 1
                 }
             }, deep)
-        },
-
-        upload: function () {
-            // 导入客户
-            let loading = null, flag = false;
-            let uploadIns = upload.render({
-                elem: '#importExcel',
-                url: REQUEST_CONFIG.IMPORT_EXCEL_URL,
-                accept: 'file', //普通文件
-                exts: 'xls|excel|xlsx', //导入表格
-                auto: true,  //选择文件后不自动上传
-                data: {
-                    type: type,
-                },
-                before: function (obj) {
-                    if (!flag) {
-                        arronUtil.Toast.fire({
-                            icon: 'question',
-                            title: `是否允许上传重复的${typeText}`,
-                            html: `重复的${typeText}以${typeText}电话为准`,
-                            toast: false,
-                            showConfirmButton: true,
-                            confirmButtonText: '允许',
-                            showDenyButton: true,
-                            denyButtonText: '不允许',
-                            timer: false,
-                            showCloseButton: true,
-                        }).then((r) => {
-                            if (r.isConfirmed) {
-                                uploadIns.config.data.is_repeat_customer = 1
-                                flag = true
-                                uploadIns.upload()
-                            } else {
-                                uploadIns.config.data.is_repeat_customer = 0
-                                flag = true
-                                uploadIns.upload()
-                            }
-                        })
-                    } else {
-                        loading = layer.load(); //上传loading
-                    }
-
-                    return flag
-                },
-                // 选择文件回调
-                choose: function (obj) {
-                },
-                done: function (res) {
-                    layer.close(loading)
-                    let op = {title: res.msg}
-                    if (res.code === 1) {
-                        op.icon = 'success';
-                        op.timer = 1500
-                        controller.reloadTable()
-                    }
-
-                    flag = false
-                    arronUtil.Toast.fire(op)
-                },
-                error: function () {
-                    flag = false
-                    setTimeout(function () {
-                        arronUtil.Toast.fire("上传失败！");
-                        //关闭所有弹出层
-                        layer.close(loading); //疯狂模式，关闭所有层
-                    }, 1000);
-                }
-            });
         },
 
         delete: function (ids) {
@@ -154,7 +68,9 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
         },
 
         listener: function () {
-            controller.upload()
+            arronUtil.importCustomer('#importExcel', type, typeText, function () {
+                controller.reloadTable()
+            })
 
             //菜单点击事件
             dropdown.on('click(filterUser)', function (options) {
@@ -304,7 +220,15 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                         break;
 
                     case 'makeCall':
-                        controller.makeCall({phone: obj.data.phone, customerId: obj.data.id}, obj);
+                        arronUtil.caller.makeCall({
+                            phone: obj.data.phone,
+                            customerId: obj.data.id
+                        }, (res) => {
+                            obj.update({
+                                last_calltime: arronUtil.getDateTime(),
+                                called_count: obj.data.called_count + 1
+                            })
+                        });
                         break;
 
                     case 'delete':
@@ -347,7 +271,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                             title = '选择用户'
 
                             $.each(user, (index, item) => {
-                                html += `<li class="list-group-item ${selector}" data-id="${item.id}">${item.username}</li>`
+                                html += `<li class="list-group-item list-group-item-action ${selector}" data-id="${item.id}" style="cursor: pointer;">${item.username}</li>`
                             });
                         } else {
                             url = REQUEST_CONFIG.CHANGE_CATE_URL
@@ -356,33 +280,28 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                             delete cateList[-1]
 
                             $.each(cateList, (index, item) => {
-                                html += `<li class="list-group-item ${selector}" data-id="${index}">${item}</li>`
+                                html += `<li class="list-group-item list-group-item-action ${selector}" data-id="${index}" style="cursor: pointer;">${item}</li>`
                             })
                         }
 
-                        layer.open({
-                            type: 1,
-                            title: title,
-                            skin: 'layui-layer-rim',
-                            area: ['420px', '500px'],
-                            content: `
-                            <div class="row justify-content-center">
-                                <div class="col-12">
-                                    <ul class="list-group">
-                                        ${html}
-                                    </ul>
-                                </div>
-                            </div>
+                        arronUtil.Toast.fire({
+                            titleText: title,
+                            icon: false,
+                            timer: false,
+                            toast: false,
+                            html: `
+                            <ul class="list-group list-group-flush">
+                                ${html}
+                            </ul>
                             `,
-                            success: function (layero, index) {
-                                layero.find('.' + selector).on('click', function () {
+                            didOpen: () => {
+                                $(window.Swal.getHtmlContainer()).find('.' + selector).on('click', function () {
                                     let id = $(this).data('id')
                                     obj.event === 'distribution' ? params.user_id = id : params.cate = id
 
                                     $.post(url, params, function (res) {
                                         let op = { title: res.msg }
                                         if (res.code === 1) {
-                                            layer.close(index)
                                             op.icon = 'success'
                                             op.timer = 1500
                                             op.didDestroy = () => {
@@ -394,8 +313,7 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                                     })
                                 })
                             }
-                        });
-
+                        })
                         break;
 
                     case 'info':
@@ -423,6 +341,12 @@ layui.use(['layer', 'miniTab', 'element', 'excel', 'upload', 'table', 'form', 'l
                             denyButtonText: '取消',
                         }).then(val => {
                             if (val.isConfirmed) {
+                                arronUtil.Toast.fire({
+                                    timer: false,
+                                    icon: 'info',
+                                    title: '正在迁移...',
+                                    didOpen: () => window.Swal.showLoading()
+                                })
                                 $.post(arronUtil.url('/Customer/migrate'), { ids: ids, type: type }, (res) => {
                                     let option = {
                                         title: res.msg,

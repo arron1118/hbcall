@@ -47,6 +47,7 @@ layui.use(['jquery', 'form', 'arronUtil'], function () {
                         }
                     } else {
                         $('.captcha-img img').click()
+                        $('input[name="captcha"]').val('')
                     }
 
                     arronUtil.Toast.fire(option)

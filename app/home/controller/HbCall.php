@@ -216,7 +216,6 @@ class HbCall extends \app\common\controller\HomeController
             $this->returnData['data'] = array_merge($this->returnData['data'], $response['data']);
         }
 
-        $this->returnData['response'] = $response;
         $this->returnData['data']['call_type'] = $call_type;
         return json($this->returnData);
     }

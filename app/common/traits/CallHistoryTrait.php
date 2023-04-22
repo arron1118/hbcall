@@ -69,7 +69,8 @@ trait CallHistoryTrait
             $this->returnData['data'] = CallHistory::where($map)
                 ->order('create_time DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
-                ->select();
+                ->select()
+                ->append(['call_type_text']);
             $this->returnData['msg'] = lang('Operation successful');
         }
 

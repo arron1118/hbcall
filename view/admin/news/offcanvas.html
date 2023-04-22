@@ -1,0 +1,50 @@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas" style="width: 600px;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">编辑</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="">
+            <form class="layui-form" action="">
+                <input name="id" type="hidden" value="{$news.id}" />
+                <div class="mb-3">
+                    <label class="form-label" for="newsTitle">标题</label>
+                    <input type="text" name="title" id="newsTitle" lay-verify="required" placeholder="标题"
+                           autocomplete="off" class="form-control" value="">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="keyword">关键词</label>
+                    <input type="text" name="keyword" id="keyword" placeholder="关键词" autocomplete="off" class="form-control" value="">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="intro">简介</label>
+                    <textarea name="intro" rows="5" id="intro" class="form-control" placeholder="简介"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="summernote">内容</label>
+                    <textarea id="summernote" name="content"></textarea>
+                </div>
+                <div class="mb-3 form-check form-switch">
+                    <input type="checkbox" class="form-check-input" id="is_top" name="is_top"
+                           value="1">
+                    <label class="form-check-label" for="is_top">置顶</label>
+                    <div class="form-text">
+                        是否置顶
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="newsImg">封面</label>
+                    <div class="input-group mb-3" id="newsImg">
+                        <span class="input-group-text">点击上传</span>
+                        <input name="contract_attachment" class="form-control" type="text" value="" readonly/>
+                    </div>
+                    <div class="layui-upload-list" id="newsImgBox"></div>
+                </div>
+
+                <div class="mb-3 d-grid">
+                    <button class="btn btn-primary" type="submit">保 存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
