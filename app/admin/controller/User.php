@@ -291,7 +291,7 @@ class User extends \app\common\controller\AdminController
                     }
                 }
 
-                $this->returnData['data'] = $userInfo->user;
+                $this->returnData['data'] = $userInfo;
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '更新完成';

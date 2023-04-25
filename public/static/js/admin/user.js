@@ -11,11 +11,124 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
             source: '',
             name: '',
         }) {
-            $('#newsImgBox').append('<img src="' + param.source + '" alt="' + param.name + '" class="mx-auto d-block m-3" style="max-height: 200px; width: auto;">')
+            $('#newsImgBox').append($('<div />', {
+                class: 'text-center position-relative mb-3',
+            }).append($('<button />', {
+                type: 'button',
+                class: 'btn-close position-absolute',
+                style: 'top: 0; right: 0;',
+                title: '删除',
+                click: function () {
+                    let contract_attachment = $('input[name="contract_attachment"]'),
+                        c = contract_attachment.val().split(',')
+                    contract_attachment.val(c.filter(i => i !== param.source))
+                    $(this).parent().remove()
+                }
+            })).append($('<img />', {
+                src: param.source,
+                alt: param.name || '',
+                class: 'mx-auto d-block',
+                style: 'max-height: 200px; width: auto;',
+                click: function () {
+                    let offset = {
+                        x: 0,
+                        y: 0,
+                        left: 0,
+                        top: 0,
+                    }, zoom = 100
+                    $('body').append($('<div />', {
+                        class: 'bg-black p-5 position-absolute w-100 h-100',
+                        style: 'z-index: 999999; top: 0; left: 0;',
+                        click: function (e) {
+                            e.preventDefault()
+                            $(this).remove()
+                            console.log('div click', e)
+                        },
+                    }).on({
+                        dragstart: function (e) {
+
+                        },
+                        dragover: function (e) {
+                            // console.log('drag over', e)
+                        },
+                        drop: function (e) {
+                            e.preventDefault()
+                            console.log('drop 2', offset)
+                            $(this).children().css({
+                                left: offset.left + 'px',
+                                top: offset.top + 'px',
+                            })
+                        }
+                    }).append($('<div />', {
+                        class: 'position-absolute',
+                        style: 'cursor: move;',
+                        draggable: true,
+                    }).on({
+                        dragstart: function (e) {
+                            offset.x = e.offsetX
+                            offset.y = e.offsetY
+                            console.log('drag start', $(this))
+                        },
+                        dragover: function (e) {
+                            // console.log('drag over', e)
+                            e.preventDefault()
+                            // offset.x = e.offsetX - offset.x
+                            // offset.y = e.offsetY - offset.y
+                            // console.log('drag over', e.offsetX, e.offsetY)
+                        },
+                        drop: function (e) {
+                            e.preventDefault()
+                            offset.left += e.offsetX - offset.x
+                            offset.top += e.offsetY - offset.y
+                            $(this).css({
+                                left: offset.left + 'px',
+                                top: offset.top + 'px',
+                            })
+                        }
+                    }).append($('<img />', {
+                        class: '',
+                        src: param.source,
+                        alt: param.name || '',
+                        click: function (e) {
+                            // 阻止冒泡
+                            window.event.cancelBubble = true
+                            console.log('click image', e)
+                        },
+                        // mousemove: function (e) {
+                        //     // console.log('mousemove', e)
+                        //     // console.log($(this))
+                        //     let s = $('html').width() / 2
+                        //     if (e.offsetX < s) {
+                        //         $(this).css({ cursor: "url('/static/images/left.ico') 0 32, auto" })
+                        //     } else if (e.offsetX > s) {
+                        //         $(this).css({ cursor: "url('/static/images/right.ico') 0 32, auto" })
+                        //     }
+                        // }
+                    }).on({
+                        mousewheel: function (e) {
+                            console.log(e)
+                            if (e.originalEvent.wheelDeltaY > 0) {
+                                zoom += 5
+                                $(this).css({
+                                    zoom: zoom + '%'
+                                })
+                            } else {
+                                zoom -= 5
+                                $(this).css({
+                                    zoom: zoom + '%'
+                                })
+                            }
+                        },
+                    }))))
+                }
+            })))
+
+            // document.onwheel = (e) => {
+            //     console.log(e)
+            // }
         },
 
         upload: function () {
-            let b = [];
             //上传图片
             let uploadInst = upload.render({
                 elem: '#newsImg',
@@ -32,10 +145,9 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                     let op = { title: res.msg }
                     if (res.code === 1) {
                         op.icon = 'success'
-                        b.push(res.data?.savePath);
-                        $('input[name="contract_attachment"]').val(b);
+                        let contract_attachment = $('input[name="contract_attachment"]')
+                        contract_attachment.val(contract_attachment.val() + ',' + res.data?.savePath)
                     }
-
                     return arronUtil.Toast.fire(op)
                 },
                 error: function () {
