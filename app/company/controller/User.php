@@ -178,7 +178,7 @@ class User extends \app\common\controller\CompanyController
                         $userInfo->test_endtime = strtotime($params['test_endtime']);
                         if ($userInfo->test_endtime < time() - 1800) {
                             $this->returnData['msg'] = '结束时间不能小于现在时间';
-                            $this->returnData['data'] = date('Y-m-d H:i:s', $userInfog->test_endtime);
+                            $this->returnData['data'] = date('Y-m-d H:i:s', $userInfo->test_endtime);
                             return json($this->returnData);
                         }
                     } else {
