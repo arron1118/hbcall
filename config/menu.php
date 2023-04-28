@@ -65,7 +65,13 @@ return [
                         "href" => (string) url('/xnumberStore/index'),
                         "icon" => "fa fa-address-book",
                         "target" => "_self"
-                    ]
+                    ],
+//                    [
+//                        "title" => "角色管理",
+//                        "href" => (string) url('/admin/index'),
+//                        "icon" => "fa fa-user",
+//                        "target" => "_self",
+//                    ]
                 ]
             ]
         ]

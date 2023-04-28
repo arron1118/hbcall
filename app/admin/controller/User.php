@@ -193,7 +193,7 @@ class User extends \app\common\controller\AdminController
             ->with(['companyXnumber'])
             ->find($userId);
         if (!$userInfo) {
-            $this->returnData['msg'] = '未找到数据';
+            $this->returnData['msg'] = lang('No data was found');
             return json($this->returnData);
         }
 

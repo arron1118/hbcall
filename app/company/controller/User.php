@@ -2,6 +2,7 @@
 
 namespace app\company\controller;
 
+use app\common\model\Company as CompanyModel;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
 use app\common\model\User as UserModel;
@@ -10,6 +11,16 @@ use think\db\exception\DbException;
 class User extends \app\common\controller\CompanyController
 {
     use UserTrait;
+
+    public function initialize()
+    {
+        parent::initialize();
+
+        $this->view->assign([
+            'callTypeList' => (new CompanyModel())->callTypeList(),
+            'numberList' => NumberStore::select(),
+        ]);
+    }
 
     public function index()
     {
@@ -120,22 +131,23 @@ class User extends \app\common\controller\CompanyController
             } else {
                 $this->returnData['msg'] = '开通失败';
             }
-
-            return json($this->returnData);
         }
 
-        return $this->view->fetch();
+        return json($this->returnData);
     }
 
     public function edit()
     {
         $userId = $this->request->param('id');
-        $userInfo = UserModel::where([
+        $userInfo = UserModel::with(['userXnumber'])
+            ->where([
             'company_id' => $this->userInfo->id,
-        ])->find($userId);
+            ])
+//            ->hidden(['password'])
+            ->find($userId);
 
         if (!$userInfo) {
-            $this->returnData['msg'] = '参数错误';
+            $this->returnData['msg'] = lang('No data was found');
             return json($this->returnData);
         }
 
@@ -200,12 +212,16 @@ class User extends \app\common\controller\CompanyController
                 $this->returnData['msg'] = '保存成功';
                 $this->returnData['code'] = 1;
             }
-
-            return json($this->returnData);
+        } else {
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '获取成功';
+            $this->returnData['data'] = [
+                'userInfo' => $userInfo,
+                'callTypeList' => (new CompanyModel())->getCalltypeList(),
+            ];
         }
 
-        $this->view->assign('userInfo', $userInfo);
-        return $this->view->fetch();
+        return json($this->returnData);
     }
 
     public function del()

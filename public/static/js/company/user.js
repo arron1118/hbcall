@@ -1,5 +1,6 @@
-layui.use(['form', 'table', 'arronUtil', 'jquery'], function () {
+layui.use(['form', 'table', 'arronUtil', 'jquery', 'laydate'], function () {
     let $ = layui.jquery,
+        laydate = layui.laydate,
         arronUtil = layui.arronUtil,
         form = layui.form,
         table = layui.table;
@@ -27,6 +28,116 @@ layui.use(['form', 'table', 'arronUtil', 'jquery'], function () {
         },
 
         listener: function () {
+            // 时间限制为现在
+            let minDate = arronUtil.getDateTime();
+            laydate.render({
+                elem: '#testEndTime',
+                type: 'datetime',
+                min: minDate,
+                value: arronUtil.getDateTime({ day: 1 }),
+            })
+            $('#isTest').on('click', function (e) {
+                let endtimeItem = $('.test-endtime'),
+                    limitCallNumber = $('.limit-call-number')
+                if (e.target.checked) {
+                    endtimeItem.removeClass('d-none')
+                    limitCallNumber.removeClass('d-none')
+                    $(this).val(1)
+                } else {
+                    endtimeItem.addClass('d-none')
+                    limitCallNumber.addClass('d-none')
+                }
+            })
+            $('#offcanvas').on('show.bs.offcanvas', e => {
+                let id = $(e.relatedTarget).data('id')
+                let f = document.formEditor, title = ''
+
+                $('#newsImgBox').html('')
+                if (id) {
+                    title = '编辑'
+                    $.get(arronUtil.url("/User/edit"), { id: id }, res => {
+                        if (res.code === 1) {
+                            for (const element of f.elements) {
+                                let name = element.name,
+                                    nodeName = element.nodeName,
+                                    el = $(e.currentTarget).find('[name="' + name + '"]');
+
+                                if (nodeName === 'SELECT') {
+                                    let v = ''
+                                    if (name === 'number_store_id') {
+                                        v = res.data['userInfo']['userXnumber']['number_store_id']
+                                    }
+                                    el.val(v)
+                                } else {
+                                    if (['is_test', 'status'].includes(name)) {
+                                        // el.val(1)
+                                        if (res.data['userInfo'][name] === 1) {
+                                            el.prop('checked', true)
+                                            if ('is_test' === name) {
+                                                $('.test-endtime').removeClass('d-none')
+                                                $('.limit-call-number').removeClass('d-none')
+                                            }
+                                        } else {
+                                            el.prop('checked', false)
+                                            if ('is_test' === name) {
+                                                $('.test-endtime').addClass('d-none')
+                                                $('.limit-call-number').addClass('d-none')
+                                            }
+                                        }
+                                    } else {
+                                        el.val(res.data['userInfo'][name])
+                                    }
+                                }
+
+                                if (['username'].includes(name)) {
+                                    el.prop('readonly', true)
+                                }
+                            }
+                        } else {
+                            arronUtil.Toast.fire({ title: res.msg })
+                        }
+                    })
+                } else {
+                    title = '添加'
+                    f.reset()
+                    $('[name="id"]').val('')
+                    $('input[name=username]').prop('readonly', false)
+                    $('.test-endtime').addClass('d-none')
+                    $('.limit-call-number').addClass('d-none')
+                }
+
+                $('.offcanvas-title').text(title)
+            })
+
+            $('form[name="formEditor"]').submit(function () {
+                let formData = $(this).serializeArray(),
+                    id = $('[name="id"]').val(),
+                    url = id ? arronUtil.url("/User/edit") : arronUtil.url("/User/add"),
+                    rate = $(this).find('input[name=rate]');
+
+                $.post(url, formData, function (res) {
+                    let option = { title: res.msg }
+                    if (res.code === 1) {
+                        option.icon = 'success'
+                        option.timer = 2000
+                        option.didDestroy = function () {
+                            if (id) {
+                                table.reload('userTable', {
+                                    where: form.val('searchForm')
+                                })
+                            } else {
+                                controller.reloadTable()
+                            }
+
+                            $('[data-bs-dismiss="offcanvas"]').click()
+                        }
+                    }
+
+                    arronUtil.Toast.fire(option)
+                })
+
+                return false
+            })
 
             table.init('currentTableFilter', {
                 url: arronUtil.url("/user/getUserList"),
@@ -90,50 +201,8 @@ layui.use(['form', 'table', 'arronUtil', 'jquery'], function () {
                 }
             })
 
-            /**
-             * toolbar监听事件
-             */
-            table.on('toolbar(currentTableFilter)', function (obj) {
-                if (obj.event === 'add') {  // 监听添加操作
-                    $.post(arronUtil.url("/User/checkLimitUser"), {}, function (res) {
-                        if (res.code === 1) {
-                            let index = layer.open({
-                                title: '开通账号',
-                                type: 2,
-                                shade: 0.2,
-                                maxmin: true,
-                                shadeClose: true,
-                                anim: 2,
-                                area: ['100%', '100%'],
-                                content: arronUtil.url("/user/add"),
-                            });
-                            $(window).on("resize", function () {
-                                layer.full(index);
-                            });
-                        } else {
-                            arronUtil.Toast.fire({
-                                title: res.msg
-                            })
-                        }
-                    })
-                }
-            });
-
             table.on('tool(currentTableFilter)', function (obj) {
-                if (obj.event === 'edit') {
-                    let index = layer.open({
-                        title: '编辑账号',
-                        type: 2,
-                        shade: 0.2,
-                        maxmin:true,
-                        shadeClose: true,
-                        area: ['100%', '100%'],
-                        content: arronUtil.url("/user/edit") + '?id=' + obj.data.id,
-                    });
-                    $(window).on("resize", function () {
-                        layer.full(index);
-                    });
-                } else if (obj.event === 'delete') {
+                if (obj.event === 'delete') {
                     arronUtil.Toast.fire({
                         title: '真的删除行么？删除后不可恢复',
                         icon: 'question',

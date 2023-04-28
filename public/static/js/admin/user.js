@@ -106,7 +106,7 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                         // }
                     }).on({
                         mousewheel: function (e) {
-                            console.log(e)
+                            // 放大缩小图片
                             if (e.originalEvent.wheelDeltaY > 0) {
                                 zoom += 5
                                 $(this).css({

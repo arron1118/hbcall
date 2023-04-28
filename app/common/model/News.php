@@ -12,9 +12,9 @@ class News extends Model
 
     use SoftDelete;
 
-    public function getStatusAttr($value)
+    public function getStatusTextAttr($value, $data)
     {
-        return $this->getStatusList()[$value];
+        return $this->getStatusList()[$data['status']];
     }
 
     protected function getStatusList()
@@ -27,9 +27,9 @@ class News extends Model
         return htmlspecialchars_decode($value);
     }
 
-    public function getIsTopAttr($value)
+    public function getIsTopTextAttr($value, $data)
     {
-        return $value === 1 ? '是' : '否';
+        return $data['is_top'] === 1 ? '是' : '否';
     }
 
     public function author()

@@ -1,7 +1,6 @@
 {extend name="../common/public/base" /}
 {block name="css"}
     {include file="../common/public/bootstrap" /}
-    <link href="__STATIC__/lib/summernote-0.8.18-dist/summernote-lite.min.css" rel="stylesheet">
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 pt-3">
@@ -19,7 +18,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">发布时间</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="time" class="layui-input" id="newsDate" placeholder=""
+                            <input type="text" name="time" class="layui-input" id="adminDate" placeholder=""
                                    autocomplete="off">
                         </div>
                     </div>
@@ -36,30 +35,25 @@
     <div class="row">
         <div class="col">
             <button class="layui-btn layui-btn-sm d-none" id="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
-            <script type="text/html" id="toolbarNews">
+            <script type="text/html" id="toolbarAdmin">
                 <div class="layui-btn-container">
-                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i class="fa fa-plus"></i> 发布</button>
-                    <button class="layui-btn layui-btn-sm" lay-event="importExcel"><i class="fa fa-file-import"></i> 批量导入</button>
-                    <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i class="fa fa-plus"></i> 添加</button>
                 </div>
             </script>
 
-            <table class="layui-table" id="newsTableId" lay-filter="newsTableFilter" lay-even lay-data="">
+            <table class="layui-table" id="adminTableId" lay-filter="adminTableFilter" lay-even lay-data="">
                 <thead>
                 <tr>
-                    <th lay-data="{type: 'checkbox', width: 50}"></th>
                     <th lay-data="{field: 'id', title: 'ID', width: 100}"></th>
-                    <th lay-data="{field: 'title', title: '标题'}"></th>
-                    <th lay-data="{field: 'is_top_text', title: '置顶', align: 'center'}"></th>
-                    <th lay-data="{field: 'view', title: '查看', align: 'center'}"></th>
+                    <th lay-data="{field: 'username', title: '用户名'}"></th>
                     <th lay-data="{field: 'status_text', title: '状态', align: 'center'}"></th>
-                    <th lay-data="{field: 'update_time', title: '更新时间', align: 'center'}"></th>
-                    <th lay-data="{title: '操作', width: 100, toolbar: '#newsTableBar', align: 'center'}"></th>
+                    <th lay-data="{field: 'create_time', title: '创建时间', align: 'center'}"></th>
+                    <th lay-data="{title: '操作', width: 100, toolbar: '#adminTableBar', align: 'center'}"></th>
                 </tr>
                 </thead>
             </table>
 
-            <script type="text/html" id="newsTableBar">
+            <script type="text/html" id="adminTableBar">
                 <a class="layui-btn layui-btn-xs data-count-edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" data-id="{{ d.id }}" title="编辑"><i class="fa fa-user-edit"></i> </a>
                 <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" title="删除"><i class="fa fa-trash-can"></i> </a>
             </script>
@@ -67,12 +61,11 @@
         </div>
     </div>
 </div>
-{include file="news/edit" /}
+{include file="admin/edit" /}
 {/block}
 
 {block name="js"}
-<script src="__STATIC__/lib/summernote-0.8.18-dist/summernote-lite.min.js"></script>
-<script src="__STATIC__/js/admin/news.js?v={:time()}">
+<script src="__STATIC__/js/admin/admin.js?v={:time()}">
 </script>
 
 {/block}

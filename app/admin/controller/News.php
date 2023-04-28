@@ -37,6 +37,7 @@ class News extends \app\common\controller\AdminController
             $this->returnData['data'] = $this->model::where($map)
                 ->limit(($page - 1) * $limit, $limit)
                 ->order('id DESC')
+                ->append(['status_text', 'is_top_text'])
                 ->select();
             $this->returnData['msg'] = lang('Operation successful');
 
@@ -49,41 +50,29 @@ class News extends \app\common\controller\AdminController
     public function add()
     {
         if ($this->request->isPost()) {
-            $title = trim($this->request->param('title'));
-            $content = $this->request->param('content');
-            $cover_img = $this->request->param('cover_img');
-            $is_top = $this->request->param('is_top/d', 0);
+            $params = $this->request->param();
+            $params['status'] = 1;
+            $params['author_id'] = $this->userInfo->id;
 
-            if ($title === '') {
+            if ($params['title'] === '') {
                 $this->returnData['msg'] = '请输入标题';
                 return json($this->returnData);
             }
 
-            if ($this->model::where('title', '=', $title)->find()) {
+            if ($this->model::where('title', '=', $params['title'])->find()) {
                 $this->returnData['msg'] = '标题已经存在';
                 return json($this->returnData);
             }
 
             $news = new $this->model();
-            $news->title = $title;
-            $news->content = $content;
-            $news->cover_img = $cover_img;
-            $news->is_top = $is_top;
-            $news->status = 1;
-            $news->create_time = time();
-            $news->update_time = time();
-            $news->author_id = $this->userInfo['id'];
-            $news->save();
-
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '发布成功';
-            $this->returnData['data'] = $news->id;
-
-            return json($this->returnData);
+            if ($news->save($params)) {
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '发布成功';
+                $this->returnData['data'] = $news->id;
+            }
         }
 
-
-        return $this->view->fetch();
+        return json($this->returnData);
     }
 
     public function edit($id = 0)
@@ -95,25 +84,36 @@ class News extends \app\common\controller\AdminController
 
         $news = $this->model::find($id);
         if (!$news) {
-            $this->returnData['msg'] = '未找到相关数据';
+            $this->returnData['msg'] = lang('No data was found');
             return json($this->returnData);
         }
+
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = lang('Operation successful');
 
         if ($this->request->isPost()) {
             $param = $this->request->param();
             $param['is_top'] = isset($param['is_top']) ?: 0;
-            $param['update_time'] = time();
-            $news->save($param);
 
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '更新成功';
-            $this->returnData['data'] = $news->id;
+            if ($param['title'] === '') {
+                $this->returnData['msg'] = '请输入标题';
+                $this->returnData['code'] = 0;
+                return json($this->returnData);
+            }
 
-            return json($this->returnData);
+            if ($this->model::where('title', '=', $param['title'])->find()) {
+                $this->returnData['msg'] = '标题已经存在';
+                $this->returnData['code'] = 0;
+                return json($this->returnData);
+            }
+
+            if ($news->save($param)) {
+                $this->returnData['msg'] = '更新成功';
+            }
         }
 
-        $this->view->assign('news', $news);
-        return $this->view->fetch();
+        $this->returnData['data'] = $news;
+        return json($this->returnData);
     }
 
     public function delete($ids)

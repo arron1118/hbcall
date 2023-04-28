@@ -1,216 +1,85 @@
-{extend name="../common/public/base" /}
-{block name="css"}
-{include file="../common/public/bootstrap" /}
-<style>
-    .logo-title {
-        text-align: center;
-        letter-spacing: 2px;
-        padding: 14px 0;
-    }
-
-    .logo-title h1 {
-        color: #1E9FFF;
-        font-size: 25px;
-        font-weight: bold;
-    }
-
-    .login-form {
-        background-color: #fff;
-        border: 1px solid #fff;
-        border-radius: 3px;
-        padding: 14px 20px;
-        box-shadow: 0 0 8px #eeeeee;
-    }
-
-    .login-form .layui-form-item {
-        position: relative;
-    }
-
-    .login-form .layui-form-item label {
-        position: absolute;
-        left: 1px;
-        top: 1px;
-        width: 100px;
-        line-height: 20px;
-        text-align: center;
-        color: #565656;
-    }
-
-    .layui-form-item .layui-input-block {
-        margin-left: 130px;
-    }
-</style>
-{/block}
-{block name="body"}
-<div class="container justify-content-center">
-    <div class="row justify-content-center">
-        <div class="col col-lg-8 col-md-10 bg-white">
-            <form class="layui-form layuimini-form" action="">
-                <input type="hidden" name="id" value="{$userInfo.id}" />
-                <div class="layui-form-item logo-title">
-                    <h1>编辑账号</h1>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas" style="width: 600px;">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">编辑</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="">
+            <form class="" action="" name="formEditor">
+                <input name="id" value="" type="hidden"/>
+                <div class="mb-3">
+                    <h5 class="text-black-50 text-center">账号信息</h5>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">呼叫线路</label>
-                    <div class="layui-input-block">
-                        <input type="text" name="" value="{$user.call_type_text}" class="layui-input border-0" disabled>
-                        <tip>提示：当前使用呼叫线路</tip>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label" for="call_type">呼叫线路</label>
+                    <div>{$user.call_type_text}</div>
+                    <div class="form-text">提示：当前使用呼叫线路</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="account">账号<span class="text-warning px-1">*</span></label>
+                    <input type="text" name="username" id="account" placeholder="账号"
+                           autocomplete="off" class="form-control" value="" required>
+                    <div class="form-text">提示：此昵称作为登录账号使用，创建后暂不支持更改</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="password">密码<span class="text-warning px-1">*</span></label>
+                    <input type="password" name="password" id="password"
+                           placeholder="密码"
+                           autocomplete="off" class="form-control" value="" required>
+                </div>
+                <div class="mb-3 {if $user->call_type !== 1}d-none{/if}">
+                    <label class="form-label" for="xnumber">小号</label>
+                    <select name="number_store_id" id="xnumber" class="form-select">
+                        <option value="{$user.companyXnumber.numberStore.id}">{$user.companyXnumber.numberStore.number}</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="realname">真实姓名<span class="text-warning px-1">*</span></label>
+                    <input type="text" name="realname" id="realname" placeholder="真实姓名" autocomplete="off"
+                           class="form-control" value="" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="phone">联系电话<span class="text-warning px-1">*</span></label>
+                    <input type="text" name="phone" id="phone" placeholder="联系电话"
+                           autocomplete="off" class="form-control" value="" required>
                 </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="account">账号<span class="text-danger" style="margin: 0 5px;">*</span></label>
-                    <div class="layui-input-block" id="account">
-                        <input type="text" name="username" lay-verify="required|account" placeholder="账号"
-                               autocomplete="off" class="layui-input" value="{$userInfo.username}" readonly>
-                        <tip>提示：此昵称作为登录账号使用，创建后暂不支持更改</tip>
-                    </div>
+                <div class="mb-3 {if !in_array($user->call_type, [3, 4])}d-none{/if}">
+                    <label class="form-label" for="callback_number">回拨号码<span class="text-danger" style="margin: 0 5px;">*</span></label>
+                    <input type="text" name="callback_number" id="callback_number" placeholder="回拨号码"
+                           autocomplete="off" class="form-control" value="" {if in_array($user->call_type, [3, 4])}required{/if}>
+                    <div class="form-text">提示：呼叫线路为<strong>电信回拨</strong>、<strong>移动回拨</strong>时，必须提供回拨号码才能进行拨号</div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="password">密码<span class="text-danger" style="margin: 0 5px;">*</span></label>
-                    <div class="layui-input-block" id="password">
-                        <input type="password" name="password" lay-verify="required|password" placeholder="密码"
-                               autocomplete="off" class="layui-input" value="{$userInfo.password}">
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label" for="customer_view_num">查看电话次数</label>
+                    <input type="number" name="customer_view_num" id="customer_view_num" min="0" placeholder="0"
+                           autocomplete="off" class="form-control" value="">
+                    <div class="form-text">提示：0 为无限制查看客户电话次数</div>
                 </div>
-
-                <div class="layui-form-item {if $user->call_type !== 1}d-none{/if}">
-                    <label class="layui-form-label">小号</label>
-                    <div class="layui-input-block">
-                        <select name="number_store_id">
-                            <option value="{$user.companyXnumber.numberStore.id}">{$user.companyXnumber.numberStore.number}</option>
-                        </select>
-                    </div>
+                <div class="mb-3 form-check form-switch {if $user.id !== 1} d-none {/if}">
+                    <input type="checkbox" class="form-check-input" id="isTest" name="is_test"
+                           value="1">
+                    <label class="form-check-label" for="isTest">测试账号</label>
+                    <div class="form-text">提示：设为测试账号</div>
                 </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="realname">真实姓名<span class="text-danger" style="margin: 0 5px;">*</span></label>
-                    <div class="layui-input-block" id="realname">
-                        <input type="text" name="realname" placeholder="真实姓名" autocomplete="off" class="layui-input" value="{$userInfo.realname}">
-                    </div>
+                <div class="mb-3 d-none test-endtime">
+                    <label class="form-label" for="test_endtime">结束时间</label>
+                    <input type="text" name="test_endtime" placeholder="1970-01-01 00:00:00"
+                           autocomplete="off" class="form-control" value="" id="testEndTime">
+                    <div class="form-text">提示：超过测试时间将禁止拨号，空为无限制。</div>
                 </div>
-
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="phone">手机号<span class="text-danger" style="margin: 0 5px;">*</span></label>
-                    <div class="layui-input-block" id="phone">
-                        <input type="text" name="phone" lay-verify="required|phone" placeholder="手机号"
-                               autocomplete="off" class="layui-input" value="{$userInfo.phone}">
-                        <tip>提示：必须提供正确的手机号才能进行拨号</tip>
-                    </div>
+                <div class="mb-5 d-none limit-call-number">
+                    <label class="form-check-label" for="limit_call_number">限制拨打数量</label>
+                    <input type="number" id="limit_call_number" class="form-control" name="limit_call_number"
+                           value="" autocomplete="off">
+                    <div class="form-text">提示：0为无限制</div>
                 </div>
 
-                <div class="layui-form-item {if !in_array($user->call_type, [3, 4])}d-none{/if}">
-                    <label class="layui-form-label" for="callback_number">回拨号码<span class="text-danger" style="margin: 0 5px;">*</span></label>
-                    <div class="layui-input-block" id="callback_number">
-                        <input type="text" name="callback_number" placeholder="回拨号码"
-                               autocomplete="off" class="layui-input" value="{$userInfo.callback_number}">
-                        <tip>提示：呼叫线路为<strong>电信回拨</strong>、<strong>移动回拨</strong>时，必须提供回拨号码才能进行拨号</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="isTest">查看电话次数</label>
-                    <div class="layui-input-block">
-                        <input type="number" name="customer_view_num" id="customer_view_num" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.customer_view_num}">
-                        <tip class="">提示：0 为无限制查看客户电话次数</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item {if $user.id !== 1} d-none {/if}">
-                    <label class="layui-form-label" for="isTest">测试账号</label>
-                    <div class="layui-input-block" id="isTest">
-                        <input type="checkbox" lay-skin="switch" lay-filter="testFilter" name="is_test" value="1" lay-text="是|否" {if $userInfo->is_test === 1}checked{/if}>
-                    </div>
-                </div>
-                <div class="layui-form-item {if !$userInfo->is_test}d-none{/if} test-endtime">
-                    <label class="layui-form-label" for="test_endtime">结束时间</label>
-                    <div class="layui-input-block" id="test_endtime">
-                        <input type="text" name="test_endtime" placeholder="1970-01-01 00:00:00"
-                               autocomplete="off" class="layui-input" value="{$userInfo.test_endtime}" id="testEndTime">
-                    </div>
-                    <div class="layui-input-block">
-                        <tip>超过测试时间将禁止拨号，空为无限制。</tip>
-                    </div>
-                </div>
-                <div class="layui-form-item {if !$userInfo->is_test}d-none{/if} test-endtime">
-                    <label class="layui-form-label" for="limit_user">限制拨打数量</label>
-                    <div class="layui-input-block" id="limit_user">
-                        <input type="number" name="limit_call_number" min="0" placeholder="0"
-                               autocomplete="off" class="layui-input" value="{$userInfo.limit_call_number}">
-                        <tip>提示：0 为无限制</tip>
-                    </div>
-                </div>
-
-                <div class="layui-form-item">
-                    <button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
-                            lay-filter="edit">保存
-                    </button>
+                <div class="mb-3 d-grid">
+                    <button class="btn btn-primary" type="submit">保 存</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-{/block}
-
-{block name="js"}
-<script>
-    layui.use(['form','laydate', 'arronUtil'], function () {
-        let $ = layui.jquery,
-            arronUtil = layui.arronUtil,
-            laydate = layui.laydate,
-            form = layui.form;
-
-        let frameIndex = parent.layer.getFrameIndex(window.name);
-
-        // 时间限制为现在
-        let minDate = arronUtil.getDateTime();
-        laydate.render({
-            elem: '#testEndTime',
-            type: 'datetime',
-            min: minDate
-        })
-        form.on('switch(testFilter)', function (obj) {
-            let endtimeItem = $('.test-endtime')
-            obj.elem.checked ? endtimeItem.removeClass('d-none') : endtimeItem.addClass('d-none')
-        })
-        // 进行登录操作
-        form.on('submit(edit)', function (data) {
-            let params = data.field
-
-            if (params.phone === '') {
-                arronUtil.Toast.fire({ title: '手机号不能为空' });
-                return false;
-            }
-            if (params.realname === '') {
-                arronUtil.Toast.fire({ title: '真实姓名不能为空' });
-                return false;
-            }
-            if (params.password === '') {
-                arronUtil.Toast.fire({ title: '密码不能为空' });
-                return false;
-            }
-            if (params.is_test === '1' && params.test_endtime === '') {
-                arronUtil.Toast.fire({ title: '结束时间不能为空' })
-                return false
-            }
-
-            $.post(arronUtil.url('/user/edit'), params, function (res) {
-                let option = { title: res.msg }
-                if (res.code === 1) {
-                    option.icon = 'success'
-                    option.didDestroy = function () {
-                        parent.layer.close(frameIndex);
-                        parent.layui.table.reload('userTable');
-                    }
-                }
-
-                arronUtil.Toast.fire(option)
-            });
-
-            return false;
-        });
-
-    });
-</script>
-
-{/block}

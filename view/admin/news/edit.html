@@ -1,163 +1,50 @@
-{extend name="../common/public/base" /}
-{block name="css"}
-{include file="../common/public/bootstrap" /}
-<link href="__STATIC__/lib/summernote-0.8.18-dist/summernote-bs4.min.css" rel="stylesheet">
-<style>
-    .layui-form-label {
-        min-width: 100px;
-    }
-</style>
-{/block}
-{block name="body"}
-<div class="container-fluid" id="lqp">
-    <div class="row bg-white rounded-3">
-        <div class="col p-3">
-            <form class="layui-form" action="">
-                <input name="id" type="hidden" value="{$news.id}" />
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsTitle">标题</label>
-                    <div class="layui-input-block" id="newsTitle">
-                        <input type="text" name="title" lay-verify="required" placeholder="标题"
-                               autocomplete="off" class="layui-input" value="{$news.title}">
+<div class="offcanvas offcanvas-end w-100" tabindex="-1" id="offcanvas" style="">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">编辑</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="">
+            <form class="" name="formEditor">
+                <input name="id" type="hidden" value="" />
+                <div class="mb-3">
+                    <label class="form-label" for="newsTitle">标题</label>
+                    <input type="text" name="title" id="newsTitle" lay-verify="required" placeholder="标题"
+                           autocomplete="off" class="form-control" value="">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="keyword">关键词</label>
+                    <input type="text" name="keyword" id="keyword" placeholder="关键词" autocomplete="off" class="form-control" value="">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="intro">简介</label>
+                    <textarea name="intro" rows="3" id="intro" class="form-control" placeholder="简介"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="summernote">内容</label>
+                    <textarea id="summernote" class="" name="content"></textarea>
+                </div>
+                <div class="mb-3 form-check form-switch">
+                    <input type="checkbox" class="form-check-input" id="is_top" name="is_top"
+                           value="1">
+                    <label class="form-check-label" for="is_top">置顶</label>
+                    <div class="form-text">
+                        是否置顶
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="keyword">关键词</label>
-                    <div class="layui-input-block" id="keyword">
-                        <input type="text" name="keyword" placeholder="关键词" autocomplete="off" class="layui-input" value="{$news.keyword}">
+                <div class="mb-3">
+                    <label class="form-label" for="newsImg">封面</label>
+                    <div class="input-group mb-3" id="newsImg">
+                        <span class="input-group-text">点击上传</span>
+                        <input name="cover_img" class="form-control" type="text" value="" readonly/>
                     </div>
+                    <div class="layui-upload-list" id="newsImgBox"></div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="intro">简介</label>
-                    <div class="layui-input-block" id="intro">
-                        <textarea name="intro" rows="4" class="layui-textarea" placeholder="简介">{$news.intro}</textarea>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsContent">内容</label>
-                    <div class="layui-input-block" id="newsContent">
-                        <textarea id="summernote" name="content">{$news.content}</textarea>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">置顶</label>
-                    <div class="layui-input-block">
-                        <input type="checkbox" name="is_top" lay-skin="switch" {if $news->getData('is_top')}checked{/if} lay-filter="switchTest" value="1"
-                        lay-text="是|否">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label" for="newsImg">封面</label>
-                    <div class="layui-upload">
-                        <button type="button" class="layui-btn" id="newsImg" style="margin-left: 12px;">上传</button>
-                        <div class="layui-upload-list" style="padding-left: 112px;">
-                            <img class="layui-upload-img" src="{$news.cover_img}" id="newsImgBox" style="max-height: 300px; width: auto;">
-                        </div>
-                        <input name="cover_img" type="hidden" value="{$news.cover_img}" />
-                    </div>
-                </div>
-                <div class="layui-input-block">
-                    <button class="layui-btn layui-btn-normal layui-btn-fluid" lay-submit=""
-                            lay-filter="publish">发布
-                    </button>
+
+                <div class="mb-3 d-grid">
+                    <button class="btn btn-primary" type="submit">保 存</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-{/block}
-
-{block name="js"}
-<script src="__STATIC__/lib/summernote-0.8.18-dist/summernote-bs4.min.js"></script>
-<script>
-    layui.use(['form', 'laydate', 'upload', 'jquery', 'arronUtil'], function () {
-        let $ = layui.jquery,
-            arronUtil = layui.arronUtil,
-            form = layui.form,
-            upload = layui.upload;
-
-        let frameIndex = parent.layui.layer.getFrameIndex(window.name);
-
-        //编辑框
-        $('#summernote').summernote({
-            placeholder: '请输入新闻内容',
-            tabsize: 2,
-            height: 400,
-            focus: false
-        });
-
-        //开关
-        //监听指定开关
-        form.on('switch(switchTest)', function (data) {
-            if (this.checked) {
-                layer.tips('置顶新闻将会出现在列表第一条显示！', data.othis)
-            }
-        });
-
-        let markupStr = 'hello world!!!';
-        // $('#summernote').summernote('code', markupStr);
-
-        //上传图片
-        let uploadInst = upload.render({
-            elem: '#newsImg',
-            url: arronUtil.url("/news/upload"),
-            before: function (obj) {
-                //预读本地文件示例，不支持ie8
-                obj.preview(function (index, file, result) {
-                    $('#newsImgBox').attr('src', result); //图片链接（base64）
-                });
-            },
-            done: function (res) {
-                let o = {
-                    title: res.msg
-                }
-                if (res.code === 1) {
-                    o.icon = 'success'
-                    $('input[name="cover_img"]').val(res.data.savePath);
-                }
-
-                return arronUtil.Toast.fire(o)
-            },
-            error: function () {
-                //演示失败状态，并实现重传
-                let demoText = $('#demoText');
-                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
-                demoText.find('.demo-reload').on('click', function () {
-                    uploadInst.upload();
-                });
-            },
-        });
-
-        // 发布
-        form.on('submit(publish)', function (data) {
-            let params = data.field;
-
-            if ($('#summernote').summernote('isEmpty')) {
-                arronUtil.Toast.fire({
-                    title: '内容不能为空'
-                })
-                return false;
-            }
-
-            $.post(arronUtil.url("/news/edit"), params, function (res) {
-                let o = { title: res.msg }
-                if (res.code === 1) {
-                    o.icon = 'success'
-                    o.timer = 1500
-                    o.didDestroy = () => {
-                        parent.layer.close(frameIndex)
-                        parent.layui.table.reload('newsTable')
-                    }
-                }
-
-                arronUtil.Toast.fire(o)
-            });
-
-            return false;
-        });
-
-    });
-</script>
-
-{/block}

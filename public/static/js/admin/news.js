@@ -8,6 +8,12 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
         upload = layui.upload,
         table = layui.table;
 
+    const REQUEST_CONFIG = {
+        EDIT_URL: arronUtil.url('/News/edit'),
+        ADD_URL: arronUtil.url('/News/add'),
+        DELETE_URL: arronUtil.url('/News/delete'),
+    }
+
     let controller = {
         uploadExcel: function (files) {
             try {
@@ -90,8 +96,44 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
             }
         },
 
+        upload: function () {
+            //上传图片
+            let uploadInst = upload.render({
+                elem: '#newsImg',
+                url: arronUtil.url("/news/upload"),
+                before: function (obj) {
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function (index, file, result) {
+                        $('#newsImgBox').append($('<img />', {
+                            class: 'img-thumbnail',
+                            src: result
+                        }))
+                    });
+                },
+                done: function (res) {
+                    let o = {
+                        title: res.msg
+                    }
+                    if (res.code === 1) {
+                        o.icon = 'success'
+                        $('input[name="cover_img"]').val(res.data.savePath);
+                    }
+
+                    return arronUtil.Toast.fire(o)
+                },
+                error: function () {
+                    //演示失败状态，并实现重传
+                    let demoText = $('#demoText');
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                    demoText.find('.demo-reload').on('click', function () {
+                        uploadInst.upload();
+                    });
+                },
+            })
+        },
+
         delete: function (ids) {
-            $.post(arronUtil.url('/news/delete'), {ids: ids}, function (res) {
+            $.post(REQUEST_CONFIG.DELETE_URL, {ids: ids}, function (res) {
                 arronUtil.Toast.fire({
                     title: res.msg,
                     icon: 'success'
@@ -110,7 +152,23 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
             });
         },
 
+        getFilterParams: function () {
+            return form.val('searchForm')
+        },
+
         listener: function () {
+            controller.upload()
+
+            // 编辑框
+            const SUMMERNOTE_CONFIG = {
+                placeholder: '请输入新闻内容',
+                tabsize: 2,
+                height: 400,
+                focus: false,
+            }
+            const SUMMERNOTE_TARGET = '#summernote'
+            $(SUMMERNOTE_TARGET).summernote(SUMMERNOTE_CONFIG)
+
             let offcanvas = $('#offcanvas')
             offcanvas.on('show.bs.offcanvas', e => {
                 let id = $(e.relatedTarget).data('id')
@@ -121,26 +179,35 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                         if (res.code === 1) {
                             for (const element of f.elements) {
                                 let name = element.name,
-                                    nodeName = element.nodeName,
                                     el = $(e.currentTarget).find('[name="' + name + '"]');
 
-                                if (nodeName === 'SELECT') {
-                                    let v = Object.keys(res.cateList).find(key => parseInt(key) === res.data[name])
-                                    el.val(v)
+                                if (name === 'is_top') {
+                                    el.prop('checked', res.data[name] === 1)
+                                } else if (name === 'content') {
+                                    $(SUMMERNOTE_TARGET).summernote('code', res.data[name])
                                 } else {
                                     el.val(res.data[name])
                                 }
+                            }
 
-                                if (name === 'phone') {
-                                    el.attr('disabled', true)
-                                }
+                            if (res.data.cover_img) {
+                                $('#newsImgBox').html('')
+                                $('#newsImgBox').append($('<img />', {
+                                    class: 'img-thumbnail',
+                                    src: res.data.cover_img
+                                }))
                             }
                         }
                     })
                 } else {
                     title = '添加'
-                    $(e.currentTarget).find('[name="phone"]').attr('disabled', false)
+                    $('[name="id"]').val('')
                     f.reset()
+                    $('#newsImgBox').html('')
+
+                    if (!$(SUMMERNOTE_TARGET).summernote('isEmpty')) {
+                        $(SUMMERNOTE_TARGET).summernote('reset', SUMMERNOTE_CONFIG)
+                    }
                 }
 
                 $('.offcanvas-title').text(title)
@@ -151,7 +218,6 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                     id = $('[name="id"]').val(),
                     url = id ? REQUEST_CONFIG.EDIT_URL : REQUEST_CONFIG.ADD_URL
 
-                console.log(id)
                 $.post(url, formData, function (res) {
                     let option = {title: res.msg}
                     if (res.code === 1) {
@@ -159,7 +225,7 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                         option.timer = 1500
                         option.didDestroy = function () {
                             if (id) {
-                                table.reload('customerTable', {
+                                table.reload('newsTable', {
                                     where: controller.getFilterParams()
                                 })
                             } else {
@@ -243,21 +309,6 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
             // 表头
             table.on('toolbar(newsTableFilter)', function (obj) {
                 switch (obj.event) {
-                    case 'add':
-                        let index = layer.open({
-                            title: '发布新闻',
-                            type: 2,
-                            shade: 0.2,
-                            maxmin: true,
-                            shadeClose: true,
-                            area: ['100%', '100%'],
-                            content: arronUtil.url("/news/add"),
-                        });
-                        $(window).on("resize", function () {
-                            layer.full(index);
-                        });
-                        break;
-
                     case 'importExcel':
                         $('#importExcel').click();
                         break;
@@ -289,20 +340,6 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
             //表内
             table.on('tool(newsTableFilter)', function (obj) {
                 switch (obj.event) {
-                    case 'edit':
-                        let index = layer.open({
-                            title: '编辑新闻',
-                            type: 2,
-                            shade: 0.2,
-                            maxmin: true,
-                            shadeClose: true,
-                            area: ['100%', '100%'],
-                            content: arronUtil.url("/news/edit") + '?id=' + obj.data.id,
-                        });
-                        $(window).on("resize", function () {
-                            layer.full(index);
-                        });
-                        break;
                     case 'del':
                         arronUtil.Toast.fire({
                             title: '真的删除这条数据么',
