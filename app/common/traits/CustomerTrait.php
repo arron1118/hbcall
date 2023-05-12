@@ -55,15 +55,57 @@ trait CustomerTrait
             $this->view->assign('users', $this->userInfo->user);
         }
 
-        $CustmoerModel = new CustomerModel();
+        $CustomerModel = new CustomerModel();
         $this->view->assign([
             'type' => $this->type,
-            'cateList' => $CustmoerModel->getCateList($this->type),
-            'typeText' => $CustmoerModel->getTypeList()[$this->type],
-            'searchItem' => $CustmoerModel->getSearchItem($this->type),
+            'cateList' => $CustomerModel->getCateList($this->type),
+            'typeText' => $CustomerModel->getTypeList()[$this->type],
+            'searchItem' => $CustomerModel->getSearchItem($this->type),
         ]);
 
         return $this->view->fetch('common@customer/index');
+    }
+
+    public function trash_list()
+    {
+        if ($this->request->isPost()) {
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
+            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
+            $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
+            $where = [];
+
+            if ($userId > 0) {
+                $where[] = ['user_id', '=', $userId];
+            }
+
+            if ($companyId > 0) {
+                $where[] = ['company_id', '=', $companyId];
+            }
+
+            if ($this->type > 0) {
+                $where[] = ['type', '=', $this->type];
+            }
+            $this->returnData['msg'] = lang('Operation successful');
+            $this->returnData['count'] = CustomerModel::onlyTrashed()->where($where)->count();
+            $this->returnData['data'] = CustomerModel::onlyTrashed()
+                ->where($where)
+                ->with(['company', 'user'])
+                ->withCount(['record'])
+                ->order('id', 'desc')
+                ->limit(($page - 1) * $limit, $limit)
+                ->append(['cate_text'])
+                ->hidden(['company', 'user'])
+                ->select();
+
+            return json($this->returnData);
+        }
+
+        $this->view->assign([
+            'type' => $this->type,
+            'typeText' => (new CustomerModel)->getTypeList()[$this->type],
+        ]);
+        return $this->view->fetch('common@customer/customer_trash_list');
     }
 
     public function getCustomerList()

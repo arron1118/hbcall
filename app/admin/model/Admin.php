@@ -3,9 +3,11 @@
 
 namespace app\admin\model;
 
+use think\model\concern\SoftDelete;
 
 class Admin extends \think\Model
 {
+    use SoftDelete;
 
     public function getPrevtimeAttr($value)
     {

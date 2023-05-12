@@ -330,6 +330,7 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                     limits: [15, 30, 45, 60],
                     limit: 15,
                 },
+                height: 725,
                 skin: 'line',
                 even: true,
             })

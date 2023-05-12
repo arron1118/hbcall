@@ -368,6 +368,21 @@ layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown'
                             }
                         })
                         break;
+
+                    case 'trash':
+                        let index = layer.open({
+                            title: '回收站',
+                            type: 2,
+                            shade: 0.2,
+                            maxmin: true,
+                            shadeClose: true,
+                            area: ['100%', '100%'],
+                            content: arronUtil.url('/Customer/trash_list') + '?type=' + type,
+                        });
+                        $(window).on("resize", function () {
+                            layer.full(index);
+                        });
+                        break;
                 }
             });
 

@@ -156,9 +156,9 @@
                 <span class="text-primary" title="点击查看">{{d.record_count}}</span>
             </script>
 
+            {if ($module !== 'admin')}
             <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入{$typeText}</button>
             <script type="text/html" id="currentTableBar">
-                {if ($module !== 'admin')}
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i class="fa fa-plus"></i> 添加{$typeText}</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入{$typeText}</button>
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
@@ -170,10 +170,9 @@
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="migrate"><i class="fa fa-share-from-square"></i> 迁移{$typeText}</button>
                 {/if}
                 {/if}
-                {/if}
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="trash"><i class="fa fa-trash-can"></i> 回收站</button>
                 <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
             </script>
+            {/if}
 
             <script type="text/html" id="barDemo">
                 {if ($module === 'home')}
@@ -185,18 +184,11 @@
         </div>
     </div>
 </div>
-{include file="customer/edit" /}
 {/block}
 {block name="js"}
-{if ($module === 'company')}
-<script>
-    let user = JSON.parse('{:json_encode($user->user->visible(["id", "username"]))}')
-</script>
-{/if}
 <script>
     let type = {$type},
-        typeText = '{$typeText}',
-        cateList = JSON.parse('{:json_encode($cateList)}');
+        typeText = '{$typeText}';
 </script>
 <script src="__STATIC__/js/common/customer.js?v={:time()}"></script>
 {/block}
