@@ -158,7 +158,7 @@ abstract class BaseController
         }
 
         if ($this->module === 'admin' && $this->userInfo->id === 1) {
-            $menu['menuInfo'][0]['child'][2] = [
+            $menu['menuInfo'][0]['child'][] = [
                 "title" => "管理员",
                 "href" => (string) url('/admin/index'),
                 "icon" => "fa fa-user",
