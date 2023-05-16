@@ -8,12 +8,13 @@
             <form class="" name="formEditor">
                 <input name="id" type="hidden" value="" />
                 <div class="mb-3">
-                    <label class="form-label" for="username">用户名</label>
+                    <label class="form-label" for="username">用户名<span class="text-warning px-1">*</span></label>
                     <input type="text" name="username" id="username" lay-verify="required" placeholder="用户名"
                            autocomplete="off" class="form-control" value="">
+                    <div class="form-text">提示：此昵称作为登录账号使用，创建后暂不支持更改</div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="password">密码</label>
+                    <label class="form-label" for="password">密码<span class="text-warning px-1">*</span></label>
                     <input type="password" name="password" id="password" placeholder="密码" autocomplete="off" class="form-control" value="">
                 </div>
 

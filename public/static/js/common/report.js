@@ -38,6 +38,7 @@ layui.use(['form', 'table', 'laydate', 'jquery', 'arronUtil'], function () {
                 url: arronUtil.url("/Report/getReport"),
                 method: 'post',
                 totalRow: true,
+                height: 350,
                 //异步请求，格式化数据
                 parseData: function (res) {
                     let data = res.data.filter(item => item.total > 0)

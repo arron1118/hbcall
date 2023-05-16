@@ -9,17 +9,9 @@
             <form class="layui-form layui-form-pane" lay-filter="searchForm" name="searchForm">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">标题</label>
+                        <label class="layui-form-label">用户名</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="title" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-
-                    <div class="layui-inline">
-                        <label class="layui-form-label">发布时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="time" class="layui-input" id="adminDate" placeholder=""
-                                   autocomplete="off">
+                            <input type="text" name="username" autocomplete="off" class="layui-input">
                         </div>
                     </div>
 
@@ -46,16 +38,30 @@
                 <tr>
                     <th lay-data="{field: 'id', title: 'ID', width: 100}"></th>
                     <th lay-data="{field: 'username', title: '用户名'}"></th>
-                    <th lay-data="{field: 'status_text', title: '状态', align: 'center'}"></th>
+                    <th lay-data="{field: 'status_text', title: '状态', align: 'center', templet: '#status', width: 100}"></th>
                     <th lay-data="{field: 'create_time', title: '创建时间', align: 'center'}"></th>
-                    <th lay-data="{title: '操作', width: 100, toolbar: '#adminTableBar', align: 'center'}"></th>
+                    <th lay-data="{title: '操作', width: 100, toolbar: '#adminTableBar', align: 'left'}"></th>
                 </tr>
                 </thead>
             </table>
 
+            {if ($user->id === 1)}
             <script type="text/html" id="adminTableBar">
                 <a class="layui-btn layui-btn-xs data-count-edit" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" data-id="{{ d.id }}" title="编辑"><i class="fa fa-user-edit"></i> </a>
+                {{# if (d.id !== 1) { }}
                 <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="del" title="删除"><i class="fa fa-trash-can"></i> </a>
+                {{# } }}
+            </script>
+            {/if}
+
+            <script type="text/html" id="status">
+                {{# if (d.id !== 1) { }}
+                {{# if(d.status === 1) { }}
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" checked>
+                {{# } else { }}
+                <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter">
+                {{# } }}
+                {{# } }}
             </script>
 
         </div>

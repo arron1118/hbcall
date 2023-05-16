@@ -42,7 +42,7 @@ trait CallHistoryTrait
                 'lt' => '<'
             ];
             $map = [
-                ['caller_number', '<>', '']
+//                ['caller_number', '<>', '']
             ];
 
             if ($companyId > 0) {

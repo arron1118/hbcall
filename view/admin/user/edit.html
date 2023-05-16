@@ -56,6 +56,30 @@
                            autocomplete="off" class="form-control" value="0.15">
                     <div class="form-text">提示：用于计算话费，默认 0.15/分钟</div>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label" for="customer_num">客户数量</label>
+                    <input type="number" name="customer_num" id="customer_num" min="0" placeholder="0"
+                           autocomplete="off" class="form-control" value="">
+                    <div class="form-text">提示：0为不限制。意向、无效类型的数量</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="customer_keep_time">客户保存时长（天）</label>
+                    <input type="number" name="customer_keep_time" id="customer_keep_time" min="0" placeholder="0"
+                           autocomplete="off" class="form-control" value="">
+                    <div class="form-text">提示：0为不限制。若设定时长，将意向、无效类型的数据移到回收站</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="talent_num">人才数量</label>
+                    <input type="number" name="talent_num" id="talent_num" min="0" placeholder="0"
+                           autocomplete="off" class="form-control" value="">
+                    <div class="form-text">提示：0为不限制。意向、无效类型的数量</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="talent_keep_time">人才保存时长（天）</label>
+                    <input type="number" name="talent_keep_time" id="talent_keep_time" min="0" placeholder="0"
+                           autocomplete="off" class="form-control" value="">
+                    <div class="form-text">提示：0为不限制。若设定时长，将意向、无效类型的数据移到回收站</div>
+                </div>
                 <div class="mb-3 form-check form-switch">
                     <input type="checkbox" class="form-check-input" id="talent_on" name="talent_on"
                            value="1">

@@ -34,7 +34,7 @@ layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown'
         delete: function (ids) {
             arronUtil.Toast.fire({
                 title: '确定删除么？',
-                text: '删除后将无法恢复',
+                text: '删除后可在回收站查看',
                 toast: false,
                 icon: 'question',
                 showConfirmButton: true,
