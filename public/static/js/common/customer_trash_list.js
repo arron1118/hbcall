@@ -18,6 +18,7 @@ layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'arronUtil'], funct
                 where: {
                     type: type,
                 },
+                height: 750,
                 toolbar: '#currentTableBar',
                 // height: 680,
                 defaultToolbar: ['filter', 'exports', 'print', {

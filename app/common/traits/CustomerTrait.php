@@ -6,6 +6,7 @@ use app\common\model\Customer as CustomerModel;
 use app\common\model\Company;
 use app\common\model\CustomerPhoneRecord;
 use think\db\exception\DbException;
+use think\facade\Event;
 
 trait CustomerTrait
 {
@@ -49,6 +50,9 @@ trait CustomerTrait
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
             $this->view->assign('company', $company->toArray());
+        } else {
+            $userInfo = $this->module === 'company' ? $this->userInfo : $this->userInfo->company;
+            Event::trigger('Customer', $userInfo);
         }
 
         if ($this->module === 'company') {
@@ -204,6 +208,11 @@ trait CustomerTrait
             $this->returnData['msg'] = '添加失败';
             $param = $this->request->param();
 
+            if (!$this->checkCustomerNum($this->request->param('type/d'))) {
+                $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';
+                return json($this->returnData);
+            }
+
             if ($this->module === 'home') {
                 $param['user_id'] = $this->userInfo->id;
                 $param['company_id'] = $this->userInfo->company_id;
@@ -244,6 +253,11 @@ trait CustomerTrait
     public function importExcel()
     {
         if ($this->request->isPost()) {
+            if (!$this->checkCustomerNum($this->request->param('type/d'))) {
+                $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';
+                return json($this->returnData);
+            }
+
             try {
                 $data = $this->readExcel();
                 $res = (new CustomerModel())->saveAll($data);
@@ -418,5 +432,24 @@ trait CustomerTrait
         }
 
         return json($this->returnData);
+    }
+
+    protected function checkCustomerNum($type)
+    {
+        $company = $this->module === 'company' ? $this->userInfo : $this->userInfo->company;
+        $number = $type === 1 ? $company->customer_num : $company->talent_num;
+        $result = [];
+        if ($number) {
+            $where = [
+                ['cate', 'in', [0, 3]],
+                ['type', '=', $type],
+                ['company_id', '=', $company->id]
+            ];
+            $result = CustomerModel::where($where)->order('id', 'desc')
+                ->limit($number, 1)
+                ->column('id');
+        }
+
+        return $result;
     }
 }

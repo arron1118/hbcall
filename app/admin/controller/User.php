@@ -6,6 +6,7 @@ use app\common\model\Company as CompanyModel;
 use app\common\model\User as UserModel;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
+use think\facade\Event;
 
 class User extends \app\common\controller\AdminController
 {
@@ -270,6 +271,10 @@ class User extends \app\common\controller\AdminController
             $userInfo->contract_start_datetime = strtotime($data['contract_start_datetime']);
             $userInfo->contract_end_datetime = strtotime($data['contract_end_datetime']);
             $userInfo->talent_on = $data['talent_on'] ?? 0;
+            $userInfo->talent_num = $data['talent_num'];
+            $userInfo->talent_keep_time = $data['talent_keep_time'];
+            $userInfo->customer_num = $data['customer_num'];
+            $userInfo->customer_keep_time = $data['customer_keep_time'];
             if ($userInfo->save()) {
                 // 更新企业小号关联表
                 if ($userInfo->companyXnumber) {
@@ -289,6 +294,11 @@ class User extends \app\common\controller\AdminController
                             $item->userXnumber()->save(['number_store_id' => $data['number_store_id']]);
                         }
                     }
+                }
+
+                // 更新用户的客户数量
+                if ($userInfo->talent_num || $userInfo->talent_keep_time || $userInfo->customer_num || $userInfo->customer_keep_time) {
+                    Event::trigger('Customer');
                 }
 
                 $this->returnData['data'] = $userInfo;

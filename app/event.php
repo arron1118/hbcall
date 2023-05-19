@@ -12,6 +12,7 @@ return [
         'LogWrite' => [],
         'CallHistory' => [\app\common\event\CallHistory::class],
         'Payment' => [\app\common\event\Payment::class],
+        'Customer' => [\app\common\event\Customer::class],
     ],
 
     'subscribe' => [
