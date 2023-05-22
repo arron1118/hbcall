@@ -137,7 +137,7 @@ SCRIPT;
 
 
 if (!function_exists('readExcel')) {
-    function readExcel($file, $appendColumns = [], $is_repeat_customer = 0)
+    function readExcel($file, $appendColumns = [], $is_repeat_customer = 0, $limitNum = 0)
     {
         $read = \PhpOffice\PhpSpreadsheet\IOFactory::createReader(ucfirst($file->extension()));
         $spreadsheet = $read->load($file);
@@ -146,6 +146,11 @@ if (!function_exists('readExcel')) {
         $highestRow = $sheet->getHighestRow();
         $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
         $log = [];
+
+        // 限制行数
+        if ($limitNum && $highestRow >= $limitNum) {
+            $highestRow = $limitNum;
+        }
 
         for ($i = 2; $i <= $highestRow; $i++) {
             $title = $sheet->getCellByColumnAndRow(1, $i)->getValue();

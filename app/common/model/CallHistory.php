@@ -3,9 +3,11 @@
 namespace app\common\model;
 
 use think\Model;
+use think\model\concern\SoftDelete;
 
 class CallHistory extends Model
 {
+    use SoftDelete;
 
     public function getCallDurationAttr($value)
     {

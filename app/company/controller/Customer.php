@@ -4,6 +4,7 @@ namespace app\company\controller;
 
 use app\common\model\Customer as CustomerModel;
 use app\common\traits\CustomerTrait;
+use think\facade\Event;
 
 class Customer extends \app\common\controller\CompanyController
 {
@@ -16,12 +17,26 @@ class Customer extends \app\common\controller\CompanyController
     public function distribution()
     {
         if ($this->request->isPost()) {
+            $this->returnData['msg'] = '分配失败';
             $ids = trim($this->request->param('ids', ''), ',');
             $userId = $this->request->param('user_id', 0);
-            $customers = CustomerModel::whereIn('id', $ids)->update(['user_id' => $userId]);
-            $this->returnData['data'] = $customers;
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '分配成功';
+            $user = \app\common\model\User::find($userId);
+
+            Event::trigger('Customer', $user);
+
+            if ($this->checkCustomerNumForUser($user)) {
+                $this->returnData['msg'] = '已超出该用户的数量限制';
+                return json($this->returnData);
+            }
+
+            $customers = CustomerModel::whereIn('id', $ids)->update([
+                'user_id' => $userId,
+                'distribution_time' => time(),
+            ]);
+            if ($customers) {
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '分配成功';
+            }
         }
 
         return json($this->returnData);

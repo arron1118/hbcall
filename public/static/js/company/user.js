@@ -154,6 +154,7 @@ layui.use(['form', 'table', 'arronUtil', 'jquery', 'laydate'], function () {
                 },
                 skin: 'line',
                 even: true,
+                height: 750,
             })
 
             // 监听搜索操作

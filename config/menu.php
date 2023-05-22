@@ -49,10 +49,28 @@ return [
                         "target" => "_self"
                     ],
                     [
+                        "name" => "customer",
                         "title" => "客户管理",
-                        "href" => (string) url('/customer/index'),
+                        "href" => "",
                         "icon" => "fa fa-users-gear",
-                        "target" => "_self"
+                        "target" => "_self",
+                        "child" => [
+                            [
+                                "title" => "客户列表",
+                                "href" => (string) url('/customer/index'),
+                                "target" => "_self",
+                            ],
+                            [
+                                "title" => "人才列表",
+                                "href" => (string) url('/customer/talent'),
+                                "target" => "_self",
+                            ],
+                            [
+                                "title" => "查看记录",
+                                "href" => (string) url('/customerPhoneRecord/index'),
+                                "target" => "_self",
+                            ]
+                        ]
                     ],
                     [
                         "title" => "资讯",

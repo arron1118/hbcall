@@ -5,6 +5,7 @@ namespace app\common\traits;
 use app\common\model\Customer as CustomerModel;
 use app\common\model\Company;
 use app\common\model\CustomerPhoneRecord;
+use app\common\model\User;
 use think\db\exception\DbException;
 use think\facade\Event;
 
@@ -24,6 +25,11 @@ trait CustomerTrait
 
         $this->type = $this->request->param('type/d', 1);
         $this->searchItem = (new CustomerModel)->getSearchItem($this->type);
+
+        // 监控用户客户数据限制
+        if ($this->module === 'home') {
+            Event::trigger('Customer', $this->userInfo);
+        }
     }
 
     /**
@@ -50,21 +56,18 @@ trait CustomerTrait
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
             $this->view->assign('company', $company->toArray());
-        } else {
-            $userInfo = $this->module === 'company' ? $this->userInfo : $this->userInfo->company;
-            Event::trigger('Customer', $userInfo);
         }
 
         if ($this->module === 'company') {
             $this->view->assign('users', $this->userInfo->user);
         }
 
-        $CustomerModel = new CustomerModel();
+        $customerModel = new CustomerModel();
         $this->view->assign([
             'type' => $this->type,
-            'cateList' => $CustomerModel->getCateList($this->type),
-            'typeText' => $CustomerModel->getTypeList()[$this->type],
-            'searchItem' => $CustomerModel->getSearchItem($this->type),
+            'cateList' => $customerModel->getCateList($this->type),
+            'typeText' => $customerModel->getTypeList()[$this->type],
+            'searchItem' => $customerModel->getSearchItem($this->type),
         ]);
 
         return $this->view->fetch('common@customer/index');
@@ -157,8 +160,15 @@ trait CustomerTrait
                 $where[] = ['create_time', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
+            $userInfo = $this->userInfo;
+            $module = $this->module;
             $this->returnData['count'] = CustomerModel::where($where)->count();
-            $this->returnData['data'] = CustomerModel::with(['company', 'user'])->withCount(['record'])
+            $this->returnData['data'] = CustomerModel::with(['company', 'user'])
+                ->withCount(['record' => function ($query) use ($userInfo, $module) {
+                    if ($module === 'home') {
+                        $query->where('user_id', $userInfo->id);
+                    }
+                }])
                 ->where($where)
                 ->order('id', 'desc')
                 ->limit(($page - 1) * $limit, $limit)
@@ -208,18 +218,18 @@ trait CustomerTrait
             $this->returnData['msg'] = '添加失败';
             $param = $this->request->param();
 
-            if (!$this->checkCustomerNum($this->request->param('type/d'))) {
-                $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';
-                return json($this->returnData);
-            }
-
             if ($this->module === 'home') {
+                if ($this->checkCustomerNumForUser($this->userInfo)) {
+                    $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';
+                    return json($this->returnData);
+                }
                 $param['user_id'] = $this->userInfo->id;
                 $param['company_id'] = $this->userInfo->company_id;
+                $param['distribution_time'] = time();
             } elseif ($this->module === 'company') {
                 $param['company_id'] = $this->userInfo->id;
             }
-            $param['create_time'] = time();
+
             $customer = new CustomerModel();
             if ($customer->save($param)) {
                 $this->returnData['msg'] = '添加成功';
@@ -253,7 +263,7 @@ trait CustomerTrait
     public function importExcel()
     {
         if ($this->request->isPost()) {
-            if (!$this->checkCustomerNum($this->request->param('type/d'))) {
+            if ($this->module === 'home' && $this->checkCustomerNumForUser($this->userInfo)) {
                 $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';
                 return json($this->returnData);
             }
@@ -289,15 +299,22 @@ trait CustomerTrait
             'type' => $this->request->param('type/d'),
         ];
 
+        $limitNum = 0;
         if ($this->module === 'home') {
             $field['company_id'] = $this->userInfo->company_id;
             $field['user_id'] = $this->userInfo->id;
+            $filed['distribution_time'] = time();
+            $limit = $this->type === 1 ? $this->userInfo->customer_num : $this->userInfo->talent_num;
+            $limit && $limitNum = $limit + 1 - CustomerModel::where([
+                    'user_id' => $this->userInfo->id,
+                    'type' => $this->type,
+                ])->whereIn('cate', [0, 3])->count();
         } elseif ($this->module === 'company') {
             $field['company_id'] = $this->userInfo->id;
             $field['user_id'] = 0;
         }
 
-        return readExcel($file, $field, $is_repeat_customer);
+        return readExcel($file, $field, $is_repeat_customer, $limitNum);
     }
 
     public function edit()
@@ -434,22 +451,22 @@ trait CustomerTrait
         return json($this->returnData);
     }
 
-    protected function checkCustomerNum($type)
+    protected function checkCustomerNumForUser(User $user)
     {
-        $company = $this->module === 'company' ? $this->userInfo : $this->userInfo->company;
-        $number = $type === 1 ? $company->customer_num : $company->talent_num;
+        $number = $this->type === 1 ? $user->customer_num : $user->talent_num;
+
         $result = [];
         if ($number) {
-            $where = [
+            CustomerModel::where([
                 ['cate', 'in', [0, 3]],
-                ['type', '=', $type],
-                ['company_id', '=', $company->id]
-            ];
-            $result = CustomerModel::where($where)->order('id', 'desc')
+                ['type', '=', $this->type],
+                ['user_id', '=', $user->id]
+            ])->order('id', 'desc')
                 ->limit($number, 1)
                 ->column('id');
         }
 
+//        var_dump($result);
         return $result;
     }
 }

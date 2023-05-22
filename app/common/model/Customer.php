@@ -69,13 +69,6 @@ class Customer extends Model
         return $searchItem;
     }
 
-    public static function onAfterDelete($customer)
-    {
-        CustomerRecord::destroy(function ($query) use ($customer) {
-            $query->where('customer_id', $customer->id);
-        });
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class)->bind(['realname']);

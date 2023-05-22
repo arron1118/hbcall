@@ -7,6 +7,7 @@ use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
 use app\common\model\User as UserModel;
 use think\db\exception\DbException;
+use think\facade\Event;
 
 class User extends \app\common\controller\CompanyController
 {
@@ -141,7 +142,7 @@ class User extends \app\common\controller\CompanyController
         $userId = $this->request->param('id');
         $userInfo = UserModel::with(['userXnumber'])
             ->where([
-            'company_id' => $this->userInfo->id,
+                'company_id' => $this->userInfo->id,
             ])
 //            ->hidden(['password'])
             ->find($userId);
@@ -197,6 +198,10 @@ class User extends \app\common\controller\CompanyController
             $userInfo->callback_number = $params['callback_number'];
             $userInfo->limit_call_number = $params['limit_call_number'];
             $userInfo->customer_view_num = $params['customer_view_num'];
+            $userInfo->talent_num = $params['talent_num'];
+            $userInfo->talent_keep_time = $params['talent_keep_time'];
+            $userInfo->customer_num = $params['customer_num'];
+            $userInfo->customer_keep_time = $params['customer_keep_time'];
             $this->returnData['msg'] = '保存失败';
 
             if ($userInfo->save()) {
@@ -208,6 +213,11 @@ class User extends \app\common\controller\CompanyController
                     } else {
                         $userInfo->userXnumber()->save(['number_store_id' => $params['number_store_id']]);
                     }
+                }
+
+                // 更新用户的客户数量
+                if ($userInfo->talent_num || $userInfo->talent_keep_time || $userInfo->customer_num || $userInfo->customer_keep_time) {
+                    Event::trigger('Customer', $userInfo);
                 }
 
                 $this->returnData['msg'] = '保存成功';

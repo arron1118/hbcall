@@ -5,9 +5,11 @@ namespace app\common\model;
 
 
 use \think\Model;
+use think\model\concern\SoftDelete;
 
 class Expense extends Model
 {
+    use SoftDelete;
 
     public function user()
     {

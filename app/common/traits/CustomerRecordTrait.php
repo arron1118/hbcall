@@ -2,6 +2,7 @@
 
 namespace app\common\traits;
 
+use app\common\model\Customer;
 use app\common\model\CustomerRecord as RecordModel;
 
 trait CustomerRecordTrait
@@ -16,8 +17,12 @@ trait CustomerRecordTrait
     {
         if ($this->request->isPost()) {
             $where = [
-                'customer_id' => $this->request->param('customer_id', 0)
+                ['customer_id', '=', $this->request->param('customer_id/d', 0)]
             ];
+
+            if ($this->module === 'home') {
+                $where[] = ['user_id', '=', $this->userInfo->id];
+            }
 
             $this->returnData['count'] = RecordModel::where($where)->count();
             $this->returnData['data'] = RecordModel::where($where)
@@ -35,6 +40,9 @@ trait CustomerRecordTrait
         if ($this->request->isPost()) {
             $param = $this->request->param();
             $param['next_call_time'] = strtotime($param['next_call_time']);
+            $param['customer'] = Customer::where('id', $param['customer_id'])->value('title');
+            $param['user_id'] = $this->userInfo->id;
+            $param['username'] = $this->userInfo->username;
             if (RecordModel::create($param)) {
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '保存成功';
@@ -49,7 +57,7 @@ trait CustomerRecordTrait
 
     public function edit($id)
     {
-        $record = RecordModel::find($id);
+        $record = RecordModel::where('user_id', $this->userInfo->id)->find($id);
 
         if ($this->request->isPost()) {
             $param = $this->request->param();
@@ -74,7 +82,13 @@ trait CustomerRecordTrait
         if ($this->request->isPost()) {
             $this->returnData['msg'] = '删除失败';
             if ($id > 0) {
-                RecordModel::destroy($id);
+                $userInfo = $this->userInfo;
+                RecordModel::destroy(function ($query) use ($id, $userInfo) {
+                    $query->where([
+                        ['id', '=', $id],
+                        ['user_id', '=', $userInfo->id],
+                    ]);
+                });
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '删除成功';
             }

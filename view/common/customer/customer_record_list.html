@@ -11,6 +11,9 @@
                 <tr>
                     <th lay-data="{field: 'id', title: 'ID', width: 100, align: 'center'}"></th>
                     <th lay-data="{field: 'content', title: '记录内容'}"></th>
+                    {if ($module !== 'home')}
+                    <th lay-data="{field: 'username', title: '跟进人', width: 180}"></th>
+                    {/if}
                     <th lay-data="{field: 'next_call_time', title: '下次回访', align: 'center', width: 180}"></th>
                     <th lay-data="{field: 'create_time', title: '记录时间', align: 'center', width: 180}"></th>
                     {if ($module === 'home')}
