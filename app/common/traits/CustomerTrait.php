@@ -413,7 +413,7 @@ trait CustomerTrait
                 $customerPhoneRecord->company_id = $this->userInfo->company_id;
                 $customerPhoneRecord->company_name = $this->userInfo->company->username;
                 $customerPhoneRecord->user_id = $this->userInfo->id;
-                $customerPhoneRecord->user_name = $this->userInfo->username;
+                $customerPhoneRecord->user_name = $this->userInfo->realname;
 
                 $customerModel = $customerModel->where([
                     'user_id' => $this->userInfo->id,
