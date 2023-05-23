@@ -198,10 +198,12 @@ class User extends \app\common\controller\CompanyController
             $userInfo->callback_number = $params['callback_number'];
             $userInfo->limit_call_number = $params['limit_call_number'];
             $userInfo->customer_view_num = $params['customer_view_num'];
-            $userInfo->talent_num = $params['talent_num'];
-            $userInfo->talent_keep_time = $params['talent_keep_time'];
             $userInfo->customer_num = $params['customer_num'];
             $userInfo->customer_keep_time = $params['customer_keep_time'];
+            if ($this->userInfo->talent_on) {
+                $userInfo->talent_num = $params['talent_num'];
+                $userInfo->talent_keep_time = $params['talent_keep_time'];
+            }
             $this->returnData['msg'] = '保存失败';
 
             if ($userInfo->save()) {
@@ -216,7 +218,8 @@ class User extends \app\common\controller\CompanyController
                 }
 
                 // 更新用户的客户数量
-                if ($userInfo->talent_num || $userInfo->talent_keep_time || $userInfo->customer_num || $userInfo->customer_keep_time) {
+                if ($userInfo->talent_num || $userInfo->talent_keep_time ||
+                    ($this->userInfo->talent_on && ($userInfo->customer_num || $userInfo->customer_keep_time))) {
                     Event::trigger('Customer', $userInfo);
                 }
 

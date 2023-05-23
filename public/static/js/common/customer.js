@@ -34,7 +34,7 @@ layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown'
         delete: function (ids) {
             arronUtil.Toast.fire({
                 title: '确定删除么？',
-                text: '删除后可在回收站查看',
+                text: '删除后将无法恢复',
                 toast: false,
                 icon: 'question',
                 showConfirmButton: true,
@@ -371,7 +371,7 @@ layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown'
 
                     case 'trash':
                         let index = layer.open({
-                            title: '回收站',
+                            title: '回收站 <span style="color: #999">(已分配并且被回收的数据)</span>',
                             type: 2,
                             shade: 0.2,
                             maxmin: true,

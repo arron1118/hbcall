@@ -79,12 +79,10 @@ trait CustomerTrait
             $page = $this->request->param('page/d', 1);
             $limit = $this->request->param('limit/d', 10);
             $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
-            $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
-            $where = [];
-
-            if ($userId > 0) {
-                $where[] = ['user_id', '=', $userId];
-            }
+            $where = [
+                ['user_id', '=', 0],
+                ['distribution_count', '>', 0],
+            ];
 
             if ($companyId > 0) {
                 $where[] = ['company_id', '=', $companyId];
@@ -93,10 +91,10 @@ trait CustomerTrait
             if ($this->type > 0) {
                 $where[] = ['type', '=', $this->type];
             }
+
             $this->returnData['msg'] = lang('Operation successful');
-            $this->returnData['count'] = CustomerModel::onlyTrashed()->where($where)->count();
-            $this->returnData['data'] = CustomerModel::onlyTrashed()
-                ->where($where)
+            $this->returnData['count'] = CustomerModel::where($where)->count();
+            $this->returnData['data'] = CustomerModel::where($where)
                 ->with(['company', 'user'])
                 ->withCount(['record'])
                 ->order('id', 'desc')
@@ -128,7 +126,9 @@ trait CustomerTrait
             $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
-            $where = [];
+            $where = [
+                ['distribution_count', '=', 0]
+            ];
 
             if ($userId > 0) {
                 $where[] = ['user_id', '=', $userId];
@@ -455,18 +455,15 @@ trait CustomerTrait
     {
         $number = $this->type === 1 ? $user->customer_num : $user->talent_num;
 
-        $result = [];
-        if ($number) {
-            CustomerModel::where([
+        return $number && (CustomerModel::where([
+                ['user_id', '=', $user->id],
                 ['cate', 'in', [0, 3]],
-                ['type', '=', $this->type],
-                ['user_id', '=', $user->id]
-            ])->order('id', 'desc')
-                ->limit($number, 1)
-                ->column('id');
-        }
-
-//        var_dump($result);
-        return $result;
+            ])->count() === (int)$number || CustomerModel::where([
+                    ['cate', 'in', [0, 3]],
+                    ['type', '=', $this->type],
+                    ['user_id', '=', $user->id]
+                ])->order('id', 'desc')
+                    ->limit($number - 1, 1)
+                    ->column('id'));
     }
 }

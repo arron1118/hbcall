@@ -33,6 +33,9 @@
                 </tr>
                 </thead>
             </table>
+            <script type="text/html" id="currentTableBar">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 重新分配</button>
+            </script>
         </div>
 
     </div>
@@ -41,7 +44,8 @@
 {block name="js"}
 <script>
     let type = {$type},
-        typeText = '{$typeText}';
+        typeText = '{$typeText}',
+        user = JSON.parse('{:json_encode($user->user->visible(["id", "username"]))}')
 </script>
 <script src="__STATIC__/js/common/customer_trash_list.js?v={:time()}"></script>
 

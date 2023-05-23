@@ -4,6 +4,7 @@ namespace app\company\controller;
 
 use app\common\model\Customer as CustomerModel;
 use app\common\traits\CustomerTrait;
+use think\facade\Db;
 use think\facade\Event;
 
 class Customer extends \app\common\controller\CompanyController
@@ -24,7 +25,8 @@ class Customer extends \app\common\controller\CompanyController
 
             Event::trigger('Customer', $user);
 
-            if ($this->checkCustomerNumForUser($user)) {
+            $check = $this->checkCustomerNumForUser($user);
+            if ($check) {
                 $this->returnData['msg'] = '已超出该用户的数量限制';
                 return json($this->returnData);
             }
@@ -32,10 +34,13 @@ class Customer extends \app\common\controller\CompanyController
             $customers = CustomerModel::whereIn('id', $ids)->update([
                 'user_id' => $userId,
                 'distribution_time' => time(),
+                'distribution_count' => Db::raw('distribution_count+1'),
             ]);
             if ($customers) {
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '分配成功';
+                $this->returnData['data']['check'] = $check;
+                $this->returnData['data']['customer'] = $customers;
             }
         }
 
