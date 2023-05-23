@@ -148,13 +148,18 @@ abstract class BaseController
             $talent_on = $this->userInfo->company->talent_on;
         }
 
-        if ($talent_on) {
-            $menu['menuInfo'][0]['child'][] = [
-                "title" => "人才管理",
-                "href" => (string) url('/customer/talent'),
-                "icon" => "fa fa-people-group",
-                "target" => "_self"
-            ];
+        if ($talent_on && $this->module !== 'admin') {
+            foreach ($menu['menuInfo'][0]['child'] as $key => $val) {
+                if (isset($val['name']) && $val['name'] === 'customer') {
+                    isset($val['child'][1]) && $menu['menuInfo'][0]['child'][$key]['child'][2] = $val['child'][1];
+                    $menu['menuInfo'][0]['child'][$key]['child'][1] = [
+                        "name" => "talent_list",
+                        "title" => "人才列表",
+                        "href" => (string) url('/customer/talent'),
+                        "target" => "_self",
+                    ];
+                }
+            }
         }
 
         if ($this->module === 'admin' && $this->userInfo->id === 1) {

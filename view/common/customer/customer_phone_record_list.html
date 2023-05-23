@@ -1,0 +1,28 @@
+{extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">
+                <thead>
+                <tr>
+                    <th lay-data="{field: 'id', title: 'ID', width: 100, align: 'center'}"></th>
+                    <th lay-data="{field: 'customer_title', title: '客户名称'}"></th>
+                    <th lay-data="{field: 'customer_phone', title: '客户电话'}"></th>
+                    <th lay-data="{field: 'user_name', title: '用户名称', width: 180}"></th>
+                    <th lay-data="{field: 'create_time', title: '查看时间', align: 'center', width: 180}"></th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script src="__STATIC__/js/common/customer_phone_record_list.js?v={:time()}"></script>
+
+{/block}

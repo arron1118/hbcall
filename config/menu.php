@@ -56,16 +56,19 @@ return [
                         "target" => "_self",
                         "child" => [
                             [
+                                "name" => "customer_list",
                                 "title" => "客户列表",
                                 "href" => (string) url('/customer/index'),
                                 "target" => "_self",
                             ],
                             [
+                                "name" => "talent_list",
                                 "title" => "人才列表",
                                 "href" => (string) url('/customer/talent'),
                                 "target" => "_self",
                             ],
                             [
+                                "name" => "record_list",
                                 "title" => "查看记录",
                                 "href" => (string) url('/customerPhoneRecord/index'),
                                 "target" => "_self",
@@ -84,12 +87,6 @@ return [
                         "icon" => "fa fa-address-book",
                         "target" => "_self"
                     ],
-//                    [
-//                        "title" => "角色管理",
-//                        "href" => (string) url('/admin/index'),
-//                        "icon" => "fa fa-user",
-//                        "target" => "_self",
-//                    ]
                 ]
             ]
         ]
@@ -142,11 +139,26 @@ return [
                         "target" => "_self"
                     ],
                     [
+                        "name" => "customer",
                         "title" => "客户管理",
-                        "href" => (string) url('/customer/index'),
+                        "href" => "",
                         "icon" => "fa fa-users-gear",
-                        "target" => "_self"
-                    ]
+                        "target" => "_self",
+                        "child" => [
+                            [
+                                "name" => "customer_list",
+                                "title" => "客户列表",
+                                "href" => (string) url('/customer/index'),
+                                "target" => "_self",
+                            ],
+                            [
+                                "name" => "record_list",
+                                "title" => "查看记录",
+                                "href" => (string) url('/customerPhoneRecord/index'),
+                                "target" => "_self",
+                            ]
+                        ]
+                    ],
                 ]
             ]
         ]
@@ -181,10 +193,19 @@ return [
                         "target" => "_self"
                     ],
                     [
+                        "name" => "customer",
                         "title" => "客户管理",
-                        "href" => (string) url('/customer/index'),
-                        "icon" => "fa fa-people-group",
-                        "target" => "_self"
+                        "href" => "",
+                        "icon" => "fa fa-users-gear",
+                        "target" => "_self",
+                        "child" => [
+                            [
+                                "name" => "customer_list",
+                                "title" => "客户列表",
+                                "href" => (string) url('/customer/index'),
+                                "target" => "_self",
+                            ],
+                        ]
                     ],
                     [
                         "title" => "基本资料",
