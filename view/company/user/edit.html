@@ -50,17 +50,12 @@
                            autocomplete="off" class="form-control" value="" {if in_array($user->call_type, [3, 4])}required{/if}>
                     <div class="form-text">提示：呼叫线路为<strong>电信回拨</strong>、<strong>移动回拨</strong>时，必须提供回拨号码才能进行拨号</div>
                 </div>
+                {if $user->recycle_on}
                 <div class="mb-3">
                     <label class="form-label" for="customer_num">客户数量</label>
                     <input type="number" name="customer_num" id="customer_num" min="0" placeholder="0"
                            autocomplete="off" class="form-control" value="">
                     <div class="form-text">提示：0为不限制。意向、无效类型的数量</div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="customer_keep_time">客户保存时长（天）</label>
-                    <input type="number" name="customer_keep_time" id="customer_keep_time" min="0" placeholder="0"
-                           autocomplete="off" class="form-control" value="">
-                    <div class="form-text">提示：0为不限制。若设定时长，将意向、无效类型的数据移到回收站</div>
                 </div>
                 {if $user->talent_on}
                 <div class="mb-3">
@@ -69,12 +64,7 @@
                            autocomplete="off" class="form-control" value="">
                     <div class="form-text">提示：0为不限制。意向、无效类型的数量</div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label" for="talent_keep_time">人才保存时长（天）</label>
-                    <input type="number" name="talent_keep_time" id="talent_keep_time" min="0" placeholder="0"
-                           autocomplete="off" class="form-control" value="">
-                    <div class="form-text">提示：0为不限制。若设定时长，将意向、无效类型的数据移到回收站</div>
-                </div>
+                {/if}
                 {/if}
                 <div class="mb-3">
                     <label class="form-label" for="customer_view_num">查看电话次数</label>

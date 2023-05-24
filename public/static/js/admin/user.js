@@ -233,7 +233,7 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                                     }
                                     el.val(v)
                                 } else {
-                                    if (['is_test', 'status', 'talent_on'].includes(name)) {
+                                    if (['is_test', 'status', 'talent_on', 'recycle_on'].includes(name)) {
                                         // el.val(1)
                                         if (res.data['userInfo'][name] === 1) {
                                             el.prop('checked', true)

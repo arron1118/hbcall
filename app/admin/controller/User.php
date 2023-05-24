@@ -271,6 +271,7 @@ class User extends \app\common\controller\AdminController
             $userInfo->contract_start_datetime = strtotime($data['contract_start_datetime']);
             $userInfo->contract_end_datetime = strtotime($data['contract_end_datetime']);
             $userInfo->talent_on = $data['talent_on'] ?? 0;
+            $userInfo->recycle_on = $data['recycle_on'] ?? 0;
             if ($userInfo->save()) {
                 // 更新企业小号关联表
                 if ($userInfo->companyXnumber) {

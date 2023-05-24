@@ -198,11 +198,11 @@ class User extends \app\common\controller\CompanyController
             $userInfo->callback_number = $params['callback_number'];
             $userInfo->limit_call_number = $params['limit_call_number'];
             $userInfo->customer_view_num = $params['customer_view_num'];
-            $userInfo->customer_num = $params['customer_num'];
-            $userInfo->customer_keep_time = $params['customer_keep_time'];
-            if ($this->userInfo->talent_on) {
-                $userInfo->talent_num = $params['talent_num'];
-                $userInfo->talent_keep_time = $params['talent_keep_time'];
+            if ($this->userInfo->recycle_on) {
+                $userInfo->customer_num = $params['customer_num'];
+                if ($this->userInfo->talent_on) {
+                    $userInfo->talent_num = $params['talent_num'];
+                }
             }
             $this->returnData['msg'] = '保存失败';
 
@@ -218,8 +218,8 @@ class User extends \app\common\controller\CompanyController
                 }
 
                 // 更新用户的客户数量
-                if ($userInfo->talent_num || $userInfo->talent_keep_time ||
-                    ($this->userInfo->talent_on && ($userInfo->customer_num || $userInfo->customer_keep_time))) {
+                if ($this->userInfo->recycle_on && ($userInfo->talent_num ||
+                    ($this->userInfo->talent_on && $userInfo->customer_num))) {
                     Event::trigger('Customer', $userInfo);
                 }
 
@@ -253,6 +253,8 @@ class User extends \app\common\controller\CompanyController
                 ])->find($userId);
 
                 $userInfo->together(['userXnumber'])->delete();
+
+                // todo 回收用户的客户数据
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = '删除成功';

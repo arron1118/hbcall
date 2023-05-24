@@ -27,7 +27,7 @@ trait CustomerTrait
         $this->searchItem = (new CustomerModel)->getSearchItem($this->type);
 
         // 监控用户客户数据限制
-        if ($this->module === 'home') {
+        if ($this->module === 'home' && $this->userInfo->company->recycle_on) {
             Event::trigger('Customer', $this->userInfo);
         }
     }
@@ -218,7 +218,7 @@ trait CustomerTrait
             $param = $this->request->param();
 
             if ($this->module === 'home') {
-                if ($this->checkCustomerNumForUser($this->userInfo)) {
+                if ($this->userInfo->company->recycle_on && $this->checkCustomerNumForUser($this->userInfo)) {
                     $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';
                     return json($this->returnData);
                 }
@@ -262,7 +262,8 @@ trait CustomerTrait
     public function importExcel()
     {
         if ($this->request->isPost()) {
-            if ($this->module === 'home' && $this->checkCustomerNumForUser($this->userInfo)) {
+            if ($this->module === 'home' && $this->userInfo->company->recycle_on
+                && $this->checkCustomerNumForUser($this->userInfo)) {
                 $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';
                 return json($this->returnData);
             }
@@ -303,11 +304,14 @@ trait CustomerTrait
             $field['company_id'] = $this->userInfo->company_id;
             $field['user_id'] = $this->userInfo->id;
             $filed['distribution_time'] = time();
-            $limit = $this->type === 1 ? $this->userInfo->customer_num : $this->userInfo->talent_num;
-            $limit && $limitNum = $limit + 1 - CustomerModel::where([
-                    'user_id' => $this->userInfo->id,
-                    'type' => $this->type,
-                ])->whereIn('cate', [0, 3])->count();
+
+            if ($this->userInfo->company->recycle_on) {
+                $limit = $this->type === 1 ? $this->userInfo->customer_num : $this->userInfo->talent_num;
+                $limit && $limitNum = $limit + 1 - CustomerModel::where([
+                        'user_id' => $this->userInfo->id,
+                        'type' => $this->type,
+                    ])->whereIn('cate', [0, 3])->count();
+            }
         } elseif ($this->module === 'company') {
             $field['company_id'] = $this->userInfo->id;
             $field['user_id'] = 0;
