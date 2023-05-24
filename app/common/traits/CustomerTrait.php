@@ -80,8 +80,7 @@ trait CustomerTrait
             $limit = $this->request->param('limit/d', 10);
             $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
             $where = [
-                ['user_id', '=', 0],
-                ['distribution_count', '>', 0],
+                ['recycle', '=', 1],
             ];
 
             if ($companyId > 0) {
@@ -127,7 +126,7 @@ trait CustomerTrait
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
             $where = [
-                ['distribution_count', '=', 0]
+                ['recycle', '=', 0]
             ];
 
             if ($userId > 0) {

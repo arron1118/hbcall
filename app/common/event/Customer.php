@@ -56,6 +56,7 @@ class Customer
         return CustomerModel::where($where)->save([
             'user_id' => 0,
             'distribution_time' => null,
+            'recycle' => 1,
         ]);
     }
 }
