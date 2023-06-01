@@ -61,7 +61,7 @@ class User extends \app\common\controller\AdminController
                 ->where($map)->order('id', 'desc')
                 ->order('id desc, logintime desc')
                 ->limit(($page - 1) * $limit, $limit)
-                ->append(['call_type_text', 'is_test_text', 'status_text'])
+                ->append(['call_type_text', 'is_test_text', 'status_text', 'call_status_text'])
                 ->hidden(['salt', 'password', 'token', 'token_expire_time'])
                 ->select();
             $this->returnData['msg'] = lang('Operation successful');

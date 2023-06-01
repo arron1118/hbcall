@@ -41,6 +41,11 @@ class Company extends Model
         return $this->getStatusList()[$data['status']];
     }
 
+    public function getCallStatusTextAttr($value, $data)
+    {
+        return $this->getStatusList()[$data['call_status']];
+    }
+
     public function getIsTestTextAttr($value, $data)
     {
         return $this->getTestList()[$data['is_test']];
@@ -52,6 +57,11 @@ class Company extends Model
     }
 
     public function getStatusList()
+    {
+        return ['-1' => '全部', '禁止', '正常'];
+    }
+
+    public function getCallStatusList()
     {
         return ['-1' => '全部', '禁止', '正常'];
     }

@@ -80,6 +80,7 @@
                     <th lay-data="{field: 'is_test_text', title: '试用', align: 'center', width: 120}"></th>
                     <th lay-data="{field: 'test_endtime', title: '到期日期', align: 'center', width: 180}"></th>
                     <th lay-data="{field: 'status_text', title: '状态', align: 'center', templet: '#status', width: 100}"></th>
+                    <th lay-data="{field: 'call_status_text', title: '拨号状态', align: 'center', templet: '#call_status', width: 100}"></th>
                     <th lay-data="{title: '操作', width: 150, toolbar: '#currentTableBar', align: 'center', fixed: 'right'}"></th>
                 </tr>
                 </thead>
@@ -99,6 +100,13 @@
                 <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter" checked>
                 {{# } else { }}
                 <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="statusFilter">
+                {{# } }}
+            </script>
+            <script type="text/html" id="call_status">
+                {{# if(d.call_status === 1) { }}
+                <input type="checkbox" name="call_status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="callStatusFilter" checked>
+                {{# } else { }}
+                <input type="checkbox" name="call_status" value="{{d.id}}" lay-skin="switch" lay-text="正常|禁止" lay-filter="callStatusFilter">
                 {{# } }}
             </script>
             <script type="text/html" id="currentTableBar">

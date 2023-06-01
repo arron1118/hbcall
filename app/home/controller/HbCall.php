@@ -59,6 +59,11 @@ class HbCall extends \app\common\controller\HomeController
             $mobile = $customer->getData('phone');
         }
 
+        if (!$this->userInfo->company->call_status) {
+            $this->returnData['msg'] = lang('用户已被禁止拨号，请联系管理员');
+            return json($this->returnData);
+        }
+
         // 不是试用账号且欠费无法拨号
         if (!$this->userInfo->company->is_test && $this->userInfo->company->getData('balance') <= 0) {
             $this->returnData['msg'] = lang('您的余额已经不足，为了不影响呼叫，请联系管理员及时充值！');

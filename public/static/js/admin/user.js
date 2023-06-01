@@ -378,6 +378,31 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
                 }
             })
 
+            form.on('switch(callStatusFilter)', function (obj) {
+                let status = obj.elem.checked ? 1 : 0;
+                let params = { id: obj.value, call_status: status };
+                if (!status) {
+                    arronUtil.Toast.fire({
+                        title: '确认禁止吗？',
+                        text: '禁止后，该账号下的所有拨号账号将无法正常使用拨号',
+                        toast: false,
+                        showConfirmButton: true,
+                        confirmButtonText: '确定',
+                        timer: false,
+                        showCloseButton: true,
+                    }).then((r) => {
+                        if (r.isConfirmed) {
+                            controller.updateUserField(params)
+                        } else {
+                            obj.elem.checked = true
+                            obj.othis.addClass('layui-form-onswitch').html('<em>正常</em><i></i>')
+                        }
+                    })
+                } else {
+                    controller.updateUserField(params)
+                }
+            })
+
             // 单元格编辑
             table.on('edit(currentTableFilter)', function (obj) {
                 $.post(arronUtil.url("/User/edit"), obj.data, function (res) {
