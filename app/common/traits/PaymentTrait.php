@@ -121,6 +121,7 @@ trait PaymentTrait
             'platform_version' => $this->agent->version($this->agent->platform()),
             'browser' => $this->agent->browser(),
             'browser_version' => $this->agent->version($this->agent->browser()),
+            'ip' => $this->request->ip(),
         ];
         $this->model->save($order);
 
