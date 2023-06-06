@@ -127,9 +127,9 @@ layui.define(['jquery', 'layer', 'upload'], function (exports) {
         showImportInfo: function (type = 1) {
             let label = ''
             if (type === 1) {
-                label = "['客户名称', '电话号码', '所在地', '邮箱', '备注']"
+                label = "['客户名称', '电话号码', '所在地', '邮箱', '备注', '联系人']"
             } else if (type === 2) {
-                label = "['人才名称', '电话号码', '所在地', '邮箱', '备注', '专业', '证书类型']"
+                label = "['人才名称', '电话号码', '所在地', '邮箱', '备注', '专业', '证书类型', '联系人']"
             }
 
             arronUtil.Toast.fire({
