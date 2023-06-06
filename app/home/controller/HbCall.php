@@ -90,7 +90,7 @@ class HbCall extends \app\common\controller\HomeController
             }
         }
 
-        if (!$mobile || strlen($mobile) < 11 || !is_numeric($mobile)) {
+        if (!$mobile || !validateMobile($mobile)) {
             $this->returnData['msg'] = lang('Please enter the correct mobile phone number');
             $this->returnData['info'] = lang('Tips');
             $this->returnData['status'] = 0;

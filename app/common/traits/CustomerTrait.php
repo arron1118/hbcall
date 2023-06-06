@@ -217,6 +217,11 @@ trait CustomerTrait
             $this->returnData['msg'] = '添加失败';
             $param = $this->request->param();
 
+            if (!validateMobile($param['phone'])) {
+                $this->returnData['msg'] = '请填写正确的电话号码';
+                return json($this->returnData);
+            }
+
             if ($this->module === 'home') {
                 if ($this->userInfo->company->recycle_on && $this->checkCustomerNumForUser($this->userInfo)) {
                     $this->returnData['msg'] = '已超出数量限制。如有问题请联系管理员';

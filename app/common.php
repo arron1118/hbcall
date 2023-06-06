@@ -153,15 +153,16 @@ if (!function_exists('readExcel')) {
         }
 
         for ($i = 2; $i <= $highestRow; $i++) {
-            $title = $sheet->getCellByColumnAndRow(1, $i)->getValue();
-            $phone = $sheet->getCellByColumnAndRow(2, $i)->getValue();
-            $province = $sheet->getCellByColumnAndRow(3, $i)->getValue();
-            $email = $sheet->getCellByColumnAndRow(4, $i)->getValue();
-            $comment = $sheet->getCellByColumnAndRow(5, $i)->getValue();
-            $professional = $sheet->getCellByColumnAndRow(6, $i)->getValue();
-            $certificate = $sheet->getCellByColumnAndRow(7, $i)->getValue();
+            $title = trim($sheet->getCellByColumnAndRow(1, $i)->getValue());
+            $phone = trim($sheet->getCellByColumnAndRow(2, $i)->getValue());
+            $province = trim($sheet->getCellByColumnAndRow(3, $i)->getValue());
+            $email = trim($sheet->getCellByColumnAndRow(4, $i)->getValue());
+            $comment = trim($sheet->getCellByColumnAndRow(5, $i)->getValue());
+            $professional = trim($sheet->getCellByColumnAndRow(6, $i)->getValue());
+            $certificate = trim($sheet->getCellByColumnAndRow(7, $i)->getValue());
+            $contact = trim($sheet->getCellByColumnAndRow(8, $i)->getValue());
             $customer = null;
-            if ($title && $phone && is_numeric($phone)) {
+            if ($title && $phone && validateMobile($phone)) {
                 if (!$is_repeat_customer) {
                     $customer = \app\common\model\Customer::where([
                         'phone' => $phone,
@@ -172,13 +173,14 @@ if (!function_exists('readExcel')) {
 
                 if (($customer && $customer->isEmpty()) || $is_repeat_customer) {
                     $log[] = array_merge($appendColumns, [
-                        'title' => trim($title),
-                        'phone' => trim($phone),
-                        'province' => trim($province ?? ''),
-                        'email' => trim($email ?? ''),
-                        'comment' => trim($comment ?? ''),
-                        'professional' => trim($professional ?? ''),
-                        'certificate' => trim($certificate ?? ''),
+                        'title' => $title,
+                        'phone' => $phone,
+                        'province' => $province ?? '',
+                        'email' => $email ?? '',
+                        'comment' => $comment ?? '',
+                        'professional' => $professional ?? '',
+                        'certificate' => $certificate ?? '',
+                        'contact' => $contact ?? '',
                     ]);
                 }
             }
@@ -210,4 +212,70 @@ function getDateFormatInfo($time)
     return date('Y-m-d H:i:s', $time);
 }
 
+/**
+ * 验证手机号
+ *
+ * @param $mobile
+ * @return bool
+ */
+function validateMobile($mobile)
+{
+    if (strlen($mobile) !== 11) {
+        return false;
+    }
+
+    $prefix = substr($mobile, 0, 3);
+
+    /**
+     * 中国移动: 134/135/136/137/138/139/150/151/152/157/158/159/182/183/184/187/188/198
+     * 中国联通: 130/131/132/155/156/185/186/166
+     * 中国电信: 133/149/153/173/177/180/181/189/199
+     */
+    $prefixes = [
+        '134',
+        '135',
+        '136',
+        '137',
+        '138',
+        '139',
+        '150',
+        '151',
+        '152',
+        '157',
+        '158',
+        '159',
+        '182',
+        '183',
+        '184',
+        '187',
+        '188',
+        '198',
+        '130',
+        '131',
+        '132',
+        '155',
+        '156',
+        '185',
+        '186',
+        '166',
+        '133',
+        '149',
+        '153',
+        '173',
+        '177',
+        '180',
+        '181',
+        '189',
+        '199'
+    ];
+
+    /**
+     * 11 位手机号码
+     * 带区号的11位电话号码
+     * 带‘-’的11位电话号码
+     */
+    return (in_array($prefix, $prefixes, true) && preg_match('/^1[3-9]\d{9}$/', $mobile)) ||
+        preg_match('/^0\d{2,3}\d{7,8}$/', $mobile) ||
+        preg_match('/^(\d{3}-|\d{4}-)?\d{7,8}$/', $mobile);
+}
 

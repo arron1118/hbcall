@@ -130,7 +130,6 @@ layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown'
                     id = $('[name="id"]').val(),
                     url = id ? REQUEST_CONFIG.EDIT_URL : REQUEST_CONFIG.ADD_URL
 
-                console.log(id)
                 $.post(url, formData, function (res) {
                     let option = {title: res.msg}
                     if (res.code === 1) {
