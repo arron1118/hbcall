@@ -171,6 +171,7 @@ class HbCall extends \app\common\controller\HomeController
                         $CallHistory->platform_version = $this->agent->version($this->agent->platform());
                         $CallHistory->browser = $this->agent->browser();
                         $CallHistory->browser_version = $this->agent->version($this->agent->browser());
+                        $CallHistory->ip = $this->request->ip();
                         switch ($call_type) {
                             case 2:
                             case 5:
