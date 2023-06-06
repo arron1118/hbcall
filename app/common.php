@@ -161,7 +161,7 @@ if (!function_exists('readExcel')) {
             $professional = $sheet->getCellByColumnAndRow(6, $i)->getValue();
             $certificate = $sheet->getCellByColumnAndRow(7, $i)->getValue();
             $customer = null;
-            if ($title && $phone) {
+            if ($title && $phone && is_numeric($phone)) {
                 if (!$is_repeat_customer) {
                     $customer = \app\common\model\Customer::where([
                         'phone' => $phone,
