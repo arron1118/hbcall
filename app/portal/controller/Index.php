@@ -57,7 +57,7 @@ class Index extends \app\common\controller\PortalController
         return $this->view->fetch();
     }
 
-    public function test()
+    public function hello()
     {
         return 'Test';
     }

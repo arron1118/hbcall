@@ -44,9 +44,14 @@
                     <th lay-data="{field: 'call_history_count', title: '呼叫总数', align: 'center', sort: true }"></th>
                     <th lay-data="{field: 'expense_sum', title: '总消费', align: 'center', sort: true }"></th>
                     <th lay-data="{field: 'logintime', title: '登录时间', align: 'center'}"></th>
+                    <th lay-data="{title: '操作', minWidth: 100, toolbar: '#currentTableBar', align: 'center'}"></th>
                 </tr>
                 </thead>
             </table>
+
+            <script type="text/html" id="currentTableBar">
+                <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete" title="删除"><i class="fa fa-trash-can"></i> </a>
+            </script>
         </div>
     </div>
 </div>

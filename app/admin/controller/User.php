@@ -6,6 +6,7 @@ use app\common\model\Company as CompanyModel;
 use app\common\model\User as UserModel;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
+use think\db\exception\DbException;
 use think\facade\Event;
 
 class User extends \app\common\controller\AdminController
@@ -362,6 +363,35 @@ class User extends \app\common\controller\AdminController
                 $this->returnData['msg'] = '删除成功';
             } else {
                 $this->returnData['msg'] = '删除失败';
+            }
+        }
+
+        return json($this->returnData);
+    }
+
+    public function delUser()
+    {
+        if ($this->request->isPost()) {
+            $userId = $this->request->param('id', 0);
+            $companyId = $this->request->param('company_id', 0);
+            if (!$userId && !$companyId) {
+                $this->returnData['msg'] = '未提供正确的ID';
+                return json($this->returnData);
+            }
+
+            try {
+                $userInfo = UserModel::where([
+                    'company_id' => $companyId,
+                ])->find($userId);
+
+                $userInfo->together(['userXnumber'])->delete();
+
+                // todo 回收用户的客户数据
+
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '删除成功';
+            } catch (DbException $exception) {
+                $this->returnData['msg'] = $exception->getMessage();
             }
         }
 
