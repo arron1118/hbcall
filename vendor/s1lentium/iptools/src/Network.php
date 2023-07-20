@@ -1,9 +1,6 @@
 <?php
 namespace IPTools;
 
-use IPTools\Exception\NetworkException;
-use ReturnTypeWillChange;
-
 /**
  * @author Safarov Alisher <alisher.safarov@outlook.com>
  * @link https://github.com/S1lentium/IPTools
@@ -69,12 +66,12 @@ class Network implements \Iterator, \Countable
 	 * @param int $prefixLength
 	 * @param string $version
 	 * @return IP
-	 * @throws NetworkException
+	 * @throws \Exception
 	 */
 	public static function prefix2netmask($prefixLength, $version)
 	{
 		if (!in_array($version, array(IP::IP_V4, IP::IP_V6))) {
-			throw new NetworkException("Wrong IP version");
+			throw new \Exception("Wrong IP version");
 		}
 
 		$maxPrefixLength = $version === IP::IP_V4
@@ -84,7 +81,7 @@ class Network implements \Iterator, \Countable
 		if (!is_numeric($prefixLength)
 			|| !($prefixLength >= 0 && $prefixLength <= $maxPrefixLength)
 		) {
-			throw new NetworkException('Invalid prefix length');
+			throw new \Exception('Invalid prefix length');
 		}
 
 		$binIP = str_pad(str_pad('', (int)$prefixLength, '1'), $maxPrefixLength, '0');
@@ -103,12 +100,12 @@ class Network implements \Iterator, \Countable
 
 	/**
 	 * @param IP ip
-	 * @throws NetworkException
+	 * @throws \Exception
 	 */
 	public function setIP(IP $ip)
 	{
 		if (isset($this->netmask) && $this->netmask->getVersion() !== $ip->getVersion()) {
-			throw new NetworkException('IP version is not same as Netmask version');
+			throw new \Exception('IP version is not same as Netmask version');
 		}
 
 		$this->ip = $ip;
@@ -116,16 +113,16 @@ class Network implements \Iterator, \Countable
 
 	/**
 	 * @param IP ip
-	 * @throws NetworkException
+	 * @throws \Exception
 	 */
 	public function setNetmask(IP $ip)
 	{
 		if (!preg_match('/^1*0*$/',$ip->toBin())) {
-			throw new NetworkException('Invalid Netmask address format');
+			throw new \Exception('Invalid Netmask address format');
 		}
 
 		if (isset($this->ip) && $ip->getVersion() !== $this->ip->getVersion()) {
-			throw new NetworkException('Netmask version is not same as IP version');
+			throw new \Exception('Netmask version is not same as IP version');
 		}
 
 		$this->netmask = $ip;
@@ -247,7 +244,7 @@ class Network implements \Iterator, \Countable
 	/**
 	 * @param IP|Network $exclude
 	 * @return Network[]
-	 * @throws NetworkException
+	 * @throws \Exception
 	 */
 	public function exclude($exclude)
 	{
@@ -256,7 +253,7 @@ class Network implements \Iterator, \Countable
 		if (strcmp($exclude->getFirstIP()->inAddr() , $this->getLastIP()->inAddr()) > 0
 			|| strcmp($exclude->getLastIP()->inAddr() , $this->getFirstIP()->inAddr()) < 0
 		) {
-			throw new NetworkException('Exclude subnet not within target network');
+			throw new \Exception('Exclude subnet not within target network');
 		}
 
 		$networks = array();
@@ -299,14 +296,14 @@ class Network implements \Iterator, \Countable
 	/**
 	 * @param int $prefixLength
 	 * @return Network[]
-	 * @throws NetworkException
+	 * @throws \Exception
 	 */
 	public function moveTo($prefixLength)
 	{
 		$maxPrefixLength = $this->ip->getMaxPrefixLength();
 
 		if ($prefixLength <= $this->getPrefixLength() || $prefixLength > $maxPrefixLength) {
-			throw new NetworkException('Invalid prefix length ');
+			throw new \Exception('Invalid prefix length ');
 		}
 
 		$netmask = self::prefix2netmask($prefixLength, $this->ip->getVersion());
@@ -326,7 +323,6 @@ class Network implements \Iterator, \Countable
 	/**
 	* @return IP
 	*/
-	#[ReturnTypeWillChange]
 	public function current()
 	{
 		return $this->getFirstIP()->next($this->position);
@@ -335,25 +331,16 @@ class Network implements \Iterator, \Countable
 	/**
 	* @return int
 	*/
-	#[ReturnTypeWillChange]
 	public function key()
 	{
 		return $this->position;
 	}
 
-    /**
-     * @return void
-     */
-	#[ReturnTypeWillChange]
 	public function next()
 	{
 		++$this->position;
 	}
 
-    /**
-     * @return void
-     */
-	#[ReturnTypeWillChange]
 	public function rewind()
 	{
 		$this->position = 0;
@@ -362,7 +349,6 @@ class Network implements \Iterator, \Countable
 	/**
 	* @return bool
 	*/
-	#[ReturnTypeWillChange]
 	public function valid()
 	{
 		return strcmp($this->getFirstIP()->next($this->position)->inAddr(), $this->getLastIP()->inAddr()) <= 0;
@@ -371,7 +357,6 @@ class Network implements \Iterator, \Countable
 	/**
 	* @return int
 	*/
-	#[ReturnTypeWillChange]
 	public function count()
 	{
 		return (integer)$this->getBlockSize();
