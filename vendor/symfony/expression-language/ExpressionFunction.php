@@ -42,8 +42,8 @@ class ExpressionFunction
     public function __construct(string $name, callable $compiler, callable $evaluator)
     {
         $this->name = $name;
-        $this->compiler = $compiler(...);
-        $this->evaluator = $evaluator(...);
+        $this->compiler = $compiler instanceof \Closure ? $compiler : \Closure::fromCallable($compiler);
+        $this->evaluator = $evaluator instanceof \Closure ? $evaluator : \Closure::fromCallable($evaluator);
     }
 
     public function getName(): string
@@ -82,9 +82,13 @@ class ExpressionFunction
             throw new \InvalidArgumentException(sprintf('An expression function name must be defined when PHP function "%s" is namespaced.', $phpFunctionName));
         }
 
-        $compiler = fn (...$args) => sprintf('\%s(%s)', $phpFunctionName, implode(', ', $args));
+        $compiler = function (...$args) use ($phpFunctionName) {
+            return sprintf('\%s(%s)', $phpFunctionName, implode(', ', $args));
+        };
 
-        $evaluator = fn ($p, ...$args) => $phpFunctionName(...$args);
+        $evaluator = function ($p, ...$args) use ($phpFunctionName) {
+            return $phpFunctionName(...$args);
+        };
 
         return new self($expressionFunctionName ?: end($parts), $compiler, $evaluator);
     }

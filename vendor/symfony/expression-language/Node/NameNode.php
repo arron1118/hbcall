@@ -28,17 +28,17 @@ class NameNode extends Node
         );
     }
 
-    public function compile(Compiler $compiler): void
+    public function compile(Compiler $compiler)
     {
         $compiler->raw('$'.$this->attributes['name']);
     }
 
-    public function evaluate(array $functions, array $values): mixed
+    public function evaluate(array $functions, array $values)
     {
         return $values[$this->attributes['name']];
     }
 
-    public function toArray(): array
+    public function toArray()
     {
         return [$this->attributes['name']];
     }

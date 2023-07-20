@@ -31,11 +31,9 @@ class Exporter
      * @param int               &$objectsCount
      * @param bool              &$valuesAreStatic
      *
-     * @return array
-     *
      * @throws NotInstantiableTypeException When a value cannot be serialized
      */
-    public static function prepare($values, $objectsPool, &$refsPool, &$objectsCount, &$valuesAreStatic)
+    public static function prepare($values, $objectsPool, &$refsPool, &$objectsCount, &$valuesAreStatic): array
     {
         $refs = $values;
         foreach ($values as $k => $value) {
@@ -73,8 +71,8 @@ class Exporter
                 goto handle_value;
             }
 
-            $class = $value::class;
-            $reflector = Registry::$reflectors[$class] ??= Registry::getClassReflector($class);
+            $class = \get_class($value);
+            $reflector = Registry::$reflectors[$class] ?? Registry::getClassReflector($class);
 
             if ($reflector->hasMethod('__serialize')) {
                 if (!$reflector->getMethod('__serialize')->isPublic()) {
@@ -135,7 +133,7 @@ class Exporter
                 $i = 0;
                 $n = (string) $name;
                 if ('' === $n || "\0" !== $n[0]) {
-                    $c = $reflector->hasProperty($n) && ($p = $reflector->getProperty($n))->isReadOnly() ? $p->class : 'stdClass';
+                    $c = \PHP_VERSION_ID >= 80100 && $reflector->hasProperty($n) && ($p = $reflector->getProperty($n))->isReadOnly() ? $p->class : 'stdClass';
                 } elseif ('*' === $n[1]) {
                     $n = substr($n, 3);
                     $c = $reflector->getProperty($n)->class;
@@ -191,7 +189,7 @@ class Exporter
         return $values;
     }
 
-    public static function export($value, $indent = '')
+    public static function export($value, string $indent = '')
     {
         switch (true) {
             case \is_int($value) || \is_float($value): return var_export($value, true);
@@ -230,7 +228,7 @@ class Exporter
                     return substr($m[1], 0, -2);
                 }
 
-                if (str_ends_with($m[1], 'n".\'')) {
+                if ('n".\'' === substr($m[1], -4)) {
                     return substr_replace($m[1], "\n".$subIndent.".'".$m[2], -2);
                 }
 
@@ -368,7 +366,7 @@ class Exporter
             self::export($value->wakeups, $subIndent),
         ];
 
-        return '\\'.$value::class."::hydrate(\n".$subIndent.implode(",\n".$subIndent, $code)."\n".$indent.')';
+        return '\\'.\get_class($value)."::hydrate(\n".$subIndent.implode(",\n".$subIndent, $code)."\n".$indent.')';
     }
 
     /**
@@ -378,7 +376,7 @@ class Exporter
     private static function getArrayObjectProperties($value, $proto): array
     {
         $reflector = $value instanceof \ArrayIterator ? 'ArrayIterator' : 'ArrayObject';
-        $reflector = Registry::$reflectors[$reflector] ??= Registry::getClassReflector($reflector);
+        $reflector = Registry::$reflectors[$reflector] ?? Registry::getClassReflector($reflector);
 
         $properties = [
             $arrayValue = (array) $value,

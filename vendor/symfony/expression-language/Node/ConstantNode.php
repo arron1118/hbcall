@@ -20,30 +20,28 @@ use Symfony\Component\ExpressionLanguage\Compiler;
  */
 class ConstantNode extends Node
 {
-    public readonly bool $isNullSafe;
     private bool $isIdentifier;
 
-    public function __construct(mixed $value, bool $isIdentifier = false, bool $isNullSafe = false)
+    public function __construct(mixed $value, bool $isIdentifier = false)
     {
         $this->isIdentifier = $isIdentifier;
-        $this->isNullSafe = $isNullSafe;
         parent::__construct(
             [],
             ['value' => $value]
         );
     }
 
-    public function compile(Compiler $compiler): void
+    public function compile(Compiler $compiler)
     {
         $compiler->repr($this->attributes['value']);
     }
 
-    public function evaluate(array $functions, array $values): mixed
+    public function evaluate(array $functions, array $values)
     {
         return $this->attributes['value'];
     }
 
-    public function toArray(): array
+    public function toArray()
     {
         $array = [];
         $value = $this->attributes['value'];
