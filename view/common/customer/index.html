@@ -161,20 +161,22 @@
             <button type="button" class="layui-btn layui-btn-sm data-count-edit layui-btn-normal d-none" id="importExcel">导入{$typeText}</button>
             <script type="text/html" id="currentTableBar">
                 {if ($module !== 'admin')}
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i class="fa fa-plus"></i> 添加{$typeText}</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入{$typeText}</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
-                {if ($module === 'company')}
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 分配{$typeText}</button>
-                {if $user->talent_on}
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="migrate"><i class="fa fa-share-from-square"></i> 迁移{$typeText}</button>
-                {/if}
-                {if $user->recycle_on}
-                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="trash" title="已分配并且被回收的数据"><i class="fa fa-trash-can"></i> 回收站</button>
-                {/if}
-                {/if}
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" data-bs-toggle="offcanvas" data-bs-target="#offcanvas"><i class="fa fa-plus"></i> 添加{$typeText}</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="importExcel"><i class="fa fa-file-import"></i> 导入{$typeText}</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-info" lay-event="info"><i class="fa fa-info"></i> 导入说明</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-warm" lay-event="delete"><i class="fa fa-trash-can"></i> 批量删除</button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="changeCate"><i class="fa fa-up-down-left-right"></i> 移动分类</button>
+                    {if ($module === 'company')}
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 分配{$typeText}</button>
+                        {if $user->talent_on}
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="migrate"><i class="fa fa-share-from-square"></i> 迁移{$typeText}</button>
+                        {/if}
+                        {if $user->recycle_on}
+                        <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="trash" title="已分配并且被回收的数据"><i class="fa fa-trash-can"></i> 回收站</button>
+                        {/if}
+                    {/if}
+
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" lay-event="recycle" title="已删除的数据"><i class="fa fa-trash-can"></i> 已删除</button>
                 {/if}
                 <span class="ms-3 text-secondary">注：点击'回访记录'列可查看详细内容</span>
             </script>

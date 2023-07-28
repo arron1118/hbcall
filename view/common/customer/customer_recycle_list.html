@@ -1,0 +1,52 @@
+{extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">
+                <thead>
+                <tr>
+                    <th lay-data="{type: 'checkbox', fixed: 'left'}"></th>
+                    <th lay-data="{field: 'id', title: 'ID', align: 'center', width: 100, fixed: 'left'}"></th>
+                    <th lay-data="{field: 'title', title: '{$typeText}名称', align: 'center', width: 200}"></th>
+                    <th lay-data="{field: 'phone', title: '联系电话', align: 'center', style: 'cursor: pointer;', width: 150}"></th>
+                    <th lay-data="{field: 'province', title: '所在地', align: 'center', width: 100}"></th>
+                    <th lay-data="{field: 'comment', title: '备注', align: 'center', width: 240}"></th>
+                    <th lay-data="{field: 'cate_text', title: '类型', align: 'center', width: 100}"></th>
+                    {if $type === 2}
+                    <th lay-data="{field: 'professional', title: '专业', align: 'center', width: 150}"></th>
+                    <th lay-data="{field: 'certificate', title: '证书类型', align: 'center', width: 100}"></th>
+                    {/if}
+                    {if ($module === 'admin')}
+                    <th lay-data="{field: 'corporation', title: '所属公司', align: 'center', width: 300}"></th>
+                    {/if}
+                    {if ($module !== 'home')}
+                    <th lay-data="{field: 'realname', title: '跟进人', align: 'center', width: 150}"></th>
+                    {/if}
+                    <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center', width: 100}"></th>
+                    <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', width: 100}"></th>
+                    <th lay-data="{field: 'last_calltime', title: '最近呼叫', align: 'center', width: 180}"></th>
+                    <th lay-data="{field: 'create_time', title: '创建时间', align: 'center', width: 180}"></th>
+                </tr>
+                </thead>
+            </table>
+            <script type="text/html" id="currentTableBar">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="restore"><i class="fa fa-share-from-square"></i> 恢复</button>
+            </script>
+        </div>
+
+    </div>
+</div>
+{/block}
+{block name="js"}
+<script>
+    let type = {$type},
+        typeText = '{$typeText}',
+        userId = {$user_id}
+</script>
+<script src="__STATIC__/js/common/customer_recycle_list.js?v={:time()}"></script>
+
+{/block}

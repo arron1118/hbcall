@@ -73,6 +73,13 @@ trait CustomerTrait
         return $this->view->fetch('common@customer/index');
     }
 
+    /**
+     * 回收站 已分配并且被回收的数据
+     * @return \think\response\Json
+     * @throws DbException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
     public function trash_list()
     {
         if ($this->request->isPost()) {
@@ -110,6 +117,62 @@ trait CustomerTrait
             'typeText' => (new CustomerModel)->getTypeList()[$this->type],
         ]);
         return $this->view->fetch('common@customer/customer_trash_list');
+    }
+
+    /**
+     * 回收站 已删除
+     * @return \think\response\Json
+     * @throws DbException
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function recycle_list()
+    {
+        $companyId = $this->module === 'company' ? $this->userInfo->id : $this->request->param('company_id/d', 0);
+        $userId = $this->module === 'home' ? $this->userInfo->id : $this->request->param('user_id/d', 0);
+        if ($this->request->isPost()) {
+            $page = $this->request->param('page/d', 1);
+            $limit = $this->request->param('limit/d', 10);
+
+            if ($this->module === 'home') {
+                $companyId = $this->userInfo->company_id;
+            }
+
+            $where = [];
+
+            if ($companyId > 0) {
+                $where[] = ['company_id', '=', $companyId];
+            }
+
+            if ($userId > 0) {
+                $where[] = ['user_id', '=', $userId];
+            }
+
+            if ($this->type > 0) {
+                $where[] = ['type', '=', $this->type];
+            }
+
+            $this->returnData['msg'] = lang('Operation successful');
+            $this->returnData['count'] = CustomerModel::onlyTrashed()->where($where)->count();
+            $this->returnData['data'] = CustomerModel::onlyTrashed()
+                ->with(['company', 'user'])
+                ->withCount(['record'])
+                ->where($where)
+                ->order('id', 'desc')
+                ->limit(($page - 1) * $limit, $limit)
+                ->append(['cate_text'])
+                ->hidden(['company', 'user'])
+                ->select();
+
+            return json($this->returnData);
+        }
+
+        $this->view->assign([
+            'type' => $this->type,
+            'typeText' => (new CustomerModel)->getTypeList()[$this->type],
+            'user_id' => $userId,
+        ]);
+        return $this->view->fetch('common@customer/customer_recycle_list');
     }
 
     public function getCustomerList()
@@ -459,6 +522,11 @@ trait CustomerTrait
         return json($this->returnData);
     }
 
+    /**
+     * 检查用户数量
+     * @param User $user
+     * @return bool
+     */
     protected function checkCustomerNumForUser(User $user)
     {
         $number = $this->type === 1 ? $user->customer_num : $user->talent_num;
@@ -474,4 +542,40 @@ trait CustomerTrait
                     ->limit($number - 1, 1)
                     ->column('id'));
     }
+
+    /**
+     * 恢复已删除数据
+     * @return \think\response\Json
+     */
+    public function restore()
+    {
+        if ($this->request->isPost()) {
+            $this->return['msg'] = '恢复失败';
+            $companyId = $this->module === 'company' ? $this->userInfo->id : $this->request->param('company_id/d', 0);
+            $userId = $this->module === 'home' ? $this->userInfo->id : $this->request->param('user_id/d', 0);
+            $ids = $this->request->param('ids', '');
+
+            if ($ids) {
+                $where = [
+                    ['id', 'in', $ids]
+                ];
+
+                if ($companyId > 0) {
+                    $where[] = ['company_id', '=', $companyId];
+                }
+
+                if ($userId > 0) {
+                    $where[] = ['user_id', '=', $userId];
+                }
+
+                CustomerModel::onlyTrashed()->where($where)->save(['delete_time' => null]);
+
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '恢复成功';
+            }
+        }
+
+        return json($this->returnData);
+    }
+
 }

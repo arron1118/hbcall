@@ -369,7 +369,7 @@ layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown'
                         break;
 
                     case 'trash':
-                        let index = layer.open({
+                        layer.open({
                             title: '回收站 <span style="color: #999">(已分配并且被回收的数据)</span>',
                             type: 2,
                             shade: 0.2,
@@ -378,8 +378,19 @@ layui.use(['layer', 'miniTab', 'element', 'table', 'form', 'laydate', 'dropdown'
                             area: ['100%', '100%'],
                             content: arronUtil.url('/Customer/trash_list') + '?type=' + type,
                         });
-                        $(window).on("resize", function () {
-                            layer.full(index);
+                        break;
+
+                    case 'recycle':
+                        let param = eval('(' + $('#filterUser li.layui-menu-item-checked').attr('lay-options') + ')')
+                        let user_id = param?.user_id || 0
+                        layer.open({
+                            title: '回收站 <span style="color: #999">(已删除)</span>',
+                            type: 2,
+                            shade: 0.2,
+                            maxmin: true,
+                            shadeClose: true,
+                            area: ['100%', '100%'],
+                            content: arronUtil.url('/Customer/recycle_list') + '?type=' + type + '&user_id=' + user_id
                         });
                         break;
                 }

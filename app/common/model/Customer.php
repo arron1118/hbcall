@@ -23,7 +23,7 @@ class Customer extends Model
 
     public function getPhoneAttr($value)
     {
-        return substr_replace($value, '****', 3, 4);
+        return validateMobile($value) ? substr_replace($value, '****', 3, 4) : $value;
     }
 
     public function getCateTextAttr($value, $data)
