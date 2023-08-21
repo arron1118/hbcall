@@ -3,8 +3,11 @@
 namespace app\common\traits;
 
 use app\admin\model\Admin;
+use app\common\model\AdminSigninLogs;
 use app\common\model\Company;
+use app\common\model\CompanySigninLogs;
 use app\common\model\User;
+use app\common\model\UserSigninLogs;
 use think\facade\Cookie;
 use think\facade\Session;
 
@@ -20,10 +23,13 @@ trait UserTrait
         if ($this->request->isPost()) {
             $param = $this->request->param();
             $model = User::class;
+            $signinLogsModel = new UserSigninLogs();
             if ($this->module === 'admin') {
                 $model = Admin::class;
+                $signinLogsModel = new AdminSigninLogs();
             } elseif ($this->module === 'company') {
                 $model = Company::class;
+                $signinLogsModel = new CompanySigninLogs();
             }
             $user = $model::getByUsername($param['username']);
             if (!$user) {
@@ -76,6 +82,23 @@ trait UserTrait
             if (in_array($this->module, ['company', 'home'])) {
                 Cookie::set('balance', $this->module === 'company' ? $user->balance : $user->company->balance);
             }
+
+            // 登录日志
+            if ($this->module === 'admin') {
+                $signinLogsModel->admin_id = $user->id;
+            } elseif ($this->module === 'company') {
+                $signinLogsModel->company_id = $user->id;
+            } else {
+                $signinLogsModel->user_id = $user->id;
+            }
+            $signinLogsModel->ip = $this->request->ip();
+            $signinLogsModel->device = $this->agent->device();
+            $signinLogsModel->device_type = $this->agent->deviceType();
+            $signinLogsModel->platform = $this->agent->platform();
+            $signinLogsModel->platform_version = $this->agent->version($this->agent->platform());
+            $signinLogsModel->browser = $this->agent->browser();
+            $signinLogsModel->browser_version = $this->agent->version($this->agent->browser());
+            $signinLogsModel->save();
 
             $this->returnData['msg'] = lang('Logined');
             $this->returnData['code'] = 1;
