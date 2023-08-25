@@ -4,6 +4,7 @@ namespace app\api\controller;
 
 use app\common\controller\ApiController;
 use app\common\model\Expense;
+use app\common\model\UserSigninLogs;
 use think\facade\Session;
 
 class User extends ApiController
@@ -102,16 +103,20 @@ class User extends ApiController
                 $this->returnApiData();
             }
 
-            $user->prevtime = $user->getData('logintime');
-            $user->logintime = $now;
-            $user->loginip = $this->request->ip();
+            ++$user->login_num;
             $user->token = createToken($password);
-            $user->platform = $this->agent->platform();
-            $user->platform_version = $this->agent->version($this->agent->platform());
-            $user->browser = $this->agent->browser();
-            $user->browser_version = $this->agent->version($this->agent->browser());
-            $user->device = $this->agent->device();
             $user->save();
+
+            $signinLogsModel = new UserSigninLogs();
+            $signinLogsModel->user_id = $user->id;
+            $signinLogsModel->ip = $this->request->ip();
+            $signinLogsModel->device = $this->agent->device();
+            $signinLogsModel->device_type = $this->agent->deviceType();
+            $signinLogsModel->platform = $this->agent->platform();
+            $signinLogsModel->platform_version = $this->agent->version($this->agent->platform());
+            $signinLogsModel->browser = $this->agent->browser();
+            $signinLogsModel->browser_version = $this->agent->version($this->agent->browser());
+            $signinLogsModel->save();
 
             $where = [$this->userType . '_id' => $user->id];
             $user->yesterday_duration = Expense::where($where)

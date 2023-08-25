@@ -3,12 +3,8 @@
 
 namespace app\common\model;
 
-use \think\Model;
-use think\model\concern\SoftDelete;
-
-class Payment extends Model
+class Payment extends CommonModel
 {
-    use SoftDelete;
 
     public function getPayTimeAttr($value)
     {

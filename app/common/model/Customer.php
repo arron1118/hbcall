@@ -2,13 +2,8 @@
 
 namespace app\common\model;
 
-use think\facade\Log;
-use \think\Model;
-use think\model\concern\SoftDelete;
-
-class Customer extends Model
+class Customer extends CommonModel
 {
-    use SoftDelete;
 
     protected $typeList = [
         '全部',

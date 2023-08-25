@@ -3,9 +3,7 @@
 
 namespace app\common\model;
 
-use \think\Model;
-
-class NumberStore extends Model
+class NumberStore extends CommonModel
 {
 
     public function getStatusAttr($value)

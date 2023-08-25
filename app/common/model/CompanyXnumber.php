@@ -4,8 +4,10 @@ namespace app\common\model;
 
 use \think\Model;
 
-class CompanyXnumber extends Model
+class CompanyXnumber extends CommonModel
 {
+    protected $deleteTime = false;
+
     public function company()
     {
         return $this->belongsTo(Company::class);

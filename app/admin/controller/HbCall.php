@@ -15,7 +15,7 @@ class HbCall extends \app\common\controller\AdminController
         if ($company_id > 0) {
             $userList = User::field('id, username')
                 ->where('company_id', $company_id)
-                ->order('id desc, logintime desc')
+                ->order('id desc')
                 ->select();
             $this->returnData['code'] = 1;
             $this->returnData['data'] = $userList;

@@ -3,13 +3,12 @@
 namespace app\common\traits;
 
 use app\admin\model\Admin;
-use app\common\model\AdminSigninLogs;
+use app\admin\model\AdminSigninLogs;
 use app\common\model\Company;
 use app\common\model\CompanySigninLogs;
 use app\common\model\User;
 use app\common\model\UserSigninLogs;
 use think\facade\Cookie;
-use think\facade\Session;
 
 trait UserTrait
 {
@@ -66,15 +65,8 @@ trait UserTrait
                 return json($this->returnData);
             }
 
-            $user->prevtime = $user->getData('logintime');
-            $user->logintime = $now;
-            $user->loginip = $this->request->ip();
+            ++$user->login_num;
             $user->token = createToken($password);
-            $user->device = $this->agent->device();
-            $user->platform = $this->agent->platform();
-            $user->platform_version = $this->agent->version($this->agent->platform());
-            $user->browser = $this->agent->browser();
-            $user->browser_version = $this->agent->version($this->agent->browser());
             $user->save();
 
             Cookie::set('hbcall_' . $this->module . '_token', $user->token, $this->token_expire_time);
@@ -139,8 +131,23 @@ trait UserTrait
                 $this->returnData['msg'] = lang('The confirmation password entered is incorrect');
                 return json($this->returnData);
             }
-            $this->userInfo->password = getEncryptPassword($confirm_password, $this->userInfo->salt);
+            $oldPassword = $this->userInfo->password;
+            $newPassword = getEncryptPassword($confirm_password, $this->userInfo->salt);
+            $this->userInfo->password = $newPassword;
             if ($this->userInfo->save()) {
+                $passwordLogs = [
+                    'old_password' => $oldPassword,
+                    'new_password' => $newPassword,
+                ];
+                if ($this->module === 'admin') {
+                    $passwordLogs['admin_id'] = $this->userInfo->id;
+                } elseif ($this->module === 'company') {
+                    $passwordLogs['company_id'] = $this->userInfo->id;
+                } else {
+                    $passwordLogs['user_id'] = $this->userInfo->id;
+                }
+                $this->userInfo->passwordLogs()->save($passwordLogs);
+
                 $this->returnData['msg'] = lang('Password modification successful, please log in again');
                 $this->returnData['code'] = 1;
             }

@@ -3,13 +3,8 @@
 
 namespace app\common\model;
 
-
-use \think\Model;
-use think\model\concern\SoftDelete;
-
-class Expense extends Model
+class Expense extends CommonModel
 {
-    use SoftDelete;
 
     public function user()
     {

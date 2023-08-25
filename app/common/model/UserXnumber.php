@@ -3,10 +3,9 @@
 
 namespace app\common\model;
 
-use \think\Model;
-
-class UserXnumber extends Model
+class UserXnumber extends CommonModel
 {
+    protected $deleteTime = false;
 
     public function user()
     {

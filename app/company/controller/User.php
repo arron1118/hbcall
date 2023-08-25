@@ -58,7 +58,7 @@ class User extends \app\common\controller\CompanyController
                 ->hidden(['password', 'salt'])
                 ->withCount('customer')
                 ->where($map)
-                ->order('id desc, logintime desc')
+                ->order('id desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->append(['is_test_text', 'status_text'])
                 ->select();
@@ -168,7 +168,15 @@ class User extends \app\common\controller\CompanyController
             }
 
             if ($params['password'] !== $userInfo->password) {
-                $userInfo->password = getEncryptPassword(trim($params['password']), $userInfo->salt);
+                $newPassword = getEncryptPassword(trim($params['password']), $userInfo->salt);
+
+                $userInfo->passwordLogs()->save([
+                    'user_id' => $userInfo->id,
+                    'old_password' => $userInfo->password,
+                    'new_password' => $newPassword,
+                ]);
+
+                $userInfo->password = $newPassword;
             }
 
             if (isset($params['is_test'])) {

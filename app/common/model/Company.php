@@ -3,13 +3,9 @@
 namespace app\common\model;
 
 use think\db\Query;
-use \think\Model;
-use think\model\concern\SoftDelete;
 
-class Company extends Model
+class Company extends CommonModel
 {
-
-    use SoftDelete;
 
     public function getPrevtimeAttr($value)
     {
@@ -86,7 +82,7 @@ class Company extends Model
         return $this->with(['user' => function (Query $query) {
             $query->field('id, company_id, realname');
         }])->field('id, username, corporation')
-            ->order('id desc, logintime desc')
+            ->order('id desc')
             ->select();
     }
 
@@ -123,6 +119,16 @@ class Company extends Model
     public function customerPhoneRecord()
     {
         return $this->hasMany(CustomerPhoneRecord::class);
+    }
+
+    public function passwordLogs()
+    {
+        return $this->hasMany(CompanyPasswordLogs::class);
+    }
+
+    public function signinLogs()
+    {
+        return $this->hasMany(CompanySigninLogs::class);
     }
 
     public static function onAfterDelete($company)

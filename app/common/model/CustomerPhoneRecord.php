@@ -3,15 +3,11 @@ declare (strict_types = 1);
 
 namespace app\common\model;
 
-use think\Model;
-use think\model\concern\SoftDelete;
-
 /**
- * @mixin \think\Model
+ * CustomerPhoneRecord
  */
-class CustomerPhoneRecord extends Model
+class CustomerPhoneRecord extends CommonModel
 {
-    use SoftDelete;
 
     public function getCustomerPhoneAttr($value)
     {

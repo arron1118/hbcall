@@ -3,14 +3,10 @@
 
 namespace app\common\model;
 
-use \think\Model;
 use app\admin\model\Admin;
-use think\model\concern\SoftDelete;
 
-class News extends Model
+class News extends CommonModel
 {
-
-    use SoftDelete;
 
     public function getStatusTextAttr($value, $data)
     {

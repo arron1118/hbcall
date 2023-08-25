@@ -3,23 +3,8 @@
 
 namespace app\common\model;
 
-use \think\Model;
-use think\model\concern\SoftDelete;
-
-class User extends Model
+class User extends CommonModel
 {
-
-    use SoftDelete;
-
-    public function getPrevtimeAttr($value)
-    {
-        return getDateFormatInfo($value);
-    }
-
-    public function getLogintimeAttr($value)
-    {
-        return getDateFormatInfo($value);
-    }
 
     public function getStatusTextAttr($value, $data)
     {
@@ -74,6 +59,16 @@ class User extends Model
     public function customerPhoneRecord()
     {
         return $this->hasMany(CustomerPhoneRecord::class);
+    }
+
+    public function passwordLogs()
+    {
+        return $this->hasMany(UserPasswordLogs::class);
+    }
+
+    public function signinLogs()
+    {
+        return $this->hasMany(UserSigninLogs::class);
     }
 
     public static function onAfterDelete($user): void

@@ -2,12 +2,8 @@
 
 namespace app\common\model;
 
-use \think\Model;
-use think\model\concern\SoftDelete;
-
-class CustomerRecord extends Model
+class CustomerRecord extends CommonModel
 {
-    use SoftDelete;
 
     public function getNextCallTimeAttr($value)
     {

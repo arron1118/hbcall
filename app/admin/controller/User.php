@@ -7,7 +7,6 @@ use app\common\model\User as UserModel;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
 use think\db\exception\DbException;
-use think\facade\Event;
 
 class User extends \app\common\controller\AdminController
 {
@@ -60,7 +59,7 @@ class User extends \app\common\controller\AdminController
             $this->returnData['data'] = CompanyModel::withCount('user')
                 ->with(['companyXnumber' => ['numberStore']])
                 ->where($map)->order('id', 'desc')
-                ->order('id desc, logintime desc')
+                ->order('id desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->append(['call_type_text', 'is_test_text', 'status_text', 'call_status_text'])
                 ->hidden(['salt', 'password', 'token', 'token_expire_time'])
@@ -98,7 +97,7 @@ class User extends \app\common\controller\AdminController
                 ->withCount('callHistory')
                 ->withSum('expense', 'cost')
                 ->where($map)
-                ->order('id desc, logintime desc')
+                ->order('id desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->select();
             $this->returnData['msg'] = lang('Operation successful');
@@ -257,7 +256,14 @@ class User extends \app\common\controller\AdminController
 //            }
 
             if ($data['password'] && $data['password'] !== $userInfo->password) {
-                $userInfo->password = getEncryptPassword(trim($data['password']), $userInfo->salt);
+                $newPassword = getEncryptPassword(trim($data['password']), $userInfo->salt);
+                $userInfo->passwordLogs()->save([
+                    'company_id' => $userInfo->id,
+                    'old_password' => $userInfo->password,
+                    'new_password' => $newPassword,
+                ]);
+
+                $userInfo->password = $newPassword;
             }
 
             $userInfo->realname = $data['realname'];

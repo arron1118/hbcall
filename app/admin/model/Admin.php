@@ -3,25 +3,24 @@
 
 namespace app\admin\model;
 
-use think\model\concern\SoftDelete;
+use app\common\model\CommonModel;
 
-class Admin extends \think\Model
+class Admin extends CommonModel
 {
-    use SoftDelete;
-
-    public function getPrevtimeAttr($value)
-    {
-        return date($this->getDateFormat(), $value);
-    }
-
-    public function getLogintimeAttr($value)
-    {
-        return date($this->getDateFormat(), $value);
-    }
 
     public function getStatusTextAttr($value, $data)
     {
         return $this->getStatusList()[$data['status']];
+    }
+
+    public function passwordLogs()
+    {
+        return $this->hasMany(AdminPasswordLogs::class);
+    }
+
+    public function signinLogs()
+    {
+        return $this->hasMany(AdminSigninLogs::class);
     }
 
     protected function getStatusList()

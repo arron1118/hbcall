@@ -34,7 +34,7 @@ class Admin extends \app\common\controller\AdminController
 
             $this->returnData['count'] = $this->model::where($map)->count();
             $this->returnData['data'] = $this->model::where($map)
-                ->order('id desc, logintime desc')
+                ->order('id desc')
                 ->limit(($page - 1) * $limit, $limit)
                 ->hidden(['password', 'salt'])
                 ->append(['status_text'])
@@ -94,7 +94,15 @@ class Admin extends \app\common\controller\AdminController
             }
 
             if ($params['password'] !== $admin->password) {
-                $admin->password = getEncryptPassword(trim($params['password']), $admin->salt);
+                $newPassword = getEncryptPassword(trim($params['password']), $admin->salt);
+
+                $admin->passwordLogs()->save([
+                    'admin_id' => $admin->id,
+                    'old_password' => $admin->password,
+                    'new_password' => $newPassword,
+                ]);
+
+                $admin->password = $newPassword;
             }
 
             if ($admin->save()) {

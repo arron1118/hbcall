@@ -1,18 +1,19 @@
 <?php
 /**
  * copyright@Administrator
- * 2023/8/21 0021 10:47
+ * 2023/8/24 0024 11:10
  * email:arron1118@icloud.com
  */
 
 namespace app\common\model;
 
-class CompanySigninLogs extends CommonModel
+class CompanyPasswordLogs extends CommonModel
 {
 
     public function company()
     {
         return $this->belongsTo(Company::class);
     }
+
 
 }
