@@ -7,6 +7,7 @@ use app\common\model\User as UserModel;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
 use think\db\exception\DbException;
+use think\facade\Event;
 
 class User extends \app\common\controller\AdminController
 {
@@ -257,10 +258,12 @@ class User extends \app\common\controller\AdminController
 
             if ($data['password'] && $data['password'] !== $userInfo->password) {
                 $newPassword = getEncryptPassword(trim($data['password']), $userInfo->salt);
-                $userInfo->passwordLogs()->save([
-                    'company_id' => $userInfo->id,
-                    'old_password' => $userInfo->password,
-                    'new_password' => $newPassword,
+
+                // 密码修改日志
+                Event::trigger('ChangePassword', [
+                    'user' => $userInfo,
+                    'oldPassword' => $userInfo->password,
+                    'newPassword' => $newPassword
                 ]);
 
                 $userInfo->password = $newPassword;

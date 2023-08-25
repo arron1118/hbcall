@@ -7,6 +7,8 @@
 
 namespace app\admin\controller;
 
+use think\facade\Event;
+
 class Admin extends \app\common\controller\AdminController
 {
     public function initialize()
@@ -96,10 +98,11 @@ class Admin extends \app\common\controller\AdminController
             if ($params['password'] !== $admin->password) {
                 $newPassword = getEncryptPassword(trim($params['password']), $admin->salt);
 
-                $admin->passwordLogs()->save([
-                    'admin_id' => $admin->id,
-                    'old_password' => $admin->password,
-                    'new_password' => $newPassword,
+                // 密码修改日志
+                Event::trigger('ChangePassword', [
+                    'user' => $admin,
+                    'oldPassword' => $admin->password,
+                    'newPassword' => $newPassword
                 ]);
 
                 $admin->password = $newPassword;

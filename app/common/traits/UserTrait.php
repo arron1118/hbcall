@@ -9,6 +9,7 @@ use app\common\model\CompanySigninLogs;
 use app\common\model\User;
 use app\common\model\UserSigninLogs;
 use think\facade\Cookie;
+use think\facade\Event;
 
 trait UserTrait
 {
@@ -22,13 +23,10 @@ trait UserTrait
         if ($this->request->isPost()) {
             $param = $this->request->param();
             $model = User::class;
-            $signinLogsModel = new UserSigninLogs();
             if ($this->module === 'admin') {
                 $model = Admin::class;
-                $signinLogsModel = new AdminSigninLogs();
             } elseif ($this->module === 'company') {
                 $model = Company::class;
-                $signinLogsModel = new CompanySigninLogs();
             }
             $user = $model::getByUsername($param['username']);
             if (!$user) {
@@ -76,21 +74,7 @@ trait UserTrait
             }
 
             // 登录日志
-            if ($this->module === 'admin') {
-                $signinLogsModel->admin_id = $user->id;
-            } elseif ($this->module === 'company') {
-                $signinLogsModel->company_id = $user->id;
-            } else {
-                $signinLogsModel->user_id = $user->id;
-            }
-            $signinLogsModel->ip = $this->request->ip();
-            $signinLogsModel->device = $this->agent->device();
-            $signinLogsModel->device_type = $this->agent->deviceType();
-            $signinLogsModel->platform = $this->agent->platform();
-            $signinLogsModel->platform_version = $this->agent->version($this->agent->platform());
-            $signinLogsModel->browser = $this->agent->browser();
-            $signinLogsModel->browser_version = $this->agent->version($this->agent->browser());
-            $signinLogsModel->save();
+            Event::trigger('UserLogin', $user);
 
             $this->returnData['msg'] = lang('Logined');
             $this->returnData['code'] = 1;
@@ -135,18 +119,12 @@ trait UserTrait
             $newPassword = getEncryptPassword($confirm_password, $this->userInfo->salt);
             $this->userInfo->password = $newPassword;
             if ($this->userInfo->save()) {
-                $passwordLogs = [
-                    'old_password' => $oldPassword,
-                    'new_password' => $newPassword,
-                ];
-                if ($this->module === 'admin') {
-                    $passwordLogs['admin_id'] = $this->userInfo->id;
-                } elseif ($this->module === 'company') {
-                    $passwordLogs['company_id'] = $this->userInfo->id;
-                } else {
-                    $passwordLogs['user_id'] = $this->userInfo->id;
-                }
-                $this->userInfo->passwordLogs()->save($passwordLogs);
+                // 密码修改日志
+                Event::trigger('ChangePassword', [
+                    'user' => $this->userInfo,
+                    'oldPassword' => $oldPassword,
+                    'newPassword' => $newPassword
+                ]);
 
                 $this->returnData['msg'] = lang('Password modification successful, please log in again');
                 $this->returnData['code'] = 1;

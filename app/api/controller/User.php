@@ -5,6 +5,7 @@ namespace app\api\controller;
 use app\common\controller\ApiController;
 use app\common\model\Expense;
 use app\common\model\UserSigninLogs;
+use think\facade\Event;
 use think\facade\Session;
 
 class User extends ApiController
@@ -118,6 +119,8 @@ class User extends ApiController
             $signinLogsModel->browser_version = $this->agent->version($this->agent->browser());
             $signinLogsModel->save();
 
+            Event::trigger('UserLogin', $user);
+
             $where = [$this->userType . '_id' => $user->id];
             $user->yesterday_duration = Expense::where($where)
                 ->whereRaw("date_format(date_sub(now(), interval 1 day), '%Y-%m-%d') = from_unixtime(create_time, '%Y-%m-%d')")
@@ -192,9 +195,18 @@ class User extends ApiController
                 $this->returnData['msg'] = '输入的确认密码有误';
                 $this->returnApiData();
             }
-            $this->userInfo->password = getEncryptPassword($this->params['confirm_password'], $this->userInfo->salt);
+            $newPassword = getEncryptPassword($this->params['confirm_password'], $this->userInfo->salt);
             $this->userInfo->token = '';
             $this->userInfo->token_expire_time = 0;
+
+            // 密码修改日志
+            Event::trigger('ChangePassword', [
+                'user' => $this->userInfo,
+                'oldPassword' => $this->userInfo->password,
+                'newPassword' => $newPassword,
+            ]);
+
+            $this->userInfo->password = $newPassword;
 
             if ($this->userInfo->save()) {
                 $this->returnData['code'] = 1;

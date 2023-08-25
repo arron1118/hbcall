@@ -16,5 +16,6 @@ return [
     ],
 
     'subscribe' => [
+        \app\common\subscribe\User::class,
     ],
 ];

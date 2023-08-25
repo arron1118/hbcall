@@ -170,10 +170,10 @@ class User extends \app\common\controller\CompanyController
             if ($params['password'] !== $userInfo->password) {
                 $newPassword = getEncryptPassword(trim($params['password']), $userInfo->salt);
 
-                $userInfo->passwordLogs()->save([
-                    'user_id' => $userInfo->id,
-                    'old_password' => $userInfo->password,
-                    'new_password' => $newPassword,
+                Event::trigger('ChangePassword', [
+                    'user' => $userInfo,
+                    'oldPassword' => $userInfo->password,
+                    'newPassword' => $newPassword,
                 ]);
 
                 $userInfo->password = $newPassword;
