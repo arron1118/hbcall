@@ -85,6 +85,8 @@ trait CustomerTrait
         if ($this->request->isPost()) {
             $page = $this->request->param('page/d', 1);
             $limit = $this->request->param('limit/d', 10);
+            $operate = trim($this->request->param('operate/s', ''));
+            $keyword = trim($this->request->param('keyword/s', ''));
             $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
             $where = [
                 ['recycle', '=', 1],
@@ -96,6 +98,10 @@ trait CustomerTrait
 
             if ($this->type > 0) {
                 $where[] = ['type', '=', $this->type];
+            }
+
+            if ($keyword) {
+                $where[] = [$operate, 'like', '%' . $keyword . '%'];
             }
 
             $this->returnData['msg'] = lang('Operation successful');
@@ -115,6 +121,7 @@ trait CustomerTrait
         $this->view->assign([
             'type' => $this->type,
             'typeText' => (new CustomerModel)->getTypeList()[$this->type],
+            'searchItem' => (new CustomerModel)->getSearchItem($this->type),
         ]);
         return $this->view->fetch('common@customer/customer_trash_list');
     }

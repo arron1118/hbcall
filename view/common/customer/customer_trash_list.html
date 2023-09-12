@@ -4,6 +4,46 @@
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 py-2">
+    <div class="row">
+        <div class="col">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" name="searchForm">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">客户类型</label>
+                        <div class="layui-input-inline">
+                            <select name="cate" lay-filter="cateFilter">
+                                <option value="-1">全部</option>
+                                <option value="0">意向客户</option>
+                                <option value="3">无效客户</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <label class="layui-form-label">搜索</label>
+                        <div class="layui-input-inline">
+                            <select name="operate" lay-filter="filterOperate">
+                                {foreach ($searchItem as $key => $item)}
+                                <option value="{$key}">{$item}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="keyword" class="layui-input" value="" placeholder="关键词">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col-12">
             <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">

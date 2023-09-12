@@ -170,6 +170,7 @@ class User extends \app\common\controller\CompanyController
             if ($params['password'] !== $userInfo->password) {
                 $newPassword = getEncryptPassword(trim($params['password']), $userInfo->salt);
 
+                // 密码修改日志
                 Event::trigger('ChangePassword', [
                     'user' => $userInfo,
                     'oldPassword' => $userInfo->password,
@@ -208,9 +209,9 @@ class User extends \app\common\controller\CompanyController
             $userInfo->customer_view_num = $params['customer_view_num'];
             if ($this->userInfo->recycle_on) {
                 $userInfo->customer_num = $params['customer_num'];
-                if ($this->userInfo->talent_on) {
-                    $userInfo->talent_num = $params['talent_num'];
-                }
+            }
+            if ($this->userInfo->talent_on) {
+                $userInfo->talent_num = $params['talent_num'];
             }
             $this->returnData['msg'] = '保存失败';
 
@@ -226,8 +227,7 @@ class User extends \app\common\controller\CompanyController
                 }
 
                 // 更新用户的客户数量
-                if ($this->userInfo->recycle_on && ($userInfo->talent_num ||
-                    ($this->userInfo->talent_on && $userInfo->customer_num))) {
+                if ($this->userInfo->recycle_on && ($userInfo->talent_num || $userInfo->customer_num)) {
                     Event::trigger('Customer', $userInfo);
                 }
 

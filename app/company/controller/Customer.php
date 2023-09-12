@@ -32,6 +32,7 @@ class Customer extends \app\common\controller\CompanyController
             }
 
             $customers = CustomerModel::whereIn('id', $ids)->update([
+                'recycle' => 0,
                 'user_id' => $userId,
                 'distribution_time' => time(),
                 'distribution_count' => Db::raw('distribution_count+1'),

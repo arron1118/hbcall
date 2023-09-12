@@ -1,9 +1,10 @@
-layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'arronUtil'], function () {
+layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'form', 'arronUtil'], function () {
     let $ = layui.jquery,
         layer = layui.layer,
         arronUtil = layui.arronUtil,
         miniTab = layui.miniTab,
         laydate = layui.laydate,
+        form = layui.form,
         table = layui.table;
 
     const REQUEST_CONFIG = {
@@ -11,6 +12,22 @@ layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'arronUtil'], funct
     }
 
     let controller = {
+        reloadTable: function (params = {}, deep = false) {
+            let finalParams = controller.getFilterParams()
+            Object.assign(finalParams, params)
+            table.reload('customerTable', {
+                where: finalParams,
+                page: {
+                    curr: 1
+                }
+            }, deep)
+        },
+
+        getFilterParams: function () {
+            let params = { type: type };
+
+            return Object.assign({}, params, form.val('searchForm'))
+        },
         listener: function () {
 
             miniTab.listen();
@@ -100,6 +117,17 @@ layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'arronUtil'], funct
                         }
                     })
                 }
+            });
+
+            form.on('select(cateFilter)', function (data) {
+                controller.reloadTable();
+            })
+
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+                controller.reloadTable()
+
+                return false
             });
         },
     }

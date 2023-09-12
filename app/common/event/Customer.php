@@ -15,15 +15,15 @@ class Customer
             $number = 0;
             $keep_time = 0;
             if ($value === 1) {
-                $number = $user->customer_num;
+                $number = (int) $user->customer_num;
                 $keep_time = $user->customer_keep_time;
             } else {
-                $number = $user->talent_num;
+                $number = (int) $user->talent_num;
                 $keep_time = $user->talent_keep_time;
             }
 
             $where = [
-                ['cate', 'in', [0, 3]],
+                ['cate', 'in', [0, 3]], // 意向客户 无效客户
                 ['type', '=', $value],
                 ['user_id', '=', $user->id]
             ];
@@ -54,7 +54,7 @@ class Customer
     protected function delete($where)
     {
         return CustomerModel::where($where)->save([
-            'user_id' => 0,
+//            'user_id' => 0,
             'distribution_time' => null,
             'recycle' => 1,
         ]);
