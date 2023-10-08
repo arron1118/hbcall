@@ -374,7 +374,7 @@ layui.define(['jquery', 'layer', 'upload'], function (exports) {
                         }
                         op.html = `
                             <div>
-                                <p>请在<span class="fs-3 clock px-2 text-warning">10</span>秒内用手机拨打号码：<h3>${param.data.xNumber}</h3> 进行通话。</p>
+                                <p>请在<span class="fs-3 clock px-2 text-warning">10</span>秒内用手机拨打号码：<h3>${param.data.telX}</h3> 进行通话。</p>
                             </div>
                         `
                         break;
