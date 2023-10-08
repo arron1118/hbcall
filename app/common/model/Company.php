@@ -131,6 +131,11 @@ class Company extends CommonModel
         return $this->hasMany(CompanySigninLogs::class);
     }
 
+    public function CallTypeLogs()
+    {
+        return $this->hasMany(CallTypeLogs::class);
+    }
+
     public static function onAfterDelete($company)
     {
         CompanyXnumber::destroy(function ($query) use ($company) {

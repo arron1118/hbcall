@@ -3,6 +3,7 @@
 
 namespace app\admin\model;
 
+use app\common\model\CallTypeLogs;
 use app\common\model\CommonModel;
 
 class Admin extends CommonModel
@@ -21,6 +22,11 @@ class Admin extends CommonModel
     public function signinLogs()
     {
         return $this->hasMany(AdminSigninLogs::class);
+    }
+
+    public function callTypeLogs()
+    {
+        return $this->hasMany(CallTypeLogs::class);
     }
 
     protected function getStatusList()

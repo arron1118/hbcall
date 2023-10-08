@@ -139,13 +139,13 @@ class HbCall extends \app\common\controller\HomeController
                     return json($this->returnData);
                 }
 
-                $params['telA'] = $this->userInfo->phone;
-                $params['telB'] = $mobile;
-                $params['telX'] = $this->userInfo->userXnumber->numberStore->number;
+                $params['caller'] = $this->userInfo->phone;
+                $params['callee'] = $mobile;
+                $params['callerX'] = $this->userInfo->userXnumber->numberStore->number;
                 break;
         }
 
-        $curl->post(Config::get('hbcall.call_api'), $params);
+        $curl->post(Config::get('hbcall.axb_call_api'), $params);
         Log::info(json_encode($params));
         Log::info($curl->response);
         $response = json_decode($curl->response, true);
@@ -185,7 +185,7 @@ class HbCall extends \app\common\controller\HomeController
                                 break;
 
                             default:
-                                $CallHistory->subid = $response['data']['subid'];
+                                $CallHistory->subid = $response['data']['bindId'];
                                 break;
                         }
 

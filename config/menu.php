@@ -87,6 +87,39 @@ return [
                         "icon" => "fa fa-address-book",
                         "target" => "_self"
                     ],
+//                    [
+//                        "title" => "呼叫线路",
+//                        "href" => (string) url('/CallType/index'),
+//                        "icon" => "fa fa-address-book",
+//                        "target" => "_self"
+//                    ],
+                ]
+            ],
+            [
+                "title" => "日志管理",
+                "child" => [
+                    [
+                        "title" => "登录日志",
+                        "target" => "_self",
+                        "icon" => "fa fa-file-lines",
+                        "child" => [
+                            [
+                                "title" => "后台登录日志",
+                                "href" => (string) url('/SigninLogs/adminLogs'),
+                                "target" => "_self",
+                            ],
+                            [
+                                "title" => "企业登录日志",
+                                "href" => (string) url('/SigninLogs/companyLogs'),
+                                "target" => "_self",
+                            ],
+                            [
+                                "title" => "用户登录日志",
+                                "href" => (string) url('/SigninLogs/userLogs'),
+                                "target" => "_self",
+                            ]
+                        ]
+                    ]
                 ]
             ]
         ]
