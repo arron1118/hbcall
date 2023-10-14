@@ -57,6 +57,7 @@
                            autocomplete="off" class="form-control" value="">
                     <div class="form-text">提示：0为不限制。意向、无效类型的数量</div>
                 </div>
+                {/if}
                 {if $user->talent_on}
                 <div class="mb-3">
                     <label class="form-label" for="talent_num">人才数量</label>
@@ -64,7 +65,6 @@
                            autocomplete="off" class="form-control" value="">
                     <div class="form-text">提示：0为不限制。意向、无效类型的数量</div>
                 </div>
-                {/if}
                 {/if}
                 <div class="mb-3">
                     <label class="form-label" for="customer_view_num">查看电话次数</label>
