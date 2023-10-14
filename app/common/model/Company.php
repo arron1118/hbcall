@@ -49,7 +49,7 @@ class Company extends CommonModel
 
     public function getCallTypeTextAttr($value, $data)
     {
-        return $this->callTypeList()[$data['call_type']];
+        return $this->callTypeList()[$data['call_type_id']];
     }
 
     public function getStatusList()
@@ -131,7 +131,12 @@ class Company extends CommonModel
         return $this->hasMany(CompanySigninLogs::class);
     }
 
-    public function CallTypeLogs()
+    public function callType()
+    {
+        return $this->belongsTo(CallType::class);
+    }
+
+    public function callTypeLogs()
     {
         return $this->hasMany(CallTypeLogs::class);
     }

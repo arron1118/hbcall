@@ -87,12 +87,12 @@ return [
                         "icon" => "fa fa-address-book",
                         "target" => "_self"
                     ],
-//                    [
-//                        "title" => "呼叫线路",
-//                        "href" => (string) url('/CallType/index'),
-//                        "icon" => "fa fa-address-book",
-//                        "target" => "_self"
-//                    ],
+                    [
+                        "title" => "呼叫线路",
+                        "href" => (string) url('/CallType/index'),
+                        "icon" => "fa fa-address-book",
+                        "target" => "_self"
+                    ],
                 ]
             ],
             [

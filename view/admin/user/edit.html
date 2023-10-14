@@ -11,10 +11,10 @@
                     <h5 class="text-black-50 text-center">账号信息</h5>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="call_type">呼叫线路</label>
-                    <select name="call_type" id="call_type" class="form-select" required>
+                    <label class="form-label" for="call_type_id">呼叫线路</label>
+                    <select name="call_type_id" id="call_type_id" class="form-select" required>
                         {foreach $callTypeList as $key => $val}
-                        <option value="{$key}">{$val}</option>
+                        <option value="{$val.id}">{$val.title}</option>
                         {/foreach}
                     </select>
                 </div>

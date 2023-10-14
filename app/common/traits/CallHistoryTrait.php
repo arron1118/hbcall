@@ -66,11 +66,11 @@ trait CallHistoryTrait
             }
 
             $this->returnData['count'] = CallHistory::where($map)->count();
-            $this->returnData['data'] = CallHistory::where($map)
+            $this->returnData['data'] = CallHistory::with(['callType'])
+                ->where($map)
                 ->order('create_time DESC, id DESC')
                 ->limit(($page - 1) * $limit, $limit)
-                ->select()
-                ->append(['call_type_text']);
+                ->select();
             $this->returnData['msg'] = lang('Operation successful');
         }
 

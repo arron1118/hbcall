@@ -31,11 +31,6 @@ class CallHistory extends CommonModel
         return substr_replace($value, '****', 3, 4);
     }
 
-    public function getCallTypeTextAttr($value, $data)
-    {
-        return (new Company())->callTypeList()[$data['call_type']];
-    }
-
     public function getReleasetimeAttr($value)
     {
         return getDateFormatInfo($value);
@@ -69,5 +64,10 @@ class CallHistory extends CommonModel
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function callType()
+    {
+        return $this->belongsTo(CallType::class);
     }
 }

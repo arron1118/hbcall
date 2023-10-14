@@ -7,8 +7,8 @@ layui.use(['jquery', 'table', 'arronUtil'], function () {
         listener: function () {
 
             table.init('currentTableFilter', {
-                url: arronUtil.url("/XnumberStore/getNumberList"),
-                id: 'XnumberStoreTable',
+                url: arronUtil.url("/CallType/getCallTypeList"),
+                id: 'CallTypeTable',
                 toolbar: '#toolbarDemo',
                 defaultToolbar: ['filter', 'exports', 'print', {
                     title: '提示',
@@ -22,56 +22,61 @@ layui.use(['jquery', 'table', 'arronUtil'], function () {
                 skin: 'line',
                 even: true,
             })
-            /**
-             * toolbar监听事件
-             */
-            table.on('toolbar(currentTableFilter)', function (obj) {
-                if (obj.event === 'add') {  // 监听添加操作
-                    arronUtil.Toast.fire({
-                        toast: false,
-                        timer: false,
-                        input: 'text',
-                        inputLabel: '号码',
-                        inputPlaceholder: '请输入号码',
-                        showConfirmButton: true,
-                        confirmButtonText: '确定',
-                        icon: '',
-                        customClass: {
-                            input: 'form'
-                        }
-                    }).then(res => {
-                        if (res.isConfirmed) {
-                            if (res.value.length !== 11 || !arronUtil.isPhone(res.value)) {
-                                arronUtil.Toast.fire({ title: '请输入正确的号码' })
-                                return false;
+
+            $('#editModal').on('show.bs.modal', e => {
+                let id = $(e.relatedTarget).data('id')
+                let f = document.editForm, title = ''
+
+                if (id) {
+                    title = '编辑'
+                } else {
+                    title = '新增'
+                    f.reset()
+                }
+
+                $('#editModel .modal-title').text(title)
+            })
+            $('form[name=editForm]').submit(function () {
+                let formData = $(this).serializeArray(),
+                    id = $('[name="id"]').val(),
+                    url = id ? arronUtil.url("/CallType/edit") : arronUtil.url("/CallType/add");
+                console.log(formData)
+
+                $.post(url, formData, function (res) {
+                    let option = { title: res.msg }
+                    if (res.code === 1) {
+                        option.icon = 'success'
+                        option.timer = 2000
+                        option.didDestroy = function () {
+                            if (id) {
+                                table.reload('CallTypeTable', {
+                                    page: {
+                                        curr: 1
+                                    }
+                                })
+                            } else {
+                                table.reload('CallTypeTable')
                             }
 
-                            $.post(arronUtil.url("/XnumberStore/add"), { number: res.value }, function (r) {
-                                let option = { title: r.msg }
-                                if (r.code === 1) {
-                                    option.icon = 'success'
-                                    table.reload('XnumberStoreTable', {
-                                        page: {
-                                            curr: 1
-                                        }
-                                    });
-                                }
-
-                                arronUtil.Toast.fire(option)
-                            })
+                            // 隐藏 modal
+                            $('[data-bs-dismiss="modal"]').click()
                         }
-                    })
-                }
+                    }
+
+                    arronUtil.Toast.fire(option)
+                })
+
+                return false
             })
 
             // 单元格编辑
             table.on('edit(currentTableFilter)', function (obj) {
-                if (obj.value.length !== 11 || !arronUtil.isPhone(obj.value)) {
-                    arronUtil.Toast.fire({ title: '请输入正确的号码' })
+                if (!obj.data.name || !obj.data.title) {
+                    arronUtil.Toast.fire({ title: '值不能为空' })
                     return false;
                 }
 
-                $.post(arronUtil.url("/XnumberStore/edit"), obj.data, function (res) {
+                $.post(arronUtil.url("/CallType/edit"), obj.data, function (res) {
                     let option = { title: res.msg }
                     if (res.code === 1) {
                         option.icon = 'success'

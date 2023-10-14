@@ -239,7 +239,6 @@ class User extends \app\common\controller\CompanyController
             $this->returnData['msg'] = '获取成功';
             $this->returnData['data'] = [
                 'userInfo' => $userInfo,
-                'callTypeList' => (new CompanyModel())->getCalltypeList(),
             ];
         }
 

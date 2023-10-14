@@ -3,6 +3,7 @@
 namespace app\common\traits;
 
 use app\common\model\CallHistory;
+use app\common\model\CallType;
 use app\common\model\Company;
 use app\common\model\Customer;
 use Curl\Curl;
@@ -62,13 +63,13 @@ trait HbCallTrait
             $this->returnApiData();
         }
 
-        $callTypeList = (new Company())->getCallTypeList();
         $curl = new Curl();
-        $call_type = $this->userInfo->company->call_type;
+        $call_type_id = $this->userInfo->company->call_type_id;
+        $callType = CallType::find($call_type_id);
         $params = [
-            'CallType' => $callTypeList[$call_type],
+            'CallType' => $callType['name'],
         ];
-        switch ($call_type) {
+        switch ($call_type_id) {
             case 2:
             case 5:
                 $params['caller'] = $this->userInfo->phone;
@@ -98,7 +99,7 @@ trait HbCallTrait
                 break;
         }
 
-        $curl->post(Config::get('hbcall.call_api'), $params);
+        $curl->post(Config::get('hbcall.axb_call_api'), $params);
         $response = json_decode($curl->response, true);
 
         if ($response) {
@@ -108,7 +109,7 @@ trait HbCallTrait
                 $CallHistory->username = $this->userInfo->username;
                 $CallHistory->company_id = $this->userInfo->company_id;
                 $CallHistory->company = $this->userInfo->company->corporation;
-                $CallHistory->call_type = $call_type;
+                $CallHistory->call_type_id = $call_type_id;
                 $CallHistory->rate = $this->userInfo->company->rate;
                 $CallHistory->caller_number = $this->userInfo->phone;
                 $CallHistory->axb_number = $this->userInfo->userXnumber->numberStore->number;
@@ -119,7 +120,7 @@ trait HbCallTrait
                 $CallHistory->platform_version = $this->agent->version($this->agent->platform());
                 $CallHistory->browser = $this->agent->browser();
                 $CallHistory->browser_version = $this->agent->version($this->agent->browser());
-                switch ($call_type) {
+                switch ($call_type_id) {
                     case 2:
                     case 5:
                         $CallHistory->subid = $response['data']['callid'];
@@ -132,8 +133,8 @@ trait HbCallTrait
                         break;
 
                     default:
-                        // call_type = 1
-                        $CallHistory->subid = $response['data']['subid'];
+                        // call_type_id = 1
+                        $CallHistory->subid = $response['data']['bindId'];
                         $this->returnData['data'] = [
                             'xNumber' => $this->userInfo->userXnumber->numberStore->number,
                             'mobile' => $mobile,

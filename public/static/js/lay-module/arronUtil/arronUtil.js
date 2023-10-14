@@ -359,7 +359,7 @@ layui.define(['jquery', 'layer', 'upload'], function (exports) {
                     allowOutsideClick: false,
                 }, timerInterval
 
-                switch (param.data.call_type) {
+                switch (param.data.call_type_id) {
                     case 1:
                         op.timer = 11000
                         op.timerProgressBar = true

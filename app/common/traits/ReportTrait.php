@@ -215,6 +215,8 @@ SQL;
             $perTime = date('Y-m-d H:i', $time - $time % $seconds);
             $between = 'create_time between ' . ($time - 3600 * $hours) . ' and ' . $time;
 
+            $this->returnData['total'] = CallHistory::where($where)->where($between)->count();
+
             $sql = <<<SQL
 select date_format(datetime, '%H:%i') as datetime,
        max(sum)                             as sum,

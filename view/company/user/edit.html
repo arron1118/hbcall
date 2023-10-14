@@ -11,8 +11,8 @@
                     <h5 class="text-black-50 text-center">账号信息</h5>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label" for="call_type">呼叫线路</label>
-                    <div>{$user.call_type_text}</div>
+                    <label class="form-label">呼叫线路</label>
+                    <div>{$user.callType.title|default='-'}</div>
                     <div class="form-text">提示：当前使用呼叫线路</div>
                 </div>
                 <div class="mb-3">
@@ -27,7 +27,7 @@
                            placeholder="密码"
                            autocomplete="off" class="form-control" value="" required>
                 </div>
-                <div class="mb-3 {if $user->call_type !== 1}d-none{/if}">
+                <div class="mb-3 {if $user->call_type_id !== 1}d-none{/if}">
                     <label class="form-label" for="xnumber">小号</label>
                     <select name="number_store_id" id="xnumber" class="form-select">
                         <option value="{$user.companyXnumber.numberStore.id}">{$user.companyXnumber.numberStore.number}</option>
@@ -44,10 +44,10 @@
                            autocomplete="off" class="form-control" value="" required>
                 </div>
 
-                <div class="mb-3 {if !in_array($user->call_type, [3, 4])}d-none{/if}">
+                <div class="mb-3 {if !in_array($user->call_type_id, [3, 4])}d-none{/if}">
                     <label class="form-label" for="callback_number">回拨号码<span class="text-danger" style="margin: 0 5px;">*</span></label>
                     <input type="text" name="callback_number" id="callback_number" placeholder="回拨号码"
-                           autocomplete="off" class="form-control" value="" {if in_array($user->call_type, [3, 4])}required{/if}>
+                           autocomplete="off" class="form-control" value="" {if in_array($user->call_type_id, [3, 4])}required{/if}>
                     <div class="form-text">提示：呼叫线路为<strong>电信回拨</strong>、<strong>移动回拨</strong>时，必须提供回拨号码才能进行拨号</div>
                 </div>
                 {if $user->recycle_on}

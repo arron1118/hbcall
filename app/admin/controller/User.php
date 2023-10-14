@@ -2,12 +2,14 @@
 
 namespace app\admin\controller;
 
+use app\common\model\CallTypeLogs;
 use app\common\model\Company as CompanyModel;
 use app\common\model\User as UserModel;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
 use think\db\exception\DbException;
 use think\facade\Event;
+use app\common\model\CallType;
 
 class User extends \app\common\controller\AdminController
 {
@@ -18,7 +20,7 @@ class User extends \app\common\controller\AdminController
         parent::initialize();
 
         $this->view->assign([
-            'callTypeList' => (new CompanyModel())->callTypeList(),
+            'callTypeList' => CallType::select()->toArray(),
             'numberList' => NumberStore::select(),
         ]);
     }
@@ -58,11 +60,11 @@ class User extends \app\common\controller\AdminController
 
             $this->returnData['count'] = CompanyModel::where($map)->count();
             $this->returnData['data'] = CompanyModel::withCount('user')
-                ->with(['companyXnumber' => ['numberStore']])
+                ->with(['companyXnumber' => ['numberStore'], 'callType'])
                 ->where($map)->order('id', 'desc')
                 ->order('id desc')
                 ->limit(($page - 1) * $limit, $limit)
-                ->append(['call_type_text', 'is_test_text', 'status_text', 'call_status_text'])
+                ->append(['is_test_text', 'status_text', 'call_status_text'])
                 ->hidden(['salt', 'password', 'token', 'token_expire_time'])
                 ->select();
             $this->returnData['msg'] = lang('Operation successful');
@@ -164,6 +166,12 @@ class User extends \app\common\controller\AdminController
 
             if ($CompanyModel->save($params)) {
                 $CompanyModel->companyXnumber()->save(['number_store_id' => $params['number_store_id']]);
+
+                (new CallTypeLogs())->save([
+                    'admin_id' => $this->userInfo->id,
+                    'company_id' => $CompanyModel->id,
+                    'call_type_id' => $params['call_type_id'],
+                ]);
 
                 $this->returnData['msg'] = '开通成功';
                 $this->returnData['code'] = 1;
@@ -269,11 +277,19 @@ class User extends \app\common\controller\AdminController
                 $userInfo->password = $newPassword;
             }
 
+            if ((int) $data['call_type_id'] !== (int) $userInfo->call_type_id) {
+                (new CallTypeLogs())->save([
+                    'admin_id' => $this->userInfo->id,
+                    'company_id' => $userInfo->id,
+                    'call_type_id' => $data['call_type_id'],
+                ]);
+            }
+
             $userInfo->realname = $data['realname'];
             $userInfo->ration = $data['ration'];
             $userInfo->rate = $data['rate'];
             $userInfo->limit_user = $data['limit_user'];
-            $userInfo->call_type = $data['call_type'];
+            $userInfo->call_type_id = $data['call_type_id'];
             $userInfo->status = $data['status'] ?? 0;
             $userInfo->phone = $data['phone'];
             $userInfo->address = $data['address'];
@@ -317,7 +333,6 @@ class User extends \app\common\controller\AdminController
         $this->returnData['msg'] = '获取成功';
         $this->returnData['data'] = [
             'userInfo' => $userInfo,
-            'callTypeList' => (new CompanyModel())->getCalltypeList(),
         ];
 
         return json($this->returnData);

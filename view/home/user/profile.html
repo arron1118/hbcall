@@ -32,10 +32,10 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">呼叫线路</label>
                             <div class="layui-input-block">
-                                <input type="text" name="" value="{$user.company.call_type_text}" class="layui-input text-muted border-0" disabled>
+                                <input type="text" name="" value="{$user.company.callType.title|default=''}" class="layui-input text-muted border-0" disabled>
                             </div>
                         </div>
-                        <div class="layui-form-item {if !in_array($user->company->call_type, [3, 4])}d-none{/if}">
+                        <div class="layui-form-item {if !in_array($user->company->call_type_id, [3, 4])}d-none{/if}">
                             <label class="layui-form-label" for="callback_number">回拨号码</label>
                             <div class="layui-input-block" id="callback_number">
                                 <input type="text" name="callback_number" placeholder="回拨号码"

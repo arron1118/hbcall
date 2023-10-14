@@ -65,6 +65,10 @@ layui.use(['layer', 'miniTab', 'arronUtil'], function () {
                     callChart.setOption({
                         title: {
                             text: `近 ${day} 拨号统计`,
+                            subtext: `共计 ${res.total} 次`,
+                            subtextStyle: {
+                                color: '#aaa',
+                            }
                         },
                         dataset: [
                             {

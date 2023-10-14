@@ -131,7 +131,7 @@ class User extends ApiController
 
             Session::set('api_' . $this->userType, $user->toArray());
 
-            $user->call_type = $user->company->call_type;
+            $user->call_type_id = $user->company->call_type_id;
 
             $this->returnData['code'] = 1;
             $this->returnData['msg'] = lang('logined');

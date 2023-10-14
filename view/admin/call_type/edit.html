@@ -1,29 +1,34 @@
-<div class="modal fade" id="editForm" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">新增</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form name="editForm">
+                <form name="editForm" id="editForm">
+                    <input type="hidden" name="id" value="" />
                     <div class="mb-3">
                         <label for="name" class="col-form-label">名称:</label>
-                        <input type="text" class="form-control" id="name">
+                        <input type="text" name="name" class="form-control" id="name">
                     </div>
                     <div class="mb-3">
                         <label for="title" class="col-form-label">标题:</label>
-                        <input type="text" class="form-control" id="title">
+                        <input type="text" name="title" class="form-control" id="title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="api_url" class="col-form-label">API接口:</label>
+                        <input type="text" name="api_url" class="form-control" id="api_url">
                     </div>
                     <div class="mb-3">
                         <label for="message-text" class="col-form-label">备注:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+                        <textarea name="remark" rows="5" class="form-control" id="message-text"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary">保存</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" form="editForm">取消</button>
+                <button type="submit" class="btn btn-primary" form="editForm">保存</button>
             </div>
         </div>
     </div>

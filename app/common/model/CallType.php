@@ -10,4 +10,8 @@ namespace app\common\model;
 class CallType extends CommonModel
 {
 
+    public function company()
+    {
+        return $this->belongsToMany(Company::class);
+    }
 }

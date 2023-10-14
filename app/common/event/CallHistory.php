@@ -83,7 +83,7 @@ class CallHistory
                 }
 
                 try {
-                    if ($val->call_type === 3) {
+                    if ($val->call_type_id === 3) {
                         $curl->get(Config::get('hbcall.dx_record_api'), [
                             'bindId' => $val['subid'],
                         ]);

@@ -226,8 +226,8 @@ layui.use(['jquery', 'form', 'table', 'laydate', 'upload', 'arronUtil'], functio
 
                                 if (nodeName === 'SELECT') {
                                     let v = ''
-                                    if (name === 'call_type') {
-                                        v = Object.keys(res.data['callTypeList']).find(key => parseInt(key) === res.data['userInfo'][name]);
+                                    if (name === 'call_type_id') {
+                                        v = res.data['userInfo'][name]
                                     } else if (name === 'number_store_id') {
                                         v = res.data['userInfo']['companyXnumber']['number_store_id']
                                     }

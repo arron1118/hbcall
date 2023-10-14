@@ -3,6 +3,7 @@
 namespace app\home\controller;
 
 use app\common\model\CallHistory;
+use app\common\model\CallType;
 use app\common\model\Company;
 use app\common\model\Customer;
 use app\common\model\Customer as CustomerModel;
@@ -104,13 +105,20 @@ class HbCall extends \app\common\controller\HomeController
             return json($this->returnData);
         }
 
-        $callTypeList = (new Company())->getCallTypeList();
         $curl = new Curl();
-        $call_type = $this->userInfo->company->call_type;
+        $call_type_id = $this->userInfo->company->call_type_id;
+        $callType = CallType::find($call_type_id);
+
+        if (!$callType) {
+            $this->returnData['msg'] = '未指定呼叫线路，请联系管理员分配可用的呼叫线路';
+            $this->returnData['info'] = lang('Tips');
+            $this->returnData['status'] = 0;
+            return json($this->returnData);
+        }
         $params = [
-            'CallType' => $callTypeList[$call_type],
+            'CallType' => $callType['name'],
         ];
-        switch ($call_type) {
+        switch ($call_type_id) {
             case 2:
             case 5:
                 $params['caller'] = $this->userInfo->phone;
@@ -160,7 +168,7 @@ class HbCall extends \app\common\controller\HomeController
                         $CallHistory->username = $this->userInfo->username;
                         $CallHistory->company_id = $this->userInfo->company_id;
                         $CallHistory->company = $this->userInfo->company->corporation;
-                        $CallHistory->call_type = $call_type;
+                        $CallHistory->call_type_id = $call_type_id;
                         $CallHistory->rate = $this->userInfo->company->rate;
                         $CallHistory->caller_number = $this->userInfo->phone;
                         $CallHistory->called_number = $mobile;
@@ -172,7 +180,7 @@ class HbCall extends \app\common\controller\HomeController
                         $CallHistory->browser = $this->agent->browser();
                         $CallHistory->browser_version = $this->agent->version($this->agent->browser());
                         $CallHistory->ip = $this->request->ip();
-                        switch ($call_type) {
+                        switch ($call_type_id) {
                             case 2:
                             case 5:
                                 $CallHistory->subid = $response['data']['callid'];
@@ -213,7 +221,8 @@ class HbCall extends \app\common\controller\HomeController
                 }
             }
 
-            (isset($response['msg']) && $this->returnData['msg'] = $response['msg']) || (isset($response['message']) && $this->returnData['msg'] = $response['message']);
+            (isset($response['msg']) && $this->returnData['msg'] = $response['msg'])
+            || (isset($response['message']) && $this->returnData['msg'] = $response['message']);
         } else {
             $this->returnData['msg'] = '暂时无法呼叫';
         }
@@ -222,7 +231,7 @@ class HbCall extends \app\common\controller\HomeController
             $this->returnData['data'] = array_merge($this->returnData['data'], $response['data']);
         }
 
-        $this->returnData['data']['call_type'] = $call_type;
+        $this->returnData['data']['call_type_id'] = $call_type_id;
         return json($this->returnData);
     }
 
