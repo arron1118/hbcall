@@ -1,0 +1,35 @@
+{extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
+            <thead>
+                <tr>
+                    <th lay-data="{field: 'id', align: 'center', width: 100}">ID</th>
+                    <th lay-data="{field: 'callType.title', align: 'center', templet: function (row) {
+                        return row.callType.title
+                    }}">呼叫线路</th>
+                    <th lay-data="{field: 'company.username', align: 'center', templet: function (row) {
+                        return row.company.username
+                    }}">企业</th>
+                    <th lay-data="{field: 'admin.username', align: 'center', templet: function (row) {
+                        return row.admin.username
+                    }}">操作员</th>
+                    <th lay-data="{field: 'create_time', align: 'center'}">操作时间</th>
+                </tr>
+            </thead>
+        </table>
+
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+
+<script src="__STATIC__/js/admin/call_type_logs.js?v={:time()}"></script>
+
+{/block}

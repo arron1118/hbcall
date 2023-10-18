@@ -99,26 +99,31 @@ return [
                 "title" => "日志管理",
                 "child" => [
                     [
-                        "title" => "登录日志",
+                        "title" => "登录",
                         "target" => "_self",
                         "icon" => "fa fa-file-lines",
                         "child" => [
                             [
-                                "title" => "后台登录日志",
+                                "title" => "后台登录",
                                 "href" => (string) url('/SigninLogs/adminLogs'),
                                 "target" => "_self",
                             ],
                             [
-                                "title" => "企业登录日志",
+                                "title" => "企业登录",
                                 "href" => (string) url('/SigninLogs/companyLogs'),
                                 "target" => "_self",
                             ],
                             [
-                                "title" => "用户登录日志",
+                                "title" => "用户登录",
                                 "href" => (string) url('/SigninLogs/userLogs'),
                                 "target" => "_self",
                             ]
                         ]
+                    ],
+                    [
+                        "title" => "线路更换",
+                        "href" => (string) url('/CallTypeLogs/index'),
+                        "target" => "_self",
                     ]
                 ]
             ]
