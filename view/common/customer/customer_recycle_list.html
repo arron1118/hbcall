@@ -4,6 +4,46 @@
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 py-2">
+    {if $module === 'company'}
+    <div class="row">
+        <div class="col">
+            <form class="layui-form layui-form-pane" lay-filter="searchForm" name="searchForm">
+                <div class="layui-form-item">
+
+                    <div class="layui-inline" id="datetime">
+                        <label class="layui-form-label">时间筛选</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户</label>
+                        <div class="layui-input-inline">
+                            <select name="user_id" lay-filter="userFilter">
+                                <option value="-1">全部</option>
+                                {foreach $user->user as $val}
+                                <option value="{$val->id}">{$val->username}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit
+                                lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary"><i class="fa fa-refresh"></i> 重 置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {/if}
     <div class="row justify-content-center">
         <div class="col-12">
             <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-data="">
@@ -29,12 +69,15 @@
                     <th lay-data="{field: 'called_count', title: '呼叫次数', align: 'center', width: 100}"></th>
                     <th lay-data="{field: 'record_count', title: '回访记录', align: 'center', width: 100}"></th>
                     <th lay-data="{field: 'last_calltime', title: '最近呼叫', align: 'center', width: 180}"></th>
-                    <th lay-data="{field: 'create_time', title: '创建时间', align: 'center', width: 180}"></th>
+                    <th lay-data="{field: 'delete_time', title: '删除时间', align: 'center', width: 180}"></th>
                 </tr>
                 </thead>
             </table>
             <script type="text/html" id="currentTableBar">
                 <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" lay-event="restore"><i class="fa fa-rotate-left"></i> 恢复</button>
+                {if $module === 'company'}
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-danger" lay-event="distribution"><i class="fa fa-share-from-square"></i> 重新分配</button>
+                {/if}
             </script>
         </div>
 
@@ -47,6 +90,13 @@
         typeText = '{$typeText}',
         userId = {$user_id}
 </script>
+
+{if $module === 'company'}
+<script>
+    const user = JSON.parse('{:json_encode($user->user->visible(["id", "username"]))}')
+</script>
+{/if}
+
 <script src="__STATIC__/js/common/customer_recycle_list.js?v={:time()}"></script>
 
 {/block}

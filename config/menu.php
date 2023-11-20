@@ -93,6 +93,12 @@ return [
                         "icon" => "fa fa-address-book",
                         "target" => "_self"
                     ],
+//                    [
+//                        "title" => "系统配置",
+//                        "href" => (string) url('/SystemConfig/index'),
+//                        "icon" => "fa fa-gear",
+//                        "target" => "_self"
+//                    ],
                 ]
             ],
             [

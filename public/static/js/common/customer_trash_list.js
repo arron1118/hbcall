@@ -31,6 +31,16 @@ layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'form', 'arronUtil'
         listener: function () {
 
             miniTab.listen();
+
+            laydate.render({
+                elem: '#datetime',
+                range: ['#startDate', '#endDate'],
+                type: 'datetime',
+                done: function (value) {
+                    let d = value.split(' - ')
+                    controller.reloadTable({ startDate: d[0], endDate: d[1] })
+                }
+            });
             // 客户列表
             table.init('currentTableFilter', {
                 id: 'customerTable',
@@ -48,7 +58,7 @@ layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'form', 'arronUtil'
                     icon: 'layui-icon-tips'
                 }],
                 page: {
-                    limits: [15, 30, 45, 60],
+                    limits: [15, 30, 45, 60, 150, 300, 450, 600],
                     limit: 15,
                 },
                 skin: 'line',
@@ -121,6 +131,10 @@ layui.use(['layer', 'miniTab', 'jquery', 'table', 'laydate', 'form', 'arronUtil'
 
             form.on('select(cateFilter)', function (data) {
                 controller.reloadTable();
+            })
+
+            form.on('select(userFilter)', function (data) {
+                controller.reloadTable()
             })
 
             // 监听搜索操作

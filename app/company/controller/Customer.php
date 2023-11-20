@@ -31,11 +31,12 @@ class Customer extends \app\common\controller\CompanyController
                 return json($this->returnData);
             }
 
-            $customers = CustomerModel::whereIn('id', $ids)->update([
+            $customers = CustomerModel::withTrashed()->whereIn('id', $ids)->update([
                 'recycle' => 0,
                 'user_id' => $userId,
                 'distribution_time' => time(),
                 'distribution_count' => Db::raw('distribution_count+1'),
+                'delete_time' => null,
             ]);
             if ($customers) {
                 $this->returnData['code'] = 1;

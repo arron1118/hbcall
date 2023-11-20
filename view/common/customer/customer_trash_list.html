@@ -18,6 +18,28 @@
                             </select>
                         </div>
                     </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户</label>
+                        <div class="layui-input-inline">
+                            <select name="user_id" lay-filter="userFilter">
+                                <option value="-1">全部</option>
+                                {foreach $user->user as $val}
+                                <option value="{$val->id}">{$val->username}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" id="datetime">
+                        <label class="layui-form-label">时间筛选</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="startDate" autocomplete="off" id="startDate" class="layui-input" placeholder="开始日期">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline">
+                            <input type="text" name="endDate" autocomplete="off" id="endDate" class="layui-input" placeholder="结束日期">
+                        </div>
+                    </div>
 
                     <div class="layui-inline">
                         <label class="layui-form-label">搜索</label>

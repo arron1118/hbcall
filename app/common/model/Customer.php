@@ -16,6 +16,11 @@ class Customer extends CommonModel
         return getDateFormatInfo($value);
     }
 
+    public function getDeleteTimeAttr($value)
+    {
+        return getDateFormatInfo($value);
+    }
+
     public function getPhoneAttr($value)
     {
         return validateMobile($value) ? substr_replace($value, '****', 3, 4) : $value;

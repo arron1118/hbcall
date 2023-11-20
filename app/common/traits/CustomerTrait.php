@@ -88,6 +88,9 @@ trait CustomerTrait
             $operate = trim($this->request->param('operate/s', ''));
             $keyword = trim($this->request->param('keyword/s', ''));
             $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
+            $userId = $this->module === 'home' ? $this->userInfo->id : $this->request->param('user_id/d', 0);
+            $startDate = $this->request->param('startDate', '');
+            $endDate = $this->request->param('endDate', '');
             $where = [
                 ['recycle', '=', 1],
             ];
@@ -96,12 +99,20 @@ trait CustomerTrait
                 $where[] = ['company_id', '=', $companyId];
             }
 
+            if ($userId > 0) {
+                $where[] = ['user_id', '=', $userId];
+            }
+
             if ($this->type > 0) {
                 $where[] = ['type', '=', $this->type];
             }
 
             if ($keyword) {
                 $where[] = [$operate, 'like', '%' . $keyword . '%'];
+            }
+
+            if ($startDate && $endDate) {
+                $where[] = ['create_time', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             $this->returnData['msg'] = lang('Operation successful');
@@ -140,6 +151,8 @@ trait CustomerTrait
         if ($this->request->isPost()) {
             $page = $this->request->param('page/d', 1);
             $limit = $this->request->param('limit/d', 10);
+            $startDate = $this->request->param('startDate', '');
+            $endDate = $this->request->param('endDate', '');
 
             if ($this->module === 'home') {
                 $companyId = $this->userInfo->company_id;
@@ -157,6 +170,10 @@ trait CustomerTrait
 
             if ($this->type > 0) {
                 $where[] = ['type', '=', $this->type];
+            }
+
+            if ($startDate && $endDate) {
+                $where[] = ['delete_time', 'between', [strtotime($startDate), strtotime($endDate)]];
             }
 
             $this->returnData['msg'] = lang('Operation successful');

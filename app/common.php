@@ -1,5 +1,6 @@
 <?php
 // 应用公共文件
+use think\facade\Cache;
 
 /**
  * 获取密码加密后的字符串
@@ -279,3 +280,28 @@ function validateMobile($mobile)
         preg_match('/^(\d{3}-|\d{4}-)?\d{7,8}$/', $mobile);
 }
 
+if (!function_exists('sysconfig')) {
+
+    /**
+     * 获取系统配置信息
+     * @param string $group
+     * @param null $name
+     * @return array|mixed
+     */
+    function sysconfig(string $group, $name = null)
+    {
+        $where = ['group' => $group];
+        $value = empty($name) ? Cache::get("sysconfig_{$group}") : Cache::get("sysconfig_{$group}_{$name}");
+        if (empty($value)) {
+            if (!empty($name)) {
+                $where['name'] = $name;
+                $value = \app\admin\model\SystemConfig::where($where)->value('value');
+                Cache::tag('sysconfig')->set("sysconfig_{$group}_{$name}", $value, 3600);
+            } else {
+                $value = \app\admin\model\SystemConfig::where($where)->column('value', 'name');
+                Cache::tag('sysconfig')->set("sysconfig_{$group}", $value, 3600);
+            }
+        }
+        return $value;
+    }
+}

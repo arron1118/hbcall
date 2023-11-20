@@ -51,6 +51,11 @@ class Customer
         }
     }
 
+    /**
+     * 回收数据
+     * @param $where
+     * @return bool
+     */
     protected function delete($where)
     {
         return CustomerModel::where($where)->save([

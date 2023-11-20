@@ -2,7 +2,6 @@
 
 namespace app\company\controller;
 
-use app\common\model\Company as CompanyModel;
 use app\common\model\NumberStore;
 use app\common\traits\UserTrait;
 use app\common\model\User as UserModel;
@@ -18,7 +17,6 @@ class User extends \app\common\controller\CompanyController
         parent::initialize();
 
         $this->view->assign([
-            'callTypeList' => (new CompanyModel())->callTypeList(),
             'numberList' => NumberStore::select(),
         ]);
     }

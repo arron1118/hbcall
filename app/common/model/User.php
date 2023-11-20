@@ -5,6 +5,11 @@ namespace app\common\model;
 
 class User extends CommonModel
 {
+    protected $json = [
+        'region_ids',
+    ];
+
+    protected $jsonAssoc = true;
 
     public function getStatusTextAttr($value, $data)
     {

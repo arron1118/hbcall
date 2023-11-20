@@ -7,7 +7,7 @@
     <div class="layuimini-main ">
         <div class="container-fluid ">
             <div class="row mt-5 justify-content-center">
-                <div class="col-md-8 col-sm-12">
+                <div class="col-md-10 col-sm-12">
                     <form class="layui-form layuimini-form">
                         <div class="layui-form-item">
                             <label class="layui-form-label">昵称</label>
@@ -45,6 +45,44 @@
                         </div>
 
                         <div class="layui-form-item">
+                            <label class="layui-form-label">联系地址</label>
+                            <div class="layui-input-block">
+                                <div class="layui-input-inline">
+                                    <select class="layui-form-select region-province" name="region[]" lay-filter="province">
+                                        <option value="">省</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <select class="layui-form-select region-city" name="region[]" lay-filter="city">
+                                        <option value="">市</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <select class="layui-form-select region-district" name="region[]" lay-filter="district">
+                                        <option value="">区</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <select class="layui-form-select region-town" name="region[]" lay-filter="town">
+                                        <option value="">镇</option>
+                                    </select>
+                                </div>
+                                <div class="layui-input-inline">
+                                    <select class="layui-form-select region-street" name="region[]" lay-filter="street">
+                                        <option value="">街道</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <label></label>
+                            <div class="layui-input-block">
+                                <input name="address" value="{$user.address}" class="layui-input" placeholder="详细地址" />
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                        </div>
+
+                        <div class="layui-form-item">
                             <div class="layui-input-block">
                                 <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
                             </div>
@@ -58,27 +96,55 @@
 {/block}
 {block name="js"}
 <script>
-    layui.use(['form', 'miniTab', 'jquery', 'arronUtil'], function () {
-        let form = layui.form,
-            arronUtil = layui.arronUtil,
-            $ = layui.jquery,
-            miniTab = layui.miniTab;
+    $(function(){
+        layui.use(['form', 'miniTab', 'jquery', 'arronUtil'], function () {
+            let form = layui.form,
+                arronUtil = layui.arronUtil,
+                $ = layui.jquery,
+                miniTab = layui.miniTab;
 
-        //监听提交
-        form.on('submit(saveBtn)', function (data) {
-            $.post(arronUtil.url("/user/profile"), data.field, function (res) {
-                let option = { title: res.msg, position: 'center' }
-                if (res.code) {
-                    option.icon = 'success'
-                }
+            function getRegionList(pid = 0, target = '') {
+                $.ajax({
+                    url: '/Ajax/getRegionList',
+                    data: { pid: pid },
+                    success: function (res) {
+                        if (res.length) {
+                            let options = '<option value="">请选择</option>'
+                            $.each(res, (index, item) => {
+                                options += '<option value="' + item.id + '">' + item.region_name + '</option>'
+                            })
+                            $('.region-' + target).html(options)
 
-                arronUtil.Toast.fire(option)
+                            form.render('select')
+                        }
+                    }
+                })
+            }
+
+            getRegionList(0, 'province')
+            const selectList = ['province', 'city', 'district', 'town', 'street']
+            $.each(selectList, function (index, item) {
+                form.on('select(' + item + ')', function (data) {
+                    getRegionList(data.value, selectList[index + 1])
+                })
             })
 
-            return false;
-        });
+            //监听提交
+            form.on('submit(saveBtn)', function (data) {
+                $.post(arronUtil.url("/user/profile"), data.field, function (res) {
+                    let option = { title: res.msg, position: 'center' }
+                    if (res.code) {
+                        option.icon = 'success'
+                    }
 
-    });
+                    arronUtil.Toast.fire(option)
+                })
+
+                return false;
+            });
+
+        });
+    })
 </script>
 
 {/block}
