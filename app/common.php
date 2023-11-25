@@ -280,7 +280,7 @@ function validateMobile($mobile)
         preg_match('/^(\d{3}-|\d{4}-)?\d{7,8}$/', $mobile);
 }
 
-if (!function_exists('sysconfig')) {
+if (!function_exists('systemConfig')) {
 
     /**
      * 获取系统配置信息
@@ -288,18 +288,18 @@ if (!function_exists('sysconfig')) {
      * @param null $name
      * @return array|mixed
      */
-    function sysconfig(string $group, $name = null)
+    function systemConfig(string $group, $name = null)
     {
         $where = ['group' => $group];
-        $value = empty($name) ? Cache::get("sysconfig_{$group}") : Cache::get("sysconfig_{$group}_{$name}");
+        $value = empty($name) ? Cache::get("system_config_{$group}") : Cache::get("system_config_{$group}_{$name}");
         if (empty($value)) {
             if (!empty($name)) {
                 $where['name'] = $name;
                 $value = \app\admin\model\SystemConfig::where($where)->value('value');
-                Cache::tag('sysconfig')->set("sysconfig_{$group}_{$name}", $value, 3600);
+                Cache::tag('system_config')->set("system_config_{$group}_{$name}", $value, 3600);
             } else {
                 $value = \app\admin\model\SystemConfig::where($where)->column('value', 'name');
-                Cache::tag('sysconfig')->set("sysconfig_{$group}", $value, 3600);
+                Cache::tag('system_config')->set("system_config_{$group}", $value, 3600);
             }
         }
         return $value;

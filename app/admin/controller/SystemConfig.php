@@ -7,6 +7,8 @@
 
 namespace app\admin\controller;
 
+use think\facade\Event;
+
 class SystemConfig extends \app\common\controller\AdminController
 {
 
@@ -19,8 +21,34 @@ class SystemConfig extends \app\common\controller\AdminController
 
     public function index()
     {
-
         return $this->view->fetch();
+    }
+
+    /**
+     * 保存配置
+     * @return \think\response\Json
+     */
+    public function save()
+    {
+        if ($this->request->isPost()) {
+            $post = $this->request->post();
+            $this->returnData['msg'] = lang('Saved successfully');
+            try {
+                foreach ($post as $key => $val) {
+                    $this->model
+                        ->where('name', $key)
+                        ->update([
+                            'value' => $val,
+                        ]);
+                }
+
+                Event::trigger('UpdateSystemConfig');
+            } catch (\Exception $e) {
+                $this->returnData['msg'] = lang('Save failed');
+            }
+        }
+
+        return json($this->returnData);
     }
 
 }

@@ -93,12 +93,12 @@ return [
                         "icon" => "fa fa-address-book",
                         "target" => "_self"
                     ],
-//                    [
-//                        "title" => "系统配置",
-//                        "href" => (string) url('/SystemConfig/index'),
-//                        "icon" => "fa fa-gear",
-//                        "target" => "_self"
-//                    ],
+                    [
+                        "title" => "系统配置",
+                        "href" => (string) url('/SystemConfig/index'),
+                        "icon" => "fa fa-gear",
+                        "target" => "_self"
+                    ],
                 ]
             ],
             [
@@ -126,11 +126,11 @@ return [
                             ]
                         ]
                     ],
-//                    [
-//                        "title" => "线路更换",
-//                        "href" => (string) url('/CallTypeLogs/index'),
-//                        "target" => "_self",
-//                    ]
+                    [
+                        "title" => "线路更换",
+                        "href" => (string) url('/CallTypeLogs/index'),
+                        "target" => "_self",
+                    ]
                 ]
             ]
         ]

@@ -84,7 +84,7 @@ abstract class BaseController
 
         $this->view->assign([
             'module' => $this->module,
-            'app_name' => config('app.app_name'),
+            'app_name' => systemConfig('site', 'site_name'),
             'baseFile' => $this->baseFile,
         ]);
 

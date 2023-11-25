@@ -17,5 +17,6 @@ return [
 
     'subscribe' => [
         \app\common\subscribe\User::class,
+        \app\common\subscribe\Config::class,
     ],
 ];

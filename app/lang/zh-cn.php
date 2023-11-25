@@ -22,6 +22,8 @@ return [
     'No data was found' => '未找到相关数据',
     'Operation successful' => '操作成功',
     'Operation failed' => '操作失败',
+    'Save failed' => '保存失败',
+    'Saved successfully' => '保存成功',
     'Please enter a nickname' => '请输入昵称',
     'Please enter your old password' => '请输入旧密码',
     'Please enter a new password' => '请输入新密码',
