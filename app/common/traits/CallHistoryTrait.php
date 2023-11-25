@@ -28,8 +28,8 @@ trait CallHistoryTrait
         if ($this->request->isPost()) {
             $page = $this->request->param('page/d', 1);
             $limit = $this->request->param('limit/d', 10);
-            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
-            $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
+            $companyId = $this->module === 'company' ? $this->userInfo->id : $this->request->param('company_id/d', 0);
+            $userId = $this->module === 'home' ? $this->userInfo->id : $this->request->param('user_id/d', 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
             $operate = $this->request->param('operate', '');

@@ -126,11 +126,11 @@ return [
                             ]
                         ]
                     ],
-                    [
-                        "title" => "线路更换",
-                        "href" => (string) url('/CallTypeLogs/index'),
-                        "target" => "_self",
-                    ]
+//                    [
+//                        "title" => "线路更换",
+//                        "href" => (string) url('/CallTypeLogs/index'),
+//                        "target" => "_self",
+//                    ]
                 ]
             ]
         ]

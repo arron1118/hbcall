@@ -87,7 +87,7 @@ trait CustomerTrait
             $limit = $this->request->param('limit/d', 10);
             $operate = trim($this->request->param('operate/s', ''));
             $keyword = trim($this->request->param('keyword/s', ''));
-            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
+            $companyId = $this->module === 'company' ? $this->userInfo->id : $this->request->param('company_id/d', 0);
             $userId = $this->module === 'home' ? $this->userInfo->id : $this->request->param('user_id/d', 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
@@ -208,13 +208,15 @@ trait CustomerTrait
             $keyword = trim($this->request->param('keyword/s', ''));
             $status = $this->request->param('status/d', -1);
             $cate = $this->request->param('cate/d', -1);
-            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
-            $userId = $this->request->param('user_id/d', $this->module === 'home' ? $this->userInfo->id : 0);
+            $companyId = $this->module === 'company' ? $this->userInfo->id : $this->request->param('company_id/d', 0);
+            $userId = $this->module === 'home' ? $this->userInfo->id : $this->request->param('user_id/d', 0);
             $startDate = $this->request->param('startDate', '');
             $endDate = $this->request->param('endDate', '');
-            $where = [
-                ['recycle', '=', 0]
-            ];
+            $where = [];
+
+            if ($this->module !== 'admin') {
+                $where[] = ['recycle', '=', 0];
+            }
 
             if ($userId > 0) {
                 $where[] = ['user_id', '=', $userId];

@@ -44,7 +44,7 @@ trait PaymentTrait
             $endDate = $this->request->param('endDate', '');
             $payType = $this->request->param('pay_type/d', 0);
             $status = $this->request->param('status/d', -1);
-            $companyId = $this->request->param('company_id/d', $this->module === 'company' ? $this->userInfo->id : 0);
+            $companyId = $this->module === 'company' ? $this->userInfo->id : $this->request->param('company_id/d', 0);
 
             $where = [];
 
