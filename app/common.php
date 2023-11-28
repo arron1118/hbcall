@@ -290,7 +290,7 @@ if (!function_exists('systemConfig')) {
      */
     function systemConfig(string $group, $name = null)
     {
-        $where = ['group' => $group];
+        $where = ['group_name' => $group];
         $value = empty($name) ? Cache::get("system_config_{$group}") : Cache::get("system_config_{$group}_{$name}");
         if (empty($value)) {
             if (!empty($name)) {

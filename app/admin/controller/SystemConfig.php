@@ -17,11 +17,21 @@ class SystemConfig extends \app\common\controller\AdminController
         parent::initialize();
 
         $this->model = new \app\admin\model\SystemConfig();
+
+        $this->view->assign([
+            'groupItemList' => $this->model->getGroupItemList(),
+            'groupList' => $this->model->getGroupList(),
+        ]);
     }
 
     public function index()
     {
         return $this->view->fetch();
+    }
+
+    public function getGroupList()
+    {
+        return json($this->getGroupList());
     }
 
     /**

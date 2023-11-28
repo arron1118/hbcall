@@ -1,38 +1,118 @@
 {extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+<link href="__STATIC__/lib/summernote-0.8.18-dist/summernote-lite.min.css" rel="stylesheet">
+{/block}
 {block name="body"}
 <div class="layuimini-container">
     <div class="layuimini-main" id="app">
-
         <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
             <ul class="layui-tab-title">
-                <li class="layui-this">网站设置</li>
-                <li>LOGO配置</li>
-                <li>上传配置</li>
+                {foreach $groupItemList as $key => $val}
+                {if $val['switch']}
+                <li {if $key === 'site'}class="layui-this"{/if}>{$val['title']}</li>
+                {/if}
+                {/foreach}
+                <li>配置项管理</li>
             </ul>
             <div class="layui-tab-content">
-                <div class="layui-tab-item layui-show">
-                    {include file="system_config/site" /}
+                {foreach $groupItemList as $key => $val}
+                {if $val['switch']}
+                <div class="layui-tab-item {if $key === 'site'} layui-show {/if}">
+                    <form id="app-form" class="layui-form layuimini-form">
+                        {foreach $groupList as $k => $v}
+                        {if $v.group_name === $key}
+                        <div class="layui-form-item">
+                            <label class="layui-form-label {if $v.required} required {/if}">{$v.title}</label>
+                            {switch $v['type']}
+                                {case text}
+                                <div class="layui-input-block">
+                                    <input type="text" name="{$v.name}" class="layui-input" {if $v.required} lay-verify="required" {/if} placeholder="请输入{$v.remark}" value="{$v.value}">
+                                    {if !empty($v.tip)}
+                                    <tip>{$v.tip}</tip>
+                                    {/if}
+                                </div>
+                                {/case}
+                                {case radio}
+                                <div class="layui-input-block">
+                                    {foreach ['local'=>'本地存储','alioss'=>'阿里云oss','qnoss'=>'七牛云oss','txcos'=>'腾讯云cos'] as $key1 => $val1}
+                                    <input type="radio" name="{$v.name}" lay-filter="upload_type" value="{$key1}" title="{$val1}" {if $key1 === $v.value}checked=""{/if}>
+                                    {/foreach}
+                                    <tip>{$v.tip}</tip>
+                                </div>
+                                {/case}
+                                {case textarea}
+                                <div class="layui-input-block">
+                                    <textarea name="{$v.name}" class="layui-textarea" {if $v.required} required lay-verify="required" {/if}>{$v.value}</textarea>
+                                </div>
+                                {/case}
+                                {case editor}
+                                <div class="layui-input-block">
+                                    <textarea name="{$v.name}" class="editor" {if $v.required} required lay-verify="required" {/if}>{$v.value}</textarea>
+                                </div>
+                                {/case}
+                            {/switch}
+                        </div>
+                        {/if}
+                        {/foreach}
+
+                        <div class="hr-line"></div>
+                        <div class="layui-form-item text-center">
+                            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit lay-filter="saveBtn">确认</button>
+                            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+                        </div>
+                    </form>
                 </div>
+                {/if}
+                {/foreach}
+
                 <div class="layui-tab-item">
-                    {include file="system_config/logo" /}
-                </div>
-                <div class="layui-tab-item">
-                    {include file="system_config/upload" /}
+                    <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
+                        <thead>
+                        <tr>
+                            <th lay-data="{field: 'id', align: 'center', width: 100}">ID</th>
+                            <th lay-data="{field: 'username', align: 'center', templet: function (row) {
+                        return row.user.username
+                    }}">用户</th>
+                            <th lay-data="{field: 'ip', align: 'center'}">登录IP</th>
+                            <th lay-data="{field: 'platform', align: 'center'}">系统信息</th>
+                            <th lay-data="{field: 'platform_version', align: 'center'}">系统版本</th>
+                            <th lay-data="{field: 'browser', align: 'center'}">浏览器信息</th>
+                            <th lay-data="{field: 'browser_version', align: 'center'}">浏览器版本</th>
+                            <th lay-data="{field: 'device', align: 'center'}">设备信息</th>
+                            <th lay-data="{field: 'device_type', align: 'center'}">设备类型</th>
+                            <th lay-data="{field: 'create_time', align: 'center'}">登录时间</th>
+                        </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 {/block}
 
 {block name="js"}
+<script src="__STATIC__/lib/summernote-0.8.18-dist/summernote-lite.min.js"></script>
 <script>
-    layui.use(['form', 'miniTab', 'jquery', 'arronUtil'], function () {
+    layui.use(['form', 'miniTab', 'jquery', 'arronUtil', 'table'], function () {
         let form = layui.form,
             $ = layui.jquery,
             arronUtil = layui.arronUtil,
+            table = layui.table,
             miniTab = layui.miniTab;
+
+        // 编辑框
+        const SUMMERNOTE_CONFIG = {
+            placeholder: '请输入内容',
+            tabsize: 2,
+            height: 200,
+            focus: false,
+        }
+        $.each($('.editor'), function (index, item) {
+            console.log($(item))
+            $(item).summernote(SUMMERNOTE_CONFIG)
+        })
 
         //监听提交
         form.on('submit(saveBtn)', function (data) {
@@ -48,6 +128,25 @@
             return false;
         });
 
+        table.init('currentTableFilter', {
+            url: arronUtil.url("/SystemConfig/getGroupList"),
+            id: 'configTable',
+            toolbar: '#toolbarNews',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            page: {
+                limits: [15, 30, 45, 60],
+                limit: 15,
+            },
+            skin: 'line',
+            even: true,
+            parseData: function (res) {
+                console.log(res)
+            }
+        })
     });
 </script>
 
