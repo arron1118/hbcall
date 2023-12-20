@@ -11,16 +11,19 @@ use think\facade\Event;
 
 class SystemConfig extends \app\common\controller\AdminController
 {
+    protected $groupList = [];
 
     protected function initialize()
     {
         parent::initialize();
 
         $this->model = new \app\admin\model\SystemConfig();
+        $this->groupList = $this->model->getGroupList();
 
         $this->view->assign([
             'groupItemList' => $this->model->getGroupItemList(),
-            'groupList' => $this->model->getGroupList(),
+            'groupList' => $this->groupList,
+            'typeList' => $this->model->getTypeList(),
         ]);
     }
 
@@ -31,7 +34,9 @@ class SystemConfig extends \app\common\controller\AdminController
 
     public function getGroupList()
     {
-        return json($this->getGroupList());
+        $this->returnData['msg'] = lang('Operation successful');
+        $this->returnData['data'] = $this->groupList;
+        return json($this->returnData);
     }
 
     /**
@@ -61,4 +66,35 @@ class SystemConfig extends \app\common\controller\AdminController
         return json($this->returnData);
     }
 
+    public function edit($id)
+    {
+        $info = $this->model->find($id);
+        if (!$info) {
+            $this->returnData['msg'] = '参数错误';
+            return json($this->returnData);
+        }
+
+        $this->returnData['code'] = 1;
+        $this->returnData['msg'] = lang('Operation successful');
+        if ($this->request->isPost()) {
+
+        }
+
+        $this->returnData['data'] = $info;
+        return json($this->returnData);
+    }
+
+    public function del($id)
+    {
+        if ($this->request->isPost()) {
+            if ($this->model->destroy(function ($query) use ($id) {
+                $query->where('id', '=', $id);
+            })) {
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '删除成功';
+            }
+        }
+
+        return json($this->returnData);
+    }
 }

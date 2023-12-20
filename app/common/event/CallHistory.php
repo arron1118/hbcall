@@ -104,14 +104,14 @@ class CallHistory
                                 // 更新通话记录
                                 if (isset($data['callId'])) {
                                     $val->callid = $data['callId'];
-                                    $val->finish_type = $data['callStatus'];
+//                                    $val->finish_type = $data['callStatus'];
                                     $val->finish_state = $data['finishStatus'];
                                 }
 
                                 $val->starttime = strtotime($data['startTime']);
                                 $val->releasetime = strtotime($data['endTime']);
                                 $val->call_duration = $data['duration'];
-                                $val->record_url = $data['preRecordUrl'];
+                                $val->record_url = $data['recordUrl'];
 
                                 if (!$val->getData('create_time')) {
                                     $val->create_time = strtotime($data['startTime']);
@@ -161,14 +161,14 @@ class CallHistory
                             $val->save();
                         }
                     } else {
-                        $curl->post(Config::get('hbcall.record_api'), [
-                            'subid' => $val['subid'],
-                            'date' => $date
+                        $curl->get(Config::get('hbcall.record_api'), [
+                            'bindId' => $val['subid'],
+//                            'date' => $date
                         ]);
                         Log::info($curl->response);
                         $response = json_decode($curl->response, true);
 
-                        if (!is_null($response) && (isset($response['code']) && $response['code'] === 1000)) {
+                        if (!is_null($response) && (isset($response['statusCode']) && $response['statusCode'] === 200)) {
                             ++$returnData['success'];
                             $returnData['successList'][] = [
                                 $val->subid,
@@ -180,34 +180,34 @@ class CallHistory
                                 }
 
                                 // 更新通话记录
-                                if (isset($data['callid'])) {
-                                    $val->callid = $data['callid'];
-                                    $val->finish_type = $data['finishType'];
-                                    $val->finish_state = $data['finishState'];
-                                    $val->releasecause = $data['releasecause'];
+                                if (isset($data['callId'])) {
+                                    $val->callid = $data['callId'];
+//                                    $val->finish_type = $data['finishType'];
+                                    $val->finish_state = $data['finishStatus'];
+//                                    $val->releasecause = $data['releasecause'];
                                 }
 
-                                $val->starttime = strtotime($data['starttime']);
-                                $val->releasetime = strtotime($data['releasetime']);
-                                $val->call_duration = $data['callDuration'];
+                                $val->starttime = strtotime($data['startTime']);
+                                $val->releasetime = strtotime($data['endTime']);
+                                $val->call_duration = $data['duration'];
                                 $val->record_url = $data['recordUrl'];
 
                                 if (!$val->getData('create_time')) {
-                                    $val->create_time = strtotime($data['starttime']);
+                                    $val->create_time = strtotime($data['startTime']);
                                 }
 
                                 if (!$val->axb_number) {
-                                    $val->axb_number = $data['xNumber'];
+                                    $val->axb_number = $data['telX'];
                                 }
 
-                                if ($data['callDuration'] > 0) {
+                                if ($data['duration'] > 0) {
                                     // 添加消费记录
                                     $ExpenseModel = Expense::where('call_history_id', $val->id)->findOrEmpty();
                                     if ($ExpenseModel->isEmpty()) {
                                         $company = Company::find($val->company_id);
 
                                         $ExpenseModel = new Expense();
-                                        $ExpenseModel->duration =  ceil($data['callDuration'] / 60);
+                                        $ExpenseModel->duration =  ceil($data['duration'] / 60);
                                         $ExpenseModel->rate = $company->rate;
                                         $ExpenseModel->cost = $ExpenseModel->duration * $company->rate;
                                         $ExpenseModel->title = '通话消费';

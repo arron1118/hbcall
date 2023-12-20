@@ -20,14 +20,14 @@
                 {if $val['switch']}
                 <div class="layui-tab-item {if $key === 'site'} layui-show {/if}">
                     <form id="app-form" class="layui-form layuimini-form">
-                        {foreach $groupList as $k => $v}
+                        {foreach $groupList[$key] as $k => $v}
                         {if $v.group_name === $key}
                         <div class="layui-form-item">
                             <label class="layui-form-label {if $v.required} required {/if}">{$v.title}</label>
                             {switch $v['type']}
                                 {case text}
                                 <div class="layui-input-block">
-                                    <input type="text" name="{$v.name}" class="layui-input" {if $v.required} lay-verify="required" {/if} placeholder="请输入{$v.remark}" value="{$v.value}">
+                                    <input type="text" name="{$v.name}" class="layui-input" {if $v.required} lay-verify="required" {/if} placeholder="请输入{$v.title}" value="{$v.value}">
                                     {if !empty($v.tip)}
                                     <tip>{$v.tip}</tip>
                                     {/if}
@@ -67,39 +67,70 @@
                 {/foreach}
 
                 <div class="layui-tab-item">
-                    <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
-                        <thead>
-                        <tr>
-                            <th lay-data="{field: 'id', align: 'center', width: 100}">ID</th>
-                            <th lay-data="{field: 'username', align: 'center', templet: function (row) {
-                        return row.user.username
-                    }}">用户</th>
-                            <th lay-data="{field: 'ip', align: 'center'}">登录IP</th>
-                            <th lay-data="{field: 'platform', align: 'center'}">系统信息</th>
-                            <th lay-data="{field: 'platform_version', align: 'center'}">系统版本</th>
-                            <th lay-data="{field: 'browser', align: 'center'}">浏览器信息</th>
-                            <th lay-data="{field: 'browser_version', align: 'center'}">浏览器版本</th>
-                            <th lay-data="{field: 'device', align: 'center'}">设备信息</th>
-                            <th lay-data="{field: 'device_type', align: 'center'}">设备类型</th>
-                            <th lay-data="{field: 'create_time', align: 'center'}">登录时间</th>
-                        </tr>
-                        </thead>
-                    </table>
+                    {foreach $groupItemList as $key => $val}
+                    {if $val['switch']}
+                        <div class="row mb-3">
+                            <div class="col">
+                                <table class="table table-striped table-hover table-sm">
+                                    <tr><th colspan="9">{$val['title']}</th></tr>
+                                    <tr>
+                                        <th>名称</th>
+                                        <th>标题</th>
+                                        <th>内容</th>
+                                        <th>提示</th>
+                                        <th>类型</th>
+                                        <th>必填</th>
+                                        <th>状态</th>
+                                        <th>排序</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    {foreach $groupList[$key] as $k => $v}
+                                    <tr>
+                                        <td>{$v['name']}</td>
+                                        <td>{$v['title']}</td>
+                                        <td>{$v['content']}</td>
+                                        <td>{$v['tip']}</td>
+                                        <td>{$v['type_text']}</td>
+                                        <td>{$v['required_text']}</td>
+                                        <td>{$v['status_text']}</td>
+                                        <td>{$v['sort']}</td>
+                                        <td>
+                                            <div class="d-flex">
+                                                <a class="editBtn me-2 text-decoration-none" data-id="{$v['id']}" href="javascript:;" data-bs-toggle="modal" data-bs-target="#editModal">编辑</a>
+                                                <a class="delBtn text-danger text-decoration-none" data-id="{$v['id']}" href="javascript:;">删除</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {/foreach}
+                                    <tr>
+                                        <td colspan="9">
+                                            <div class="d-flex justify-content-center">
+                                                <a class="addBtn" data-group="{$key}" href="javascript:;" data-bs-toggle="modal" data-bs-target="#editModal"><i class="fa fa-plus"></i> 添加</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    {/if}
+                    {/foreach}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+{include file="system_config/edit" /}
 {/block}
 
 {block name="js"}
 <script src="__STATIC__/lib/summernote-0.8.18-dist/summernote-lite.min.js"></script>
 <script>
-    layui.use(['form', 'miniTab', 'jquery', 'arronUtil', 'table'], function () {
+    layui.use(['form', 'miniTab', 'jquery', 'arronUtil', 'table', 'element'], function () {
         let form = layui.form,
             $ = layui.jquery,
             arronUtil = layui.arronUtil,
-            table = layui.table,
+            element = layui.element,
             miniTab = layui.miniTab;
 
         // 编辑框
@@ -110,8 +141,79 @@
             focus: false,
         }
         $.each($('.editor'), function (index, item) {
-            console.log($(item))
             $(item).summernote(SUMMERNOTE_CONFIG)
+        })
+
+        let initContentOptions = function (val) {
+            if (['radio', 'checkbox', 'select'].includes(val)) {
+                $('.content-options').removeClass('d-none')
+            } else {
+                $('.content-options').addClass('d-none')
+            }
+        }
+
+        $('select[name="type"]').on('change', function (e) {
+            initContentOptions($(this).val())
+        })
+
+        $('#editModal').on('show.bs.modal', function (e) {
+            let id = $(e.relatedTarget).data('id')
+            let f = document.editForm, title = ''
+            if (id) {
+                title = '编辑'
+                $.get(arronUtil.url('/SystemConfig/edit'), {id: id}, res => {
+                    if (res.code === 1) {
+                        for (const element of f.elements) {
+                            let name = element.name,
+                                el = $(e.currentTarget).find('[name="' + name + '"]');
+
+                            if (['required', 'status'].includes(name)) {
+                                el.prop('checked', res.data[name] === 1)
+                            } else {
+                                el.val(res.data[name])
+                            }
+                        }
+
+                        initContentOptions($('select[name="type"]').val())
+                    }
+                })
+            } else {
+                title = '添加'
+                $('[name="id"]').val('')
+                f.reset()
+            }
+
+            $('.modal-title').text(title)
+        })
+
+        $('form[name="formEditor"]').submit(function () {
+            let formData = $(this).serializeArray(),
+                id = $('[name="id"]').val(),
+                url = id ? arronUtil.url("/User/edit") : arronUtil.url("/User/add"),
+                rate = $(this).find('input[name=rate]');
+
+            $.post(url, formData, function (res) {
+                let option = { title: res.msg }
+                if (res.code === 1) {
+                    option.icon = 'success'
+                    option.timer = 2000
+                    option.didDestroy = function () {
+                        if (id) {
+                            table.reload('userTable', {
+                                where: form.val('searchForm')
+                            })
+                        } else {
+                            controller.reloadTable()
+                        }
+
+                        $('[data-bs-dismiss="offcanvas"]').click()
+                    }
+                }
+
+                arronUtil.Toast.fire(option)
+            })
+
+            return false
         })
 
         //监听提交
@@ -126,26 +228,46 @@
             })
 
             return false;
-        });
+        })
 
-        table.init('currentTableFilter', {
-            url: arronUtil.url("/SystemConfig/getGroupList"),
-            id: 'configTable',
-            toolbar: '#toolbarNews',
-            defaultToolbar: ['filter', 'exports', 'print', {
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            page: {
-                limits: [15, 30, 45, 60],
-                limit: 15,
-            },
-            skin: 'line',
-            even: true,
-            parseData: function (res) {
-                console.log(res)
-            }
+        $('.delBtn').on('click', function (e) {
+            let data = $(this).data()
+            arronUtil.Toast.fire({
+                title: '真的删除这条数据么',
+                showConfirmButton: true,
+                confirmButtonText: '确定',
+                toast: false,
+                icon: 'question',
+                timer: false,
+            }).then(function (val) {
+                if (val.isConfirmed) {
+                    $.post(arronUtil.url('/SystemConfig/del'), data, function (res) {
+                        let option = { title: res.msg, position: 'top' }
+                        if (res.code) {
+                            option.icon = 'success'
+
+                            // 移除 tr
+                            e.target.closest('tr').remove()
+                        }
+
+                        arronUtil.Toast.fire(option)
+                    })
+                }
+            });
+        })
+
+        $('.delete-content-option').on('click', function (e) {
+            e.target.closest('tr').remove()
+        })
+
+        $('.add-content-option').on('click', function (e) {
+            $('.content-options').find('table tbody').append($('<tr />')
+                .append($('<td />').append($('<input />', {
+                    name: 'content[name][]',
+                    class: 'form-control form-control-sm',
+                    placeholder: '名称',
+                })))
+            )
         })
     });
 </script>

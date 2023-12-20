@@ -1,0 +1,83 @@
+<div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">新增</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form name="editForm" id="editForm">
+                    <input type="hidden" name="id" value="" />
+                    <div class="mb-3">
+                        <label for="name" class="col-form-label">名称:</label>
+                        <input type="text" name="name" class="form-control" id="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="col-form-label">标题:</label>
+                        <input type="text" name="title" class="form-control" id="title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="col-form-label">类型:</label>
+                        <select name="type" class="form-select" id="type">
+                            {foreach $typeList as $key => $val}
+                            <option value="{$key}">{$val}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                    <div class="mb-3 content-options d-none">
+                        <label for="content" class="col-form-label">选项内容:</label>
+                        <table class="table table-borderless table-content-select-options">
+                            <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>标题</th>
+                                <th width="60"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <input name="content[name][]" class="form-control form-control-sm" placeholder="名称" />
+                                </td>
+                                <td>
+                                    <input name="content[title][]" class="form-control form-control-sm" placeholder="标题" />
+                                </td>
+                                <td>
+                                    <a class="text-danger-emphasis text-decoration-none delete-content-option" href="javascript:;">移除</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-center">
+                            <a class="text-decoration-none add-content-option" href="javascript:;"><i class="fa fa-plus"></i> 添加</a>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tip" class="col-form-label">提示信息:</label>
+                        <input type="text" name="tip" class="form-control" id="tip">
+                    </div>
+                    <div class="mb-3">
+                        <label for="sort" class="col-form-label">排序:</label>
+                        <input type="text" name="sort" class="form-control" id="sort" value="0">
+                    </div>
+                    <div class="mb-3 form-check form-switch">
+                        <label class="form-check-label" for="required">必填</label>
+                        <input type="checkbox" id="required" class="form-check-input" name="required"
+                               value="1" checked>
+                        <div class="form-text">开启后，该项为必填项。</div>
+                    </div>
+                    <div class="mb-3 form-check form-switch">
+                        <label class="form-check-label" for="status">状态</label>
+                        <input type="checkbox" id="status" class="form-check-input" name="status"
+                               value="1" checked>
+                        <div class="form-text">禁止后，将不能再使用该配置。</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal" form="editForm">取消</button>
+                <button type="submit" class="btn btn-sm btn-primary" form="editForm">保存</button>
+            </div>
+        </div>
+    </div>
+</div>

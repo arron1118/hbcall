@@ -123,11 +123,15 @@ class News extends \app\common\controller\AdminController
             return json($this->returnData);
         }
 
-        $res = $this->model::where('id', 'in', $ids)->delete();
+        $res = $this->model::destroy(function ($query) use ($ids) {
+            $query->where('id', 'in', $ids);
+        });
 
-        $this->returnData['code'] = 1;
-        $this->returnData['msg'] = '删除成功';
-        $this->returnData['data'] = $res;
+        if ($res) {
+            $this->returnData['code'] = 1;
+            $this->returnData['msg'] = '删除成功';
+            $this->returnData['data'] = $res;
+        }
 
         return json($this->returnData);
     }

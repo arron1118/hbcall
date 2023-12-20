@@ -328,7 +328,14 @@ layui.use(['form', 'table', 'laydate', 'layer', 'excel', 'upload', 'arronUtil'],
                             ids.push(data[i].id);
                         });
 
-                        arronUtil.Toast.fire( { title: '删除 ' + data.length + ' 条数据？确定么' }).then(function (val) {
+                        arronUtil.Toast.fire( {
+                            title: '删除 ' + data.length + ' 条数据？确定么',
+                            showConfirmButton: true,
+                            confirmButtonText: '确定',
+                            toast: false,
+                            icon: 'question',
+                            timer: false,
+                        }).then(function (val) {
                             if (val.isConfirmed) {
                                 controller.delete(ids)
                             }
