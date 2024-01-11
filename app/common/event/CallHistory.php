@@ -36,7 +36,7 @@ class CallHistory
 
 //        $module = app('http')->getName();
         $time = strtotime($date);
-        $endTime = time() - 1800;
+        $endTime = time() - 900;    // 前15分钟的数据
         if (date('Y-m-d', time()) !== $date) {
             $endTime = $time + 86400 - 1;
         }
