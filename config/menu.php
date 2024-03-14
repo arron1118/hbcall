@@ -204,6 +204,28 @@ return [
                         ]
                     ],
                 ]
+            ],
+            [
+                "title" => "日志管理",
+                "child" => [
+                    [
+                        "title" => "登录",
+                        "target" => "_self",
+                        "icon" => "fa fa-file-lines",
+                        "child" => [
+                            [
+                                "title" => "企业登录",
+                                "href" => (string) url('/SigninLogs/companyLogs'),
+                                "target" => "_self",
+                            ],
+                            [
+                                "title" => "用户登录",
+                                "href" => (string) url('/SigninLogs/userLogs'),
+                                "target" => "_self",
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ]
     ],
@@ -262,6 +284,17 @@ return [
                         "href" => (string) url('/user/resetPassword'),
                         "icon" => "fa fa-lock",
                         "target" => "_self"
+                    ]
+                ]
+            ],
+            [
+                "title" => "日志管理",
+                "child" => [
+                    [
+                        "title" => "登录",
+                        "target" => "_self",
+                        "icon" => "fa fa-file-lines",
+                        "href" => (string) url('/SigninLogs/userLogs')
                     ]
                 ]
             ]

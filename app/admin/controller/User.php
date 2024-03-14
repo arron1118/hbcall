@@ -358,8 +358,10 @@ class User extends \app\common\controller\AdminController
     public function profile()
     {
         if ($this->request->isPost()) {
+            $nickname = trim($this->request->param('nickname'));
             $realname = trim($this->request->param('realname'));
 
+            $this->userInfo->nickname = $nickname;
             $this->userInfo->realname = $realname;
             if ($this->userInfo->save()) {
                 $this->returnData['msg'] = lang('Operation successful');

@@ -1,0 +1,61 @@
+{extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+{/block}
+{block name="body"}
+<div class="container-fluid bg-white rounded-3 py-3">
+    <div class="row justify-content-center">
+        {if $module === 'admin'}
+        <div class="col-lg-2 col-md-3 col-sm-12">
+            <div class="layui-card border border-light-subtle mt-2">
+                <div class="layui-card-header">筛选</div>
+                <div class="layui-card-body overflow-y-auto overflow-x-hidden" style="max-height: 680px;">
+                    <ul class="layui-menu p-0" id="filterUser">
+                        {if $module === 'admin'}
+                        <li class="layui-menu-item-checked" lay-options="{company_id: 0}">
+                            <div class="layui-menu-body-title">全部</div>
+                        </li>
+                        {foreach $company as $key => $val}
+                        <li class="" lay-options="{company_id: {$val.id}}">
+                            <div class="layui-menu-body-title">
+                                {$val.corporation}
+                            </div>
+                        </li>
+                        {/foreach}
+                        {/if}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-10 col-md-9 col-sm-12">
+        {else /}
+        <div class="col">
+        {/if}
+            <table class="layui-table" id="currentTableId" lay-filter="currentTableFilter" lay-even lay-data="">
+                <thead>
+                    <tr>
+                        <th lay-data="{field: 'id', align: 'center', width: 100}">ID</th>
+                        <th lay-data="{field: 'username', align: 'center'}">用户</th>
+                        <th lay-data="{field: 'ip', align: 'center'}">登录IP</th>
+                        <th lay-data="{field: 'platform', align: 'center'}">系统信息</th>
+                        <th lay-data="{field: 'platform_version', align: 'center'}">系统版本</th>
+                        <th lay-data="{field: 'browser', align: 'center'}">浏览器信息</th>
+                        <th lay-data="{field: 'browser_version', align: 'center'}">浏览器版本</th>
+                        <th lay-data="{field: 'device', align: 'center'}">设备信息</th>
+                        <th lay-data="{field: 'device_type', align: 'center'}">设备类型</th>
+                        <th lay-data="{field: 'create_time', align: 'center'}">登录时间</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+
+<script src="__STATIC__/js/common/company_logs.js?v={:time()}"></script>
+
+{/block}

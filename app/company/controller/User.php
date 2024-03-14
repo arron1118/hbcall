@@ -315,7 +315,9 @@ class User extends \app\common\controller\CompanyController
     public function profile()
     {
         if ($this->request->isPost()) {
+            $nickname = trim($this->request->param('nickname'));
             $realname = trim($this->request->param('realname'));
+            $this->userInfo->nickname = $nickname;
             $this->userInfo->realname = $realname;
             $this->userInfo->save();
 

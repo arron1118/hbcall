@@ -14,6 +14,7 @@ class User extends \app\common\controller\HomeController
     {
         if ($this->request->isPost()) {
             $realname = trim($this->request->param('realname'));
+            $nickname = trim($this->request->param('nickname'));
             $phone = trim($this->request->param('phone'));
             $callback_number = trim($this->request->param('callback_number'));
             $regionIds = $this->request->param('region');
@@ -28,6 +29,7 @@ class User extends \app\common\controller\HomeController
                 return json($this->returnData);
             }
 
+            $this->userInfo->nickname = $nickname;
             $this->userInfo->realname = $realname;
             $this->userInfo->phone = $phone;
             $this->userInfo->callback_number = $callback_number;

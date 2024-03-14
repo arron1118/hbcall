@@ -10,10 +10,16 @@
                 <div class="col-md-8 col-sm-12">
                     <form class="layui-form layuimini-form">
                         <div class="layui-form-item">
+                            <label class="layui-form-label">用户名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="username"  value="{$user.username}" class="layui-input text-muted border-0" readonly>
+                                <tip>登录账号，暂不支持更改！</tip>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
                             <label class="layui-form-label">昵称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="username" placeholder="请输入昵称"  value="{$user.username}" class="layui-input text-muted border-0" readonly>
-                                <tip>此昵称作为登录账号使用，暂不支持更改！</tip>
+                                <input type="text" name="nickname" placeholder="请输入昵称"  value="{$user.nickname}" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
