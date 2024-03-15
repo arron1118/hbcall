@@ -15,4 +15,13 @@ class UserSigninLogs extends CommonModel
         return $this->belongsTo(User::class);
     }
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function getDeviceTypeTextAttr()
+    {
+
+    }
 }

@@ -117,6 +117,7 @@ trait PaymentTrait
             'amount' => $amount,
             'pay_type' => $payType,
             'device' => $this->agent->device(),
+            'device_type' => $this->agent->deviceType(),
             'platform' => $this->agent->platform(),
             'platform_version' => $this->agent->version($this->agent->platform()),
             'browser' => $this->agent->browser(),

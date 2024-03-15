@@ -58,15 +58,18 @@
                     <thead>
                         <tr>
                             <th lay-data="{field: 'id', align: 'center', width: 100}">ID</th>
-                            <th lay-data="{field: 'username', align: 'center'}">用户</th>
-                            <th lay-data="{field: 'ip', align: 'center'}">登录IP</th>
-                            <th lay-data="{field: 'platform', align: 'center'}">系统信息</th>
-                            <th lay-data="{field: 'platform_version', align: 'center'}">系统版本</th>
-                            <th lay-data="{field: 'browser', align: 'center'}">浏览器信息</th>
-                            <th lay-data="{field: 'browser_version', align: 'center'}">浏览器版本</th>
-                            <th lay-data="{field: 'device', align: 'center'}">设备信息</th>
-                            <th lay-data="{field: 'device_type', align: 'center'}">设备类型</th>
-                            <th lay-data="{field: 'create_time', align: 'center'}">登录时间</th>
+                            <th lay-data="{field: 'username', align: 'center', width: 150}">用户</th>
+                            {if $module === 'admin'}
+                            <th lay-data="{field: 'company', align: 'center', width: 300}">所属公司</th>
+                            {/if}
+                            <th lay-data="{field: 'ip', align: 'center', width: 200}">登录IP</th>
+                            <th lay-data="{field: 'platform', align: 'center', width: 150}">系统信息</th>
+                            <th lay-data="{field: 'platform_version', align: 'center', width: 150}">系统版本</th>
+                            <th lay-data="{field: 'browser', align: 'center', width: 150}">浏览器信息</th>
+                            <th lay-data="{field: 'browser_version', align: 'center', width: 200}">浏览器版本</th>
+                            <th lay-data="{field: 'device', align: 'center', width: 150}">设备信息</th>
+                            <th lay-data="{field: 'device_type', align: 'center', width: 150}">设备类型</th>
+                            <th lay-data="{field: 'create_time', align: 'center', width: 200}">登录时间</th>
                         </tr>
                     </thead>
                 </table>

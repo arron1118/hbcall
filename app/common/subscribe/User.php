@@ -39,6 +39,7 @@ class User
             } elseif ($user instanceof UserModel) {
                 $signinLogs['user_id'] = $user->id;
                 $signinLogs['company_id'] = $user->company_id;
+                $signinLogs['company'] = $user->company->corporation;
             }
 
             return $user->signinLogs()->save($signinLogs);
