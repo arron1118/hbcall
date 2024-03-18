@@ -71,6 +71,10 @@ function getCosts($company_id = 0, $user_id = 0)
         // 昨日消费
         'yesterday_cost' => $callHistoryModel::where($where)
             ->whereBetweenTime('create_time', strtotime('yesterday'), strtotime('today'))->sum('cost'),
+        // 前天消费
+        'two_days_ago_cost' => $callHistoryModel::where($where)
+            ->whereBetweenTime('create_time', strtotime('-2 day', strtotime('today')), strtotime('yesterday'))
+            ->sum('cost'),
         // 本月消费
         'current_month_cost' => $callHistoryModel::where($where)
             ->whereBetweenTime('create_time',

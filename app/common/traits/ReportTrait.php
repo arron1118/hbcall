@@ -40,6 +40,10 @@ trait ReportTrait
 
     public function dashboard()
     {
+        $this->view->assign([
+            'total_title' => $this->module === 'admin' ? '收入' : '支出',
+        ]);
+
         return $this->view->fetch('common@index/dashboard');
     }
 
@@ -66,10 +70,16 @@ trait ReportTrait
             return '<i class="fa fa-yen-sign fs-6 text-muted"></i>' . implode('', $numbers);
         }, $cost);
 
-        $this->returnData['data']['percentage'] = '0%';
+        $this->returnData['data']['percentage'] = $this->returnData['data']['yesterdayPercentage'] = '0%';
         if ($cost['current_day_cost'] > 0) {
             $this->returnData['data']['percentage'] = $cost['yesterday_cost'] > 0 ?
                 number_format(($cost['current_day_cost'] - $cost['yesterday_cost']) / $cost['yesterday_cost'] * 100, 2) . '%'
+                : '100%';
+        }
+
+        if ($cost['yesterday_cost'] > 0) {
+            $this->returnData['data']['yesterdayPercentage'] = $cost['two_days_ago_cost'] > 0 ?
+                number_format(($cost['yesterday_cost'] - $cost['two_days_ago_cost']) / $cost['two_days_ago_cost'] * 100, 2) . '%'
                 : '100%';
         }
 

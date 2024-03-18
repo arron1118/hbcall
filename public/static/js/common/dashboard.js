@@ -8,7 +8,7 @@ layui.use(['layer', 'miniTab', 'arronUtil'], function () {
 
     let chart = echarts.init($('#historyChart')[0]),
         callChart = echarts.init($('#callChart')[0]),
-        h = 8
+        h = 10
 
     let controller = {
         getCostData: function () {
@@ -18,8 +18,10 @@ layui.use(['layer', 'miniTab', 'arronUtil'], function () {
                 }
                 $('.total-cost').html(res.data.total_cost)
                 $('.percentage').html(res.data.percentage)
+                $('.yesterday-percentage').html(res.data.yesterdayPercentage)
                 $('.current-day-cost').html(res.data.current_day_cost)
                 $('.yesterday-cost').html(res.data.yesterday_cost)
+                $('.two-days-ago-cost').html(res.data.two_days_ago_cost)
                 $('.current-month-cost').html(res.data.current_month_cost)
                 $('.current-year-cost').html(res.data.current_year_cost)
             })

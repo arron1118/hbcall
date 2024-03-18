@@ -9,7 +9,6 @@
 {/block}
 {block name="body"}
 <div class="container-fluid bg-white rounded-3 shadow-sm mb-3">
-    {php} $total_title = $module === 'admin' ? '收入' : '支出'; {/php}
     {if $module === 'company'}
     <div class="row mb-3 py-5">
         <div class="col-12 col-md-4 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
@@ -63,26 +62,26 @@
     {/if}
     <div class="row mb-3 py-3">
         {if $module === 'admin'}
-        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总收入</p>
                 <h5 class="fs-2 total-payment"></h5>
             </div>
         </div>
         {elseif $module === 'company'}
-        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-center justify-content-center">
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 d-flex align-items-center justify-content-center">
             <div>
                 <h4>网站概况</h4>
             </div>
         </div>
         {/if}
-        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">总消费</p>
                 <h5 class="fs-2 total-cost"></h5>
             </div>
         </div>
-        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div class="">
                 <p class="text-black-50">
                     今日{$total_title}
@@ -91,19 +90,28 @@
                 <h5 class="fs-2 current-day-cost"></h5>
             </div>
         </div>
-        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
-                <p class="text-black-50">昨日{$total_title}</p>
+                <p class="text-black-50">
+                    昨日{$total_title}
+                    [<span class="text-warning fs-6 yesterday-percentage"></span>]
+                </p>
                 <h5 class="fs-2 yesterday-cost"></h5>
             </div>
         </div>
-        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
+            <div>
+                <p class="text-black-50">前天{$total_title}</p>
+                <h5 class="fs-2 two-days-ago-cost"></h5>
+            </div>
+        </div>
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 border-end d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">本月{$total_title}</p>
                 <h5 class="fs-2 current-month-cost"></h5>
             </div>
         </div>
-        <div class="col-6 col-md-2 mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
+        <div class="col-6 col-lg mb-3 mb-sm-3 mb-md-0 d-flex align-items-end justify-content-center">
             <div>
                 <p class="text-black-50">今年{$total_title}</p>
                 <h5 class="fs-2 current-year-cost"></h5>
