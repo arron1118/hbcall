@@ -1,0 +1,81 @@
+{extend name="../common/public/base" /}
+{block name="css"}
+{include file="../common/public/bootstrap" /}
+<style>
+    canvas {
+        border: 1px solid #cccccc;
+    }
+    button {
+        margin: 10px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <canvas id="signatureCanvas" width="400" height="200"></canvas>
+        <br>
+        <button id="clearButton" class="btn btn-light">清除签名</button>
+        <button id="saveButton" class="btn btn-primary">保存签名</button>
+    </div>
+</div>
+{/block}
+
+{block name="js"}
+<script>
+    const canvas = document.getElementById("signatureCanvas");
+    const ctx = canvas.getContext("2d");
+    console.log('ctx', ctx)
+
+    let isDrawing = false;
+    let lastX = 0;
+    let lastY = 0;
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mousemove", draw);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseout", stopDrawing);
+
+    function startDrawing(e) {
+        console.log('start drawing', e)
+        isDrawing = true;
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+    }
+
+    function draw(e) {
+        console.log('draw', e)
+        if (!isDrawing) return;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.lineWidth = 3
+        ctx.strokeStyle = '#00f'
+        ctx.stroke();
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+    }
+
+    function stopDrawing() {
+        isDrawing = false;
+    }
+
+    const clearButton = document.getElementById("clearButton");
+
+    clearButton.addEventListener("click", clearCanvas);
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    const saveButton = document.getElementById("saveButton");
+
+    saveButton.addEventListener("click", saveCanvas);
+
+    function saveCanvas() {
+        const image = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = "signature.png";
+        link.href = image;
+        link.click();
+    }
+</script>
+{/block}

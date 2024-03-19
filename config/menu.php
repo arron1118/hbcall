@@ -99,6 +99,12 @@ return [
                         "icon" => "fa fa-gear",
                         "target" => "_self"
                     ],
+                    [
+                        "title" => "电子签名",
+                        "href" => (string) url('/Signature/index'),
+                        "icon" => "fa fa-pen",
+                        "target" => "_self"
+                    ],
                 ]
             ],
             [
