@@ -4,6 +4,7 @@
 namespace app\common\controller;
 
 use app\common\model\User;
+use think\facade\Log;
 
 class HomeController extends \app\BaseController
 {
@@ -35,6 +36,10 @@ class HomeController extends \app\BaseController
 
     protected function initialize()
     {
+        $logs = [
+            'all' => $this->request->all(),
+            'header' => $this->request->header()
+        ];
         $this->returnData['msg'] = lang('Unknown error');
         $this->token = $this->request->cookie('hbcall_' . $this->module . '_token');
         if ($this->token) {
@@ -42,7 +47,9 @@ class HomeController extends \app\BaseController
                 ->where('token', $this->token)
                 ->find();
             $this->userInfo && cookie('balance', $this->userInfo->company->balance);
+            $logs['user'] = $this->userInfo;
         }
+        Log::info(json_encode($logs));
 
         $this->view->assign('user', $this->userInfo);
     }
