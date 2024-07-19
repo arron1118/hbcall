@@ -38,7 +38,8 @@ class HomeController extends \app\BaseController
     {
         $logs = [
             'all' => $this->request->all(),
-            'header' => $this->request->header()
+            'header' => $this->request->header(),
+            'ip' => $this->request->ip(),
         ];
         $this->returnData['msg'] = lang('Unknown error');
         $this->token = $this->request->cookie('hbcall_' . $this->module . '_token');
@@ -47,7 +48,7 @@ class HomeController extends \app\BaseController
                 ->where('token', $this->token)
                 ->find();
             $this->userInfo && cookie('balance', $this->userInfo->company->balance);
-            $logs['user'] = $this->userInfo;
+            $logs['user'] = ['id' => $this->userInfo->id, 'username' => $this->userInfo->username];
         }
         Log::info(json_encode($logs));
 
