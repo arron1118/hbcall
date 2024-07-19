@@ -37,9 +37,11 @@ class HomeController extends \app\BaseController
     protected function initialize()
     {
         $logs = [
-            'all' => $this->request->all(),
-            'header' => $this->request->header(),
+            'host' => $this->request->host(),
+            'method' => $this->request->method(),
             'ip' => $this->request->ip(),
+            'param' => $this->request->all(),
+            'header' => $this->request->header(),
         ];
         $this->returnData['msg'] = lang('Unknown error');
         $this->token = $this->request->cookie('hbcall_' . $this->module . '_token');
