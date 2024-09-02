@@ -66,10 +66,10 @@ layui.use(['jquery', 'table', 'arronUtil'], function () {
 
             // 单元格编辑
             table.on('edit(currentTableFilter)', function (obj) {
-                if (obj.value.length !== 11 || !arronUtil.isPhone(obj.value)) {
-                    arronUtil.Toast.fire({ title: '请输入正确的号码' })
-                    return false;
-                }
+                // if (obj.value.length !== 11 || !arronUtil.isPhone(obj.value)) {
+                //     arronUtil.Toast.fire({ title: '请输入正确的手机号码' })
+                //     return false;
+                // }
 
                 $.post(arronUtil.url("/XnumberStore/edit"), obj.data, function (res) {
                     let option = { title: res.msg }
