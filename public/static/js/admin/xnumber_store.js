@@ -41,10 +41,10 @@ layui.use(['jquery', 'table', 'arronUtil'], function () {
                         }
                     }).then(res => {
                         if (res.isConfirmed) {
-                            if (res.value.length !== 11 || !arronUtil.isPhone(res.value)) {
-                                arronUtil.Toast.fire({ title: '请输入正确的号码' })
-                                return false;
-                            }
+                            // if (res.value.length !== 11 || !arronUtil.isPhone(res.value)) {
+                            //     arronUtil.Toast.fire({ title: '请输入正确的手机号码' })
+                            //     return false;
+                            // }
 
                             $.post(arronUtil.url("/XnumberStore/add"), { number: res.value }, function (r) {
                                 let option = { title: r.msg }
