@@ -67,7 +67,7 @@
                     <div class="layui-inline">
                         <label class="layui-form-label">支付方式</label>
                         <div class="layui-input-block">
-                            <input type="radio" name="pay_type" value="1" title="微信" checked="">
+<!--                            <input type="radio" name="pay_type" value="1" title="微信" checked="">-->
                             <input type="radio" name="pay_type" value="2" title="支付宝">
                         </div>
                     </div>
@@ -82,6 +82,7 @@
                         <button type="submit" class="layui-btn layui-btn-normal" lay-submit
                                 lay-filter="data-money-btn">立即充值
                         </button>
+                        <span style="color: red">微信支付暂不支持，请使用支付宝支付。谢谢谅解！！</span>
                     </div>
                 </div>
             </form>
