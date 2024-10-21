@@ -6,6 +6,7 @@ namespace app\company\controller;
 use app\common\traits\PaymentTrait;
 use chillerlan\QRCode\QRCode;
 use think\facade\Config;
+use Yansongda\Pay\Exceptions\Exception;
 use Yansongda\Pay\Pay;
 
 class Payment extends \app\common\controller\CompanyController
@@ -53,7 +54,12 @@ class Payment extends \app\common\controller\CompanyController
             ];
             return json($this->returnData);
         } elseif ($payType === 2) {
+            try {
             return Pay::alipay(Config::get('payment.alipay.web'))->web($data)->send();
+//                return Pay::alipay(Config::get('payment.alipay.web'))->verify();
+            } catch (Exception $e) {
+//                dump($e);
+            }
         }
     }
 
