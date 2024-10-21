@@ -44,14 +44,19 @@ class Payment extends \app\common\controller\CompanyController
 
         $data = $this->createOrder($this->userInfo, $amount, $payType, $orderNo);
         if ($payType === 1) {
-            $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($data);
-            $this->returnData['code'] = 1;
-            $this->returnData['msg'] = '订单创建成功';
-            $this->returnData['data'] = [
-                'qr' => (new QRCode())->render($pay->code_url),
-                'payno' => $data['out_trade_no'],
-                'amount' => $amount,
-            ];
+            try {
+                $pay = Pay::wechat(Config::get('payment.wxpay'))->scan($data);
+                $this->returnData['code'] = 1;
+                $this->returnData['msg'] = '订单创建成功';
+                $this->returnData['data'] = [
+                    'qr' => (new QRCode())->render($pay->code_url),
+                    'payno' => $data['out_trade_no'],
+                    'amount' => $amount,
+                ];
+            } catch (Exception $e) {
+                $this->returnData['code'] = $e->getCode();
+                $this->returnData['msg'] = $e->getMessage();
+            }
             return json($this->returnData);
         } elseif ($payType === 2) {
             try {
