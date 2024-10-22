@@ -70,8 +70,8 @@ return [
 //        'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',    // 商务号KEY
         'key' => 'Axcv2M0CiOeLynN0n4ylyBteBm0n5cAF',
         'notify_url' => 'http://caller.hbosw.com/api/payment/notify',   // 回调地址
-        'cert_client' => './certs/apiclient_cert.pem', // optional，退款等情况时用到
-        'cert_key' => './certs/apiclient_key.pem', // optional，退款等情况时用到
+        'cert_client' => app()->getConfigPath() . '/certs/apiclient_cert.pem', // optional，退款等情况时用到
+        'cert_key' => app()->getConfigPath() . '/certs/apiclient_key.pem', // optional，退款等情况时用到
         'log' => [ // optional
             'file' => app()->getRuntimePath() . 'payment/logs/wechat.log',
             'level' => 'info', // 建议生产环境等级调整为 info，开发环境为 debug
