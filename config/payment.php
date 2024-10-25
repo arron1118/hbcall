@@ -63,7 +63,8 @@ return [
     'wxpay' => [
 //        'appid' => 'wxc5a6a4d49b6da197', // APP APPID
         'appid' => 'ww01beae8f33a202b4',    // 巨门企业微信ID
-        'app_id' => 'ww8ee3085852a83f1d', // 公众号 APPID
+//        'app_id' => 'ww8ee3085852a83f1d', // 公众号 APPID
+        'app_id' => 'ww01beae8f33a202b4',
         'miniapp_id' => '', // 小程序 APPID
 //        'mch_id' => '1503645201',   // 商务号
         'mch_id' => '1695646480',
