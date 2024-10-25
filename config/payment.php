@@ -68,7 +68,7 @@ return [
 //        'mch_id' => '1503645201',   // 商务号
         'mch_id' => '1695646480',
 //        'key' => 'UbHJAz3LqCQ71Efq0PadywjTG2Cq13nb',    // 商务号KEY
-        'key' => 'Axcv2M0CiOeLynN0n4ylyBteBm0n5cAF',
+        'key' => 'ECPbogadOBXvGzwp9klS9P3L7z3HE5IG',
         'notify_url' => 'http://caller.hbosw.com/api/payment/notify',   // 回调地址
         'cert_client' => app()->getConfigPath() . '/certs/apiclient_cert.pem', // optional，退款等情况时用到
         'cert_key' => app()->getConfigPath() . '/certs/apiclient_key.pem', // optional，退款等情况时用到
