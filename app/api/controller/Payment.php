@@ -8,10 +8,8 @@ use app\common\model\Company;
 use think\facade\Config;
 use think\facade\Db;
 use think\facade\Log;
-use Yansongda\Pay\Exceptions\BusinessException;
 use Yansongda\Pay\Exceptions\GatewayException;
 use Yansongda\Pay\Exceptions\InvalidArgumentException;
-use Yansongda\Pay\Exceptions\InvalidGatewayException;
 use Yansongda\Pay\Exceptions\InvalidSignException;
 use Yansongda\Pay\Pay;
 use app\common\model\Payment as PaymentModel;
@@ -98,7 +96,7 @@ class Payment extends \app\common\controller\ApiController
             }
 
             return $pay->success()->send(); // laravel 框架中请直接 `return $pay->success()`
-        } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException|BusinessException $e) {
+        } catch (InvalidArgumentException|InvalidSignException $e) {
             Log::error('[微信回调失败]' . $e->getMessage());
         }
     }
@@ -123,7 +121,7 @@ class Payment extends \app\common\controller\ApiController
             }
 
             return $alipay->success()->send();
-        } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException|BusinessException $e) {
+        } catch (InvalidSignException $e) {
             Log::error('[支付宝回调失败]' . $e->getMessage());
         }
     }

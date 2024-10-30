@@ -8,19 +8,18 @@ use chillerlan\QRCode\QRCode;
 use think\facade\Config;
 use think\facade\Log;
 use Yansongda\Pay\Exceptions\BusinessException;
-use Yansongda\Pay\Exceptions\Exception;
 use Yansongda\Pay\Exceptions\InvalidArgumentException;
 use Yansongda\Pay\Exceptions\InvalidGatewayException;
 use Yansongda\Pay\Exceptions\InvalidSignException;
 use Yansongda\Pay\Pay;
+use app\common\controller\CompanyController;
 
-class Payment extends \app\common\controller\CompanyController
+class Payment extends CompanyController
 {
     use PaymentTrait;
 
     /**
-     * 检查订单
-     * @return \think\response\Json
+     * @return \think\response\Json|void
      * @throws \Yansongda\Pay\Exceptions\GatewayException
      */
     public function checkOrder()
@@ -29,16 +28,17 @@ class Payment extends \app\common\controller\CompanyController
             $payno = $this->request->param('payno');
 
             try {
-                $order = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno], 'scan');
+                $order = Pay::wechat(Config::get('payment.wxpay'))
+                    ->find(['out_trade_no' => $payno]);
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = 'success';
                 $this->returnData['data'] = $order;
-            } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException|BusinessException $e) {
+                return json($this->returnData);
+            } catch (InvalidArgumentException|InvalidSignException|BusinessException $e) {
                 Log::error('[订单查询异常] ' . $e->getMessage());
+            }
         }
-
-        return json($this->returnData);
     }
 
     public function pay()
