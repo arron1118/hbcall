@@ -7,6 +7,7 @@ use app\common\traits\PaymentTrait;
 use chillerlan\QRCode\QRCode;
 use think\facade\Config;
 use think\facade\Log;
+use Yansongda\Pay\Exceptions\BusinessException;
 use Yansongda\Pay\Exceptions\Exception;
 use Yansongda\Pay\Exceptions\InvalidArgumentException;
 use Yansongda\Pay\Exceptions\InvalidGatewayException;
@@ -32,7 +33,7 @@ class Payment extends \app\common\controller\CompanyController
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = 'success';
                 $this->returnData['data'] = $order;
-            } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException $e) {
+            } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException|BusinessException $e) {
                 Log::error('[订单查询异常] ' . $e->getMessage());
             }
         }
