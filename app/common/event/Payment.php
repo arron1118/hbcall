@@ -9,6 +9,7 @@ use Yansongda\Pay\Exceptions\BusinessException;
 use Yansongda\Pay\Exceptions\GatewayException;
 use Yansongda\Pay\Exceptions\InvalidArgumentException;
 use Yansongda\Pay\Exceptions\InvalidConfigException;
+use Yansongda\Pay\Exceptions\InvalidGatewayException;
 use Yansongda\Pay\Pay;
 
 class Payment
@@ -64,7 +65,7 @@ class Payment
                         $value->save();
                     }
                 }
-            } catch (GatewayException|InvalidConfigException|InvalidArgumentException|BusinessException $e) {
+            } catch (GatewayException|InvalidConfigException|InvalidArgumentException|BusinessException|InvalidGatewayException $e) {
                 Log::error('[查询订单异常-' . $value->payno . '] ' . $e->getMessage());
 //                Log::error($e->raw['alipay_trade_query_response']);
 //                $response = $e->raw['alipay_trade_query_response'];
