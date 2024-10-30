@@ -29,6 +29,7 @@ class Payment extends \app\common\controller\CompanyController
 
             try {
                 $order = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno]);
+
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = 'success';
                 $this->returnData['data'] = $order;

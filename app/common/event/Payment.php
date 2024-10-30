@@ -24,7 +24,7 @@ class Payment
                 // 检查微信订单是否已支付
                 $data = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $value->payno]);
                 Log::info('微信订单：' . json_encode($data));
-                if ($data->trade_state === 'SUCCESS') {
+                if ($data->result_code === 'SUCCESS') {
                     $mt = mktime(
                         substr($data->time_end, 8, 2),
                         substr($data->time_end, 10, 2),
@@ -37,7 +37,7 @@ class Payment
                     $value->payment_no = $data->transaction_id;
                     $value->status = 1;
                     $value->save();
-                } elseif ($data->trade_state === 'CLOSED') {
+                } elseif ($data->result_code === 'CLOSED') {
                     $value->status = 2;
                     $value->save();
                 }
