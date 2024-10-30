@@ -31,7 +31,7 @@ class Payment
                         ->find(['out_trade_no' => $value->payno], 'scan');
                     Log::info('微信订单：' . json_encode($data));
 
-                    if ($data->result_code === 'SUCCESS') {
+                    if ($data->trade_state === 'SUCCESS') {
                         $mt = mktime(
                             substr($data->time_end, 8, 2),
                             substr($data->time_end, 10, 2),
@@ -44,7 +44,7 @@ class Payment
                         $value->payment_no = $data->transaction_id;
                         $value->status = 1;
                         $value->save();
-                    } elseif ($data->result_code === 'CLOSED') {
+                    } elseif ($data->trade_state === 'CLOSED') {
                         $value->status = 2;
                         $value->save();
                     }
@@ -65,17 +65,26 @@ class Payment
                         $value->save();
                     }
                 }
-            } catch (GatewayException|InvalidConfigException|InvalidArgumentException|BusinessException|InvalidGatewayException $e) {
+            } catch (GatewayException|InvalidConfigException|InvalidArgumentException|BusinessException $e) {
                 Log::error('[查询订单异常-' . $value->payno . '] ' . $e->getMessage());
-//                Log::error($e->raw['alipay_trade_query_response']);
-//                $response = $e->raw['alipay_trade_query_response'];
-//                if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {
-//                    $value->status = 2;
-//                    $value->comment = $response['sub_msg'];
-//                    $value->save();
-//                }
+                Log::debug($e->raw);
 
+                if ($value->pay_type === 1) {
+                    if ($e->raw['return_code'] === 'SUCCESS' && $e->raw['result_code'] === 'FAIL') {
+//                        if ($e->raw['err_code'] === 'ORDERNOTEXIST')
+                        $value->status = 2;
+                        $value->comment = $e->raw['err_code_des'];
+                        $value->save();
+                    }
+                } elseif ($value->pay_type === 2) {
+                    $response = $e->raw['alipay_trade_query_response'];
+                    if ($response['code'] === '40004' && $response['sub_code'] === 'ACQ.TRADE_NOT_EXIST') {
+                        $value->status = 2;
+                        $value->comment = $response['sub_msg'];
+                        $value->save();
+                    }
 
+                }
             }
         }
     }

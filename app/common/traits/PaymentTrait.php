@@ -22,7 +22,7 @@ trait PaymentTrait
 
     public function index()
     {
-//        Event::trigger('Payment');
+        Event::trigger('Payment');
         if ($this->module === 'admin') {
             $company = (new Company())->getCompanyList();
             $this->view->assign('company', $company->hidden(['user'])->toArray());

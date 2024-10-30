@@ -74,7 +74,7 @@ class Payment extends \app\common\controller\ApiController
             $data = $pay->verify(); // 是的，验签就这么简单！
             Log::info('[微信回调]' . json_encode($data));
 
-            if ($data->result_code === 'SUCCESS') {
+            if ($data->return_code === 'SUCCESS' && $data->result_code === 'SUCCESS') {
                 $mt = mktime(
                     substr($data->time_end, 8, 2),
                     substr($data->time_end, 10, 2),
