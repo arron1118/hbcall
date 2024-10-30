@@ -29,6 +29,7 @@ class Payment
                     $data = Pay::wechat(Config::get('payment.wxpay'))
                         ->find(['out_trade_no' => $value->payno]);
                     Log::info('微信订单：' . json_encode($data));
+
                     if ($data->result_code === 'SUCCESS') {
                         $mt = mktime(
                             substr($data->time_end, 8, 2),
@@ -48,8 +49,10 @@ class Payment
                     }
                 } elseif ($value->pay_type === 2) {
                     // 检查支付宝订单是否已支付
-                    $data = Pay::alipay(Config::get('payment.alipay.web'))->find(['out_trade_no' => $value->payno]);
+                    $data = Pay::alipay(Config::get('payment.alipay.web'))
+                        ->find(['out_trade_no' => $value->payno]);
                     Log::info('支付宝订单：' . json_encode($data));
+
                     if ($data->trade_status === 'TRADE_SUCCESS') {
                         $value->pay_time = strtotime($data->send_pay_date);
                         $value->payment_no = $data->trade_no;
