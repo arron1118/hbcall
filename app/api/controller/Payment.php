@@ -7,7 +7,11 @@ use app\common\traits\PaymentTrait;
 use app\common\model\Company;
 use think\facade\Config;
 use think\facade\Db;
+use think\facade\Log;
 use Yansongda\Pay\Exceptions\GatewayException;
+use Yansongda\Pay\Exceptions\InvalidArgumentException;
+use Yansongda\Pay\Exceptions\InvalidGatewayException;
+use Yansongda\Pay\Exceptions\InvalidSignException;
 use Yansongda\Pay\Pay;
 use app\common\model\Payment as PaymentModel;
 
@@ -66,12 +70,12 @@ class Payment extends \app\common\controller\ApiController
      */
     public function notify()
     {
-        $pay = Pay::wechat(Config::get('payment.wxpay'));
-
         try {
+            $pay = Pay::wechat(Config::get('payment.wxpay'));
             $data = $pay->verify(); // 是的，验签就这么简单！
+            Log::info('[微信回调]' . json_encode($data));
 
-            if ($data->result_code === 'SUCCESS') {
+            if ($data->trade_state === 'SUCCESS') {
                 $mt = mktime(
                     substr($data->time_end, 8, 2),
                     substr($data->time_end, 10, 2),
@@ -91,18 +95,18 @@ class Payment extends \app\common\controller\ApiController
                     $this->updateUserAmount($paymentModel);
                 }
             }
-        } catch (\Exception $e) {
-            // $e->getMessage();
-        }
 
-        return $pay->success()->send(); // laravel 框架中请直接 `return $pay->success()`
+            return $pay->success()->send(); // laravel 框架中请直接 `return $pay->success()`
+        } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException $e) {
+            Log::error('[微信回调失败]' . $e->getMessage());
+        }
     }
 
     public function alipayNotify()
     {
-        $alipay = Pay::alipay(Config::get('payment.alipay.web'));
-
         try {
+            $alipay = Pay::alipay(Config::get('payment.alipay.web'));
+
             $data = $alipay->verify();
 
             if ($data->trade_status === 'TRADE_SUCCESS') {
@@ -116,10 +120,11 @@ class Payment extends \app\common\controller\ApiController
                     $this->updateUserAmount($paymentModel);
                 }
             }
-        } catch (\Exception $e) {
-        }
 
-        return $alipay->success()->send();
+            return $alipay->success()->send();
+        } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException $e) {
+            Log::error('[支付宝回调失败]' . $e->getMessage());
+        }
     }
 
     /**
