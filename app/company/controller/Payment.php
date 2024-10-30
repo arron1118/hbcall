@@ -29,14 +29,13 @@ class Payment extends \app\common\controller\CompanyController
             $payno = $this->request->param('payno');
 
             try {
-                $order = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno]);
+                $order = Pay::wechat(Config::get('payment.wxpay'))->find(['out_trade_no' => $payno], 'scan');
 
                 $this->returnData['code'] = 1;
                 $this->returnData['msg'] = 'success';
                 $this->returnData['data'] = $order;
             } catch (InvalidGatewayException|InvalidArgumentException|InvalidSignException|BusinessException $e) {
                 Log::error('[订单查询异常] ' . $e->getMessage());
-            }
         }
 
         return json($this->returnData);
