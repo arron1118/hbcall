@@ -29,7 +29,7 @@ class Payment
                     // 检查微信订单是否已支付
                     $data = Pay::wechat(Config::get('payment.wxpay'))
                         ->find(['out_trade_no' => $value->payno], 'scan');
-                    Log::info('微信订单：' . json_encode($data));
+                    Log::info('微信订单：' . $data->toJson());
 
                     if ($data->trade_state === 'SUCCESS') {
                         $mt = mktime(
