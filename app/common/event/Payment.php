@@ -45,6 +45,7 @@ class Payment
                         $value->status = 1;
                         $value->save();
                     } elseif ($data->trade_state === 'CLOSED') {
+                        $value->payment_no = $data->transaction_id ?? '';
                         $value->status = 2;
                         $value->save();
                     }
