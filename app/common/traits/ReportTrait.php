@@ -101,7 +101,7 @@ trait ReportTrait
                 $field .= ', corporation as username';
             }
 
-            $this->returnData['data'] = $model->field($field)
+            $this->returnData['data'] = $model::field($field)
                 ->where($where)
                 ->order('call_sum desc')
                 ->limit(5)
