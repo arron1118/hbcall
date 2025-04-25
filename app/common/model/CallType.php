@@ -14,4 +14,9 @@ class CallType extends CommonModel
     {
         return $this->belongsToMany(Company::class);
     }
+
+    public function callHistory()
+    {
+        return $this->hasMany(CallHistory::class);
+    }
 }
