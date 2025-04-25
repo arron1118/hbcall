@@ -21,24 +21,24 @@
   ],
   "require": {
     "php": ">=7.1.0",
-    "topthink/framework": "v6.0.12",
-    "topthink/think-orm": "v2.0.52",
-    "topthink/think-view": "v1.0.14",
-    "topthink/think-multi-app": "v1.0.14",
+    "topthink/framework": "^6.0.12",
+    "topthink/think-orm": "^2.0.52",
+    "topthink/think-view": "^1.0.14",
+    "topthink/think-multi-app": "^1.0.14",
     "ext-curl": "*",
-    "curl/curl": "2.3.3",
+    "curl/curl": "^2.3.3",
     "ext-json": "*",
-    "topthink/think-captcha": "v3.0.4",
-    "chillerlan/php-qrcode": "3.4.1",
+    "topthink/think-captcha": "^3.0.4",
+    "chillerlan/php-qrcode": "^3.4.1",
     "phpoffice/phpspreadsheet": "^1.22",
-    "yansongda/pay": "2.10",
+    "yansongda/pay": "^2.10",
     "jenssegers/agent": "^2.6",
     "lcobucci/jwt": "^4.0",
     "casbin/think-authz": "^1.5"
   },
   "require-dev": {
-    "symfony/var-dumper": "v4.4.37",
-    "topthink/think-trace": "v1.4"
+    "symfony/var-dumper": "^4.4.37",
+    "topthink/think-trace": "^1.4"
   },
   "autoload": {
     "psr-4": {
