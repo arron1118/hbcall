@@ -162,7 +162,7 @@ class CallHistory
                         }
                     } else {
                         $curl->get(Config::get('hbcall.record_api'), [
-                            'bindId' => $val['subid'],
+                            'callid' => $val['subid'],
 //                            'date' => $date
                         ]);
                         Log::info($curl->response);
