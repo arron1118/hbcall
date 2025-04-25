@@ -120,7 +120,7 @@ class ApiController extends \app\BaseController
     protected function getRequestParams($param = 'params')
     {
         $data = $this->request->param($param);
-        return json_decode($this->aes->aesDecode($data), JSON_UNESCAPED_UNICODE);
+        return $data ? json_decode($this->aes->aesDecode($data), JSON_UNESCAPED_UNICODE) : [];
     }
 
     /**
