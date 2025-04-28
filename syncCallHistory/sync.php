@@ -5,4 +5,4 @@
  * email:arron1118@icloud.com
  */
 set_time_limit(0);
-file_get_contents('http://caller.hbosw.com/api/hbcall/updateCallHistory');
+file_get_contents('http://caller.miaotouying.com/api/hbcall/updateCallHistory');
